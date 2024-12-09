@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Table View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: purple; /* Set the background to purple */
+            color: gold; /* Set the default text color to gold */
+            margin: 0;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #4b0082; /* Slightly darker purple for the table background */
+            color: gold; /* Text color inside the table */
+        }
+        th, td {
+            border: 1px solid gold; /* Gold borders for table cells */
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #6a0dad; /* Dark purple for the header row */
+        }
+        tr:nth-child(even) {
+            background-color: #5a0088; /* Slightly lighter purple for alternating rows */
+        }
+        .data {
+            font-size: 0.9em;
+            color: #eee;
+            white-space: pre-line; /* Render line breaks in the data field */
+        }
+        #searchBar {
+            margin: 20px auto;
+            display: block;
+            width: 90%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid gold;
+            border-radius: 4px;
+            background-color: #4b0082; /* Match table background */
+            color: gold;
+        }
+        #searchBar::placeholder {
+            color: gold; /* Gold placeholder text */
+        }
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: gold; /* Gold heading */
+        }
+    </style>
+</head>
+<body>
+    <h1>Item List</h1>
+    <input type="text" id="searchBar" placeholder="Search for an item..." oninput="filterTable()">
+    <table id="itemTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Stats</th>
+                <th>Repair Cost</th>
+                <th>Uses</th>
+                <th>Sell Value</th>
+                <th>Tile Range</th>
+                <th>Handedness</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be populated here by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchAndDisplayItems() {
+            const apiUrl = 'https://corsproxy.io/?https://play.mirageonlineclassic.com/itemdump.json';
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const items = await response.json();
+
+                const tableBody = document.getElementById('itemTable').querySelector('tbody');
+                tableBody.innerHTML = ''; // Clear table before populating
+
+                items.forEach(item => {
+                    if (!item.name || item.name === "No name" || item.desc === "No description available") {
+                        return;
+                    }
+
+                    const row = document.createElement('tr');
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = item.name;
+                    row.appendChild(nameCell);
+
+                    const descCell = document.createElement('td');
+                    descCell.textContent = item.desc;
+                    row.appendChild(descCell);
+
+                    const dataCell = document.createElement('td');
+                    if (item.data) {
+                        // Format the data field: each key-value pair on a new line
+                        const formattedData = Object.entries(item.data)
+                            .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`)
+                            .join('\n'); // Join entries with a newline
+                        dataCell.textContent = formattedData.trim();
+                        dataCell.classList.add('data');
+                    } else {
+                        dataCell.textContent = 'No data';
+                    }
+                    row.appendChild(dataCell);
+
+                    // Repair cost
+                    const repairCostCell = document.createElement('td');
+                    repairCostCell.textContent = item.repair_cost ? item.repair_cost : 'No repair cost';
+                    row.appendChild(repairCostCell);
+
+                    // Uses
+                    const usesCell = document.createElement('td');
+                    usesCell.textContent = item.uses ? item.uses : 'No uses data';
+                    row.appendChild(usesCell);
+
+                    // Recycle value
+                    const recycleValueCell = document.createElement('td');
+                    recycleValueCell.textContent = item.recycle_value ? item.recycle_value : 'No recycle value';
+                    row.appendChild(recycleValueCell);
+
+                    // Tile range
+                    const tileRangeCell = document.createElement('td');
+                    tileRangeCell.textContent = item.tile_range ? item.tile_range : 'No tile range';
+                    row.appendChild(tileRangeCell);
+
+                    // Handedness (Two handed or One handed)
+                    const handednessCell = document.createElement('td');
+                    handednessCell.textContent = item.two_handed ? 'Two Handed' : 'One Handed';
+                    row.appendChild(handednessCell);
+
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching or processing data:', error);
+                document.body.innerHTML += `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+            }
+        }
+
+        function filterTable() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const rows = document.querySelectorAll('#itemTable tbody tr');
+
+            rows.forEach(row => {
+                const nameCell = row.querySelector('td:nth-child(1)');
+                const descriptionCell = row.querySelector('td:nth-child(2)');
+
+                if (
+                    (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
+                    (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm))
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Call the function to populate the table
+        fetchAndDisplayItems();
+    </script>
+</body>
+</html>

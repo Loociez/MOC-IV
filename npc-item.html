@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items and NPCs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2b2b2b;
+            color: #d4af37; /* Gold color for text */
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4B0082; /* Purple header */
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4B0082; /* Purple */
+            color: #fff;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #6a2d9f; /* Lighter purple on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Items and NPCs</h1>
+
+    <!-- Search for Items -->
+    <h2>Search for Items</h2>
+    <input type="text" id="searchBarItems" placeholder="Search for an item..." oninput="filterTable('items')">
+
+    <!-- Button to toggle visibility of the Items Table -->
+    <button onclick="toggleTable('items')">Toggle Items Table</button>
+
+    <!-- Items Table -->
+    <table id="itemsTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Item rows will be populated here by JavaScript -->
+        </tbody>
+    </table>
+
+    <hr>
+
+    <!-- Search for NPCs -->
+    <h2>Search for NPCs</h2>
+    <input type="text" id="searchBarNPCs" placeholder="Search for an NPC..." oninput="filterTable('npcs')">
+
+    <!-- Button to toggle visibility of the NPCs Table -->
+    <button onclick="toggleTable('npcs')">Toggle NPCs Table</button>
+
+    <!-- NPCs Table -->
+    <table id="npcTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Pursue Run</th>
+                <th>Spawn Night</th>
+                <th>Regen Rate</th>
+                <th>Vitals</th>
+                <th>Stats</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- NPC rows will be populated here by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchAndDisplayData() {
+            const itemApiUrl = 'https://play.mirageonlineclassic.com/itemdump.json';  // Item data API URL
+            const npcApiUrl = 'https://play.mirageonlineclassic.com/npcdump.json';    // Correct NPC data API URL
+            const corsProxy = 'https://corsproxy.io/?';
+
+            try {
+                // Fetch Item Data
+                const itemResponse = await fetch(corsProxy + itemApiUrl);
+                if (!itemResponse.ok) {
+                    throw new Error(`HTTP error! status: ${itemResponse.status}`);
+                }
+                const items = await itemResponse.json();
+                console.log('Items data fetched successfully:', items);
+                displayItems(items);
+
+                // Fetch NPC Data
+                const npcResponse = await fetch(corsProxy + npcApiUrl);
+                if (!npcResponse.ok) {
+                    throw new Error(`HTTP error! status: ${npcResponse.status}`);
+                }
+                const npcs = await npcResponse.json();
+                console.log('NPC data fetched successfully:', npcs);
+                displayNPCs(npcs);
+
+            } catch (error) {
+                console.error('Error fetching or processing data:', error);
+                document.body.innerHTML += `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+            }
+        }
+
+        // Function to display items data
+        function displayItems(items) {
+            const tableBody = document.getElementById('itemsTable').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            items.forEach(item => {
+                if (!item.name || !item.desc) {
+                    return; // Skip if no name or description
+                }
+
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.name;
+                row.appendChild(nameCell);
+
+                const descCell = document.createElement('td');
+                descCell.textContent = item.desc || 'No description available';
+                row.appendChild(descCell);
+
+                const dataCell = document.createElement('td');
+                if (item.data) {
+                    dataCell.innerHTML = formatItemData(item.data);
+                } else {
+                    dataCell.textContent = 'No data';
+                }
+                row.appendChild(dataCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to format item data for better readability
+        function formatItemData(data) {
+            return Object.entries(data)
+                .map(([key, value]) => `${key.replace('_', ' ')}: ${value}`)
+                .join('<br>');
+        }
+
+        // Function to display NPCs data
+        function displayNPCs(npcs) {
+            const tableBody = document.getElementById('npcTable').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            npcs.forEach(npc => {
+                if (!npc.name) {
+                    return; // Skip if no name
+                }
+
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = npc.name;
+                row.appendChild(nameCell);
+
+                const pursueRunCell = document.createElement('td');
+                pursueRunCell.textContent = npc.pursue_run ? 'Yes' : '';
+                row.appendChild(pursueRunCell);
+
+                const spawnNightCell = document.createElement('td');
+                spawnNightCell.textContent = npc.spawn_night ? 'Yes' : '';
+                row.appendChild(spawnNightCell);
+
+                const regenRateCell = document.createElement('td');
+                regenRateCell.textContent = npc.regen_rate || 'No data';
+                row.appendChild(regenRateCell);
+
+                const vitalsCell = document.createElement('td');
+                vitalsCell.textContent = formatNPCVitals(npc.vitals);
+                row.appendChild(vitalsCell);
+
+                const statsCell = document.createElement('td');
+                statsCell.textContent = formatNPCStats(npc.stats);
+                row.appendChild(statsCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to format NPC vitals
+        function formatNPCVitals(vitals) {
+            if (!vitals) return 'No vitals';
+            return Object.entries(vitals).map(([key, value]) => `${key}: ${value}`).join(', ');
+        }
+
+        // Function to format NPC stats
+        function formatNPCStats(stats) {
+            if (!stats) return 'No stats';
+            return Object.entries(stats).map(([key, value]) => `${key}: ${value}`).join(', ');
+        }
+
+        // Function to filter tables
+        function filterTable(type) {
+            const searchTerm = document.getElementById(`searchBar${type === 'items' ? 'Items' : 'NPCs'}`).value.toLowerCase();
+            const rows = document.querySelectorAll(`#${type === 'items' ? 'itemsTable' : 'npcTable'} tbody tr`);
+
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                let matched = false;
+                for (let cell of cells) {
+                    if (cell.textContent.toLowerCase().includes(searchTerm)) {
+                        matched = true;
+                        break;
+                    }
+                }
+                row.style.display = matched ? '' : 'none';
+            });
+        }
+
+        // Function to toggle visibility of the tables
+        function toggleTable(tableType) {
+            const table = document.getElementById(tableType === 'items' ? 'itemsTable' : 'npcTable');
+            const button = event.target;
+            if (table.style.display === 'none') {
+                table.style.display = 'table';
+                button.textContent = `Hide ${tableType.charAt(0).toUpperCase() + tableType.slice(1)} Table`;
+            } else {
+                table.style.display = 'none';
+                button.textContent = `Show ${tableType.charAt(0).toUpperCase() + tableType.slice(1)} Table`;
+            }
+        }
+
+        // Call the function to populate both tables
+        fetchAndDisplayData();
+    </script>
+
+</body>
+</html>
