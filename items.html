@@ -59,6 +59,18 @@
 <body>
     <h1>Item List</h1>
     <input type="text" id="searchBar" placeholder="Search for an item..." oninput="filterTable()">
+    <label style="margin-left: 10px;">
+        <input type="checkbox" id="weaponFilter" onclick="filterTable()"> Weapons Only
+    </label>
+    <label style="margin-left: 10px;">
+        <input type="checkbox" id="petFilter" onclick="filterTable()"> Pets Only
+    </label>
+    <label style="margin-left: 10px;">
+        <input type="checkbox" id="recipeFilter" onclick="filterTable()"> Recipes Only
+    </label>
+    <label style="margin-left: 10px;">
+        <input type="checkbox" id="rareFilter" onclick="filterTable()"> Rare+
+    </label>
     <table id="itemTable">
         <thead>
             <tr>
@@ -68,7 +80,6 @@
                 <th>Repair Cost</th>
                 <th>Uses</th>
                 <th>Sell Value</th>
-                <th>Tile Range</th>
                 <th>Handedness</th>
             </tr>
         </thead>
@@ -107,16 +118,18 @@
                     row.appendChild(descCell);
 
                     const dataCell = document.createElement('td');
-                    if (item.data) {
-                        // Format the data field: each key-value pair on a new line
-                        const formattedData = Object.entries(item.data)
-                            .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`)
-                            .join('\n'); // Join entries with a newline
-                        dataCell.textContent = formattedData.trim();
-                        dataCell.classList.add('data');
-                    } else {
-                        dataCell.textContent = 'No data';
+                    let stats = item.data ? Object.entries(item.data) : [];
+
+                    // Add tile_range if it exists
+                    if (item.tile_range) {
+                        stats.push(['tile range', item.tile_range]);
                     }
+
+                    const formattedData = stats
+                        .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`)
+                        .join('\n');
+                    dataCell.textContent = formattedData.trim() || 'No data';
+                    dataCell.classList.add('data');
                     row.appendChild(dataCell);
 
                     // Repair cost
@@ -134,14 +147,10 @@
                     recycleValueCell.textContent = item.recycle_value ? item.recycle_value : 'No recycle value';
                     row.appendChild(recycleValueCell);
 
-                    // Tile range
-                    const tileRangeCell = document.createElement('td');
-                    tileRangeCell.textContent = item.tile_range ? item.tile_range : 'No tile range';
-                    row.appendChild(tileRangeCell);
-
-                    // Handedness (Two handed or One handed)
+                    // Handedness (Two Handed or One Handed)
                     const handednessCell = document.createElement('td');
-                    handednessCell.textContent = item.two_handed ? 'Two Handed' : 'One Handed';
+                    const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
+                    handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
                     row.appendChild(handednessCell);
 
                     tableBody.appendChild(row);
@@ -154,15 +163,47 @@
 
         function filterTable() {
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const weaponFilter = document.getElementById('weaponFilter').checked;
+            const petFilter = document.getElementById('petFilter').checked;
+            const recipeFilter = document.getElementById('recipeFilter').checked;
+            const rareFilter = document.getElementById('rareFilter').checked;
             const rows = document.querySelectorAll('#itemTable tbody tr');
 
             rows.forEach(row => {
                 const nameCell = row.querySelector('td:nth-child(1)');
                 const descriptionCell = row.querySelector('td:nth-child(2)');
+                const statsCell = row.querySelector('td:nth-child(3)');
 
-                if (
+                // Check if the row matches the search term
+                const matchesSearch =
                     (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
-                    (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm))
+                    (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
+
+                // Check if the row contains "two handed" in the stats (if the weapon filter is enabled)
+                const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
+
+                // Check if the name contains "🐶" (if the pet filter is enabled)
+                const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
+
+                // Check if the name or description contains "recipe" (if the recipe filter is enabled)
+                const matchesRecipeFilter =
+                    !recipeFilter ||
+                    (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) ||
+                    (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
+
+                // Check if the name or description contains at least one "*" (if the rare filter is enabled)
+                const matchesRareFilter =
+                    !rareFilter ||
+                    (nameCell && nameCell.textContent.includes('*')) ||
+                    (descriptionCell && descriptionCell.textContent.includes('*'));
+
+                // Show or hide the row based on the combined criteria
+                if (
+                    matchesSearch &&
+                    matchesWeaponFilter &&
+                    matchesPetFilter &&
+                    matchesRecipeFilter &&
+                    matchesRareFilter
                 ) {
                     row.style.display = '';
                 } else {
@@ -175,4 +216,6 @@
         fetchAndDisplayItems();
     </script>
 </body>
+
+
 </html>
