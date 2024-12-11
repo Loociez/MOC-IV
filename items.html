@@ -117,7 +117,11 @@
     <label style="margin-left: 10px;">
         <input type="checkbox" id="rareFilter" onclick="filterTable()"> Rare+
     </label>
+	<label style="margin-left: 10px;">
+    <input type="checkbox" id="favoritesFilter" onclick="filterTable()"> Show Favorites Only
+</label>
     <button onclick="clearComparison()">Clear Comparison</button>
+    <button onclick="generateShareLink()">Share Comparison</button>
 
     <table id="itemTable">
         <thead>
@@ -162,6 +166,7 @@
 
     <script>
         let selectedItems = [];
+		
 
         async function fetchAndDisplayItems() {
             const apiUrl = 'https://corsproxy.io/?https://play.mirageonlineclassic.com/itemdump.json';
@@ -257,7 +262,6 @@
 
             // Separate stats for Item 1
             const statsCell1 = document.createElement('td');
-            let formattedStats1 = '';
             Object.entries(stats1).forEach(([key, value]) => {
                 if (excludedFields.includes(key.toLowerCase())) {
                     return; // Skip this field if it's in the excluded list
@@ -272,7 +276,6 @@
 
             // Separate stats for Item 2
             const statsCell2 = document.createElement('td');
-            let formattedStats2 = '';
             Object.entries(stats2).forEach(([key, value]) => {
                 if (excludedFields.includes(key.toLowerCase())) {
                     return; // Skip this field if it's in the excluded list
@@ -369,7 +372,56 @@
             });
         }
 
+        function generateShareLink() {
+            if (selectedItems.length < 2) {
+                alert("Select at least two items to share a comparison.");
+                return;
+            }
+            const selectedNames = selectedItems.map(item => encodeURIComponent(item.name)).join(',');
+            const shareLink = `${window.location.origin}${window.location.pathname}?compare=${selectedNames}`;
+            navigator.clipboard.writeText(shareLink).then(() => {
+                alert("Share link copied to clipboard!");
+            }).catch(err => {
+                console.error("Error copying link:", err);
+                alert("Failed to copy link.");
+            });
+        }
+
+        function parseQueryAndDisplayComparison() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const compareParam = urlParams.get('compare');
+    if (!compareParam) return;
+
+    const itemNames = compareParam.split(',').map(decodeURIComponent);
+
+    const interval = setInterval(() => {
+        const rows = Array.from(document.querySelectorAll('#itemTable tbody tr'));
+        if (rows.length > 0) {
+            clearInterval(interval);
+            rows.forEach(row => {
+                const nameCell = row.querySelector('td:nth-child(2)');
+                if (nameCell && itemNames.includes(nameCell.textContent)) {
+                    const checkbox = row.querySelector('td input[type="checkbox"]');
+                    if (checkbox && !checkbox.checked) {
+                        checkbox.checked = true;
+                        checkbox.dispatchEvent(new Event('click')); // Trigger the item selection logic
+                    }
+                }
+            });
+
+            // Ensure modal is displayed after restoring selections
+            if (selectedItems.length >= 2) {
+                displayComparison(selectedItems);
+            }
+        }
+    }, 100); // Check every 100ms
+}
+
+
+
+
         fetchAndDisplayItems();
+        parseQueryAndDisplayComparison();
     </script>
 </body>
 </html>
