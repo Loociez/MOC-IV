@@ -145,7 +145,8 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Stats</th>
+                        <th>Item 1 Stats</th>
+                        <th>Item 2 Stats</th>
                         <th>Repair Cost</th>
                         <th>Uses</th>
                         <th>Sell Value</th>
@@ -254,7 +255,7 @@
             nameCell.textContent = item1.name + " vs " + item2.name;
             row.appendChild(nameCell);
 
-            // Filter out excluded fields
+            // Separate stats for Item 1
             const statsCell1 = document.createElement('td');
             let formattedStats1 = '';
             Object.entries(stats1).forEach(([key, value]) => {
@@ -262,20 +263,14 @@
                     return; // Skip this field if it's in the excluded list
                 }
 
-                const statValue2 = stats2[key];
-                let className = '';
-                if (statValue2 !== undefined) {
-                    if (value > statValue2) {
-                        className = 'higher';
-                    } else if (value < statValue2) {
-                        className = 'lower';
-                    }
-                }
-                formattedStats1 += `<div class="${className}">${key.replace(/_/g, ' ')}: ${value}</div>`;
+                const statElement = document.createElement('span');
+                statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
+                statsCell1.appendChild(statElement);
+                statsCell1.appendChild(document.createElement('br')); // Adds a line break between stats
             });
-            statsCell1.innerHTML = formattedStats1 || 'No data';
             row.appendChild(statsCell1);
 
+            // Separate stats for Item 2
             const statsCell2 = document.createElement('td');
             let formattedStats2 = '';
             Object.entries(stats2).forEach(([key, value]) => {
@@ -283,32 +278,32 @@
                     return; // Skip this field if it's in the excluded list
                 }
 
-                const statValue1 = stats1[key];
-                let className = '';
-                if (statValue1 !== undefined) {
-                    if (value > statValue1) {
-                        className = 'higher';
-                    } else if (value < statValue1) {
-                        className = 'lower';
-                    }
-                }
-                formattedStats2 += `<div class="${className}">${key.replace(/_/g, ' ')}: ${value}</div>`;
+                const statElement = document.createElement('span');
+                statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
+                statsCell2.appendChild(statElement);
+                statsCell2.appendChild(document.createElement('br')); // Adds a line break between stats
             });
-            statsCell2.innerHTML = formattedStats2 || 'No data';
             row.appendChild(statsCell2);
 
+            // Apply highlight to individual stats
+            highlightStats(stats1, stats2, statsCell1, statsCell2);
+
+            // Repair cost
             const repairCostCell = document.createElement('td');
             repairCostCell.textContent = item1.repair_cost || 'No repair cost';
             row.appendChild(repairCostCell);
 
+            // Uses
             const usesCell = document.createElement('td');
             usesCell.textContent = item1.uses || 'No uses data';
             row.appendChild(usesCell);
 
+            // Sell value
             const sellValueCell = document.createElement('td');
             sellValueCell.textContent = item1.recycle_value || 'No sell value';
             row.appendChild(sellValueCell);
 
+            // Handedness
             const handednessCell = document.createElement('td');
             handednessCell.textContent = item1.data && item1.data.two_handed ? 'Two Handed' : 'One Handed';
             row.appendChild(handednessCell);
@@ -316,6 +311,21 @@
             comparisonTableBody.appendChild(row);
 
             document.getElementById('comparisonModal').style.display = 'block';
+        }
+
+        function highlightStats(stats1, stats2, statsCell1, statsCell2) {
+            const stats1Entries = Object.entries(stats1);
+            const stats2Entries = Object.entries(stats2);
+
+            stats1Entries.forEach(([key, value], index) => {
+                if (value > stats2Entries[index][1]) {
+                    statsCell1.children[index].classList.add('higher');
+                    statsCell2.children[index].classList.add('lower');
+                } else if (value < stats2Entries[index][1]) {
+                    statsCell1.children[index].classList.add('lower');
+                    statsCell2.children[index].classList.add('higher');
+                }
+            });
         }
 
         function clearComparison() {
