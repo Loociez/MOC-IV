@@ -222,6 +222,15 @@
                     const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
                     handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
                     row.appendChild(handednessCell);
+					
+					  // Favorite checkbox
+    const favoriteCell = document.createElement('td');
+    const favoriteCheckbox = document.createElement('input');
+    favoriteCheckbox.type = 'checkbox';
+    favoriteCheckbox.checked = isFavorite(item.name);
+    favoriteCheckbox.onclick = () => toggleFavorite(item);
+    favoriteCell.appendChild(favoriteCheckbox);
+    row.appendChild(favoriteCell);
 
                     tableBody.appendChild(row);
                 });
@@ -342,35 +351,44 @@
             document.getElementById('comparisonModal').style.display = 'none';
         }
 
-        function filterTable() {
-            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-            const weaponFilter = document.getElementById('weaponFilter').checked;
-            const petFilter = document.getElementById('petFilter').checked;
-            const recipeFilter = document.getElementById('recipeFilter').checked;
-            const rareFilter = document.getElementById('rareFilter').checked;
-            const rows = document.querySelectorAll('#itemTable tbody tr');
+       function filterTable() {
+    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+    const weaponFilter = document.getElementById('weaponFilter').checked;
+    const petFilter = document.getElementById('petFilter').checked;
+    const recipeFilter = document.getElementById('recipeFilter').checked;
+    const rareFilter = document.getElementById('rareFilter').checked;
+    const favoritesFilter = document.getElementById('favoritesFilter').checked;
+    const rows = document.querySelectorAll('#itemTable tbody tr');
 
-            rows.forEach(row => {
-                const nameCell = row.querySelector('td:nth-child(2)');
-                const descriptionCell = row.querySelector('td:nth-child(3)');
-                const statsCell = row.querySelector('td:nth-child(4)');
+    rows.forEach(row => {
+        const nameCell = row.querySelector('td:nth-child(2)');
+        const descriptionCell = row.querySelector('td:nth-child(3)');
+        const statsCell = row.querySelector('td:nth-child(4)');
 
-                const matchesSearch =
-                    (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
-                    (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
+        const matchesSearch =
+            (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
+            (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
 
-                const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
-                const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
-                const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
-                const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
+        const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
+        const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
+        const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
+        const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
 
-                if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        const isFavoriteItem = isFavorite(nameCell.textContent);
+
+        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && (!favoritesFilter || isFavoriteItem)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
         }
+    });
+}
+document.addEventListener('DOMContentLoaded', () => {
+    fetchAndDisplayItems();
+    parseQueryAndDisplayComparison();
+    filterTable(); // Ensure table is filtered based on the current state of the filters
+});
+
 
         function generateShareLink() {
             if (selectedItems.length < 2) {
@@ -416,6 +434,25 @@
         }
     }, 100); // Check every 100ms
 }
+function toggleFavorite(item) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    
+    if (favorites.includes(item.name)) {
+        // If the item is already a favorite, remove it
+        favorites = favorites.filter(fav => fav !== item.name);
+    } else {
+        // Otherwise, add it to the favorites
+        favorites.push(item.name);
+    }
+    
+    // Save the updated favorites list to localStorage
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+function isFavorite(itemName) {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    return favorites.includes(itemName);
+}
+
 
 
 
