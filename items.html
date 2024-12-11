@@ -120,7 +120,8 @@
 	<label style="margin-left: 10px;">
     <input type="checkbox" id="favoritesFilter" onclick="filterTable()"> Show Favorites Only
 </label>
-    <button onclick="clearComparison()">Clear Comparison & Favs</button>
+    <button onclick="clearComparison()">Clear Comparison</button>
+	<button onclick="clearFavorites()">Clear Favorites</button>
     <button onclick="generateShareLink()">Share Comparison</button>
 
     <table id="itemTable">
@@ -453,6 +454,22 @@ function toggleFavorite(item) {
 function isFavorite(itemName) {
     const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     return favorites.includes(itemName);
+}
+function clearFavorites() {
+    // Clear favorites from localStorage
+    localStorage.setItem('favorites', JSON.stringify([]));
+
+    // Refresh the table to reflect changes
+    const rows = document.querySelectorAll('#itemTable tbody tr');
+    rows.forEach(row => {
+        const favoriteCheckbox = row.querySelector('td:nth-child(9) input[type="checkbox"]');
+        if (favoriteCheckbox) {
+            favoriteCheckbox.checked = false;
+        }
+    });
+
+    alert('Favorites cleared!');
+    filterTable(); // Reapply filters in case "Show Favorites Only" is active
 }
 
 
