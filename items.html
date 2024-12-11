@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: purple; /* Set the background to purple */
-            color: gold; /* Set the default text color to gold */
+            background-color: purple;
+            color: gold;
             margin: 0;
             padding: 0;
         }
@@ -16,24 +16,24 @@
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background-color: #4b0082; /* Slightly darker purple for the table background */
-            color: gold; /* Text color inside the table */
+            background-color: #4b0082;
+            color: gold;
         }
         th, td {
-            border: 1px solid gold; /* Gold borders for table cells */
+            border: 1px solid gold;
             padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #6a0dad; /* Dark purple for the header row */
+            background-color: #6a0dad;
         }
         tr:nth-child(even) {
-            background-color: #5a0088; /* Slightly lighter purple for alternating rows */
+            background-color: #5a0088;
         }
         .data {
             font-size: 0.9em;
             color: #eee;
-            white-space: pre-line; /* Render line breaks in the data field */
+            white-space: pre-line;
         }
         #searchBar {
             margin: 20px auto;
@@ -43,16 +43,62 @@
             font-size: 1em;
             border: 1px solid gold;
             border-radius: 4px;
-            background-color: #4b0082; /* Match table background */
+            background-color: #4b0082;
             color: gold;
         }
         #searchBar::placeholder {
-            color: gold; /* Gold placeholder text */
+            color: gold;
         }
         h1 {
             text-align: center;
             margin: 20px 0;
-            color: gold; /* Gold heading */
+            color: gold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 25px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .higher {
+            background-color: green;
+            color: white;
+        }
+
+        .lower {
+            background-color: red;
+            color: white;
         }
     </style>
 </head>
@@ -71,9 +117,12 @@
     <label style="margin-left: 10px;">
         <input type="checkbox" id="rareFilter" onclick="filterTable()"> Rare+
     </label>
+    <button onclick="clearComparison()">Clear Comparison</button>
+
     <table id="itemTable">
         <thead>
             <tr>
+                <th>Select</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Stats</th>
@@ -88,66 +137,82 @@
         </tbody>
     </table>
 
+    <div id="comparisonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Item Comparison</h2>
+            <table id="comparisonTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Item 1 Stats</th>
+                        <th>Item 2 Stats</th>
+                        <th>Repair Cost</th>
+                        <th>Uses</th>
+                        <th>Sell Value</th>
+                        <th>Handedness</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Comparison rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
+        let selectedItems = [];
+
         async function fetchAndDisplayItems() {
             const apiUrl = 'https://corsproxy.io/?https://play.mirageonlineclassic.com/itemdump.json';
-
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const items = await response.json();
-
                 const tableBody = document.getElementById('itemTable').querySelector('tbody');
-                tableBody.innerHTML = ''; // Clear table before populating
+                tableBody.innerHTML = ''; 
 
                 items.forEach(item => {
-                    if (!item.name || item.name === "No name" || item.desc === "No description available") {
-                        return;
-                    }
-
                     const row = document.createElement('tr');
+
+                    const selectCell = document.createElement('td');
+                    const selectCheckbox = document.createElement('input');
+                    selectCheckbox.type = 'checkbox';
+                    selectCheckbox.value = item.name;
+                    selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+                    selectCell.appendChild(selectCheckbox);
+                    row.appendChild(selectCell);
 
                     const nameCell = document.createElement('td');
                     nameCell.textContent = item.name;
                     row.appendChild(nameCell);
 
                     const descCell = document.createElement('td');
-                    descCell.textContent = item.desc;
+                    descCell.textContent = item.desc || 'No description';
                     row.appendChild(descCell);
 
                     const dataCell = document.createElement('td');
                     let stats = item.data ? Object.entries(item.data) : [];
-
-                    // Add tile_range if it exists
-                    if (item.tile_range) {
-                        stats.push(['tile range', item.tile_range]);
-                    }
-
-                    const formattedData = stats
-                        .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`)
-                        .join('\n');
-                    dataCell.textContent = formattedData.trim() || 'No data';
+                    if (item.tile_range) stats.push(['tile range', item.tile_range]);
+                    const formattedData = stats.map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`).join('\n');
+                    dataCell.textContent = formattedData.trim() || 'No stats';
                     dataCell.classList.add('data');
                     row.appendChild(dataCell);
 
-                    // Repair cost
                     const repairCostCell = document.createElement('td');
-                    repairCostCell.textContent = item.repair_cost ? item.repair_cost : 'No repair cost';
+                    repairCostCell.textContent = item.repair_cost || 'No repair cost';
                     row.appendChild(repairCostCell);
 
-                    // Uses
                     const usesCell = document.createElement('td');
-                    usesCell.textContent = item.uses ? item.uses : 'No uses data';
+                    usesCell.textContent = item.uses || 'No uses data';
                     row.appendChild(usesCell);
 
-                    // Recycle value
-                    const recycleValueCell = document.createElement('td');
-                    recycleValueCell.textContent = item.recycle_value ? item.recycle_value : 'No recycle value';
-                    row.appendChild(recycleValueCell);
+                    const sellValueCell = document.createElement('td');
+                    sellValueCell.textContent = item.recycle_value || 'No sell value';
+                    row.appendChild(sellValueCell);
 
-                    // Handedness (Two Handed or One Handed)
                     const handednessCell = document.createElement('td');
                     const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
                     handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
@@ -161,6 +226,100 @@
             }
         }
 
+        function handleItemSelection(item, checkbox) {
+            if (checkbox.checked) {
+                selectedItems.push(item);
+            } else {
+                selectedItems = selectedItems.filter(selectedItem => selectedItem !== item);
+            }
+            displayComparison(selectedItems);
+        }
+
+        function displayComparison(selectedItems) {
+            const comparisonTableBody = document.getElementById('comparisonTable').querySelector('tbody');
+            comparisonTableBody.innerHTML = ''; 
+
+            if (selectedItems.length < 2) {
+                document.getElementById('comparisonModal').style.display = 'none';
+                return;
+            }
+
+            const [item1, item2] = selectedItems;
+            const stats1 = item1.data || {};
+            const stats2 = item2.data || {};
+
+            const row = document.createElement('tr');
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = item1.name + " vs " + item2.name;
+            row.appendChild(nameCell);
+
+            const statsCell1 = document.createElement('td');
+            let formattedStats1 = '';
+            Object.entries(stats1).forEach(([key, value]) => {
+                const statValue2 = stats2[key];
+                let className = '';
+                if (statValue2 !== undefined) {
+                    if (value > statValue2) {
+                        className = 'higher';
+                    } else if (value < statValue2) {
+                        className = 'lower';
+                    }
+                }
+                formattedStats1 += `<div class="${className}">${key.replace(/_/g, ' ')}: ${value}</div>`;
+            });
+            statsCell1.innerHTML = formattedStats1 || 'No data';
+            row.appendChild(statsCell1);
+
+            const statsCell2 = document.createElement('td');
+            let formattedStats2 = '';
+            Object.entries(stats2).forEach(([key, value]) => {
+                const statValue1 = stats1[key];
+                let className = '';
+                if (statValue1 !== undefined) {
+                    if (value > statValue1) {
+                        className = 'higher';
+                    } else if (value < statValue1) {
+                        className = 'lower';
+                    }
+                }
+                formattedStats2 += `<div class="${className}">${key.replace(/_/g, ' ')}: ${value}</div>`;
+            });
+            statsCell2.innerHTML = formattedStats2 || 'No data';
+            row.appendChild(statsCell2);
+
+            const repairCostCell = document.createElement('td');
+            repairCostCell.textContent = item1.repair_cost || 'No repair cost';
+            row.appendChild(repairCostCell);
+
+            const usesCell = document.createElement('td');
+            usesCell.textContent = item1.uses || 'No uses data';
+            row.appendChild(usesCell);
+
+            const sellValueCell = document.createElement('td');
+            sellValueCell.textContent = item1.recycle_value || 'No sell value';
+            row.appendChild(sellValueCell);
+
+            const handednessCell = document.createElement('td');
+            handednessCell.textContent = item1.data && item1.data.two_handed ? 'Two Handed' : 'One Handed';
+            row.appendChild(handednessCell);
+
+            comparisonTableBody.appendChild(row);
+
+            document.getElementById('comparisonModal').style.display = 'block';
+        }
+
+        function clearComparison() {
+            selectedItems = [];
+            const checkboxes = document.querySelectorAll('#itemTable input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            document.getElementById('comparisonModal').style.display = 'none';
+        }
+
+        function closeModal() {
+            document.getElementById('comparisonModal').style.display = 'none';
+        }
+
         function filterTable() {
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
             const weaponFilter = document.getElementById('weaponFilter').checked;
@@ -170,41 +329,20 @@
             const rows = document.querySelectorAll('#itemTable tbody tr');
 
             rows.forEach(row => {
-                const nameCell = row.querySelector('td:nth-child(1)');
-                const descriptionCell = row.querySelector('td:nth-child(2)');
-                const statsCell = row.querySelector('td:nth-child(3)');
+                const nameCell = row.querySelector('td:nth-child(2)');
+                const descriptionCell = row.querySelector('td:nth-child(3)');
+                const statsCell = row.querySelector('td:nth-child(4)');
 
-                // Check if the row matches the search term
                 const matchesSearch =
                     (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
                     (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
 
-                // Check if the row contains "two handed" in the stats (if the weapon filter is enabled)
                 const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
-
-                // Check if the name contains "🐶" (if the pet filter is enabled)
                 const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
+                const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
+                const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
 
-                // Check if the name or description contains "recipe" (if the recipe filter is enabled)
-                const matchesRecipeFilter =
-                    !recipeFilter ||
-                    (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) ||
-                    (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
-
-                // Check if the name or description contains at least one "*" (if the rare filter is enabled)
-                const matchesRareFilter =
-                    !rareFilter ||
-                    (nameCell && nameCell.textContent.includes('*')) ||
-                    (descriptionCell && descriptionCell.textContent.includes('*'));
-
-                // Show or hide the row based on the combined criteria
-                if (
-                    matchesSearch &&
-                    matchesWeaponFilter &&
-                    matchesPetFilter &&
-                    matchesRecipeFilter &&
-                    matchesRareFilter
-                ) {
+                if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -212,10 +350,7 @@
             });
         }
 
-        // Call the function to populate the table
         fetchAndDisplayItems();
     </script>
 </body>
-
-
 </html>
