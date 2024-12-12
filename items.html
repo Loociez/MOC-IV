@@ -204,6 +204,56 @@
     throw new Error('All proxies failed. Unable to fetch data.');
 }
 
+async function fetchWithTimeout(url, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            reject(new Error('Request timed out'));
+        }, timeout);
+
+        fetch(url)
+            .then(response => {
+                clearTimeout(timer); // Clear timeout if fetch succeeds
+                if (!response.ok) {
+                    reject(new Error(`HTTP error! status: ${response.status}`));
+                } else {
+                    resolve(response);
+                }
+            })
+            .catch(err => {
+                clearTimeout(timer); // Clear timeout if fetch errors out
+                reject(err);
+            });
+    });
+}
+
+async function fetchWithFallback() {
+    const proxies = [
+        'https://api.allorigins.win/get?url=',
+        'https://cors-anywhere.herokuapp.com/',
+        '', // Direct fetch without proxy
+    ];
+    const targetUrl = 'https://play.mirageonlineclassic.com/itemdump.json';
+
+    for (const proxy of proxies) {
+        const url = proxy ? `${proxy}${encodeURIComponent(targetUrl)}` : targetUrl;
+        console.log(`Trying to fetch from: ${proxy || 'Direct fetch'}`); // Debug log
+
+        try {
+            const response = await fetchWithTimeout(url, 5000); // Set a timeout of 5 seconds
+            const data = proxy.includes('allorigins')
+                ? JSON.parse((await response.json()).contents) // Unwrap AllOrigins response
+                : await response.json();
+
+            console.log(`Success! Data fetched from: ${proxy || 'Direct fetch'}`);
+            return data; // Return the fetched data
+        } catch (error) {
+            console.error(`Failed to fetch from: ${proxy || 'Direct fetch'} - ${error.message}`);
+        }
+    }
+
+    throw new Error('All proxies failed. Unable to fetch data.');
+}
+
 async function fetchAndDisplayItems() {
     try {
         const items = await fetchWithFallback();
@@ -270,6 +320,7 @@ async function fetchAndDisplayItems() {
         alert(`Failed to load data: ${error.message}`);
     }
 }
+
 
 
         function handleItemSelection(item, checkbox) {
