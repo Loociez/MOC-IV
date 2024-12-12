@@ -171,77 +171,106 @@
         let selectedItems = [];
 		
 
-        async function fetchAndDisplayItems() {
-            const apiUrl = 'https://corsproxy.io/?https://play.mirageonlineclassic.com/itemdump.json';
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const items = await response.json();
-                const tableBody = document.getElementById('itemTable').querySelector('tbody');
-                tableBody.innerHTML = ''; 
+        async function fetchWithFallback() {
+    const proxies = [
+        'https://api.allorigins.win/get?url=',
+        'https://cors-anywhere.herokuapp.com/',
+        '', // Direct fetch without proxy
+    ];
+    const targetUrl = 'https://play.mirageonlineclassic.com/itemdump.json';
 
-                items.forEach(item => {
-                    const row = document.createElement('tr');
+    for (const proxy of proxies) {
+        const url = proxy ? `${proxy}${encodeURIComponent(targetUrl)}` : targetUrl;
+        console.log(`Trying to fetch from: ${proxy || 'Direct fetch'}`); // Debug log
 
-                    const selectCell = document.createElement('td');
-                    const selectCheckbox = document.createElement('input');
-                    selectCheckbox.type = 'checkbox';
-                    selectCheckbox.value = item.name;
-                    selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-                    selectCell.appendChild(selectCheckbox);
-                    row.appendChild(selectCell);
-
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = item.name;
-                    row.appendChild(nameCell);
-
-                    const descCell = document.createElement('td');
-                    descCell.textContent = item.desc || 'No description';
-                    row.appendChild(descCell);
-
-                    const dataCell = document.createElement('td');
-                    let stats = item.data ? Object.entries(item.data) : [];
-                    if (item.tile_range) stats.push(['tile range', item.tile_range]);
-                    const formattedData = stats.map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`).join('\n');
-                    dataCell.textContent = formattedData.trim() || 'No stats';
-                    dataCell.classList.add('data');
-                    row.appendChild(dataCell);
-
-                    const repairCostCell = document.createElement('td');
-                    repairCostCell.textContent = item.repair_cost || 'No repair cost';
-                    row.appendChild(repairCostCell);
-
-                    const usesCell = document.createElement('td');
-                    usesCell.textContent = item.uses || 'No uses data';
-                    row.appendChild(usesCell);
-
-                    const sellValueCell = document.createElement('td');
-                    sellValueCell.textContent = item.recycle_value || 'No sell value';
-                    row.appendChild(sellValueCell);
-
-                    const handednessCell = document.createElement('td');
-                    const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
-                    handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-                    row.appendChild(handednessCell);
-					
-					  // Favorite checkbox
-    const favoriteCell = document.createElement('td');
-    const favoriteCheckbox = document.createElement('input');
-    favoriteCheckbox.type = 'checkbox';
-    favoriteCheckbox.checked = isFavorite(item.name);
-    favoriteCheckbox.onclick = () => toggleFavorite(item);
-    favoriteCell.appendChild(favoriteCheckbox);
-    row.appendChild(favoriteCell);
-
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error fetching or processing data:', error);
-                document.body.innerHTML += `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            // If using AllOrigins, unwrap the content
+            const data = proxy.includes('allorigins')
+                ? JSON.parse((await response.json()).contents)
+                : await response.json();
+
+            console.log(`Success! Data fetched from: ${proxy || 'Direct fetch'}`);
+            return data; // Return the fetched data
+        } catch (error) {
+            console.error(`Failed to fetch from: ${proxy || 'Direct fetch'} - ${error.message}`);
         }
+    }
+
+    throw new Error('All proxies failed. Unable to fetch data.');
+}
+
+async function fetchAndDisplayItems() {
+    try {
+        const items = await fetchWithFallback();
+        const tableBody = document.getElementById('itemTable').querySelector('tbody');
+        tableBody.innerHTML = ''; // Clear existing table content
+
+        items.forEach(item => {
+            const row = document.createElement('tr');
+
+            const selectCell = document.createElement('td');
+            const selectCheckbox = document.createElement('input');
+            selectCheckbox.type = 'checkbox';
+            selectCheckbox.value = item.name;
+            selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+            selectCell.appendChild(selectCheckbox);
+            row.appendChild(selectCell);
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            const descCell = document.createElement('td');
+            descCell.textContent = item.desc || 'No description';
+            row.appendChild(descCell);
+
+            const dataCell = document.createElement('td');
+            let stats = item.data ? Object.entries(item.data) : [];
+            if (item.tile_range) stats.push(['tile range', item.tile_range]);
+            const formattedData = stats.map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`).join('\n');
+            dataCell.textContent = formattedData.trim() || 'No stats';
+            dataCell.classList.add('data');
+            row.appendChild(dataCell);
+
+            const repairCostCell = document.createElement('td');
+            repairCostCell.textContent = item.repair_cost || 'No repair cost';
+            row.appendChild(repairCostCell);
+
+            const usesCell = document.createElement('td');
+            usesCell.textContent = item.uses || 'No uses data';
+            row.appendChild(usesCell);
+
+            const sellValueCell = document.createElement('td');
+            sellValueCell.textContent = item.recycle_value || 'No sell value';
+            row.appendChild(sellValueCell);
+
+            const handednessCell = document.createElement('td');
+            const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
+            handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
+            row.appendChild(handednessCell);
+
+            // Favorite checkbox
+            const favoriteCell = document.createElement('td');
+            const favoriteCheckbox = document.createElement('input');
+            favoriteCheckbox.type = 'checkbox';
+            favoriteCheckbox.checked = isFavorite(item.name);
+            favoriteCheckbox.onclick = () => toggleFavorite(item);
+            favoriteCell.appendChild(favoriteCheckbox);
+            row.appendChild(favoriteCell);
+
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching or displaying data:', error);
+        alert(`Failed to load data: ${error.message}`);
+    }
+}
+
 
         function handleItemSelection(item, checkbox) {
             if (checkbox.checked) {
