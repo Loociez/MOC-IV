@@ -228,9 +228,13 @@ async function fetchWithTimeout(url, timeout = 5000) {
 
 async function fetchWithFallback() {
     const proxies = [
-        'https://api.allorigins.win/get?url=',
-        'https://cors-anywhere.herokuapp.com/',
-        '', // Direct fetch without proxy
+	'', // Direct fetch without proxy
+    'https://api.allorigins.win/get?url=',
+	'https://cors-anywhere.herokuapp.com/',
+    'https://corsproxy.io/?',
+    'https://thingproxy.freeboard.io/fetch/',
+    'https://anyorigin.com/go?url=',
+    'https://crossorigin.me/',
     ];
     const targetUrl = 'https://play.mirageonlineclassic.com/itemdump.json';
 
