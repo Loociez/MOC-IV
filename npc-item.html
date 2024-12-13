@@ -7,54 +7,162 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #2b2b2b;
-            color: #d4af37; /* Gold color for text */
+            background-color: #2e1a47; /* Dark purple background */
+            color: #FFD700; /* Gold text */
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            background-color: #4b1f8d; /* Darker purple for the header */
+            color: #FFD700; /* Gold text */
+            text-align: center;
             padding: 20px;
         }
-        input[type="text"] {
-            padding: 8px;
-            margin-bottom: 10px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+
+        h2, h3 {
+            color: #FFD700; /* Gold text for subheadings */
+            margin-left: 20px;
         }
-        button {
-            background-color: #4B0082; /* Purple */
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #6a2d9f; /* Lighter purple on hover */
-        }
+
         table {
             width: 100%;
+            margin: 20px 0;
             border-collapse: collapse;
+            background-color: #3c1d5c; /* Darker purple for the table */
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #6a4e9a; /* Lighter purple for borders */
+        }
+
+        th {
+            background-color: #4b1f8d; /* Darker purple for the header row */
+            color: #FFD700; /* Gold text */
+        }
+
+        tr:nth-child(even) {
+            background-color: #4a1e6a; /* Slightly lighter purple */
+        }
+
+        tr:hover {
+            background-color: #6a4e9a; /* Lighter purple when hovering */
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin: 10px;
+            width: 95%;
+            max-width: 500px;
+            border: 1px solid #FFD700; /* Gold border */
+            border-radius: 4px;
+            background-color: #2e1a47; /* Dark purple background for inputs */
+            color: #FFD700; /* Gold text */
+        }
+
+        .error-message, .success-message {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .checkbox-container, .favorites {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        button {
+            background-color: #6a4e9a; /* Lighter purple for buttons */
+            color: #FFD700; /* Gold text */
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #4b1f8d; /* Darker purple when hovering */
+        }
+
+        .comparison-section {
             margin-top: 20px;
         }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+
+        .hidden-items {
+            display: none;
         }
-        th {
-            background-color: #4B0082; /* Purple header */
+
+        .buttons-container {
+            margin: 20px;
         }
+
+        .highlight-higher {
+    background-color: #006400; /* Dark green for higher stat */
+}
+
+        .highlight-lower {
+            background-color: #8B0000; /* Dark red for lower stat */
+        }
+
     </style>
 </head>
 <body>
 
     <h1>NPC Data</h1>
 
-    <!-- Search for NPCs -->
-    <h2>Search for NPCs</h2>
-    <input type="text" id="searchBarNPCs" placeholder="Search for an NPC..." oninput="filterNPCs()">
+    <!-- Error and success messages -->
+    <div class="error-message" id="errorMessage">Error fetching NPC data.</div>
+    <div class="success-message" id="successMessage">NPC data loaded successfully!</div>
+
+    <!-- Favorites and Comparison Buttons (fixed at the top) -->
+    <div class="buttons-container">
+        <h2>Search for NPCs</h2>
+        <input type="text" id="searchBarNPCs" placeholder="Search for an NPC..." oninput="filterNPCs()">
+
+        <div class="checkboxes">
+            <label><input type="checkbox" id="favoritesCheckbox" onclick="toggleFavorites()"> Show Favorites</label>
+            <label><input type="checkbox" id="comparisonCheckbox" onclick="toggleComparison()"> Show Comparison</label>
+        </div>
+
+        <!-- Favorites Section -->
+        <div class="favorites" id="favoritesSection" style="display: none;">
+            <h3>Favorites</h3>
+            <ul id="favoritesList"></ul>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section" id="hiddenItems">
+            <h3>Comparison</h3>
+            <table id="comparisonStatsTable">
+                <thead>
+                    <tr>
+                        <th>Stat</th>
+                        <th id="npc1NameHeader"></th>
+                        <th id="npc2NameHeader"></th>
+                    </tr>
+                </thead>
+                <tbody id="comparisonStatsBody">
+                    <!-- Comparison data will be added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action Buttons (always visible) -->
+        <button onclick="clearFavorites()">Clear Favorites</button>
+        <button onclick="clearComparison()">Clear Comparison</button>
+        <button onclick="generateShareLink()">Share Comparison</button>
+    </div>
 
     <!-- NPCs Table -->
     <table id="npcTable">
@@ -66,6 +174,7 @@
                 <th>Regen Rate</th>
                 <th>Vitals</th>
                 <th>Stats</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -74,28 +183,65 @@
     </table>
 
     <script>
-        async function fetchAndDisplayData() {
-            const npcApiUrl = 'https://play.mirageonlineclassic.com/npcdump.json'; // Correct NPC data API URL
-            const corsProxy = 'https://corsproxy.io/?';
+        // Function to fetch data with timeout support
+        async function fetchWithTimeout(url, timeout) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
 
             try {
-                // Fetch NPC Data
-                const npcResponse = await fetch(corsProxy + npcApiUrl);
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw new Error('Request timed out or was aborted');
+            }
+        }
+
+        async function fetchAndDisplayData() {
+            const npcApiUrl = 'https://play.mirageonlineclassic.com/npcdump.json'; // Correct NPC data API URL
+            const corsProxy = 'https://api.allorigins.win/raw?url='; // Fallback proxy URL
+            const timeoutDuration = 5000; // 5 seconds timeout
+
+            try {
+                // First try fetching from the primary API
+                const npcResponse = await fetchWithTimeout(npcApiUrl, timeoutDuration);
                 if (!npcResponse.ok) {
                     throw new Error(`HTTP error! status: ${npcResponse.status}`);
                 }
                 const npcs = await npcResponse.json();
                 console.log('NPC data fetched successfully:', npcs);
                 displayNPCs(npcs);
-
+                document.getElementById('successMessage').style.display = 'block'; // Show success message
+                document.getElementById('errorMessage').style.display = 'none'; // Hide error message
             } catch (error) {
-                console.error('Error fetching or processing data:', error);
-                document.body.innerHTML += `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+                console.error('Error fetching or processing data from primary API:', error);
+                // Show error message
+                document.getElementById('errorMessage').innerText = `Error fetching NPC data: ${error.message}. Using proxy...`;
+                document.getElementById('errorMessage').style.display = 'block';
+
+                // Attempt to fetch from the proxy with the same URL
+                try {
+                    const npcResponse = await fetchWithTimeout(corsProxy + encodeURIComponent(npcApiUrl), timeoutDuration);
+                    if (!npcResponse.ok) {
+                        throw new Error(`HTTP error! status: ${npcResponse.status}`);
+                    }
+                    const npcs = await npcResponse.json();
+                    console.log('NPC data fetched successfully from proxy:', npcs);
+                    displayNPCs(npcs);
+                    document.getElementById('successMessage').style.display = 'block'; // Show success message
+                    document.getElementById('errorMessage').style.display = 'none'; // Hide error message
+                } catch (proxyError) {
+                    console.error('Error fetching data from proxy:', proxyError);
+                    document.getElementById('errorMessage').innerText = `Error fetching NPC data from proxy: ${proxyError.message}`;
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
             }
         }
 
         // Function to display NPCs data
         function displayNPCs(npcs) {
+            window.npcs = npcs; // Make the NPCs available globally for comparison logic
             const tableBody = document.getElementById('npcTable').querySelector('tbody');
             tableBody.innerHTML = ''; // Clear existing rows
 
@@ -105,6 +251,7 @@
                 }
 
                 const row = document.createElement('tr');
+                row.dataset.name = npc.name; // Store the NPC name in the row for easier filtering later
 
                 const nameCell = document.createElement('td');
                 nameCell.textContent = npc.name;
@@ -130,41 +277,155 @@
                 statsCell.textContent = formatNPCStats(npc.stats);
                 row.appendChild(statsCell);
 
+                const actionsCell = document.createElement('td');
+                actionsCell.innerHTML = `<button onclick="addToFavorites('${npc.name}')">Add to Favorites</button>
+                                         <button onclick="addToComparison('${npc.name}')">Add to Comparison</button>`;
+                row.appendChild(actionsCell);
+
                 tableBody.appendChild(row);
             });
         }
 
-        // Function to format NPC vitals
+        // Function to format vitals for display
         function formatNPCVitals(vitals) {
-            if (!vitals) return 'No vitals';
-            return Object.entries(vitals).map(([key, value]) => `${key}: ${value}`).join(', ');
+            return `HP: ${vitals.hp || 'N/A'}, MP: ${vitals.mp || 'N/A'}, SP: ${vitals.sp || 'N/A'}`;
         }
 
-        // Function to format NPC stats
+        // Function to format stats for display
         function formatNPCStats(stats) {
-            if (!stats) return 'No stats';
             return Object.entries(stats).map(([key, value]) => `${key}: ${value}`).join(', ');
         }
 
-        // Function to filter the NPC table
-        function filterNPCs() {
-            const searchTerm = document.getElementById('searchBarNPCs').value.toLowerCase();
-            const rows = document.querySelectorAll('#npcTable tbody tr');
+        // Global arrays for favorites and comparison
+        let favorites = [];
+        let comparison = [];
 
-            rows.forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                let matched = false;
-                for (let cell of cells) {
-                    if (cell.textContent.toLowerCase().includes(searchTerm)) {
-                        matched = true;
-                        break;
+        // Function to toggle favorites display
+        function toggleFavorites() {
+            const favoritesCheckbox = document.getElementById('favoritesCheckbox');
+            const tableRows = document.querySelectorAll('#npcTable tbody tr');
+
+            if (favoritesCheckbox.checked) {
+                // Hide all NPCs except favorites
+                tableRows.forEach(row => {
+                    const npcName = row.dataset.name;
+                    if (!favorites.includes(npcName)) {
+                        row.style.display = 'none';
                     }
-                }
-                row.style.display = matched ? '' : 'none';
+                });
+            } else {
+                // Show all NPCs
+                tableRows.forEach(row => {
+                    row.style.display = '';
+                });
+            }
+        }
+
+        // Function to toggle comparison display
+        function toggleComparison() {
+            const comparisonCheckbox = document.getElementById('comparisonCheckbox');
+            const comparisonSection = document.getElementById('hiddenItems');
+
+            if (comparisonCheckbox.checked && comparison.length === 2) {
+                comparisonSection.style.display = 'block';
+                updateComparisonTable();
+            } else {
+                comparisonSection.style.display = 'none';
+            }
+        }
+
+        // Function to add NPC to favorites
+        function addToFavorites(name) {
+            if (!favorites.includes(name)) {
+                favorites.push(name);
+                toggleFavorites(); // Update the table visibility
+                toggleFavoritesDisplay();
+            }
+        }
+
+        // Function to add NPC to comparison
+        function addToComparison(name) {
+            if (comparison.length < 2 && !comparison.includes(name)) {
+                comparison.push(name);
+                toggleComparison();
+            }
+        }
+
+        // Function to display favorite NPCs
+        function toggleFavoritesDisplay() {
+            const favoritesList = document.getElementById('favoritesList');
+            favoritesList.innerHTML = '';
+
+            favorites.forEach(favorite => {
+                const li = document.createElement('li');
+                li.textContent = favorite;
+                favoritesList.appendChild(li);
             });
         }
 
-        // Fetch and display data on page load
+        // Function to clear favorites list
+        function clearFavorites() {
+            favorites = [];
+            toggleFavorites(); // Update the table visibility
+            toggleFavoritesDisplay();
+        }
+
+        // Function to update comparison table
+        function updateComparisonTable() {
+            const comparisonStatsTable = document.getElementById('comparisonStatsTable');
+            const comparisonStatsBody = document.getElementById('comparisonStatsBody');
+            comparisonStatsBody.innerHTML = ''; // Clear existing rows
+
+            const npc1 = npcs.find(npc => npc.name === comparison[0]);
+            const npc2 = npcs.find(npc => npc.name === comparison[1]);
+
+            document.getElementById('npc1NameHeader').textContent = npc1.name;
+            document.getElementById('npc2NameHeader').textContent = npc2.name;
+
+            const statsToCompare = ['hp', 'mp', 'sp', ...Object.keys(npc1.stats)];
+            statsToCompare.forEach(stat => {
+                const row = document.createElement('tr');
+
+                const statCell = document.createElement('td');
+                statCell.textContent = stat.toUpperCase();
+                row.appendChild(statCell);
+
+                const npc1StatCell = document.createElement('td');
+                const npc1StatValue = stat === 'hp' ? npc1.vitals.hp : (stat === 'mp' ? npc1.vitals.mp : (stat === 'sp' ? npc1.vitals.sp : npc1.stats[stat]));
+                npc1StatCell.textContent = npc1StatValue || 'N/A';
+                row.appendChild(npc1StatCell);
+
+                const npc2StatCell = document.createElement('td');
+                const npc2StatValue = stat === 'hp' ? npc2.vitals.hp : (stat === 'mp' ? npc2.vitals.mp : (stat === 'sp' ? npc2.vitals.sp : npc2.stats[stat]));
+                npc2StatCell.textContent = npc2StatValue || 'N/A';
+                row.appendChild(npc2StatCell);
+
+                if (npc1StatValue > npc2StatValue) {
+                    npc1StatCell.classList.add('highlight-higher');
+                    npc2StatCell.classList.add('highlight-lower');
+                } else if (npc1StatValue < npc2StatValue) {
+                    npc1StatCell.classList.add('highlight-lower');
+                    npc2StatCell.classList.add('highlight-higher');
+                }
+
+                comparisonStatsBody.appendChild(row);
+            });
+        }
+
+        // Function to clear comparison
+        function clearComparison() {
+            comparison = [];
+            toggleComparison();
+        }
+
+        // Function to generate a shareable link for comparison
+        function generateShareLink() {
+            const comparisonNames = comparison.join(',');
+            const url = window.location.href.split('?')[0] + '?comparison=' + encodeURIComponent(comparisonNames);
+            console.log('Shareable comparison link:', url);
+        }
+
+        // Initialize the data fetching when the page loads
         fetchAndDisplayData();
     </script>
 
