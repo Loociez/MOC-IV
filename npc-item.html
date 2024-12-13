@@ -199,9 +199,16 @@
         }
 
         async function fetchAndDisplayData() {
-            const npcApiUrl = 'https://play.mirageonlineclassic.com/npcdump.json'; // Correct NPC data API URL
-            const corsProxy = 'https://api.allorigins.win/raw?url='; // Fallback proxy URL
-            const timeoutDuration = 5000; // 5 seconds timeout
+    const npcApiUrl = 'https://play.mirageonlineclassic.com/npcdump.json'; // Correct NPC data API URL
+    const proxies = [
+        'https://api.allorigins.win/raw?url=', // First proxy
+        'https://cors-anywhere.herokuapp.com/', // Second proxy
+        'https://api.codetabs.com/v1/proxy?quest=', // Third proxy
+        'https://thingproxy.freeboard.io/fetch/', // Fourth proxy
+        'https://www.yourfox.io/fetch/', // Fifth proxy
+        'https://proxy-cors.herokuapp.com/' // Sixth proxy
+    ];
+    const timeoutDuration = 5000; // 5 seconds timeout
 
             try {
                 // First try fetching from the primary API
