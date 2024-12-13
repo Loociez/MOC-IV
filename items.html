@@ -103,21 +103,26 @@
     </style>
 </head>
 <body>
-    <h1>Item List</h1>
+    <h1 id="itemListHeading">Item List</h1>
+	<select id="languageSelector" onchange="changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+		</select>
+		
     <input type="text" id="searchBar" placeholder="Search for an item..." oninput="filterTable()">
-    <label style="margin-left: 10px;">
-        <input type="checkbox" id="weaponFilter" onclick="filterTable()"> Weapons Only
-    </label>
-    <label style="margin-left: 10px;">
-        <input type="checkbox" id="petFilter" onclick="filterTable()"> Pets Only
-    </label>
-    <label style="margin-left: 10px;">
-        <input type="checkbox" id="recipeFilter" onclick="filterTable()"> Recipes Only
-    </label>
-    <label style="margin-left: 10px;">
-        <input type="checkbox" id="rareFilter" onclick="filterTable()"> Rare+
-    </label>
-	<label style="margin-left: 10px;">
+    <label style="margin-left: 10px;" id="weaponFilterLabel">
+    <input type="checkbox" id="weaponFilter" onclick="filterTable()"> Weapons Only
+</label>
+<label style="margin-left: 10px;" id="petFilterLabel">
+    <input type="checkbox" id="petFilter" onclick="filterTable()"> Pets Only
+</label>
+<label style="margin-left: 10px;" id="recipeFilterLabel">
+    <input type="checkbox" id="recipeFilter" onclick="filterTable()"> Recipes Only
+</label>
+<label style="margin-left: 10px;" id="rareFilterLabel">
+    <input type="checkbox" id="rareFilter" onclick="filterTable()"> Rare+
+</label>
+<label style="margin-left: 10px;" id="favoritesFilterLabel">
     <input type="checkbox" id="favoritesFilter" onclick="filterTable()"> Show Favorites Only
 </label>
     <button onclick="clearComparison()">Clear Comparison</button>
@@ -517,6 +522,75 @@ function clearFavorites() {
             favoriteCheckbox.checked = false;
         }
     });
+	const translations = {
+    en: {
+        item_list: "Item List",
+        search_placeholder: "Search items...",
+        weapons_only: "Weapons Only",
+        pets_only: "Pets Only",
+        recipes_only: "Recipes Only",
+        rare_filter: "Rare+",
+        favorites_only: "Show Favorites Only",
+        clear_comparison: "Clear Comparison",
+        clear_favorites: "Clear Favorites",
+        share_comparison: "Share Comparison",
+    },
+    es: {
+        item_list: "Lista de Artículos",
+        search_placeholder: "Buscar artículos...",
+        weapons_only: "Solo Armas",
+        pets_only: "Solo Mascotas",
+        recipes_only: "Solo Recetas",
+        rare_filter: "Solo Raros+",
+        favorites_only: "Mostrar Solo Favoritos",
+        clear_comparison: "Limpiar Comparación",
+        clear_favorites: "Limpiar Favoritos",
+        share_comparison: "Compartir Comparación",
+    },
+    // Add more languages as necessary...
+};
+
+function applyTranslations(lang) {
+    const t = translations[lang];
+    if (!t) {
+        console.warn(`No translations available for language: ${lang}`);
+        return;
+    }
+
+    // Apply translations to all elements
+    document.getElementById("itemListHeading").textContent = t.item_list;
+    document.getElementById("searchBar").placeholder = t.search_placeholder;
+    document.getElementById("weaponFilterLabel").textContent = t.weapons_only;
+    document.getElementById("petFilterLabel").textContent = t.pets_only;
+    document.getElementById("recipeFilterLabel").textContent = t.recipes_only;
+    document.getElementById("rareFilterLabel").textContent = t.rare_filter;
+    document.getElementById("favoritesFilterLabel").textContent = t.favorites_only;
+    document.getElementById("clearComparisonButton").textContent = t.clear_comparison;
+    document.getElementById("clearFavoritesButton").textContent = t.clear_favorites;
+    document.getElementById("shareComparisonButton").textContent = t.share_comparison;
+}
+
+function changeLanguage(lang) {
+    applyTranslations(lang);
+    // Optionally, trigger filtering or other actions when language changes
+}
+
+document.getElementById("languageSelector").addEventListener("change", (event) => {
+    changeLanguage(event.target.value);
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const savedLang = localStorage.getItem("preferredLanguage") || "en";
+    applyTranslations(savedLang);
+    document.getElementById("languageSelector").value = savedLang;
+
+    fetchAndDisplayItems();
+    parseQueryAndDisplayComparison();
+});
+
+
 
     alert('Favorites cleared!');
     filterTable(); // Reapply filters in case "Show Favorites Only" is active
