@@ -249,6 +249,20 @@
         }
     }
 }
+// Function to filter NPCs based on search bar input
+function filterNPCs() {
+    const searchInput = document.getElementById('searchBarNPCs').value.toLowerCase();
+    const tableRows = document.querySelectorAll('#npcTable tbody tr');
+
+    tableRows.forEach(row => {
+        const npcName = row.dataset.name.toLowerCase();
+        if (npcName.includes(searchInput)) {
+            row.style.display = ''; // Show the row
+        } else {
+            row.style.display = 'none'; // Hide the row
+        }
+    });
+}
 
 
         // Function to display NPCs data
