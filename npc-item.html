@@ -210,41 +210,46 @@
     ];
     const timeoutDuration = 5000; // 5 seconds timeout
 
+    try {
+        // Try fetching directly from the source
+        const npcResponse = await fetchWithTimeout(npcApiUrl, timeoutDuration);
+        if (!npcResponse.ok) {
+            throw new Error(`HTTP error! status: ${npcResponse.status}`);
+        }
+        const npcs = await npcResponse.json();
+        console.log('NPC data fetched successfully:', npcs);
+        displayNPCs(npcs);
+        document.getElementById('successMessage').style.display = 'block'; // Show success message
+    } catch (error) {
+        console.error('Error fetching or processing data from primary API:', error);
+
+        // Show error message
+        document.getElementById('errorMessage').innerText = `Error fetching NPC data: ${error.message}. Using proxy...`;
+        document.getElementById('errorMessage').style.display = 'block';
+
+        // Try each proxy in the list
+        for (let i = 0; i < proxies.length; i++) {
             try {
-                // First try fetching from the primary API
-                const npcResponse = await fetchWithTimeout(npcApiUrl, timeoutDuration);
+                const npcResponse = await fetchWithTimeout(proxies[i] + encodeURIComponent(npcApiUrl), timeoutDuration);
                 if (!npcResponse.ok) {
                     throw new Error(`HTTP error! status: ${npcResponse.status}`);
                 }
                 const npcs = await npcResponse.json();
-                console.log('NPC data fetched successfully:', npcs);
+                console.log(`NPC data fetched successfully from proxy ${i + 1}:`, npcs);
                 displayNPCs(npcs);
                 document.getElementById('successMessage').style.display = 'block'; // Show success message
-                document.getElementById('errorMessage').style.display = 'none'; // Hide error message
-            } catch (error) {
-                console.error('Error fetching or processing data from primary API:', error);
-                // Show error message
-                document.getElementById('errorMessage').innerText = `Error fetching NPC data: ${error.message}. Using proxy...`;
-                document.getElementById('errorMessage').style.display = 'block';
-
-                // Attempt to fetch from the proxy with the same URL
-                try {
-                    const npcResponse = await fetchWithTimeout(corsProxy + encodeURIComponent(npcApiUrl), timeoutDuration);
-                    if (!npcResponse.ok) {
-                        throw new Error(`HTTP error! status: ${npcResponse.status}`);
-                    }
-                    const npcs = await npcResponse.json();
-                    console.log('NPC data fetched successfully from proxy:', npcs);
-                    displayNPCs(npcs);
-                    document.getElementById('successMessage').style.display = 'block'; // Show success message
-                    document.getElementById('errorMessage').style.display = 'none'; // Hide error message
-                } catch (proxyError) {
-                    console.error('Error fetching data from proxy:', proxyError);
-                    document.getElementById('errorMessage').innerText = `Error fetching NPC data from proxy: ${proxyError.message}`;
+                break; // Exit the loop if successful
+            } catch (proxyError) {
+                console.error(`Error fetching data from proxy ${i + 1}:`, proxyError);
+                if (i === proxies.length - 1) { // If this is the last proxy and still failed
+                    document.getElementById('errorMessage').innerText = `Error fetching NPC data from all proxies: ${proxyError.message}`;
                     document.getElementById('errorMessage').style.display = 'block';
                 }
             }
         }
+    }
+}
+
 
         // Function to display NPCs data
         function displayNPCs(npcs) {
