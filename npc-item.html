@@ -3,457 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NPC Data</title>
+    <title>Map Visualizer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #2e1a47; /* Dark purple background */
-            color: #FFD700; /* Gold text */
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #map {
+            display: grid;
+            gap: 1px;
+            background-color: #333;
+        }
+
+        .tile {
+            width: 20px;
+            height: 20px;
             box-sizing: border-box;
         }
 
-        h1 {
-            background-color: #4b1f8d; /* Darker purple for the header */
-            color: #FFD700; /* Gold text */
-            text-align: center;
-            padding: 20px;
-        }
-
-        h2, h3 {
-            color: #FFD700; /* Gold text for subheadings */
-            margin-left: 20px;
-        }
-
-        table {
-            width: 100%;
-            margin: 20px 0;
-            border-collapse: collapse;
-            background-color: #3c1d5c; /* Darker purple for the table */
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #6a4e9a; /* Lighter purple for borders */
-        }
-
-        th {
-            background-color: #4b1f8d; /* Darker purple for the header row */
-            color: #FFD700; /* Gold text */
-        }
-
-        tr:nth-child(even) {
-            background-color: #4a1e6a; /* Slightly lighter purple */
-        }
-
-        tr:hover {
-            background-color: #6a4e9a; /* Lighter purple when hovering */
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            margin: 10px;
-            width: 95%;
-            max-width: 500px;
-            border: 1px solid #FFD700; /* Gold border */
-            border-radius: 4px;
-            background-color: #2e1a47; /* Dark purple background for inputs */
-            color: #FFD700; /* Gold text */
-        }
-
-        .error-message, .success-message {
-            text-align: center;
-            padding: 10px;
-        }
-
-        .error-message {
-            color: red;
-        }
-
-        .success-message {
-            color: green;
-        }
-
-        .checkbox-container, .favorites {
-            margin-left: 20px;
-            margin-top: 10px;
-        }
-
-        button {
-            background-color: #6a4e9a; /* Lighter purple for buttons */
-            color: #FFD700; /* Gold text */
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #4b1f8d; /* Darker purple when hovering */
-        }
-
-        .comparison-section {
-            margin-top: 20px;
-        }
-
-        .hidden-items {
-            display: none;
-        }
-
-        .buttons-container {
-            margin: 20px;
-        }
-
-        .highlight-higher {
-    background-color: #006400; /* Dark green for higher stat */
-}
-
-        .highlight-lower {
-            background-color: #8B0000; /* Dark red for lower stat */
-        }
-
+        /* Tile Colors for different values */
+        .tile-0 { background-color: white; }
+        .tile-1 { background-color: green; }
+        .tile-2 { background-color: blue; }
+        .tile-3 { background-color: gray; }
     </style>
 </head>
 <body>
-
-    <h1>NPC Data</h1>
-
-    <!-- Error and success messages -->
-    <div class="error-message" id="errorMessage">Error fetching NPC data.</div>
-    <div class="success-message" id="successMessage">NPC data loaded successfully!</div>
-
-    <!-- Favorites and Comparison Buttons (fixed at the top) -->
-    <div class="buttons-container">
-        <h2>Search for NPCs</h2>
-        <input type="text" id="searchBarNPCs" placeholder="Search for an NPC..." oninput="filterNPCs()">
-
-        <div class="checkboxes">
-            <label><input type="checkbox" id="favoritesCheckbox" onclick="toggleFavorites()"> Show Favorites</label>
-            <label><input type="checkbox" id="comparisonCheckbox" onclick="toggleComparison()"> Show Comparison</label>
-        </div>
-
-        <!-- Favorites Section -->
-        <div class="favorites" id="favoritesSection" style="display: none;">
-            <h3>Favorites</h3>
-            <ul id="favoritesList"></ul>
-        </div>
-
-        <!-- Comparison Section -->
-        <div class="comparison-section" id="hiddenItems">
-            <h3>Comparison</h3>
-            <table id="comparisonStatsTable">
-                <thead>
-                    <tr>
-                        <th>Stat</th>
-                        <th id="npc1NameHeader"></th>
-                        <th id="npc2NameHeader"></th>
-                    </tr>
-                </thead>
-                <tbody id="comparisonStatsBody">
-                    <!-- Comparison data will be added here -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Action Buttons (always visible) -->
-        <button onclick="clearFavorites()">Clear Favorites</button>
-        <button onclick="clearComparison()">Clear Comparison</button>
-        <button onclick="generateShareLink()">Share Comparison</button>
-    </div>
-
-    <!-- NPCs Table -->
-    <table id="npcTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Pursue Run</th>
-                <th>Spawn Night</th>
-                <th>Regen Rate</th>
-                <th>Vitals</th>
-                <th>Stats</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- NPC rows will be populated here by JavaScript -->
-        </tbody>
-    </table>
+    <div id="map"></div>
 
     <script>
-        // Function to fetch data with timeout support
-        async function fetchWithTimeout(url, timeout) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const mapUrl = "https://play.mirageonlineclassic.com/mapdump.json";
+        const mapContainer = document.getElementById('map');
 
-            try {
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                return response;
-            } catch (error) {
-                clearTimeout(timeoutId);
-                throw new Error('Request timed out or was aborted');
-            }
-        }
+        // Mapping tile types to their respective CSS classes
+        const tileTypes = {
+            0: 'tile-0', // empty
+            1: 'tile-1', // grass
+            2: 'tile-2', // water
+            3: 'tile-3', // wall
+        };
 
-        async function fetchAndDisplayData() {
-    const npcApiUrl = 'https://play.mirageonlineclassic.com/npcdump.json'; // Correct NPC data API URL
-    const proxies = [
-        'https://api.allorigins.win/raw?url=', // First proxy
-        'https://cors-anywhere.herokuapp.com/', // Second proxy
-        'https://api.codetabs.com/v1/proxy?quest=', // Third proxy
-        'https://thingproxy.freeboard.io/fetch/', // Fourth proxy
-        'https://www.yourfox.io/fetch/', // Fifth proxy
-        'https://proxy-cors.herokuapp.com/' // Sixth proxy
-    ];
-    const timeoutDuration = 5000; // 5 seconds timeout
-
-    try {
-        // Try fetching directly from the source
-        const npcResponse = await fetchWithTimeout(npcApiUrl, timeoutDuration);
-        if (!npcResponse.ok) {
-            throw new Error(`HTTP error! status: ${npcResponse.status}`);
-        }
-        const npcs = await npcResponse.json();
-        console.log('NPC data fetched successfully:', npcs);
-        displayNPCs(npcs);
-        document.getElementById('successMessage').style.display = 'block'; // Show success message
-    } catch (error) {
-        console.error('Error fetching or processing data from primary API:', error);
-
-        // Show error message
-        document.getElementById('errorMessage').innerText = `Error fetching NPC data: ${error.message}. Using proxy...`;
-        document.getElementById('errorMessage').style.display = 'block';
-
-        // Try each proxy in the list
-        for (let i = 0; i < proxies.length; i++) {
-            try {
-                const npcResponse = await fetchWithTimeout(proxies[i] + encodeURIComponent(npcApiUrl), timeoutDuration);
-                if (!npcResponse.ok) {
-                    throw new Error(`HTTP error! status: ${npcResponse.status}`);
-                }
-                const npcs = await npcResponse.json();
-                console.log(`NPC data fetched successfully from proxy ${i + 1}:`, npcs);
-                displayNPCs(npcs);
-                document.getElementById('successMessage').style.display = 'block'; // Show success message
-                break; // Exit the loop if successful
-            } catch (proxyError) {
-                console.error(`Error fetching data from proxy ${i + 1}:`, proxyError);
-                if (i === proxies.length - 1) { // If this is the last proxy and still failed
-                    document.getElementById('errorMessage').innerText = `Error fetching NPC data from all proxies: ${proxyError.message}`;
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-            }
-        }
-    }
-}
-// Function to filter NPCs based on search bar input
-function filterNPCs() {
-    const searchInput = document.getElementById('searchBarNPCs').value.toLowerCase();
-    const tableRows = document.querySelectorAll('#npcTable tbody tr');
-
-    tableRows.forEach(row => {
-        const npcName = row.dataset.name.toLowerCase();
-        if (npcName.includes(searchInput)) {
-            row.style.display = ''; // Show the row
-        } else {
-            row.style.display = 'none'; // Hide the row
-        }
-    });
-}
-
-
-        // Function to display NPCs data
-        function displayNPCs(npcs) {
-            window.npcs = npcs; // Make the NPCs available globally for comparison logic
-            const tableBody = document.getElementById('npcTable').querySelector('tbody');
-            tableBody.innerHTML = ''; // Clear existing rows
-
-            npcs.forEach(npc => {
-                if (!npc.name) {
-                    return; // Skip if no name
-                }
-
-                const row = document.createElement('tr');
-                row.dataset.name = npc.name; // Store the NPC name in the row for easier filtering later
-
-                const nameCell = document.createElement('td');
-                nameCell.textContent = npc.name;
-                row.appendChild(nameCell);
-
-                const pursueRunCell = document.createElement('td');
-                pursueRunCell.textContent = npc.pursue_run ? 'Yes' : '';
-                row.appendChild(pursueRunCell);
-
-                const spawnNightCell = document.createElement('td');
-                spawnNightCell.textContent = npc.spawn_night ? 'Yes' : '';
-                row.appendChild(spawnNightCell);
-
-                const regenRateCell = document.createElement('td');
-                regenRateCell.textContent = npc.regen_rate || 'No data';
-                row.appendChild(regenRateCell);
-
-                const vitalsCell = document.createElement('td');
-                vitalsCell.textContent = formatNPCVitals(npc.vitals);
-                row.appendChild(vitalsCell);
-
-                const statsCell = document.createElement('td');
-                statsCell.textContent = formatNPCStats(npc.stats);
-                row.appendChild(statsCell);
-
-                const actionsCell = document.createElement('td');
-                actionsCell.innerHTML = `<button onclick="addToFavorites('${npc.name}')">Add to Favorites</button>
-                                         <button onclick="addToComparison('${npc.name}')">Add to Comparison</button>`;
-                row.appendChild(actionsCell);
-
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Function to format vitals for display
-        function formatNPCVitals(vitals) {
-            return `HP: ${vitals.hp || 'N/A'}, MP: ${vitals.mp || 'N/A'}, SP: ${vitals.sp || 'N/A'}`;
-        }
-
-        // Function to format stats for display
-        function formatNPCStats(stats) {
-            return Object.entries(stats).map(([key, value]) => `${key}: ${value}`).join(', ');
-        }
-
-        // Global arrays for favorites and comparison
-        let favorites = [];
-        let comparison = [];
-
-        // Function to toggle favorites display
-        function toggleFavorites() {
-            const favoritesCheckbox = document.getElementById('favoritesCheckbox');
-            const tableRows = document.querySelectorAll('#npcTable tbody tr');
-
-            if (favoritesCheckbox.checked) {
-                // Hide all NPCs except favorites
-                tableRows.forEach(row => {
-                    const npcName = row.dataset.name;
-                    if (!favorites.includes(npcName)) {
-                        row.style.display = 'none';
+        // Function to process each tile and extract valid values
+        function processTileData(tile) {
+            if (Array.isArray(tile)) {
+                // Flatten the nested array and extract valid values
+                for (let i = 0; i < tile.length; i++) {
+                    const value = tile[i];
+                    if (typeof value === 'number' && value !== -1 && !isNaN(value)) {
+                        return value; // Return the first valid value
                     }
-                });
-            } else {
-                // Show all NPCs
-                tableRows.forEach(row => {
-                    row.style.display = '';
-                });
+                }
+                return 0; // Return 0 if no valid value is found
             }
-        }
 
-        // Function to toggle comparison display
-        function toggleComparison() {
-            const comparisonCheckbox = document.getElementById('comparisonCheckbox');
-            const comparisonSection = document.getElementById('hiddenItems');
-
-            if (comparisonCheckbox.checked && comparison.length === 2) {
-                comparisonSection.style.display = 'block';
-                updateComparisonTable();
-            } else {
-                comparisonSection.style.display = 'none';
+            // If the tile is a valid number, return it
+            if (typeof tile === 'number' && tile !== -1 && !isNaN(tile)) {
+                return tile;
             }
+
+            return 0; // If invalid (e.g., -1 or NaN), return 0
         }
 
-        // Function to add NPC to favorites
-        function addToFavorites(name) {
-            if (!favorites.includes(name)) {
-                favorites.push(name);
-                toggleFavorites(); // Update the table visibility
-                toggleFavoritesDisplay();
-            }
+        // Flatten the nested array data and return the valid values
+        function flattenAndProcessMapData(data) {
+            const mapData = data
+                .map(layer => layer.tiles) // Extract the "tiles" array from each layer
+                .flat()  // Flatten the nested arrays
+                .flat(); // Flatten the inner arrays into a single array
+
+            return mapData;
         }
 
-        // Function to add NPC to comparison
-        function addToComparison(name) {
-            if (comparison.length < 2 && !comparison.includes(name)) {
-                comparison.push(name);
-                toggleComparison();
-            }
-        }
+        // Fetch the map data from the URL
+        fetch(mapUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetched data:', data);
 
-        // Function to display favorite NPCs
-        function toggleFavoritesDisplay() {
-            const favoritesList = document.getElementById('favoritesList');
-            favoritesList.innerHTML = '';
+                // Flatten and process the map data
+                const mapData = flattenAndProcessMapData(data);
 
-            favorites.forEach(favorite => {
-                const li = document.createElement('li');
-                li.textContent = favorite;
-                favoritesList.appendChild(li);
-            });
-        }
+                // Check if the mapData is properly flattened
+                console.log('Flattened map data:', mapData);
 
-        // Function to clear favorites list
-        function clearFavorites() {
-            favorites = [];
-            toggleFavorites(); // Update the table visibility
-            toggleFavoritesDisplay();
-        }
-
-        // Function to update comparison table
-        function updateComparisonTable() {
-            const comparisonStatsTable = document.getElementById('comparisonStatsTable');
-            const comparisonStatsBody = document.getElementById('comparisonStatsBody');
-            comparisonStatsBody.innerHTML = ''; // Clear existing rows
-
-            const npc1 = npcs.find(npc => npc.name === comparison[0]);
-            const npc2 = npcs.find(npc => npc.name === comparison[1]);
-
-            document.getElementById('npc1NameHeader').textContent = npc1.name;
-            document.getElementById('npc2NameHeader').textContent = npc2.name;
-
-            const statsToCompare = ['hp', 'mp', 'sp', ...Object.keys(npc1.stats)];
-            statsToCompare.forEach(stat => {
-                const row = document.createElement('tr');
-
-                const statCell = document.createElement('td');
-                statCell.textContent = stat.toUpperCase();
-                row.appendChild(statCell);
-
-                const npc1StatCell = document.createElement('td');
-                const npc1StatValue = stat === 'hp' ? npc1.vitals.hp : (stat === 'mp' ? npc1.vitals.mp : (stat === 'sp' ? npc1.vitals.sp : npc1.stats[stat]));
-                npc1StatCell.textContent = npc1StatValue || 'N/A';
-                row.appendChild(npc1StatCell);
-
-                const npc2StatCell = document.createElement('td');
-                const npc2StatValue = stat === 'hp' ? npc2.vitals.hp : (stat === 'mp' ? npc2.vitals.mp : (stat === 'sp' ? npc2.vitals.sp : npc2.stats[stat]));
-                npc2StatCell.textContent = npc2StatValue || 'N/A';
-                row.appendChild(npc2StatCell);
-
-                if (npc1StatValue > npc2StatValue) {
-                    npc1StatCell.classList.add('highlight-higher');
-                    npc2StatCell.classList.add('highlight-lower');
-                } else if (npc1StatValue < npc2StatValue) {
-                    npc1StatCell.classList.add('highlight-lower');
-                    npc2StatCell.classList.add('highlight-higher');
+                if (mapData.length === 0) {
+                    throw new Error('No tiles found after flattening map data');
                 }
 
-                comparisonStatsBody.appendChild(row);
+                // Set the grid columns based on the map width
+                const rowLength = Math.sqrt(mapData.length); // Assuming the map is square-shaped
+                mapContainer.style.gridTemplateColumns = `repeat(${rowLength}, 20px)`;
+
+                // Populate the map grid with the tiles
+                mapData.forEach((tile, index) => {
+                    console.log(`Tile at index [${index}]:`, tile); // Log the tile value
+
+                    // Process the tile and extract the valid value
+                    const processedTile = processTileData(tile);
+
+                    // Apply the correct class based on the processed tile value
+                    const tileClass = tileTypes[processedTile] || 'tile-0'; // Default to 'tile-0' for invalid tiles
+                    console.log(`Applying class: ${tileClass}`);
+
+                    // Create the tile div and add it to the map
+                    const tileDiv = document.createElement('div');
+                    tileDiv.className = `tile ${tileClass}`;
+                    mapContainer.appendChild(tileDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching or processing map data:', error);
             });
-        }
-
-        // Function to clear comparison
-        function clearComparison() {
-            comparison = [];
-            toggleComparison();
-        }
-
-        // Function to generate a shareable link for comparison
-        function generateShareLink() {
-            const comparisonNames = comparison.join(',');
-            const url = window.location.href.split('?')[0] + '?comparison=' + encodeURIComponent(comparisonNames);
-            console.log('Shareable comparison link:', url);
-        }
-
-        // Initialize the data fetching when the page loads
-        fetchAndDisplayData();
     </script>
-
 </body>
 </html>

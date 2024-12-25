@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #map {
+            display: grid;
+            gap: 1px;
+            background-color: #333;
+        }
+
+        .tile {
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Tile Colors for different values */
+        .tile-0 { background-color: white; }
+        .tile-1 { background-color: green; }
+        .tile-2 { background-color: blue; }
+        .tile-3 { background-color: gray; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        const mapUrl = "https://play.mirageonlineclassic.com/mapdump.json";
+        const mapContainer = document.getElementById('map');
+
+        // Mapping tile types to their respective CSS classes
+        const tileTypes = {
+            0: 'tile-0', // empty
+            1: 'tile-1', // grass
+            2: 'tile-2', // water
+            3: 'tile-3', // wall
+        };
+
+        // Function to process each tile and extract valid values
+        function processTileData(tile) {
+            console.log('Inspecting tile:', tile);
+
+            // If tile is an array, check each element and return the first valid number
+            if (Array.isArray(tile)) {
+                for (let i = 0; i < tile.length; i++) {
+                    if (typeof tile[i] === 'number' && tile[i] !== -1 && !isNaN(tile[i])) {
+                        console.log('Valid tile value found in array:', tile[i]);
+                        return tile[i];
+                    }
+                }
+                console.log('No valid value found in array, defaulting to 0');
+                return 0; // Default value when no valid value is found
+            }
+
+            // If the tile is a number, return it if it's valid (not -1 or NaN)
+            if (typeof tile === 'number' && tile !== -1 && !isNaN(tile)) {
+                return tile;
+            }
+
+            // If invalid (e.g., -1 or NaN), return 0
+            console.log('Invalid tile value, defaulting to 0');
+            return 0;
+        }
+
+        // Fetch the map data from the URL
+        fetch(mapUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetched data:', data);
+
+                // Extract rows and map their tiles
+                const mapData = Object.keys(data)
+                    .map(key => parseInt(key)) // Convert keys to numbers
+                    .sort((a, b) => a - b)    // Sort numerically
+                    .map(key => data[key].tiles); // Extract the "tiles" array
+
+                console.log('Processed map data (tiles only):', mapData);
+
+                if (!mapData.length || !Array.isArray(mapData[0])) {
+                    throw new Error('Invalid map data format (tiles array not found)');
+                }
+
+                // Set the grid columns based on the first row length
+                console.log('First row length:', mapData[0].length);
+                mapContainer.style.gridTemplateColumns = `repeat(${mapData[0].length}, 20px)`;
+
+                // Populate the map grid with the tiles
+                mapData.forEach((row, rowIndex) => {
+                    row.forEach((tile, columnIndex) => {
+                        console.log(`Tile at [${rowIndex}, ${columnIndex}]:`, tile); // Log the tile value
+
+                        // Process the tile and extract the valid value
+                        const processedTile = processTileData(tile);
+
+                        // Apply the correct class based on the processed tile value
+                        const tileClass = tileTypes[processedTile] || 'tile-0'; // Default to 'tile-0' for invalid tiles
+                        console.log(`Applying class: ${tileClass}`);
+
+                        // Create the tile div and add it to the map
+                        const tileDiv = document.createElement('div');
+                        tileDiv.className = `tile ${tileClass}`;
+                        mapContainer.appendChild(tileDiv);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching or processing map data:', error);
+            });
+    </script>
+</body>
+</html>
