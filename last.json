@@ -44,7 +44,8 @@
       "min_mdf": 5,
       "min_rat": 0,
       "min_rdf": 5,
-      "damage_stat": 5
+      "damage_stat": 5,
+      "!warlock_npcaoe_delay": "50"
     }
   },
   {
@@ -6238,52 +6239,51 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 2,
-    "sprite": 0,
+    "name": "Overseer's Vision",
+    "desc": "A rare off-hand found within Middle Tower [ 5% Break chance upon repair ]",
+    "revision": 0,
+    "sprite": 2058,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 200,
+      "brightness": 120
     },
-    "scale": 1,
-    "color": "",
+    "scale": 0.8,
+    "color": "#66ff66",
     "show_name": false,
-    "spawn_delay": 10,
-    "type": 1,
-    "uses": 0,
+    "spawn_delay": 60,
+    "type": 5,
+    "uses": 6000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 0,
-    "recycle_value": 0,
-    "level_req": 0,
-    "prof_req_flags": -11,
+    "repair_cost": 1500,
+    "break_chance": 5,
+    "recycle_value": 3000,
+    "level_req": 20,
+    "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 0,
+      "max_hp": 250,
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
-      "max_mat": 0,
+      "max_mat": 600,
       "max_mdf": 0,
-      "max_rat": 0,
+      "max_rat": 160,
       "max_rdf": 0,
       "min_atk": 0,
       "min_def": 0,
-      "min_mat": 0,
+      "min_mat": 550,
       "min_mdf": 0,
-      "min_rat": 0,
+      "min_rat": 130,
       "min_rdf": 0,
-      "two_handed": true,
-      "damage_stat": 0
+      "damage_stat": 4
     }
   },
   {
@@ -7204,7 +7204,7 @@
   },
   {
     "name": "Excalipur *",
-    "desc": "A rare weapon found in Tomb of Trizarhn [ 5% Break chance upon repair ]",
+    "desc": "A fake imitation of a legendary weapon, found in Tomb of Trizarhn [ 5% Break chance upon repair ]",
     "revision": 2,
     "sprite": 143,
     "sprite_color": {
@@ -11545,7 +11545,7 @@
   },
   {
     "name": "Potion of Mana Restoration",
-    "desc": "Restores 10 MP",
+    "desc": "",
     "revision": 3,
     "sprite": 670,
     "sprite_color": {
@@ -11555,14 +11555,14 @@
       "brightness": 100
     },
     "scale": 0.7,
-    "color": "#4da6ff",
+    "color": "#33ccff",
     "show_name": false,
     "spawn_delay": 15,
     "type": 6,
     "uses": 1,
     "limit": 25,
     "cooldown_delay": 6,
-    "cooldown_id": -1,
+    "cooldown_id": 462,
     "repair_cost": 0,
     "break_chance": 50,
     "recycle_value": 15,
@@ -11574,7 +11574,7 @@
     "transferable": true,
     "data": {
       "hp": 0,
-      "mp": 15,
+      "mp": 20,
       "sp": 0
     }
   },
@@ -16118,13 +16118,13 @@
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
-      "max_rdf": 15,
+      "max_rdf": 25,
       "min_atk": 15,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
       "min_rat": 0,
-      "min_rdf": 15,
+      "min_rdf": 20,
       "damage_stat": 3
     }
   },
@@ -16210,17 +16210,17 @@
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 20,
-      "max_def": 0,
+      "max_def": 7,
       "max_mat": 0,
-      "max_mdf": 0,
+      "max_mdf": 6,
       "max_rat": 0,
-      "max_rdf": 0,
+      "max_rdf": 6,
       "min_atk": 20,
-      "min_def": 0,
+      "min_def": 5,
       "min_mat": 0,
-      "min_mdf": 0,
+      "min_mdf": 3,
       "min_rat": 0,
-      "min_rdf": 0,
+      "min_rdf": 3,
       "damage_stat": 1
     }
   },
@@ -16254,16 +16254,16 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 100,
+      "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
+      "max_atk": 10,
       "max_def": 20,
       "max_mat": 0,
       "max_mdf": 10,
       "max_rat": 0,
       "max_rdf": 10,
-      "min_atk": 0,
+      "min_atk": 10,
       "min_def": 20,
       "min_mat": 0,
       "min_mdf": 10,
@@ -16354,17 +16354,17 @@
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 0,
-      "max_def": 0,
+      "max_def": 5,
       "max_mat": 0,
-      "max_mdf": 0,
+      "max_mdf": 10,
       "max_rat": 25,
-      "max_rdf": 0,
+      "max_rdf": 10,
       "min_atk": 0,
-      "min_def": 0,
+      "min_def": 5,
       "min_mat": 0,
-      "min_mdf": 0,
+      "min_mdf": 10,
       "min_rat": 25,
-      "min_rdf": 0,
+      "min_rdf": 10,
       "damage_stat": 2
     }
   },
@@ -16402,17 +16402,17 @@
       "max_mp": 30,
       "max_sp": 30,
       "max_atk": 19,
-      "max_def": -5,
+      "max_def": 0,
       "max_mat": 15,
-      "max_mdf": -5,
+      "max_mdf": 0,
       "max_rat": 15,
-      "max_rdf": -5,
+      "max_rdf": 0,
       "min_atk": 15,
-      "min_def": -5,
+      "min_def": 0,
       "min_mat": 15,
-      "min_mdf": -5,
+      "min_mdf": 0,
       "min_rat": 15,
-      "min_rdf": -5,
+      "min_rdf": 0,
       "damage_stat": 1
     }
   },
@@ -18735,7 +18735,7 @@
     }
   },
   {
-    "name": "Doomed Coronet *",
+    "name": "Cursed Coronet *",
     "desc": "A rare helmet from Hell DMC [ 5% Break chance upon repair ]",
     "revision": 0,
     "sprite": 1240,
@@ -18764,20 +18764,20 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 100,
+      "max_hp": -250,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 30,
+      "max_atk": 38,
       "max_def": 0,
-      "max_mat": 30,
+      "max_mat": 34,
       "max_mdf": 0,
-      "max_rat": 30,
+      "max_rat": 34,
       "max_rdf": 0,
-      "min_atk": 25,
+      "min_atk": 35,
       "min_def": 0,
-      "min_mat": 25,
+      "min_mat": 31,
       "min_mdf": 0,
-      "min_rat": 25,
+      "min_rat": 31,
       "min_rdf": 0,
       "damage_stat": 1
     }
@@ -18977,7 +18977,7 @@
     }
   },
   {
-    "name": "Potion Cooldown",
+    "name": "HP Cooldown",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -19208,7 +19208,7 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 250,
+      "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 0,
@@ -19218,11 +19218,11 @@
       "max_rat": 0,
       "max_rdf": 30,
       "min_atk": 0,
-      "min_def": 25,
+      "min_def": 30,
       "min_mat": 0,
-      "min_mdf": 25,
+      "min_mdf": 30,
       "min_rat": 0,
-      "min_rdf": 25,
+      "min_rdf": 30,
       "damage_stat": 1
     }
   },
@@ -22454,17 +22454,17 @@
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 0,
-      "max_def": 22,
+      "max_def": 28,
       "max_mat": 0,
-      "max_mdf": 22,
+      "max_mdf": 40,
       "max_rat": 0,
-      "max_rdf": 22,
+      "max_rdf": 40,
       "min_atk": 0,
       "min_def": 22,
       "min_mat": 0,
-      "min_mdf": 22,
+      "min_mdf": 30,
       "min_rat": 0,
-      "min_rdf": 22,
+      "min_rdf": 30,
       "damage_stat": 1
     }
   },
@@ -22502,17 +22502,17 @@
       "max_mp": 10,
       "max_sp": 10,
       "max_atk": 0,
-      "max_def": 1,
+      "max_def": 5,
       "max_mat": 0,
-      "max_mdf": 1,
+      "max_mdf": 15,
       "max_rat": 0,
-      "max_rdf": 1,
+      "max_rdf": 15,
       "min_atk": 0,
-      "min_def": 1,
+      "min_def": 5,
       "min_mat": 0,
-      "min_mdf": 1,
+      "min_mdf": 15,
       "min_rat": 0,
-      "min_rdf": 1,
+      "min_rdf": 15,
       "damage_stat": 1
     }
   },
@@ -23041,10 +23041,10 @@
     }
   },
   {
-    "name": "",
+    "name": "tower projectile",
     "desc": "",
-    "revision": 1,
-    "sprite": 0,
+    "revision": 0,
+    "sprite": 1228,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -23055,7 +23055,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 2,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -23070,13 +23070,40 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 25,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.8,
+      "speed": 0.2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 1228,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 500,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 500,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "brightness": 100,
+      "saturation": 111,
+      "tile_range": 11,
+      "two_handed": false,
+      "damage_stat": 4,
+      "sprite_rotation": 0
     }
   },
   {
-    "name": "",
+    "name": "Thragmara the Womb Projectile",
     "desc": "",
-    "revision": 1,
+    "revision": 0,
     "sprite": 0,
     "sprite_color": {
       "alpha": 1,
@@ -23088,7 +23115,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 2,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -23100,10 +23127,37 @@
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 1000,
+      "max_mat": 1000,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 4,
+      "two_handed": false,
+      "tile_range": 16,
+      "sprite_rotation": 0,
+      "sprite": 2008,
+      "hue": 180,
+      "saturation": 100,
+      "brightness": 100,
+      "alpha": 1,
+      "scale": 1,
+      "spin": true,
+      "speed": 0.5,
+      "move": true
     }
   },
   {
@@ -24077,8 +24131,8 @@
     "transferable": true,
     "data": {
       "max_hp": 250,
-      "max_mp": 0,
-      "max_sp": 0,
+      "max_mp": 10,
+      "max_sp": 20,
       "max_atk": 25,
       "max_def": 0,
       "max_mat": 25,
@@ -27664,8 +27718,8 @@
     "transferable": true,
     "data": {
       "max_hp": 300,
-      "max_mp": 15,
-      "max_sp": 25,
+      "max_mp": 10,
+      "max_sp": 10,
       "max_atk": 30,
       "max_def": 10,
       "max_mat": 30,
@@ -27705,27 +27759,27 @@
     "break_chance": 5,
     "recycle_value": 5500,
     "level_req": 45,
-    "prof_req_flags": -1776,
+    "prof_req_flags": -1772,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 450,
+      "max_hp": 400,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 320,
-      "max_def": 0,
+      "max_atk": 300,
+      "max_def": 7,
       "max_mat": 0,
-      "max_mdf": 0,
+      "max_mdf": 10,
       "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 320,
-      "min_def": 0,
+      "max_rdf": 10,
+      "min_atk": 300,
+      "min_def": 7,
       "min_mat": 0,
-      "min_mdf": 0,
+      "min_mdf": 10,
       "min_rat": 0,
-      "min_rdf": 0,
+      "min_rdf": 10,
       "two_handed": true,
       "damage_stat": 0
     }
@@ -28123,10 +28177,10 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 350,
+      "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 310,
+      "max_atk": 320,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
@@ -28331,7 +28385,7 @@
     "transferable": true,
     "data": {
       "max_hp": 400,
-      "max_mp": 15,
+      "max_mp": 0,
       "max_sp": 0,
       "max_atk": 340,
       "max_def": -1,
@@ -28897,21 +28951,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 125,
+      "max_hp": 100,
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 0,
       "max_def": 25,
       "max_mat": 0,
-      "max_mdf": 25,
+      "max_mdf": 30,
       "max_rat": 0,
-      "max_rdf": 25,
+      "max_rdf": 30,
       "min_atk": 0,
       "min_def": 25,
       "min_mat": 0,
-      "min_mdf": 25,
+      "min_mdf": 30,
       "min_rat": 0,
-      "min_rdf": 25,
+      "min_rdf": 30,
       "damage_stat": 1
     }
   },
@@ -33022,15 +33076,15 @@
     }
   },
   {
-    "name": "Ice Demons Platemail *",
+    "name": "Lesser Demons Paddedmail *",
     "desc": "Found off an Ice Demon [ 5% Break chance upon repair ]",
     "revision": 0,
-    "sprite": 198,
+    "sprite": 168,
     "sprite_color": {
       "alpha": 1,
-      "hue": 333,
+      "hue": 111,
       "saturation": 100,
-      "brightness": 140
+      "brightness": 100
     },
     "scale": 1.1,
     "color": "#66ff66",
@@ -33327,7 +33381,7 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 325,
+      "max_hp": 400,
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 225,
@@ -33427,13 +33481,13 @@
       "max_hp": 250,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 305,
+      "max_atk": 300,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 295,
+      "min_atk": 300,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -33871,7 +33925,7 @@
     "data": {
       "max_hp": 225,
       "max_mp": 15,
-      "max_sp": 5,
+      "max_sp": 0,
       "max_atk": 285,
       "max_def": 0,
       "max_mat": 300,
@@ -34298,13 +34352,13 @@
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
-      "max_rat": 1,
+      "max_rat": 5,
       "max_rdf": 0,
       "min_atk": 0,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
-      "min_rat": 1,
+      "min_rat": 5,
       "min_rdf": 0,
       "brightness": 0,
       "saturation": 0,
@@ -34509,13 +34563,13 @@
       "sprite": 1864,
       "max_atk": 0,
       "max_def": 0,
-      "max_mat": 0,
+      "max_mat": 200,
       "max_mdf": 0,
       "max_rat": 275,
       "max_rdf": 0,
       "min_atk": 0,
       "min_def": 0,
-      "min_mat": 0,
+      "min_mat": 200,
       "min_mdf": 0,
       "min_rat": 270,
       "min_rdf": 0,
@@ -35625,7 +35679,7 @@
     "data": {
       "max_hp": 225,
       "max_mp": 0,
-      "max_sp": 15,
+      "max_sp": 0,
       "max_atk": 300,
       "max_def": 0,
       "max_mat": 0,
@@ -35643,8 +35697,8 @@
     }
   },
   {
-    "name": "Elixir of MP Restoration",
-    "desc": "Restores 30 MP",
+    "name": "Elixir of Spirited Grace",
+    "desc": "",
     "revision": 0,
     "sprite": 774,
     "sprite_color": {
@@ -35653,17 +35707,17 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.7,
     "color": "#33ccff",
     "show_name": false,
     "spawn_delay": 60,
     "type": 6,
     "uses": 1,
     "limit": 20,
-    "cooldown_delay": 0,
+    "cooldown_delay": 8,
     "cooldown_id": 462,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
@@ -35673,7 +35727,7 @@
     "transferable": true,
     "data": {
       "hp": 0,
-      "mp": 30,
+      "mp": 45,
       "sp": 0
     }
   },
@@ -35976,15 +36030,15 @@
     "transferable": true,
     "data": {
       "max_hp": 450,
-      "max_mp": 10,
+      "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 330,
+      "max_atk": 320,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 325,
+      "min_atk": 310,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -36414,9 +36468,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 800,
-      "max_mp": 10,
-      "max_sp": 10,
+      "max_hp": 900,
+      "max_mp": 20,
+      "max_sp": 20,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -36679,16 +36733,16 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 400,
-      "max_mp": 10,
+      "max_hp": 300,
+      "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 310,
+      "max_atk": 300,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 300,
+      "min_atk": 290,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -36735,7 +36789,7 @@
       "scale": 1,
       "speed": 0.13,
       "max_hp": 175,
-      "max_mp": 5,
+      "max_mp": 0,
       "max_sp": 0,
       "sprite": 2044,
       "max_atk": 0,
@@ -36849,7 +36903,7 @@
     "transferable": true,
     "data": {
       "max_hp": 200,
-      "max_mp": 10,
+      "max_mp": 15,
       "max_sp": 0,
       "max_atk": 280,
       "max_def": 0,
@@ -37687,7 +37741,7 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 100,
+      "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
       "max_atk": 40,
@@ -38459,7 +38513,7 @@
   },
   {
     "name": "Sapphire Armor **",
-    "desc": "Unique recipe made armor. 2% Break chance on repair.",
+    "desc": "Unique armor. 2% Break chance on repair.",
     "revision": 0,
     "sprite": 198,
     "sprite_color": {
@@ -38477,10 +38531,10 @@
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 5250,
+    "repair_cost": 2450,
     "break_chance": 2,
     "recycle_value": 6000,
-    "level_req": 40,
+    "level_req": 20,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
@@ -38490,15 +38544,15 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 20,
+      "max_atk": 25,
       "max_def": 20,
-      "max_mat": 25,
+      "max_mat": 20,
       "max_mdf": 20,
       "max_rat": 20,
       "max_rdf": 20,
-      "min_atk": 17,
+      "min_atk": 20,
       "min_def": 10,
-      "min_mat": 22,
+      "min_mat": 17,
       "min_mdf": 10,
       "min_rat": 17,
       "min_rdf": 10,
@@ -38507,7 +38561,7 @@
   },
   {
     "name": "Emerald Armor **",
-    "desc": "Unique recipe made armor. 2% Break chance on repair.",
+    "desc": "Unique armor. 2% Break chance on repair.",
     "revision": 0,
     "sprite": 198,
     "sprite_color": {
@@ -38525,10 +38579,10 @@
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 6000,
+    "repair_cost": 2450,
     "break_chance": 2,
     "recycle_value": 6000,
-    "level_req": 40,
+    "level_req": 20,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
@@ -38555,7 +38609,7 @@
   },
   {
     "name": "Amethyst Armor **",
-    "desc": "Unique recipe made armor. 2% Break chance on repair. Increases Cleric's spell by 2%",
+    "desc": "Unique armor obtain within Middle Tower [ 2% Break chance upon repair ]",
     "revision": 0,
     "sprite": 198,
     "sprite_color": {
@@ -38573,11 +38627,11 @@
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 5250,
+    "repair_cost": 2450,
     "break_chance": 2,
     "recycle_value": 6000,
-    "level_req": 40,
-    "prof_req_flags": -2044,
+    "level_req": 20,
+    "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
@@ -38588,17 +38642,17 @@
       "max_sp": 0,
       "max_atk": 20,
       "max_def": 20,
-      "max_mat": 20,
+      "max_mat": 25,
       "max_mdf": 20,
       "max_rat": 20,
       "max_rdf": 20,
       "min_atk": 17,
       "min_def": 10,
-      "min_mat": 17,
+      "min_mat": 22,
       "min_mdf": 10,
       "min_rat": 17,
       "min_rdf": 10,
-      "damage_stat": 0
+      "damage_stat": 4
     }
   },
   {
@@ -38935,36 +38989,51 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Diamond Armor **",
+    "desc": "Unique armor obtained from a hidden merchant, 2 % Break chance upon repair, Increases spell effects by 5%",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 198,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 25,
+      "saturation": 25,
+      "brightness": 200
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#cc6600",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 5000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
+    "repair_cost": 3500,
+    "break_chance": 2,
+    "recycle_value": 10000,
+    "level_req": 30,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 35,
+      "max_mat": 0,
+      "max_mdf": 30,
+      "max_rat": 0,
+      "max_rdf": 30,
+      "min_atk": 0,
+      "min_def": 30,
+      "min_mat": 0,
+      "min_mdf": 30,
+      "min_rat": 0,
+      "min_rdf": 30,
+      "damage_stat": 0
     }
   },
   {
@@ -39403,10 +39472,10 @@
     }
   },
   {
-    "name": "",
+    "name": "Custom Data Tester #1",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 1538,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -39415,9 +39484,9 @@
     },
     "scale": 1,
     "color": "#008b8b",
-    "show_name": false,
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 1,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -39432,14 +39501,33 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 120,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 75,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 1,
+      "!samurai_npcriposte_ticks": "3",
+      "!samurai_npcriposte_damage": "50",
+      "!samurai_playerriposte_damage": "45"
     }
   },
   {
-    "name": "",
+    "name": "Custom Data Tester #2",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 1549,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -39450,7 +39538,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 4,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -39465,7 +39553,25 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "damage_stat": 1,
+      "!samurai_npcriposte_ticks": "3",
+      "!samurai_npcriposte_damage": "50",
+      "!samurai_playerriposte_damage": "45"
     }
   },
   {
@@ -41360,10 +41466,10 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Elixir of Spirited Grace",
     "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "revision": 1,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -41371,31 +41477,55 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "spawn_delay": 1,
+    "type": 13,
+    "uses": 100,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 7,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 0,
+      "item_id": 838,
+      "recipe_items": [
+        {
+          "amount": 5,
+          "item_id": 365
+        },
+        {
+          "amount": 1,
+          "item_id": 176
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
     "name": "",
     "desc": "",
-    "revision": 0,
+    "revision": 1,
     "sprite": 0,
     "sprite_color": {
       "alpha": 1,
@@ -41404,25 +41534,49 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "spawn_delay": 1,
+    "type": 13,
+    "uses": 100,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 7,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 0,
+      "item_id": 838,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 176
+        },
+        {
+          "amount": 5,
+          "item_id": 365
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
@@ -41657,20 +41811,20 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Donut of Finite Learning",
+    "desc": "Studying the novel grants 4,000,000 experience",
+    "revision": 1,
+    "sprite": 452,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.4,
+    "color": "#FFA500",
     "show_name": false,
-    "spawn_delay": 60,
+    "spawn_delay": 0,
     "type": 0,
     "uses": 1,
     "limit": 0,
@@ -41678,12 +41832,12 @@
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
@@ -42630,18 +42784,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 1 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42663,18 +42817,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 2 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42696,18 +42850,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 3 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42729,18 +42883,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 4 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42762,18 +42916,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 5 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42795,18 +42949,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 6 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42828,18 +42982,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 7 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42861,18 +43015,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 8 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42894,18 +43048,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 9 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42927,18 +43081,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Page 10 of 10",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 597,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42960,18 +43114,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Chapter 1",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 370,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 90,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.8,
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -42993,18 +43147,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Chapter 2",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 370,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 90,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.8,
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -43026,18 +43180,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess - Chapter 3",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 370,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 90,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 150
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.8,
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -43059,18 +43213,18 @@
     }
   },
   {
-    "name": "",
+    "name": "Translate: The Last Princess - Chapter 1",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 90,
+      "saturation": 50,
+      "brightness": 30
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -43092,18 +43246,18 @@
     }
   },
   {
-    "name": "",
+    "name": "Translate: The Last Princess - Chapter 2",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 90,
+      "saturation": 50,
+      "brightness": 30
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -43125,18 +43279,18 @@
     }
   },
   {
-    "name": "",
+    "name": "Translate: The Last Princess - Chapter 3",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 90,
+      "saturation": 50,
+      "brightness": 30
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -43158,18 +43312,18 @@
     }
   },
   {
-    "name": "",
+    "name": "The Last Princess",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 371,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 90,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 1.2,
+    "color": "#808080",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -43191,18 +43345,18 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: The Last Princess",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 90,
+      "saturation": 50,
+      "brightness": 30
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
