@@ -2,46 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NPC Last - 05/29/25</title>
+  <title>NPC Comparison</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #222;
-      color: #fff;
+      background-color: purple;
+      color: gold;
+      margin: 0;
+      padding: 0;
     }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: gold;
+    }
+
+    #searchBar {
+      display: block;
+      width: 90%;
+      margin: 0 auto 20px;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid gold;
+      border-radius: 4px;
+      background-color: #4b0082;
+      color: gold;
+    }
+
+    #searchBar::placeholder {
+      color: gold;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1em;
+      margin: 0 auto 20px;
+      background-color: #4b0082;
+      color: gold;
     }
+
     th, td {
+      border: 1px solid gold;
       padding: 8px;
-      border: 1px solid #555;
+      text-align: left;
     }
+
+    th {
+      background-color: #6a0dad;
+    }
+
+    tr:nth-child(even) {
+      background-color: #5a0088;
+    }
+
     .modal {
       display: none;
       position: fixed;
-      top: 0; left: 0;
+      z-index: 1;
+      left: 0; top: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
+      background-color: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
     }
+
     .modal-content {
-      background: #fff;
-      color: #000;
+      background-color: #fefefe;
+      color: black;
       padding: 20px;
       width: 80%;
     }
+
     .close {
       float: right;
+      font-size: 28px;
       cursor: pointer;
-      font-size: 1.5em;
     }
+
     .higher {
       background-color: green;
       color: white;
     }
+
     .lower {
       background-color: red;
       color: white;
@@ -51,6 +94,8 @@
 <body>
 
 <h1>NPC List</h1>
+<input type="text" id="searchBar" placeholder="Search for an NPC...">
+
 <table id="npcTable">
   <thead>
     <tr>
@@ -69,7 +114,11 @@
     <h2>NPC Comparison</h2>
     <table id="comparisonTable">
       <thead>
-        <tr><th>Attribute</th><th>NPC 1</th><th>NPC 2</th></tr>
+        <tr>
+          <th>Attribute</th>
+          <th>NPC 1</th>
+          <th>NPC 2</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -77,34 +126,43 @@
 </div>
 
 <script>
+let allNPCs = [];
 let selectedNPCs = [];
 
 async function loadNPCs() {
   const response = await fetch('npc.json');
   const npcs = await response.json();
-  const tbody = document.querySelector("#npcTable tbody");
+  allNPCs = npcs;
+  displayNPCs(allNPCs);
+}
+
+function displayNPCs(npcs) {
+  const tbody = document.querySelector('#npcTable tbody');
+  tbody.innerHTML = '';
 
   npcs.forEach(npc => {
     const row = document.createElement('tr');
 
-    const sel = document.createElement('td');
+    const selectCell = document.createElement('td');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.onclick = () => handleSelection(npc, checkbox);
-    sel.appendChild(checkbox);
-    row.appendChild(sel);
+    selectCell.appendChild(checkbox);
+    row.appendChild(selectCell);
 
-    const name = document.createElement('td');
-    name.textContent = npc.name;
-    row.appendChild(name);
+    const nameCell = document.createElement('td');
+    nameCell.textContent = npc.name;
+    row.appendChild(nameCell);
 
-    const desc = document.createElement('td');
-    desc.textContent = npc.desc || 'No description';
-    row.appendChild(desc);
+    const descCell = document.createElement('td');
+    descCell.textContent = npc.desc || 'No description';
+    row.appendChild(descCell);
 
-    const stats = document.createElement('td');
-    stats.textContent = npc.stats ? JSON.stringify(npc.stats, null, 2) : 'No stats';
-    row.appendChild(stats);
+    const statsCell = document.createElement('td');
+    const stats = npc.stats ? Object.entries(npc.stats).map(([k, v]) => `${k}: ${v}`).join('\n') : 'No stats';
+    statsCell.textContent = stats;
+    statsCell.style.whiteSpace = 'pre-line';
+    row.appendChild(statsCell);
 
     tbody.appendChild(row);
   });
@@ -131,31 +189,31 @@ function showComparison(npc1, npc2) {
 
   allKeys.forEach(key => {
     const row = document.createElement('tr');
-    const cellKey = document.createElement('td');
-    cellKey.textContent = key;
+    const keyCell = document.createElement('td');
+    keyCell.textContent = key;
 
     const val1 = stats1[key] ?? '—';
     const val2 = stats2[key] ?? '—';
 
-    const cell1 = document.createElement('td');
-    const cell2 = document.createElement('td');
-
-    cell1.textContent = val1;
-    cell2.textContent = val2;
+    const val1Cell = document.createElement('td');
+    const val2Cell = document.createElement('td');
+    val1Cell.textContent = val1;
+    val2Cell.textContent = val2;
 
     if (!isNaN(val1) && !isNaN(val2)) {
-      if (parseFloat(val1) > parseFloat(val2)) {
-        cell1.classList.add('higher');
-        cell2.classList.add('lower');
-      } else if (parseFloat(val1) < parseFloat(val2)) {
-        cell1.classList.add('lower');
-        cell2.classList.add('higher');
+      const n1 = parseFloat(val1), n2 = parseFloat(val2);
+      if (n1 > n2) {
+        val1Cell.classList.add('higher');
+        val2Cell.classList.add('lower');
+      } else if (n1 < n2) {
+        val1Cell.classList.add('lower');
+        val2Cell.classList.add('higher');
       }
     }
 
-    row.appendChild(cellKey);
-    row.appendChild(cell1);
-    row.appendChild(cell2);
+    row.appendChild(keyCell);
+    row.appendChild(val1Cell);
+    row.appendChild(val2Cell);
     table.appendChild(row);
   });
 
@@ -165,6 +223,15 @@ function showComparison(npc1, npc2) {
 function closeModal() {
   document.getElementById('comparisonModal').style.display = 'none';
 }
+
+document.getElementById('searchBar').addEventListener('input', () => {
+  const term = document.getElementById('searchBar').value.toLowerCase();
+  const filtered = allNPCs.filter(npc =>
+    npc.name.toLowerCase().includes(term) || 
+    (npc.desc && npc.desc.toLowerCase().includes(term))
+  );
+  displayNPCs(filtered);
+});
 
 document.addEventListener('DOMContentLoaded', loadNPCs);
 </script>
