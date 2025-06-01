@@ -206,11 +206,27 @@
         const item = allItems.find(i => i.name === selectedName);
         if (!item || !item.data) return;
 
-        for (let [key, val] of Object.entries(item.data)) {
-  if (typeof val === 'number') {
-    const normalizedKey = key.startsWith('max_') ? key.slice(4) : key; // remove "max_"
-    combinedStats[normalizedKey] = (combinedStats[normalizedKey] || 0) + val;
+       for (let [key, val] of Object.entries(item.data)) {
+  if (typeof val !== 'number') continue;
+
+  let normalizedKey = key;
+
+  // Normalize prefixes
+  if (key.startsWith('max_')) {
+    normalizedKey = key.slice(4);
+  } else if (key.startsWith('min_')) {
+    const minMap = {
+      min_atk: 'patk',
+      min_def: 'pdef',
+      min_mat: 'matk',
+      min_mdf: 'mdef',
+      min_rat: 'ratk',
+      min_rdf: 'rdef'
+    };
+    normalizedKey = minMap[key] || key.slice(4);
   }
+
+  combinedStats[normalizedKey] = (combinedStats[normalizedKey] || 0) + val;
 }
 
         if (item.tile_range) {
