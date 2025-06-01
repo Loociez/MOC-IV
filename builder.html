@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Build Editor</title>
+  <style>
+    body {
+      background: #2d004d;
+      color: gold;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: gold;
+    }
+
+    #baseStats label {
+      margin-right: 10px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .searchable-slot {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 6px;
+      background-color: #4b0082;
+      color: gold;
+      border: 1px solid gold;
+    }
+
+    .dropdown-list {
+      position: absolute;
+      background-color: #4b0082;
+      color: gold;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 1px solid gold;
+      width: 100%;
+      max-height: 150px;
+      overflow-y: auto;
+      display: none;
+      z-index: 5;
+    }
+
+    .dropdown-list li {
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .dropdown-list li:hover {
+      background-color: #6a0dad;
+    }
+
+    .stats {
+      background: #4b0082;
+      padding: 15px;
+      border: 1px solid gold;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <h1>Build Editor</h1>
+
+  <h2>Base Stats</h2>
+  <div id="baseStats">
+    <label>HP: <input type="number" id="base_hp" value="0"></label>
+    <label>MP: <input type="number" id="base_mp" value="0"></label>
+    <label>SP: <input type="number" id="base_sp" value="0"></label><br>
+    <label>PATK: <input type="number" id="base_patk" value="0"></label>
+    <label>PDEF: <input type="number" id="base_pdef" value="0"></label><br>
+    <label>RATK: <input type="number" id="base_ratk" value="0"></label>
+    <label>RDEF: <input type="number" id="base_rdef" value="0"></label><br>
+    <label>MATK: <input type="number" id="base_matk" value="0"></label>
+    <label>MDEF: <input type="number" id="base_mdef" value="0"></label>
+  </div>
+
+  <h2>Equipment</h2>
+
+  <div class="searchable-slot" data-slot="helm">
+    <label>Helm:</label>
+    <input type="text" class="search-input" placeholder="Search helm..." oninput="filterDropdown(this)">
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value">
+  </div>
+
+  <div class="searchable-slot" data-slot="armor">
+    <label>Armor:</label>
+    <input type="text" class="search-input" placeholder="Search armor..." oninput="filterDropdown(this)">
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value">
+  </div>
+
+  <div class="searchable-slot" data-slot="weapon">
+    <label>Weapon:</label>
+    <input type="text" class="search-input" placeholder="Search weapon..." oninput="filterDropdown(this)">
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value">
+  </div>
+
+  <div class="searchable-slot" data-slot="shield">
+    <label>Shield:</label>
+    <input type="text" class="search-input" placeholder="Search shield..." oninput="filterDropdown(this)">
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value">
+  </div>
+
+  <div class="searchable-slot" data-slot="accessory">
+    <label>Accessory:</label>
+    <input type="text" class="search-input" placeholder="Search accessory..." oninput="filterDropdown(this)">
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value">
+  </div>
+
+  <h2>Total Stats</h2>
+  <div class="stats" id="totalStats">No items equipped.</div>
+
+  <script>
+    let allItems = [];
+
+    async function loadItems() {
+      try {
+        const response = await fetch('last.json');
+        allItems = await response.json();
+
+        populateSearchDropdown('helm', item => item.name.toLowerCase().includes('helm'));
+        populateSearchDropdown('armor', item => item.name.toLowerCase().includes('armor'));
+        populateSearchDropdown('weapon', item => item.data && item.data.damage);
+        populateSearchDropdown('shield', item => item.name.toLowerCase().includes('shield'));
+        populateSearchDropdown('accessory', item =>
+          ['ring', 'charm', 'amulet', 'accessory'].some(keyword =>
+            item.name.toLowerCase().includes(keyword))
+        );
+
+        // Update when base stats change
+        document.querySelectorAll('#baseStats input').forEach(input => {
+          input.addEventListener('input', updateStats);
+        });
+
+      } catch (e) {
+        console.error('Failed to load last.json:', e);
+        document.getElementById('totalStats').textContent = 'Failed to load items.';
+      }
+    }
+
+    function populateSearchDropdown(slot, filterFn) {
+      const slotDiv = document.querySelector(`.searchable-slot[data-slot="${slot}"]`);
+      const list = slotDiv.querySelector('.dropdown-list');
+      list.innerHTML = '';
+
+      allItems.filter(filterFn).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.name;
+        li.onclick = () => {
+          slotDiv.querySelector('.search-input').value = item.name;
+          slotDiv.querySelector('.selected-value').value = item.name;
+          list.style.display = 'none';
+          updateStats();
+        };
+        list.appendChild(li);
+      });
+
+      slotDiv.querySelector('.search-input').addEventListener('focus', () => {
+        list.style.display = 'block';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!slotDiv.contains(e.target)) {
+          list.style.display = 'none';
+        }
+      });
+    }
+
+    function filterDropdown(input) {
+      const slotDiv = input.closest('.searchable-slot');
+      const list = slotDiv.querySelector('.dropdown-list');
+      const filter = input.value.toLowerCase();
+      const items = list.querySelectorAll('li');
+
+      let anyVisible = false;
+      items.forEach(item => {
+        const match = item.textContent.toLowerCase().includes(filter);
+        item.style.display = match ? 'block' : 'none';
+        if (match) anyVisible = true;
+      });
+
+      list.style.display = anyVisible ? 'block' : 'none';
+    }
+
+    function updateStats() {
+      const slots = ['helm', 'armor', 'weapon', 'shield', 'accessory'];
+      let combinedStats = {};
+
+      // Add equipped item stats
+      slots.forEach(slot => {
+        const selectedName = document.querySelector(`.searchable-slot[data-slot="${slot}"] .selected-value`).value;
+        if (!selectedName) return;
+
+        const item = allItems.find(i => i.name === selectedName);
+        if (!item || !item.data) return;
+
+        for (let [key, val] of Object.entries(item.data)) {
+          if (typeof val === 'number') {
+            combinedStats[key] = (combinedStats[key] || 0) + val;
+          }
+        }
+
+        if (item.tile_range) {
+          combinedStats['tile_range'] = (combinedStats['tile_range'] || 0) + item.tile_range;
+        }
+      });
+
+      // Add base stats
+      const baseKeys = ['hp', 'mp', 'sp', 'patk', 'pdef', 'ratk', 'rdef', 'matk', 'mdef'];
+      baseKeys.forEach(key => {
+        const val = parseInt(document.getElementById(`base_${key}`).value) || 0;
+        combinedStats[key] = (combinedStats[key] || 0) + val;
+      });
+
+      if (Object.keys(combinedStats).length === 0) {
+        document.getElementById('totalStats').textContent = 'No items equipped.';
+      } else {
+        const statText = Object.entries(combinedStats)
+          .map(([k, v]) => `${k.toUpperCase().replace(/_/g, ' ')}: ${v}`)
+          .join('\n');
+        document.getElementById('totalStats').textContent = statText;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadItems);
+  </script>
+</body>
+</html>
