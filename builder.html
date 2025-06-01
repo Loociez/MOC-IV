@@ -132,7 +132,10 @@
 
         populateSearchDropdown('helm', item => item.name.toLowerCase().includes('helm'));
         populateSearchDropdown('armor', item => item.name.toLowerCase().includes('armor'));
-        populateSearchDropdown('weapon', item => item.data && item.data.damage);
+        populateSearchDropdown('weapon', item =>
+  typeof item.two_handed === 'boolean' && (item.category === 'weapon' || item.type === 'weapon')
+);
+
         populateSearchDropdown('shield', item => item.name.toLowerCase().includes('shield'));
         populateSearchDropdown('accessory', item =>
           ['ring', 'charm', 'amulet', 'accessory'].some(keyword =>
