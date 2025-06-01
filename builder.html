@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Build Editor</title>
   <style>
     body {
@@ -130,17 +130,19 @@
         const response = await fetch('last.json');
         allItems = await response.json();
 
+        // Populate dropdowns for all slots without filtering (allow all items)
         populateSearchDropdown('helm', () => true);
-populateSearchDropdown('armor', () => true);
-populateSearchDropdown('weapon', () => true);
-populateSearchDropdown('shield', () => true);
-populateSearchDropdown('accessory', () => true);
-        );
+        populateSearchDropdown('armor', () => true);
+        populateSearchDropdown('weapon', () => true);
+        populateSearchDropdown('shield', () => true);
+        populateSearchDropdown('accessory', () => true);
 
-        // Update when base stats change
+        // Update stats on base stat inputs change
         document.querySelectorAll('#baseStats input').forEach(input => {
           input.addEventListener('input', updateStats);
         });
+
+        updateStats();
 
       } catch (e) {
         console.error('Failed to load last.json:', e);
@@ -148,12 +150,16 @@ populateSearchDropdown('accessory', () => true);
       }
     }
 
+    // Track active dropdown so only one outside click listener is added
+    let activeDropdown = null;
+
     function populateSearchDropdown(slot, filterFn) {
       const slotDiv = document.querySelector(`.searchable-slot[data-slot="${slot}"]`);
       const list = slotDiv.querySelector('.dropdown-list');
       list.innerHTML = '';
 
-      allItems.filter(filterFn).forEach(item => {
+      const filteredItems = allItems.filter(filterFn);
+      filteredItems.forEach(item => {
         const li = document.createElement('li');
         li.textContent = item.name;
         li.onclick = () => {
@@ -165,15 +171,23 @@ populateSearchDropdown('accessory', () => true);
         list.appendChild(li);
       });
 
-      slotDiv.querySelector('.search-input').addEventListener('focus', () => {
+      // Show dropdown on focus
+      const input = slotDiv.querySelector('.search-input');
+      input.addEventListener('focus', () => {
         list.style.display = 'block';
+        activeDropdown = list;
       });
 
-      document.addEventListener('click', (e) => {
-        if (!slotDiv.contains(e.target)) {
-          list.style.display = 'none';
-        }
-      });
+      // Add one global click listener to close dropdown if clicked outside
+      if (!document._dropdownListenerAdded) {
+        document.addEventListener('click', (e) => {
+          if (activeDropdown && !activeDropdown.parentElement.contains(e.target)) {
+            activeDropdown.style.display = 'none';
+            activeDropdown = null;
+          }
+        });
+        document._dropdownListenerAdded = true;
+      }
     }
 
     function filterDropdown(input) {
@@ -204,28 +218,27 @@ populateSearchDropdown('accessory', () => true);
         const item = allItems.find(i => i.name === selectedName);
         if (!item || !item.data) return;
 
-       for (let [key, val] of Object.entries(item.data)) {
-  if (typeof val !== 'number') continue;
+        for (let [key, val] of Object.entries(item.data)) {
+          if (typeof val !== 'number') continue;
 
-  let normalizedKey = key;
+          let normalizedKey = key;
 
-  // Normalize prefixes
-  if (key.startsWith('max_')) {
-    normalizedKey = key.slice(4);
-  } else if (key.startsWith('min_')) {
-    const minMap = {
-      min_atk: 'patk',
-      min_def: 'pdef',
-      min_mat: 'matk',
-      min_mdf: 'mdef',
-      min_rat: 'ratk',
-      min_rdf: 'rdef'
-    };
-    normalizedKey = minMap[key] || key.slice(4);
-  }
+          if (key.startsWith('max_')) {
+            normalizedKey = key.slice(4);
+          } else if (key.startsWith('min_')) {
+            const minMap = {
+              min_atk: 'patk',
+              min_def: 'pdef',
+              min_mat: 'matk',
+              min_mdf: 'mdef',
+              min_rat: 'ratk',
+              min_rdf: 'rdef'
+            };
+            normalizedKey = minMap[key] || key.slice(4);
+          }
 
-  combinedStats[normalizedKey] = (combinedStats[normalizedKey] || 0) + val;
-}
+          combinedStats[normalizedKey] = (combinedStats[normalizedKey] || 0) + val;
+        }
 
         if (item.tile_range) {
           combinedStats['tile_range'] = (combinedStats['tile_range'] || 0) + item.tile_range;
