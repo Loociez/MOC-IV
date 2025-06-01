@@ -207,10 +207,11 @@
         if (!item || !item.data) return;
 
         for (let [key, val] of Object.entries(item.data)) {
-          if (typeof val === 'number') {
-            combinedStats[key] = (combinedStats[key] || 0) + val;
-          }
-        }
+  if (typeof val === 'number') {
+    const normalizedKey = key.startsWith('max_') ? key.slice(4) : key; // remove "max_"
+    combinedStats[normalizedKey] = (combinedStats[normalizedKey] || 0) + val;
+  }
+}
 
         if (item.tile_range) {
           combinedStats['tile_range'] = (combinedStats['tile_range'] || 0) + item.tile_range;
