@@ -130,16 +130,11 @@
         const response = await fetch('last.json');
         allItems = await response.json();
 
-        populateSearchDropdown('helm', item => item.name.toLowerCase().includes('helm'));
-        populateSearchDropdown('armor', item => item.name.toLowerCase().includes('armor'));
-        populateSearchDropdown('weapon', item =>
-  typeof item.two_handed === 'boolean' && (item.category === 'weapon' || item.type === 'weapon')
-);
-
-        populateSearchDropdown('shield', item => item.name.toLowerCase().includes('shield'));
-        populateSearchDropdown('accessory', item =>
-          ['ring', 'charm', 'amulet', 'accessory'].some(keyword =>
-            item.name.toLowerCase().includes(keyword))
+        populateSearchDropdown('helm', () => true);
+populateSearchDropdown('armor', () => true);
+populateSearchDropdown('weapon', () => true);
+populateSearchDropdown('shield', () => true);
+populateSearchDropdown('accessory', () => true);
         );
 
         // Update when base stats change
