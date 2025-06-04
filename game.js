@@ -44,10 +44,10 @@ function updateUI() {
   goldText.innerText = `Gold: ${Math.floor(gold)}`;
   clickPowerCostText.innerText = upgrades.clickPower.cost;
   autoMinerCostText.innerText = upgrades.autoMiner.cost;
-  
+
   rebirthText.innerText = `Rebirth Level: ${rebirthLevel} | Bonus: x${rebirthBonus.toFixed(2)}`;
   document.getElementById('rebirthPointsDisplay').innerText = `Rebirth Points: ${rebirthPoints}`;
-  
+
   document.getElementById('rebirthBtn').innerText = `Rebirth (Cost: ${rebirthCost} Gold)`;
 }
 
