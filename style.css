@@ -1,31 +1,40 @@
 /* Reset and basics */
-body, html {
+html, body {
   margin: 0;
-  padding: 40px 0 20px 0; /* added 40px top padding */
-  min-height: 100vh;
+  padding: 0;
+  height: 100%;
   background-color: #121212;
   color: #e0e0e0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-  display: flex;
-  justify-content: center;   /* center horizontally */
-  align-items: flex-start;   /* align to top vertically */
-  overflow-y: auto;          /* enable vertical scrolling */
-  box-sizing: border-box;
+  overflow-y: auto;  /* allow scrolling if content too tall */
 }
 
-/* Container for all game elements */
+/* Wrapper container centers content vertically and horizontally */
+#gameContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* vertical center */
+  align-items: center;      /* horizontal center */
+  padding: 40px 20px 20px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;         /* limits max width for readability */
+  margin: 0 auto;
+}
+
+/* Panels styling */
 #stats, #upgrades, #prestigeShop {
   background: #1e1e1e;
   border: 1px solid #333;
   border-radius: 8px;
   padding: 15px 25px;
   margin: 15px 0;
-  width: 320px;
+  width: 100%; /* full width inside container */
   box-shadow: 0 0 10px rgba(0,0,0,0.7);
 }
 
-/* Center text and elements inside */
+/* Headings */
 h1, h3 {
   text-align: center;
   margin-bottom: 15px;
