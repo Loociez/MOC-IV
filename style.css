@@ -1,20 +1,16 @@
 /* Reset and basics */
 body, html {
   margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: #121212; /* Very dark gray/black */
-  color: #e0e0e0;            /* Light gray text */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-body {
-  flex-direction: column;
+  padding: 40px 0 20px 0; /* added 40px top padding */
   min-height: 100vh;
-  padding: 20px;
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  display: flex;
+  justify-content: center;   /* center horizontally */
+  align-items: flex-start;   /* align to top vertically */
+  overflow-y: auto;          /* enable vertical scrolling */
   box-sizing: border-box;
 }
 
@@ -33,7 +29,7 @@ body {
 h1, h3 {
   text-align: center;
   margin-bottom: 15px;
-  color: #f5a623; /* warm gold/orange */
+  color: #f5a623;
   user-select: none;
 }
 
