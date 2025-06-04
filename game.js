@@ -15,6 +15,7 @@ const gpcText = document.getElementById('gpc');
 const clickPowerCostText = document.getElementById('clickPowerCost');
 const autoMinerCostText = document.getElementById('autoMinerCost');
 const clickEffects = document.getElementById('click-effects');
+const evolutionImage = document.getElementById('evolutionImage');
 
 // UI Updates
 function updateUI() {
@@ -25,7 +26,13 @@ function updateUI() {
   rebirthText.innerText = `Rebirths: ${rebirths} | Bonus: x${rebirthBonus}`;
 }
 
-// Click Event
+// Update evolution image based on rebirths
+function updateEvolutionImage() {
+  const stage = Math.min(rebirths, 5); // You can expand beyond 5
+  evolutionImage.src = `images/stage${stage}.png`;
+}
+
+// Click to gain gold
 document.getElementById('mineBtn').addEventListener('click', (e) => {
   const gain = goldPerClick * rebirthBonus;
   gold += gain;
@@ -33,7 +40,7 @@ document.getElementById('mineBtn').addEventListener('click', (e) => {
   updateUI();
 });
 
-// Buy Click Power
+// Buy click power upgrade
 document.getElementById('clickUpgradeBtn').addEventListener('click', () => {
   const up = upgrades.clickPower;
   if (gold >= up.cost) {
@@ -44,7 +51,7 @@ document.getElementById('clickUpgradeBtn').addEventListener('click', () => {
   }
 });
 
-// Buy Auto Miner
+// Buy auto miner upgrade
 document.getElementById('autoMinerBtn').addEventListener('click', () => {
   const up = upgrades.autoMiner;
   if (gold >= up.cost) {
@@ -55,7 +62,7 @@ document.getElementById('autoMinerBtn').addEventListener('click', () => {
   }
 });
 
-// Rebirth
+// Rebirth system
 document.getElementById('rebirthBtn').addEventListener('click', () => {
   if (gold >= 1000) {
     gold = 0;
@@ -66,16 +73,17 @@ document.getElementById('rebirthBtn').addEventListener('click', () => {
     rebirths++;
     rebirthBonus = 1 + rebirths;
     updateUI();
+    updateEvolutionImage();
   }
 });
 
-// Passive income
+// Passive income loop
 setInterval(() => {
   gold += goldPerSecond * rebirthBonus;
   updateUI();
 }, 1000);
 
-// Click effect visuals
+// Show floating click effect
 function showClickEffect(x, y, text) {
   const span = document.createElement('span');
   span.className = 'floating-text';
@@ -85,6 +93,8 @@ function showClickEffect(x, y, text) {
   clickEffects.appendChild(span);
   setTimeout(() => span.remove(), 1000);
 }
+
+// Save game to localStorage
 function saveGame() {
   const saveData = {
     gold,
@@ -101,6 +111,7 @@ function saveGame() {
   console.log("Game Saved");
 }
 
+// Load game from localStorage
 function loadGame() {
   const saved = localStorage.getItem('idleClickerSave');
   if (saved) {
@@ -115,15 +126,17 @@ function loadGame() {
     upgrades.autoMiner.cost = data.upgrades?.autoMinerCost || 50;
 
     updateUI();
+    updateEvolutionImage();
     console.log("Game Loaded");
   }
 }
 
-
-// Initial render
-updateUI();
 // Auto-save every 15 seconds
 setInterval(() => {
   saveGame();
 }, 15000);
 
+// Initial render
+updateUI();
+updateEvolutionImage();
+loadGame(); // Optional: auto-load on page load
