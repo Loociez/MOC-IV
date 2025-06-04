@@ -1,7 +1,11 @@
 let gold = 0;
 let goldPerClick = 1;
 let goldPerSecond = 0;
-let rebirths = 0;
+
+// === Changed rebirth system variables ===
+let rebirthLevel = 0;    // Tracks total rebirth count (used for bonus)
+let rebirthPoints = 0;   // Points to spend in prestige shop
+let rebirthCost = 1000;  // Cost doubles each rebirth
 let rebirthBonus = 1;
 
 let critChance = 0;
@@ -29,13 +33,22 @@ const autoMinerCostText = document.getElementById('autoMinerCost');
 const clickEffects = document.getElementById('click-effects');
 const evolutionImage = document.getElementById('evolutionImage');
 
+// === New UI element for rebirth points & cost ===
+// Make sure your HTML has elements with these IDs:
+// <div id="rebirthPointsDisplay"></div>
+// <button id="rebirthBtn"></button>
+
 // UI update functions
 
 function updateUI() {
   goldText.innerText = `Gold: ${Math.floor(gold)}`;
   clickPowerCostText.innerText = upgrades.clickPower.cost;
   autoMinerCostText.innerText = upgrades.autoMiner.cost;
-  rebirthText.innerText = `Rebirths: ${rebirths} | Bonus: x${rebirthBonus.toFixed(2)}`;
+  
+  rebirthText.innerText = `Rebirth Level: ${rebirthLevel} | Bonus: x${rebirthBonus.toFixed(2)}`;
+  document.getElementById('rebirthPointsDisplay').innerText = `Rebirth Points: ${rebirthPoints}`;
+  
+  document.getElementById('rebirthBtn').innerText = `Rebirth (Cost: ${rebirthCost} Gold)`;
 }
 
 function updatePrestigeInfo() {
@@ -56,7 +69,7 @@ function updatePrestigeInfo() {
 }
 
 function updateEvolutionImage() {
-  const stage = Math.min(rebirths, 5);
+  const stage = Math.min(rebirthLevel, 5);
   evolutionImage.src = `images/stage${stage}.png`;
 }
 
@@ -97,63 +110,81 @@ document.getElementById('autoMinerBtn').addEventListener('click', () => {
 });
 
 document.getElementById('rebirthBtn').addEventListener('click', () => {
-  if (gold >= 1000) {
+  if (gold >= rebirthCost) {
     gold = 0;
     goldPerClick = 1;
     goldPerSecond = 0;
     upgrades.clickPower.cost = 10;
     upgrades.autoMiner.cost = 50;
-    rebirths++;
-    rebirthBonus = 1 + rebirths * (1 + prestigeUpgrades.rebirthPower * 0.5);
+
+    rebirthLevel++;
+    rebirthPoints++;  // Award 1 rebirth point per rebirth; change if you want more
+    rebirthCost *= 2; // Double the cost each time
+
+    // Calculate rebirth bonus with prestige upgrades
+    rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
+
     updateEvolutionImage();
     updateUI();
     updatePrestigeInfo();
+  } else {
+    alert(`You need at least ${rebirthCost} Gold to rebirth!`);
   }
 });
 
-// Prestige upgrade purchase functions
+// Prestige upgrade purchase functions - now spend rebirthPoints
 
 function buyGoldMagnet() {
-  if (rebirths >= 1) {
-    rebirths--;
+  if (rebirthPoints >= 1) {
+    rebirthPoints--;
     prestigeUpgrades.goldMagnet++;
     goldBonusPercent += 10;
     updateUI();
     updatePrestigeInfo();
+  } else {
+    alert("You don't have enough Rebirth Points.");
   }
 }
 function buyLuckyTouch() {
-  if (rebirths >= 1) {
-    rebirths--;
+  if (rebirthPoints >= 1) {
+    rebirthPoints--;
     prestigeUpgrades.luckyTouch++;
     critChance += 2;
     updateUI();
     updatePrestigeInfo();
+  } else {
+    alert("You don't have enough Rebirth Points.");
   }
 }
 function buyClickForge() {
-  if (rebirths >= 1) {
-    rebirths--;
+  if (rebirthPoints >= 1) {
+    rebirthPoints--;
     prestigeUpgrades.clickForge++;
     updateUI();
     updatePrestigeInfo();
+  } else {
+    alert("You don't have enough Rebirth Points.");
   }
 }
 function buyAutoMinerBoost() {
-  if (rebirths >= 1) {
-    rebirths--;
+  if (rebirthPoints >= 1) {
+    rebirthPoints--;
     prestigeUpgrades.autoMinerBoost++;
     updateUI();
     updatePrestigeInfo();
+  } else {
+    alert("You don't have enough Rebirth Points.");
   }
 }
 function buyRebirthPower() {
-  if (rebirths >= 1) {
-    rebirths--;
+  if (rebirthPoints >= 1) {
+    rebirthPoints--;
     prestigeUpgrades.rebirthPower++;
-    rebirthBonus = 1 + rebirths * (1 + prestigeUpgrades.rebirthPower * 0.5);
+    rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
     updateUI();
     updatePrestigeInfo();
+  } else {
+    alert("You don't have enough Rebirth Points.");
   }
 }
 
@@ -237,7 +268,9 @@ function saveGame() {
     gold,
     goldPerClick,
     goldPerSecond,
-    rebirths,
+    rebirthLevel,
+    rebirthPoints,
+    rebirthCost,
     rebirthBonus,
     critChance,
     goldBonusPercent,
@@ -257,7 +290,9 @@ function loadGame() {
     gold = data.gold || 0;
     goldPerClick = data.goldPerClick || 1;
     goldPerSecond = data.goldPerSecond || 0;
-    rebirths = data.rebirths || 0;
+    rebirthLevel = data.rebirthLevel || 0;
+    rebirthPoints = data.rebirthPoints || 0;
+    rebirthCost = data.rebirthCost || 1000;
     rebirthBonus = data.rebirthBonus || 1;
     critChance = data.critChance || 0;
     goldBonusPercent = data.goldBonusPercent || 0;
@@ -266,7 +301,9 @@ function loadGame() {
     upgrades.clickPower.cost = data.upgrades?.clickPowerCost || 10;
     upgrades.autoMiner.cost = data.upgrades?.autoMinerCost || 50;
 
-    rebirthBonus = 1 + rebirths * (1 + prestigeUpgrades.rebirthPower * 0.5);
+    // Recalculate rebirthBonus for safety
+    rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
+
     updateUI();
     updateEvolutionImage();
     updatePrestigeInfo();
