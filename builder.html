@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Build Editor</title>
   <style>
     body {
@@ -18,11 +18,11 @@
     #baseStats label {
       margin-right: 10px;
       display: inline-block;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     .searchable-slot {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       position: relative;
     }
 
@@ -60,46 +60,71 @@
 
     .stats {
       background: #4b0082;
-      padding: 15px;
+      padding: 10px;
       border: 1px solid gold;
       white-space: pre-line;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h1>Build Editor</h1>
 
-  <h2>Load Item Data</h2>
-  <input type="file" id="itemFile" accept=".json" onchange="loadItemData(this)">
-
   <h2>Base Stats</h2>
   <div id="baseStats">
-    <label>HP: <input type="number" id="base_hp" value="0"></label>
-    <label>MP: <input type="number" id="base_mp" value="0"></label>
-    <label>SP: <input type="number" id="base_sp" value="0"></label><br>
-    <label>PATK: <input type="number" id="base_patk" value="0"></label>
-    <label>PDEF: <input type="number" id="base_pdef" value="0"></label><br>
-    <label>RATK: <input type="number" id="base_ratk" value="0"></label>
-    <label>RDEF: <input type="number" id="base_rdef" value="0"></label><br>
-    <label>MATK: <input type="number" id="base_matk" value="0"></label>
-    <label>MDEF: <input type="number" id="base_mdef" value="0"></label>
+    <label>HP: <input type="number" id="base_hp" value="0" /></label>
+    <label>MP: <input type="number" id="base_mp" value="0" /></label>
+    <label>SP: <input type="number" id="base_sp" value="0" /></label><br />
+    <label>PATK: <input type="number" id="base_patk" value="0" /></label>
+    <label>PDEF: <input type="number" id="base_pdef" value="0" /></label><br />
+    <label>RATK: <input type="number" id="base_ratk" value="0" /></label>
+    <label>RDEF: <input type="number" id="base_rdef" value="0" /></label><br />
+    <label>MATK: <input type="number" id="base_matk" value="0" /></label>
+    <label>MDEF: <input type="number" id="base_mdef" value="0" /></label>
   </div>
 
   <h2>Equipment</h2>
-  <div id="equipmentSlots"></div>
+
+  <div class="searchable-slot" data-slot="helm">
+    <label>Helm:</label>
+    <input type="text" class="search-input" placeholder="Search helm..." oninput="filterDropdown(this)" />
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value" />
+  </div>
+
+  <div class="searchable-slot" data-slot="armor">
+    <label>Armor:</label>
+    <input type="text" class="search-input" placeholder="Search armor..." oninput="filterDropdown(this)" />
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value" />
+  </div>
+
+  <div class="searchable-slot" data-slot="weapon">
+    <label>Weapon:</label>
+    <input type="text" class="search-input" placeholder="Search weapon..." oninput="filterDropdown(this)" />
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value" />
+  </div>
+
+  <div class="searchable-slot" data-slot="shield">
+    <label>Shield:</label>
+    <input type="text" class="search-input" placeholder="Search shield..." oninput="filterDropdown(this)" />
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value" />
+  </div>
+
+  <div class="searchable-slot" data-slot="accessory">
+    <label>Accessory:</label>
+    <input type="text" class="search-input" placeholder="Search accessory..." oninput="filterDropdown(this)" />
+    <ul class="dropdown-list"></ul>
+    <input type="hidden" class="selected-value" />
+  </div>
 
   <h2>Total Stats</h2>
   <div class="stats" id="totalStats">No items equipped.</div>
-  
 
   <h2>NPC Damage Simulator</h2>
-  <div>
-    <label>Load NPC Data:
-      <input type="file" id="npcFile" accept=".json" onchange="loadNPCData(this)">
-    </label>
-  </div>
-
-  <div id="npcSimSection" style="display:none; margin-top: 10px;">
+  <div id="npcSimSection" style="margin-top: 10px; display:none;">
     <label for="npcSelect">Select NPC:</label>
     <select id="npcSelect" onchange="simulateDamage()"></select>
   </div>
@@ -107,36 +132,38 @@
   <div class="stats" id="damageOutput">No NPC selected.</div>
 
   <script>
-    let allItems = [], npcData = [];
-    const slots = ['helm', 'armor', 'weapon', 'shield', 'accessory'];
+    let allItems = [];
+    let npcData = [];
 
-    function loadItemData(input) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          allItems = JSON.parse(e.target.result);
-          setupEquipmentSlots();
-        } catch (err) {
-          alert("Invalid item data");
-        }
-      };
-      reader.readAsText(input.files[0]);
-    }
+    // Auto load JSON files on page load
+    window.addEventListener('load', () => {
+      Promise.all([
+        fetch('last.json').then(res => {
+          if (!res.ok) throw new Error(`Failed to load last.json: ${res.status}`);
+          return res.json();
+        }),
+        fetch('npc.json').then(res => {
+          if (!res.ok) throw new Error(`Failed to load npc.json: ${res.status}`);
+          return res.json();
+        })
+      ]).then(([itemsJson, npcJson]) => {
+        allItems = itemsJson;
+        npcData = npcJson;
 
-    function setupEquipmentSlots() {
-      const container = document.getElementById('equipmentSlots');
-      container.innerHTML = '';
+        initializeItemSelectors();
+        populateNPCDropdown(npcData);
+
+        // Show npc selector section
+        document.getElementById('npcSimSection').style.display = 'block';
+      }).catch(err => {
+        alert("Error loading JSON files: " + err.message);
+        console.error(err);
+      });
+    });
+
+    function initializeItemSelectors() {
+      const slots = ['helm', 'armor', 'weapon', 'shield', 'accessory'];
       slots.forEach(slot => {
-        const div = document.createElement('div');
-        div.className = 'searchable-slot';
-        div.dataset.slot = slot;
-        div.innerHTML = `
-          <label>${slot.charAt(0).toUpperCase() + slot.slice(1)}:</label>
-          <input type="text" class="search-input" placeholder="Search ${slot}..." oninput="filterDropdown(this)">
-          <ul class="dropdown-list"></ul>
-          <input type="hidden" class="selected-value">
-        `;
-        container.appendChild(div);
         populateSearchDropdown(slot);
       });
 
@@ -170,8 +197,10 @@
         list.style.display = 'block';
       });
 
-      document.addEventListener('click', e => {
-        if (!slotDiv.contains(e.target)) list.style.display = 'none';
+      document.addEventListener('click', (e) => {
+        if (!slotDiv.contains(e.target)) {
+          list.style.display = 'none';
+        }
       });
     }
 
@@ -179,87 +208,135 @@
       const slotDiv = input.closest('.searchable-slot');
       const list = slotDiv.querySelector('.dropdown-list');
       const filter = input.value.toLowerCase();
-      list.querySelectorAll('li').forEach(item => {
-        item.style.display = item.textContent.toLowerCase().includes(filter) ? 'block' : 'none';
+      const items = list.querySelectorAll('li');
+
+      let anyVisible = false;
+      items.forEach(item => {
+        const match = item.textContent.toLowerCase().includes(filter);
+        item.style.display = match ? 'block' : 'none';
+        if (match) anyVisible = true;
       });
+
+      list.style.display = anyVisible ? 'block' : 'none';
     }
 
     function updateStats() {
       const stats = getCombinedStats();
-      document.getElementById('totalStats').textContent = Object.keys(stats).length === 0 ? 'No items equipped.' :
-        Object.entries(stats).map(([k, v]) => `${k.toUpperCase()}: ${v}`).join('\n');
+      if (Object.keys(stats).length === 0) {
+        document.getElementById('totalStats').textContent = 'No items equipped.';
+      } else {
+        const statText = Object.entries(stats)
+          .map(([k, v]) => `${k.toUpperCase().replace(/_/g, ' ')}: ${v}`)
+          .join('\n');
+        document.getElementById('totalStats').textContent = statText;
+      }
     }
 
     function getCombinedStats() {
-      const baseStats = ['hp', 'mp', 'sp', 'patk', 'pdef', 'ratk', 'rdef', 'matk', 'mdef'];
+      const baseKeys = ['hp', 'mp', 'sp', 'patk', 'pdef', 'ratk', 'rdef', 'matk', 'mdef'];
       const stats = {};
-
-      baseStats.forEach(key => {
-        stats[key] = parseInt(document.getElementById(`base_${key}`).value) || 0;
+      baseKeys.forEach(key => {
+        const val = parseInt(document.getElementById(`base_${key}`).value) || 0;
+        stats[key] = val;
       });
 
+      const slots = ['helm', 'armor', 'weapon', 'shield', 'accessory'];
       slots.forEach(slot => {
-        const selected = document.querySelector(`.searchable-slot[data-slot="${slot}"] .selected-value`).value;
-        const item = allItems.find(i => i.name === selected);
+        const selectedName = document.querySelector(`.searchable-slot[data-slot="${slot}"] .selected-value`).value;
+        if (!selectedName) return;
+
+        const item = allItems.find(i => i.name === selectedName);
         if (!item || !item.data) return;
 
-        Object.entries(item.data).forEach(([key, val]) => {
-          if (typeof val !== 'number') return;
+        for (let [key, val] of Object.entries(item.data)) {
+          if (typeof val !== 'number') continue;
 
-          const minMap = {
-            min_atk: 'patk', min_def: 'pdef', min_mat: 'matk',
-            min_mdf: 'mdef', min_rat: 'ratk', min_rdf: 'rdef'
-          };
+          let normalizedKey = key;
+          if (key.startsWith('max_')) {
+            normalizedKey = key.slice(4);
+          } else if (key.startsWith('min_')) {
+            const minMap = {
+              min_atk: 'patk',
+              min_def: 'pdef',
+              min_mat: 'matk',
+              min_mdf: 'mdef',
+              min_rat: 'ratk',
+              min_rdf: 'rdef'
+            };
+            normalizedKey = minMap[key] || key.slice(4);
+          }
 
-          let normKey = key.startsWith('max_') ? key.slice(4) : minMap[key] || key;
-          if (!baseStats.includes(normKey)) return;
-
-          stats[normKey] = (stats[normKey] || 0) + val;
-        });
+          stats[normalizedKey] = (stats[normalizedKey] || 0) + val;
+        }
       });
 
       return stats;
     }
 
-    function loadNPCData(input) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          npcData = JSON.parse(e.target.result);
-          populateNPCDropdown();
-          document.getElementById('npcSimSection').style.display = 'block';
-        } catch (err) {
-          alert("Invalid NPC data");
-        }
-      };
-      reader.readAsText(input.files[0]);
-    }
-
-    function populateNPCDropdown() {
+    function populateNPCDropdown(data) {
       const select = document.getElementById('npcSelect');
       select.innerHTML = '<option value="">-- Select NPC --</option>';
-      npcData.forEach((npc, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = npc.name || `NPC ${i+1}`;
-        select.appendChild(opt);
+      data.forEach((npc, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = npc.name || `NPC ${index + 1}`;
+        select.appendChild(option);
       });
     }
 
     function simulateDamage() {
       const index = document.getElementById('npcSelect').value;
-      if (index === '') return document.getElementById('damageOutput').textContent = 'No NPC selected.';
+      if (index === "") {
+        document.getElementById('damageOutput').textContent = "No NPC selected.";
+        return;
+      }
 
       const npc = npcData[index];
-      const s = getCombinedStats();
+      const stats = getCombinedStats();
 
-      const dmg = (atk, def) => Math.max(0, (s[atk] || 0) - (npc[def] || 0));
+      // Player offensive stats
+      const playerPatk = stats.patk || 0;
+      const playerRatk = stats.ratk || 0;
+      const playerMatk = stats.matk || 0;
 
-      document.getElementById('damageOutput').textContent =
-        `Against ${npc.name || 'Unknown'}:\n` +
-        `PHYSICAL DMG: ${dmg('patk', 'pdef')}\n` +
-        `RANGED DMG: ${dmg('ratk', 'rdef')}\n` +
-        `MAGIC DMG: ${dmg('matk', 'mdef')}`;
+      // Player defensive stats
+      const playerPdef = stats.pdef || 0;
+      const playerRdef = stats.rdef || 0;
+      const playerMdef = stats.mdef || 0;
+
+      // NPC stats from JSON structure
+      const npcStats = npc.stats || {};
+      const npcVitals = npc.vitals || {};
+
+      const npcAtk = npcStats.atk || 0;
+      const npcRat = npcStats.rat || 0;
+      const npcMat = npcStats.mat || 0;
+
+      const npcDef = npcStats.def || 0;
+      const npcRdf = npcStats.rdf || 0;
+      const npcMdf = npcStats.mdf || 0;
+
+      const npcHp = npcVitals.hp || 0;
+
+      // Damage player deals to NPC
+      const physicalDamage = Math.max(0, playerPatk - npcDef);
+      const rangedDamage = Math.max(0, playerRatk - npcRdf);
+      const magicDamage = Math.max(0, playerMatk - npcMdf);
+
+      // Damage NPC deals to player (physical and magic only, ranged unclear)
+      const physicalDamageToPlayer = Math.max(0, npcAtk - playerPdef);
+      const rangedDamageToPlayer = Math.max(0, npcRat - playerRdef);
+      const magicDamageToPlayer = Math.max(0, npcMat - playerMdef);
+
+      document.getElementById('damageOutput').innerHTML =
+        `Against ${npc.name || "Unknown NPC"} (HP: ${npcHp}):<br>` +
+        `PHYSICAL DMG TO NPC: ${physicalDamage.toFixed(1)}<br>` +
+        `RANGED DMG TO NPC: ${rangedDamage.toFixed(1)}<br>` +
+        `MAGIC DMG TO NPC: ${magicDamage.toFixed(1)}<br><br>` +
+        `<span style="color:red; font-weight:bold;">DAMAGE NPC WOULD DO TO YOU:</span><br>` +
+        `Physical: ${physicalDamageToPlayer.toFixed(1)}<br>` +
+        `Ranged: ${rangedDamageToPlayer.toFixed(1)}<br>` +
+        `Magic: ${magicDamageToPlayer.toFixed(1)}`;
     }
   </script>
 </body>
