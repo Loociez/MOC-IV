@@ -4,9 +4,18 @@ let goldPerSecond = 0;
 let rebirths = 0;
 let rebirthBonus = 1;
 
-let critChance = 0; // %
+let critChance = 0;
 let critMultiplier = 2;
-let goldBonusPercent = 0; // From Gold Magnet
+let goldBonusPercent = 0;
+
+// Prestige Upgrades (persist through rebirths)
+let prestigeUpgrades = {
+  goldMagnet: 0,
+  luckyTouch: 0,
+  clickForge: 0,
+  autoMinerBoost: 0,
+  rebirthPower: 0
+};
 
 const upgrades = {
   clickPower: { cost: 10, power: 1 },
@@ -20,12 +29,11 @@ const autoMinerCostText = document.getElementById('autoMinerCost');
 const clickEffects = document.getElementById('click-effects');
 const evolutionImage = document.getElementById('evolutionImage');
 
-// UI Updates
 function updateUI() {
   goldText.innerText = `Gold: ${Math.floor(gold)}`;
   clickPowerCostText.innerText = upgrades.clickPower.cost;
   autoMinerCostText.innerText = upgrades.autoMiner.cost;
-  rebirthText.innerText = `Rebirths: ${rebirths} | Bonus: x${rebirthBonus}`;
+  rebirthText.innerText = `Rebirths: ${rebirths} | Bonus: x${rebirthBonus.toFixed(2)}`;
 }
 
 function updateEvolutionImage() {
@@ -34,18 +42,16 @@ function updateEvolutionImage() {
 }
 
 document.getElementById('mineBtn').addEventListener('click', (e) => {
-  let gain = goldPerClick * rebirthBonus;
-  
-  // Apply crit
+  let gain = (goldPerClick + prestigeUpgrades.clickForge) * rebirthBonus;
+
   const isCrit = Math.random() * 100 < critChance;
   if (isCrit) {
     gain *= critMultiplier;
-    showClickEffect(e.clientX, e.clientY, `CRIT! +${gain}`);
+    showClickEffect(e.clientX, e.clientY, `CRIT! +${Math.floor(gain)}`);
   } else {
-    showClickEffect(e.clientX, e.clientY, `+${gain}`);
+    showClickEffect(e.clientX, e.clientY, `+${Math.floor(gain)}`);
   }
 
-  // Apply global % bonus
   gain *= 1 + goldBonusPercent / 100;
   gold += gain;
   updateUI();
@@ -79,21 +85,19 @@ document.getElementById('rebirthBtn').addEventListener('click', () => {
     upgrades.clickPower.cost = 10;
     upgrades.autoMiner.cost = 50;
     rebirths++;
-    rebirthBonus = 1 + rebirths;
-    updateUI();
+    rebirthBonus = 1 + rebirths * (1 + prestigeUpgrades.rebirthPower * 0.5);
     updateEvolutionImage();
+    updateUI();
   }
 });
 
-// Passive gold
 setInterval(() => {
-  let gain = goldPerSecond * rebirthBonus;
+  let gain = (goldPerSecond + prestigeUpgrades.autoMinerBoost) * rebirthBonus;
   gain *= 1 + goldBonusPercent / 100;
   gold += gain;
   updateUI();
 }, 1000);
 
-// Click effects
 function showClickEffect(x, y, text) {
   const span = document.createElement('span');
   span.className = 'floating-text';
@@ -104,7 +108,51 @@ function showClickEffect(x, y, text) {
   setTimeout(() => span.remove(), 1000);
 }
 
-// Save / Load
+// Prestige Functions
+function buyGoldMagnet() {
+  if (rebirths >= 1) {
+    rebirths--;
+    prestigeUpgrades.goldMagnet++;
+    goldBonusPercent += 10;
+    updateUI();
+  }
+}
+
+function buyLuckyTouch() {
+  if (rebirths >= 1) {
+    rebirths--;
+    prestigeUpgrades.luckyTouch++;
+    critChance += 2;
+    updateUI();
+  }
+}
+
+function buyClickForge() {
+  if (rebirths >= 1) {
+    rebirths--;
+    prestigeUpgrades.clickForge++;
+    updateUI();
+  }
+}
+
+function buyAutoMinerBoost() {
+  if (rebirths >= 1) {
+    rebirths--;
+    prestigeUpgrades.autoMinerBoost++;
+    updateUI();
+  }
+}
+
+function buyRebirthPower() {
+  if (rebirths >= 1) {
+    rebirths--;
+    prestigeUpgrades.rebirthPower++;
+    rebirthBonus = 1 + rebirths * (1 + prestigeUpgrades.rebirthPower * 0.5);
+    updateUI();
+  }
+}
+
+// Save & Load
 function saveGame() {
   const saveData = {
     gold,
@@ -114,6 +162,7 @@ function saveGame() {
     rebirthBonus,
     critChance,
     goldBonusPercent,
+    prestigeUpgrades,
     upgrades: {
       clickPowerCost: upgrades.clickPower.cost,
       autoMinerCost: upgrades.autoMiner.cost
@@ -133,35 +182,18 @@ function loadGame() {
     rebirthBonus = data.rebirthBonus || 1;
     critChance = data.critChance || 0;
     goldBonusPercent = data.goldBonusPercent || 0;
+    prestigeUpgrades = data.prestigeUpgrades || prestigeUpgrades;
 
     upgrades.clickPower.cost = data.upgrades?.clickPowerCost || 10;
     upgrades.autoMiner.cost = data.upgrades?.autoMinerCost || 50;
 
+    rebirthBonus = 1 + rebirths * (1 + prestigeUpgrades.rebirthPower * 0.5);
     updateUI();
     updateEvolutionImage();
   }
 }
 
 setInterval(saveGame, 15000);
-
-// Prestige Shop
-function buyGoldMagnet() {
-  if (rebirths >= 1) {
-    rebirths -= 1;
-    goldBonusPercent += 10;
-    updateUI();
-  }
-}
-
-function buyLuckyTouch() {
-  if (rebirths >= 1) {
-    rebirths -= 1;
-    critChance += 2;
-    updateUI();
-  }
-}
-
-// Start game
 updateUI();
 updateEvolutionImage();
 loadGame();
