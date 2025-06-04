@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gold Clicker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Gold Clicker</h1>
+  <div id="gold">Gold: 0</div>
+  <div id="rebirths">Rebirths: 0 | Bonus: x1</div>
+
+  <button id="mineBtn">Mine Gold (+<span id="gpc">1</span>)</button>
+
+  <div id="shop">
+    <h2>Upgrades</h2>
+    <div class="shop-item">
+      <button id="clickUpgradeBtn">
+        Increase Click Power (Cost: <span id="clickPowerCost">10</span>)
+      </button>
+    </div>
+    <div class="shop-item">
+      <button id="autoMinerBtn">
+        Hire Auto Miner +1 GPS (Cost: <span id="autoMinerCost">50</span>)
+      </button>
+    </div>
+    <div class="shop-item">
+      <button id="rebirthBtn">
+        Rebirth (Requires 1000 Gold)
+      </button>
+    </div>
+  </div>
+
+  <div id="click-effects"></div>
+<div style="margin-top: 20px;">
+  <button onclick="saveGame()">💾 Save</button>
+  <button onclick="loadGame()">📂 Load</button>
+</div>
+
+  <script src="game.js"></script>
+</body>
+</html>
