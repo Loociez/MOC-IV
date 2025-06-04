@@ -1,44 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Idle Clicker</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Idle Clicker Game</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Mine Madness</h1>
 
-  <div id="gold">Gold: 0</div>
-  <img id="evolutionImage" src="images/stage0.png" width="150" height="150" />
-  <div id="rebirths">Rebirths: 0 | Bonus: x1</div>
+<h1>Idle Clicker</h1>
 
-  <button id="mineBtn">💎 Mine</button>
+<div>
+  <button id="mineBtn">Mine Gold</button>
+</div>
 
-  <div>
-    <button id="clickUpgradeBtn">Upgrade Click Power (Cost: <span id="clickPowerCost">10</span>)</button>
-    <button id="autoMinerBtn">Buy Auto Miner (Cost: <span id="autoMinerCost">50</span>)</button>
-  </div>
+<div id="stats">
+  <p id="gold">Gold: 0</p>
+  <p id="rebirths">Rebirths: 0 | Bonus: x1.00</p>
+  <img id="evolutionImage" src="images/stage0.png" alt="Evolution Stage" width="150" />
+</div>
 
-  <div>
-    <button id="rebirthBtn">🔥 Rebirth (1000+ Gold)</button>
-  </div>
+<div id="upgrades">
+  <h3>Upgrades</h3>
+  <button id="clickUpgradeBtn">Upgrade Click Power (<span id="clickPowerCost">10</span> Gold)</button>
+  <button id="autoMinerBtn">Buy Auto Miner (<span id="autoMinerCost">50</span> Gold)</button>
+</div>
 
-  <div>
-    <button onclick="saveGame()">💾 Save</button>
-    <button onclick="loadGame()">📂 Load</button>
-  </div>
+<div>
+  <button id="rebirthBtn">Rebirth (Requires 1000 Gold)</button>
+</div>
 
-  <h2>Prestige Shop (Uses Rebirth Points)</h2>
-  <div>
-    <button onclick="buyGoldMagnet()">Gold Magnet (+10% gold gain) - 1 RP</button>
-    <button onclick="buyLuckyTouch()">Lucky Touch (+2% crit chance) - 1 RP</button>
-    <button onclick="buyClickForge()">Click Forge (+1 base click) - 1 RP</button>
-    <button onclick="buyAutoMinerBoost()">Auto Miner Boost (+1 GPS) - 1 RP</button>
-    <button onclick="buyRebirthPower()">Rebirth Power (+0.5x rebirth bonus) - 1 RP</button>
-  </div>
+<div id="prestigeShop">
+  <h3>Prestige Shop</h3>
 
-  <div id="click-effects"></div>
+  <button id="buyGoldMagnet">Buy Gold Magnet (10% Gold Bonus)</button>
+  <div id="goldMagnetInfo" class="upgrade-info"></div>
 
-  <script src="game.js"></script>
+  <button id="buyLuckyTouch">Buy Lucky Touch (2% Crit Chance)</button>
+  <div id="luckyTouchInfo" class="upgrade-info"></div>
+
+  <button id="buyClickForge">Buy Click Forge (+1 Click Power)</button>
+  <div id="clickForgeInfo" class="upgrade-info"></div>
+
+  <button id="buyAutoMinerBoost">Buy Auto Miner Boost (+1 Gold/sec)</button>
+  <div id="autoMinerBoostInfo" class="upgrade-info"></div>
+
+  <button id="buyRebirthPower">Buy Rebirth Power (+50% Rebirth Bonus per rebirth)</button>
+  <div id="rebirthPowerInfo" class="upgrade-info"></div>
+</div>
+
+<div id="click-effects"></div>
+
+<script src="game.js"></script>
 </body>
 </html>

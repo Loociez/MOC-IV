@@ -1,21 +1,85 @@
-body {
-  background: #1c0030;
-  color: gold;
-  font-family: Arial, sans-serif;
-  padding: 20px;
+/* Reset and basics */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #121212; /* Very dark gray/black */
+  color: #e0e0e0;            /* Light gray text */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+body {
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Container for all game elements */
+#stats, #upgrades, #prestigeShop {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px 25px;
+  margin: 15px 0;
+  width: 320px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+/* Center text and elements inside */
+h1, h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #f5a623; /* warm gold/orange */
+  user-select: none;
+}
+
+/* Buttons */
 button {
-  margin: 5px;
-  padding: 10px;
+  width: 100%;
+  background-color: #2d2d2d;
+  border: 1.5px solid #444;
+  border-radius: 6px;
+  color: #ddd;
   font-size: 16px;
+  padding: 12px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  user-select: none;
+}
+
+button:hover {
+  background-color: #f5a623;
+  color: #121212;
+  border-color: #f5a623;
 }
 
 button:active {
-  transform: scale(0.95);
-  transition: transform 0.1s ease;
+  transform: scale(0.97);
 }
 
+/* Stats text */
+#gold, #rebirths {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 8px 0;
+  text-align: center;
+}
+
+/* Upgrade info text */
+.upgrade-info {
+  font-size: 13px;
+  color: #bbb;
+  font-style: italic;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Floating click effects container */
 #click-effects {
   position: fixed;
   top: 0;
@@ -23,58 +87,71 @@ button:active {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 1000;
 }
 
+/* Floating text for clicks */
 .floating-text {
   position: absolute;
-  color: gold;
-  font-weight: bold;
-  font-size: 18px;
-  animation: floatUp 1s ease-out forwards;
-  text-shadow: 0 0 10px gold;
+  font-weight: 700;
+  font-size: 20px;
+  color: #f5a623;
+  text-shadow: 0 0 4px #f5a623aa;
+  user-select: none;
+  animation: floatUp 1s ease forwards;
+  pointer-events: none;
 }
 
 .floating-text.crit {
-  color: #ff4444;
-  text-shadow:
-    0 0 5px #ff4444,
-    0 0 10px #ff2222,
-    0 0 20px #ff0000,
-    0 0 30px #ff0000;
-  font-size: 22px;
-  font-weight: 900;
+  color: #ff4c4c;
+  text-shadow: 0 0 6px #ff4c4ccc;
+  font-size: 24px;
 }
 
-@keyframes floatUp {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-}
-
-@keyframes particleBurst {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--x), var(--y)) scale(0);
-  }
-}
-
+/* Particle burst */
 .particle {
   position: absolute;
   width: 6px;
   height: 6px;
-  background: #ff5555;
+  background: #f5a623;
   border-radius: 50%;
-  opacity: 1;
-  animation: particleBurst 700ms forwards;
   pointer-events: none;
+  animation: particleMove 0.7s ease forwards;
+  opacity: 0.8;
+  will-change: transform, opacity;
+  --x: 0px;
+  --y: 0px;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+}
+
+@keyframes particleMove {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y));
+  }
+}
+
+/* Center the evolution image */
+#evolutionImage {
+  display: block;
+  margin: 20px auto 0 auto;
+  max-width: 150px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #f5a623aa;
+  user-select: none;
 }
