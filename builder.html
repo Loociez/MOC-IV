@@ -90,6 +90,10 @@
 
   <h2>Total Stats</h2>
   <div class="stats" id="totalStats">No items equipped.</div>
+  <h2>Save / Load Build</h2>
+<button onclick="saveBuild()">Save Build</button>
+<input type="file" id="loadBuildFile" accept=".json" onchange="loadBuild(this)">
+
 
   <h2>NPC Damage Simulator</h2>
   <div>
@@ -260,6 +264,70 @@
         `RANGED DMG: ${dmg('ratk', 'rdef')}\n` +
         `MAGIC DMG: ${dmg('matk', 'mdef')}`;
     }
+	function saveBuild() {
+  const build = {
+    baseStats: {},
+    equipment: {}
+  };
+
+  // Gather base stats
+  document.querySelectorAll('#baseStats input').forEach(input => {
+    build.baseStats[input.id] = input.value;
+  });
+
+  // Gather equipment selections
+  slots.forEach(slot => {
+    const selected = document.querySelector(`.searchable-slot[data-slot="${slot}"] .selected-value`).value;
+    build.equipment[slot] = selected;
+  });
+
+  const blob = new Blob([JSON.stringify(build, null, 2)], { type: "application/json" });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "build.json";
+  link.click();
+}
+
+function loadBuild(input) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const build = JSON.parse(e.target.result);
+
+      // Set base stats
+      for (const id in build.baseStats) {
+        const el = document.getElementById(id);
+        if (el) el.value = build.baseStats[id];
+      }
+
+      // Set equipment
+      for (const slot in build.equipment) {
+        const slotDiv = document.querySelector(`.searchable-slot[data-slot="${slot}"]`);
+        const name = build.equipment[slot];
+        if (!slotDiv) continue;
+
+        const input = slotDiv.querySelector('.search-input');
+        const hidden = slotDiv.querySelector('.selected-value');
+        const item = allItems.find(i => i.name === name);
+
+        if (item) {
+          input.value = name;
+          hidden.value = name;
+        } else {
+          input.value = '';
+          hidden.value = '';
+        }
+      }
+
+      updateStats();
+      simulateDamage();
+    } catch (err) {
+      alert("Invalid build file");
+    }
+  };
+  reader.readAsText(input.files[0]);
+}
+
   </script>
 </body>
 </html>
