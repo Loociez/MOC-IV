@@ -11,6 +11,11 @@ button {
   font-size: 16px;
 }
 
+button:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
 #click-effects {
   position: fixed;
   top: 0;
@@ -24,7 +29,21 @@ button {
 .floating-text {
   position: absolute;
   color: gold;
+  font-weight: bold;
+  font-size: 18px;
   animation: floatUp 1s ease-out forwards;
+  text-shadow: 0 0 10px gold;
+}
+
+.floating-text.crit {
+  color: #ff4444;
+  text-shadow:
+    0 0 5px #ff4444,
+    0 0 10px #ff2222,
+    0 0 20px #ff0000,
+    0 0 30px #ff0000;
+  font-size: 22px;
+  font-weight: 900;
 }
 
 @keyframes floatUp {
@@ -33,7 +52,29 @@ button {
     opacity: 1;
   }
   to {
-    transform: translateY(-40px);
+    transform: translateY(-50px);
     opacity: 0;
   }
+}
+
+@keyframes particleBurst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(0);
+  }
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #ff5555;
+  border-radius: 50%;
+  opacity: 1;
+  animation: particleBurst 700ms forwards;
+  pointer-events: none;
 }

@@ -47,10 +47,8 @@ document.getElementById('mineBtn').addEventListener('click', (e) => {
   const isCrit = Math.random() * 100 < critChance;
   if (isCrit) {
     gain *= critMultiplier;
-    showClickEffect(e.clientX, e.clientY, `CRIT! +${Math.floor(gain)}`);
-  } else {
-    showClickEffect(e.clientX, e.clientY, `+${Math.floor(gain)}`);
   }
+  showClickEffect(e.clientX, e.clientY, `${isCrit ? 'CRIT! +' : '+'}${Math.floor(gain)}`, isCrit);
 
   gain *= 1 + goldBonusPercent / 100;
   gold += gain;
@@ -98,14 +96,59 @@ setInterval(() => {
   updateUI();
 }, 1000);
 
-function showClickEffect(x, y, text) {
+function showClickEffect(x, y, text, isCrit = false) {
+  // Floating Text
   const span = document.createElement('span');
   span.className = 'floating-text';
   span.innerText = text;
   span.style.left = `${x}px`;
   span.style.top = `${y}px`;
+  if (isCrit) span.classList.add('crit');
   clickEffects.appendChild(span);
   setTimeout(() => span.remove(), 1000);
+
+  if (isCrit) {
+    createParticleBurst(x, y);
+    shakeScreen();
+  }
+}
+
+function createParticleBurst(x, y) {
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (i / 8) * 2 * Math.PI;
+    const dist = 30 + Math.random() * 20;
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.setProperty('--x', `${Math.cos(angle) * dist}px`);
+    p.style.setProperty('--y', `${Math.sin(angle) * dist}px`);
+    clickEffects.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+function shakeScreen() {
+  const intensity = 5;
+  const duration = 300;
+  let elapsed = 0;
+  const interval = 16;
+  const body = document.body;
+  
+  const originalStyle = body.style.transform;
+
+  function shake() {
+    if (elapsed < duration) {
+      const x = (Math.random() - 0.5) * intensity;
+      const y = (Math.random() - 0.5) * intensity;
+      body.style.transform = `translate(${x}px, ${y}px)`;
+      elapsed += interval;
+      setTimeout(shake, interval);
+    } else {
+      body.style.transform = originalStyle;
+    }
+  }
+  shake();
 }
 
 // Prestige Functions
