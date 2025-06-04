@@ -89,11 +89,13 @@
   <div id="equipmentSlots"></div>
 
   <h2>Total Stats</h2>
-  <div class="stats" id="totalStats">No items equipped.</div>
-  <h2>Save / Load Build</h2>
+<div class="stats" id="totalStats">No items equipped.</div>
+
+<h2>Save / Load Build</h2>
 <button onclick="saveBuild()">Save Build</button>
 <input type="file" id="loadBuildFile" accept=".json" onchange="loadBuild(this)">
 
+  
 
   <h2>NPC Damage Simulator</h2>
   <div>
@@ -275,7 +277,7 @@
     build.baseStats[input.id] = input.value;
   });
 
-  // Gather equipment selections
+  // Gather equipment
   slots.forEach(slot => {
     const selected = document.querySelector(`.searchable-slot[data-slot="${slot}"] .selected-value`).value;
     build.equipment[slot] = selected;
@@ -284,7 +286,7 @@
   const blob = new Blob([JSON.stringify(build, null, 2)], { type: "application/json" });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = "build.json";
+  link.download = "last.json";
   link.click();
 }
 
@@ -293,40 +295,62 @@ function loadBuild(input) {
   reader.onload = e => {
     try {
       const build = JSON.parse(e.target.result);
-
-      // Set base stats
-      for (const id in build.baseStats) {
-        const el = document.getElementById(id);
-        if (el) el.value = build.baseStats[id];
-      }
-
-      // Set equipment
-      for (const slot in build.equipment) {
-        const slotDiv = document.querySelector(`.searchable-slot[data-slot="${slot}"]`);
-        const name = build.equipment[slot];
-        if (!slotDiv) continue;
-
-        const input = slotDiv.querySelector('.search-input');
-        const hidden = slotDiv.querySelector('.selected-value');
-        const item = allItems.find(i => i.name === name);
-
-        if (item) {
-          input.value = name;
-          hidden.value = name;
-        } else {
-          input.value = '';
-          hidden.value = '';
-        }
-      }
-
-      updateStats();
-      simulateDamage();
+      applyBuild(build);
     } catch (err) {
       alert("Invalid build file");
     }
   };
   reader.readAsText(input.files[0]);
 }
+
+function applyBuild(build) {
+  // Set base stats
+  for (const id in build.baseStats) {
+    const el = document.getElementById(id);
+    if (el) el.value = build.baseStats[id];
+  }
+
+  // Set equipment
+  for (const slot in build.equipment) {
+    const slotDiv = document.querySelector(`.searchable-slot[data-slot="${slot}"]`);
+    const name = build.equipment[slot];
+    if (!slotDiv) continue;
+
+    const input = slotDiv.querySelector('.search-input');
+    const hidden = slotDiv.querySelector('.selected-value');
+    const item = allItems.find(i => i.name === name);
+
+    if (item) {
+      input.value = name;
+      hidden.value = name;
+    } else {
+      input.value = '';
+      hidden.value = '';
+    }
+  }
+
+  updateStats();
+  simulateDamage();
+}
+
+// Automatically load last.json and npc.json if they exist
+window.addEventListener('DOMContentLoaded', () => {
+  fetch('last.json')
+    .then(res => res.ok ? res.json() : null)
+    .then(json => {
+      if (json) applyBuild(json);
+    });
+
+  fetch('npc.json')
+    .then(res => res.ok ? res.json() : null)
+    .then(json => {
+      if (json) {
+        npcData = json;
+        populateNPCDropdown();
+        document.getElementById('npcSimSection').style.display = 'block';
+      }
+    });
+});
 
   </script>
 </body>
