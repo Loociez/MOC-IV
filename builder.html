@@ -124,7 +124,7 @@
   <div class="stats" id="totalStats">No items equipped.</div>
 
   <h2>NPC Damage Simulator</h2>
-  <div id="npcSimSection" style="margin-top: 10px;">
+  <div id="npcSimSection" style="margin-top: 10px; display:none;">
     <label for="npcSelect">Select NPC:</label>
     <select id="npcSelect" onchange="simulateDamage()"></select>
   </div>
@@ -138,8 +138,14 @@
     // Auto load JSON files on page load
     window.addEventListener('load', () => {
       Promise.all([
-        fetch('items.json').then(res => res.json()),
-        fetch('npc.json').then(res => res.json())
+        fetch('last.json').then(res => {
+          if (!res.ok) throw new Error(`Failed to load last.json: ${res.status}`);
+          return res.json();
+        }),
+        fetch('npc.json').then(res => {
+          if (!res.ok) throw new Error(`Failed to load npc.json: ${res.status}`);
+          return res.json();
+        })
       ]).then(([itemsJson, npcJson]) => {
         allItems = itemsJson;
         npcData = npcJson;
