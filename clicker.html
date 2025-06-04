@@ -2,46 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Gold Clicker</title>
+  <title>Idle Clicker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>Idle Clicker</h1>
 
-  <h1>Gold Clicker</h1>
   <div id="gold">Gold: 0</div>
+  <img id="evolutionImage" src="images/stage0.png" width="150" height="150" />
+  <div id="rebirths">Rebirths: 0 | Bonus: x1</div>
 
-<!-- Evolution image here -->
-<img id="evolutionImage" src="images/stage0.png" alt="Evolution Stage" width="150" height="150" style="margin: 10px;" />
+  <button id="mineBtn">💎 Mine</button>
 
-<div id="rebirths">Rebirths: 0 | Bonus: x1</div>
+  <div>
+    <button id="clickUpgradeBtn">Upgrade Click Power (Cost: <span id="clickPowerCost">10</span>)</button>
+    <button id="autoMinerBtn">Buy Auto Miner (Cost: <span id="autoMinerCost">50</span>)</button>
+  </div>
 
+  <div>
+    <button id="rebirthBtn">🔥 Rebirth (1000+ Gold)</button>
+  </div>
 
-  <button id="mineBtn">Mine Gold (+<span id="gpc">1</span>)</button>
+  <div>
+    <button onclick="saveGame()">💾 Save</button>
+    <button onclick="loadGame()">📂 Load</button>
+  </div>
 
-  <div id="shop">
-    <h2>Upgrades</h2>
-    <div class="shop-item">
-      <button id="clickUpgradeBtn">
-        Increase Click Power (Cost: <span id="clickPowerCost">10</span>)
-      </button>
-    </div>
-    <div class="shop-item">
-      <button id="autoMinerBtn">
-        Hire Auto Miner +1 GPS (Cost: <span id="autoMinerCost">50</span>)
-      </button>
-    </div>
-    <div class="shop-item">
-      <button id="rebirthBtn">
-        Rebirth (Requires 1000 Gold)
-      </button>
-    </div>
+  <h2>Prestige Shop (Uses Rebirth Points)</h2>
+  <div>
+    <button onclick="buyGoldMagnet()">Gold Magnet (+10% gold gain) - Cost: 1 RP</button>
+    <button onclick="buyLuckyTouch()">Lucky Touch (+2% crit chance) - Cost: 1 RP</button>
   </div>
 
   <div id="click-effects"></div>
-<div style="margin-top: 20px;">
-  <button onclick="saveGame()">💾 Save</button>
-  <button onclick="loadGame()">📂 Load</button>
-</div>
 
   <script src="game.js"></script>
 </body>
