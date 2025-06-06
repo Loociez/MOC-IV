@@ -1,3 +1,4 @@
+// --- Game Variables ---
 let gold = 0;
 let goldPerClick = 1;
 let goldPerSecond = 0;
@@ -11,50 +12,50 @@ let critChance = 0;
 let critMultiplier = 2;
 let goldBonusPercent = 0;
 
+// --- Prestige Upgrades ---
 let prestigeUpgrades = {
   goldMagnet: 0,
   luckyTouch: 0,
   clickForge: 0,
   autoMinerBoost: 0,
-  rebirthPower: 0
+  rebirthPower: 0,
+  megaMiner: 0,
+  critMastery: 0,
+  efficientClicks: 0
 };
 
 const upgrades = {
-  clickPower: { cost: 10, power: 1, owned: 0 },
-  autoMiner: { cost: 50, gps: 1, owned: 0 }
+  clickPower: { cost: 10, power: 1 },
+  autoMiner: { cost: 50, gps: 1 }
 };
 
+// --- DOM Elements ---
 const goldText = document.getElementById('gold');
 const rebirthText = document.getElementById('rebirths');
 const clickPowerCostText = document.getElementById('clickPowerCost');
 const autoMinerCostText = document.getElementById('autoMinerCost');
-const clickPowerOwnedDisplay = document.getElementById('clickPowerOwnedDisplay');
-const autoMinerOwnedDisplay = document.getElementById('autoMinerOwnedDisplay');
 const clickEffects = document.getElementById('click-effects');
 const evolutionImage = document.getElementById('evolutionImage');
 
+// --- UI Update ---
 function updateUI() {
   goldText.innerText = `Gold: ${Math.floor(gold)}`;
   clickPowerCostText.innerText = upgrades.clickPower.cost;
   autoMinerCostText.innerText = upgrades.autoMiner.cost;
-  clickPowerOwnedDisplay.innerText = `Click Power Upgrades: ${upgrades.clickPower.owned}`;
-  autoMinerOwnedDisplay.innerText = `Auto Miner Upgrades: ${upgrades.autoMiner.owned}`;
   rebirthText.innerText = `Rebirth Level: ${rebirthLevel} | Bonus: x${rebirthBonus.toFixed(2)}`;
   document.getElementById('rebirthPointsDisplay').innerText = `Rebirth Points: ${rebirthPoints}`;
   document.getElementById('rebirthBtn').innerText = `Rebirth (Cost: ${rebirthCost} Gold)`;
 }
 
 function updatePrestigeInfo() {
-  document.getElementById('goldMagnetInfo').innerText =
-    `Owned: ${prestigeUpgrades.goldMagnet} (Gold Bonus: ${prestigeUpgrades.goldMagnet * 10}%)`;
-  document.getElementById('luckyTouchInfo').innerText =
-    `Owned: ${prestigeUpgrades.luckyTouch} (Crit Chance: ${prestigeUpgrades.luckyTouch * 2}%)`;
-  document.getElementById('clickForgeInfo').innerText =
-    `Owned: ${prestigeUpgrades.clickForge} (+${prestigeUpgrades.clickForge} Click Power)`;
-  document.getElementById('autoMinerBoostInfo').innerText =
-    `Owned: ${prestigeUpgrades.autoMinerBoost} (+${prestigeUpgrades.autoMinerBoost} Gold/sec)`;
-  document.getElementById('rebirthPowerInfo').innerText =
-    `Owned: ${prestigeUpgrades.rebirthPower} (+${prestigeUpgrades.rebirthPower * 50}% Rebirth Bonus per rebirth)`;
+  document.getElementById('goldMagnetInfo').innerText = `Owned: ${prestigeUpgrades.goldMagnet} (+${prestigeUpgrades.goldMagnet * 10}% Gold Bonus)`;
+  document.getElementById('luckyTouchInfo').innerText = `Owned: ${prestigeUpgrades.luckyTouch} (+${prestigeUpgrades.luckyTouch * 2}% Crit Chance)`;
+  document.getElementById('clickForgeInfo').innerText = `Owned: ${prestigeUpgrades.clickForge} (+${prestigeUpgrades.clickForge} Click Power)`;
+  document.getElementById('autoMinerBoostInfo').innerText = `Owned: ${prestigeUpgrades.autoMinerBoost} (+${prestigeUpgrades.autoMinerBoost} Gold/sec)`;
+  document.getElementById('rebirthPowerInfo').innerText = `Owned: ${prestigeUpgrades.rebirthPower} (+${prestigeUpgrades.rebirthPower * 50}% Rebirth Bonus)`;
+  document.getElementById('megaMinerInfo').innerText = `Owned: ${prestigeUpgrades.megaMiner} (+${prestigeUpgrades.megaMiner * 5} Gold/sec)`;
+  document.getElementById('critMasteryInfo').innerText = `Owned: ${prestigeUpgrades.critMastery} (+${prestigeUpgrades.critMastery * 0.5}x Crit Damage)`;
+  document.getElementById('efficientClicksInfo').innerText = `Owned: ${prestigeUpgrades.efficientClicks} (+${prestigeUpgrades.efficientClicks}% Click Gold Bonus)`;
 }
 
 function updateEvolutionImage() {
@@ -62,14 +63,15 @@ function updateEvolutionImage() {
   evolutionImage.src = `images/stage${stage}.png`;
 }
 
+// --- Click & Rebirth ---
 document.getElementById('mineBtn').addEventListener('click', (e) => {
   let gain = (goldPerClick + prestigeUpgrades.clickForge) * rebirthBonus;
+  gain *= 1 + (goldBonusPercent + prestigeUpgrades.efficientClicks) / 100;
+
   const isCrit = Math.random() * 100 < critChance;
-  if (isCrit) {
-    gain *= critMultiplier;
-  }
+  if (isCrit) gain *= critMultiplier + prestigeUpgrades.critMastery * 0.5;
+
   showClickEffect(e.clientX, e.clientY, `${isCrit ? 'CRIT! +' : '+'}${Math.floor(gain)}`, isCrit);
-  gain *= 1 + goldBonusPercent / 100;
   gold += gain;
   updateUI();
 });
@@ -79,7 +81,6 @@ document.getElementById('clickUpgradeBtn').addEventListener('click', () => {
   if (gold >= up.cost) {
     gold -= up.cost;
     goldPerClick += up.power;
-    up.owned++;
     up.cost = Math.floor(up.cost * 1.5);
     updateUI();
   }
@@ -90,7 +91,6 @@ document.getElementById('autoMinerBtn').addEventListener('click', () => {
   if (gold >= up.cost) {
     gold -= up.cost;
     goldPerSecond += up.gps;
-    up.owned++;
     up.cost = Math.floor(up.cost * 1.7);
     updateUI();
   }
@@ -103,13 +103,11 @@ document.getElementById('rebirthBtn').addEventListener('click', () => {
     goldPerSecond = 0;
     upgrades.clickPower.cost = 10;
     upgrades.autoMiner.cost = 50;
-    upgrades.clickPower.owned = 0;
-    upgrades.autoMiner.owned = 0;
 
     rebirthLevel++;
     rebirthPoints++;
     rebirthCost *= 2;
-    rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
+    recalculateRebirthBonus();
 
     updateEvolutionImage();
     updateUI();
@@ -119,13 +117,14 @@ document.getElementById('rebirthBtn').addEventListener('click', () => {
   }
 });
 
-// Prestige shop logic
-
-function buyUpgrade(key, effectFn) {
+// --- Prestige Buying ---
+function buyUpgrade(type) {
   if (rebirthPoints >= 1) {
     rebirthPoints--;
-    prestigeUpgrades[key]++;
-    effectFn();
+    prestigeUpgrades[type]++;
+    if (type === "goldMagnet") goldBonusPercent += 10;
+    if (type === "luckyTouch") critChance += 2;
+    if (type === "rebirthPower") recalculateRebirthBonus();
     updateUI();
     updatePrestigeInfo();
   } else {
@@ -133,35 +132,37 @@ function buyUpgrade(key, effectFn) {
   }
 }
 
-document.getElementById('buyGoldMagnet').addEventListener('click', () =>
-  buyUpgrade('goldMagnet', () => goldBonusPercent += 10)
-);
-document.getElementById('buyLuckyTouch').addEventListener('click', () =>
-  buyUpgrade('luckyTouch', () => critChance += 2)
-);
-document.getElementById('buyClickForge').addEventListener('click', () => 
-  buyUpgrade('clickForge', () => {})
-);
-document.getElementById('buyAutoMinerBoost').addEventListener('click', () =>
-  buyUpgrade('autoMinerBoost', () => {})
-);
-document.getElementById('buyRebirthPower').addEventListener('click', () =>
-  buyUpgrade('rebirthPower', () =>
-    rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5)
-  )
-);
+function recalculateRebirthBonus() {
+  rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
+}
 
-// Passive income
+// --- Attach Prestige Buttons ---
+[
+  "goldMagnet",
+  "luckyTouch",
+  "clickForge",
+  "autoMinerBoost",
+  "rebirthPower",
+  "megaMiner",
+  "critMastery",
+  "efficientClicks"
+].forEach(id => {
+  document.getElementById(`buy${capitalize(id)}`).addEventListener('click', () => buyUpgrade(id));
+});
 
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// --- Passive Income ---
 setInterval(() => {
-  let gain = (goldPerSecond + prestigeUpgrades.autoMinerBoost) * rebirthBonus;
+  let gain = (goldPerSecond + prestigeUpgrades.autoMinerBoost + prestigeUpgrades.megaMiner * 5) * rebirthBonus;
   gain *= 1 + goldBonusPercent / 100;
   gold += gain;
   updateUI();
 }, 1000);
 
-// Click effects
-
+// --- Effects ---
 function showClickEffect(x, y, text, isCrit = false) {
   const span = document.createElement('span');
   span.className = 'floating-text';
@@ -171,7 +172,6 @@ function showClickEffect(x, y, text, isCrit = false) {
   if (isCrit) span.classList.add('crit');
   clickEffects.appendChild(span);
   setTimeout(() => span.remove(), 1000);
-
   if (isCrit) {
     createParticleBurst(x, y);
     shakeScreen();
@@ -194,13 +194,9 @@ function createParticleBurst(x, y) {
 }
 
 function shakeScreen() {
-  const intensity = 5;
-  const duration = 300;
-  let elapsed = 0;
-  const interval = 16;
-  const body = document.body;
-  const originalStyle = body.style.transform;
-
+  const intensity = 5, duration = 300;
+  let elapsed = 0, interval = 16;
+  const body = document.body, originalStyle = body.style.transform;
   function shake() {
     if (elapsed < duration) {
       const x = (Math.random() - 0.5) * intensity;
@@ -208,32 +204,21 @@ function shakeScreen() {
       body.style.transform = `translate(${x}px, ${y}px)`;
       elapsed += interval;
       setTimeout(shake, interval);
-    } else {
-      body.style.transform = originalStyle;
-    }
+    } else body.style.transform = originalStyle;
   }
   shake();
 }
 
-// Save/load
-
+// --- Save/Load/Reset ---
 function saveGame() {
   const saveData = {
-    gold,
-    goldPerClick,
-    goldPerSecond,
-    rebirthLevel,
-    rebirthPoints,
-    rebirthCost,
-    rebirthBonus,
-    critChance,
-    goldBonusPercent,
+    gold, goldPerClick, goldPerSecond,
+    rebirthLevel, rebirthPoints, rebirthCost,
+    rebirthBonus, critChance, goldBonusPercent,
     prestigeUpgrades,
     upgrades: {
       clickPowerCost: upgrades.clickPower.cost,
-      clickPowerOwned: upgrades.clickPower.owned,
-      autoMinerCost: upgrades.autoMiner.cost,
-      autoMinerOwned: upgrades.autoMiner.owned
+      autoMinerCost: upgrades.autoMiner.cost
     }
   };
   localStorage.setItem('idleClickerSave', JSON.stringify(saveData));
@@ -243,29 +228,25 @@ function loadGame() {
   const saved = localStorage.getItem('idleClickerSave');
   if (saved) {
     const data = JSON.parse(saved);
-    gold = data.gold || 0;
-    goldPerClick = data.goldPerClick || 1;
-    goldPerSecond = data.goldPerSecond || 0;
-    rebirthLevel = data.rebirthLevel || 0;
-    rebirthPoints = data.rebirthPoints || 0;
-    rebirthCost = data.rebirthCost || 1000;
-    rebirthBonus = data.rebirthBonus || 1;
-    critChance = data.critChance || 0;
-    goldBonusPercent = data.goldBonusPercent || 0;
+    Object.assign(this, data);
     prestigeUpgrades = data.prestigeUpgrades || prestigeUpgrades;
-
     upgrades.clickPower.cost = data.upgrades?.clickPowerCost || 10;
-    upgrades.clickPower.owned = data.upgrades?.clickPowerOwned || 0;
     upgrades.autoMiner.cost = data.upgrades?.autoMinerCost || 50;
-    upgrades.autoMiner.owned = data.upgrades?.autoMinerOwned || 0;
-
-    rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
-
+    recalculateRebirthBonus();
     updateUI();
     updateEvolutionImage();
     updatePrestigeInfo();
   }
 }
+
+function resetGame() {
+  if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+    localStorage.removeItem('idleClickerSave');
+    location.reload();
+  }
+}
+
+document.getElementById('resetBtn').addEventListener('click', resetGame);
 
 setInterval(saveGame, 15000);
 loadGame();
