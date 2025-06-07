@@ -226,14 +226,27 @@ function saveGame() {
 
 function loadGame() {
   const saved = localStorage.getItem('idleClickerSave');
-  if (saved) {
-    const data = JSON.parse(saved);
-    gold = data.gold ?? 0;
-    goldPerClick = data.goldPerClick ?? 1;
-    goldPerSecond = data.goldPerSecond ?? 0;
+  if (!saved) return;
 
-    rebirthLevel = data.rebirthLevel ?? 0;
-    rebirthPoints = data.rebirthPoints ?? 0;
+  try {
+    const data = JSON.parse(saved);
+
+    // Validate essential fields
+    if (
+      typeof data.gold !== 'number' ||
+      typeof data.goldPerClick !== 'number' ||
+      typeof data.goldPerSecond !== 'number' ||
+      typeof data.rebirthLevel !== 'number' ||
+      typeof data.rebirthPoints !== 'number'
+    ) throw new Error("Corrupted save data");
+
+    // Assign safely
+    gold = data.gold;
+    goldPerClick = data.goldPerClick;
+    goldPerSecond = data.goldPerSecond;
+
+    rebirthLevel = data.rebirthLevel;
+    rebirthPoints = data.rebirthPoints;
     rebirthCost = data.rebirthCost ?? 1000;
     rebirthBonus = data.rebirthBonus ?? 1;
 
@@ -249,8 +262,15 @@ function loadGame() {
     updateUI();
     updateEvolutionImage();
     updatePrestigeInfo();
+
+  } catch (e) {
+    console.warn("Failed to load save data. Resetting.", e);
+    localStorage.removeItem('idleClickerSave');
+    alert("Save data was corrupted and has been reset.");
+    location.reload(); // Clean reload
   }
 }
+
 
 
 function resetGame() {
