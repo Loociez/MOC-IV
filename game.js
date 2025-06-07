@@ -228,16 +228,30 @@ function loadGame() {
   const saved = localStorage.getItem('idleClickerSave');
   if (saved) {
     const data = JSON.parse(saved);
-    Object.assign(this, data);
+    gold = data.gold ?? 0;
+    goldPerClick = data.goldPerClick ?? 1;
+    goldPerSecond = data.goldPerSecond ?? 0;
+
+    rebirthLevel = data.rebirthLevel ?? 0;
+    rebirthPoints = data.rebirthPoints ?? 0;
+    rebirthCost = data.rebirthCost ?? 1000;
+    rebirthBonus = data.rebirthBonus ?? 1;
+
+    critChance = data.critChance ?? 0;
+    goldBonusPercent = data.goldBonusPercent ?? 0;
+
     prestigeUpgrades = data.prestigeUpgrades || prestigeUpgrades;
+
     upgrades.clickPower.cost = data.upgrades?.clickPowerCost || 10;
     upgrades.autoMiner.cost = data.upgrades?.autoMinerCost || 50;
+
     recalculateRebirthBonus();
     updateUI();
     updateEvolutionImage();
     updatePrestigeInfo();
   }
 }
+
 
 function resetGame() {
   if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
