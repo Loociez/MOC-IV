@@ -198,8 +198,14 @@ function handleSelection(npc, checkbox) {
 function showComparison(npc1, npc2) {
   const table = document.querySelector('#comparisonTable tbody');
   table.innerHTML = '';
-  const stats1 = npc1.stats || {};
-  const stats2 = npc2.stats || {};
+
+  // Merge stats and vitals into a single comparison object
+  const stats1 = { ...npc1.stats };
+  const stats2 = { ...npc2.stats };
+
+  if (npc1.vitals && npc1.vitals.hp !== undefined) stats1.HP = npc1.vitals.hp;
+  if (npc2.vitals && npc2.vitals.hp !== undefined) stats2.HP = npc2.vitals.hp;
+
   const allKeys = new Set([...Object.keys(stats1), ...Object.keys(stats2)]);
 
   allKeys.forEach(key => {
@@ -234,6 +240,7 @@ function showComparison(npc1, npc2) {
 
   document.getElementById('comparisonModal').style.display = 'flex';
 }
+
 
 function closeModal() {
   document.getElementById('comparisonModal').style.display = 'none';
