@@ -159,14 +159,26 @@ function displayNPCs(npcs) {
     row.appendChild(descCell);
 
     const statsCell = document.createElement('td');
-    const stats = npc.stats ? Object.entries(npc.stats).map(([k, v]) => `${k}: ${v}`).join('\n') : 'No stats';
-    statsCell.textContent = stats;
+    let statsText = '';
+
+    if (npc.stats) {
+      statsText = Object.entries(npc.stats)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n');
+    }
+
+    if (npc.hp !== undefined) {
+      statsText += (statsText ? '\n' : '') + `HP: ${npc.hp}`;
+    }
+
+    statsCell.textContent = statsText || 'No stats';
     statsCell.style.whiteSpace = 'pre-line';
     row.appendChild(statsCell);
 
     tbody.appendChild(row);
   });
 }
+
 
 function handleSelection(npc, checkbox) {
   if (checkbox.checked) {
