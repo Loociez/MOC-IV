@@ -167,9 +167,12 @@ function displayNPCs(npcs) {
         .join('\n');
     }
 
-    if (npc.hp !== undefined) {
-      statsText += (statsText ? '\n' : '') + `HP: ${npc.hp}`;
-    }
+   if (npc.vitals) {
+  const { hp, mp, sp } = npc.vitals;
+  statsText += (statsText ? '\n' : '') + `HP: ${hp}`;
+  if (mp) statsText += `\nMP: ${mp}`;
+  if (sp) statsText += `\nSP: ${sp}`;
+}
 
     statsCell.textContent = statsText || 'No stats';
     statsCell.style.whiteSpace = 'pre-line';
