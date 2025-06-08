@@ -103,7 +103,7 @@
     </style>
 </head>
 <body>
-    <h1 id="itemListHeading">Last Known 06/08/25 - Item List</h1>
+    <h1 id="itemListHeading">Last Known 06/05/25 - Item List</h1>
 	<select id="languageSelector" onchange="changeLanguage(this.value)">
         <option value="en">English</option>
         <option value="es">Español</option>
@@ -257,8 +257,26 @@ async function fetchAndDisplayItems() {
             const dataCell = document.createElement('td');
             let stats = item.data ? Object.entries(item.data) : [];
             if (item.tile_range) stats.push(['tile range', item.tile_range]);
-            const formattedData = stats.map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`).join('\n');
-            dataCell.textContent = formattedData.trim() || 'No stats';
+            const groupedStats = {};
+stats.forEach(([key, value]) => {
+    const match = key.match(/^(min|max)_(.+)$/);
+    if (match) {
+        const [, bound, statName] = match;
+        if (!groupedStats[statName]) groupedStats[statName] = {};
+        groupedStats[statName][bound] = value;
+    } else {
+        groupedStats[key] = value;
+    }
+});
+
+const formattedData = Object.entries(groupedStats).map(([key, value]) => {
+    if (typeof value === 'object' && value.min !== undefined && value.max !== undefined) {
+        return `${key}: ${value.min} - ${value.max}`;
+    }
+    return `${key.replace(/_/g, ' ')}: ${value}`;
+}).join('\n');
+
+dataCell.textContent = formattedData.trim() || 'No stats';
             dataCell.classList.add('data');
             row.appendChild(dataCell);
 
@@ -296,42 +314,7 @@ async function fetchAndDisplayItems() {
     }
 }
 
- function formatStats(data) {
-      const merged = {};
-      const output = [];
-      for (const [key, value] of Object.entries(data || {})) {
-        const lowerKey = key.toLowerCase();
-        if (lowerKey === "damage stat") continue;
-        const isMin = lowerKey.startsWith("min ");
-        const isMax = lowerKey.startsWith("max ");
-        if (isMin || isMax) {
-          const statName = lowerKey.slice(4);
-          if (!merged[statName]) merged[statName] = {};
-          if (isMin) merged[statName].min = value;
-          if (isMax) merged[statName].max = value;
-        } else {
-          merged[lowerKey] = { value };
-        }
-      }
-      for (const [key, val] of Object.entries(merged)) {
-        if ('min' in val || 'max' in val) {
-          const min = val.min ?? 0;
-          const max = val.max ?? 0;
-          output.push(`${key}: ${min} - ${max}`);
-        } else {
-          output.push(`${key}: ${val.value}`);
-        }
-      }
-      return output.join('\n');
-    }
 
-    // Inside fetchAndDisplayItems()
-    const formattedData = formatStats(item.data);
-    dataCell.textContent = formattedData.trim() || 'No stats';
-
-    // Inside displayComparison()
-    statsCell1.textContent = formatStats(stats1);
-    statsCell2.textContent = formatStats(stats2);
 
         function handleItemSelection(item, checkbox) {
             if (checkbox.checked) {
