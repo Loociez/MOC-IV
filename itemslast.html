@@ -128,6 +128,7 @@
     <button onclick="clearComparison()">Clear Comparison</button>
 	<button onclick="clearFavorites()">Clear Favorites</button>
     <button onclick="generateShareLink()">Share Comparison</button>
+	<button onclick="copySelectedItem()">Copy</button>
 
     <table id="itemTable">
         <thead>
@@ -529,6 +530,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 100); // Check every 100ms
 }
+function copySelectedItem() {
+    if (selectedItems.length === 0) {
+        alert("Please select at least one item.");
+        return;
+    }
+
+    const item = selectedItems[0]; // Copy only the first selected item
+    const stats = item.data ? Object.entries(item.data) : [];
+    const excludedKeys = [
+        "hue", "move", "spin", "alpha", "scale", "sprite",
+        "brightness", "saturation", "damage stat"
+    ];
+
+    const groupedStats = {};
+    stats.forEach(([key, value]) => {
+        if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
+
+        const match = key.match(/^(min|max)_(.+)$/);
+        if (match) {
+            const [, bound, statName] = match;
+            if (!groupedStats[statName]) groupedStats[statName] = {};
+            groupedStats[statName][bound] = value;
+        } else {
+            groupedStats[key] = value;
+        }
+    });
+
+    const formattedStats = Object.entries(groupedStats).map(([key, value]) => {
+        if (typeof value === 'object') {
+            const min = value.min;
+            const max = value.max;
+            if (min !== undefined && max !== undefined) {
+                return `${key}: ${min} - ${max}`;
+            } else if (min !== undefined) {
+                return `${key} (min): ${min}`;
+            } else if (max !== undefined) {
+                return `${key} (max): ${max}`;
+            } else {
+                return `${key}: ?`;
+            }
+        }
+        return `${key.replace(/_/g, ' ')}: ${value}`;
+    }).join('\n');
+
+    const textToCopy = `${item.name}\n${item.desc || 'No description'}\n${formattedStats}`;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        alert("Copied to clipboard!");
+    }).catch(err => {
+        console.error("Failed to copy:", err);
+        alert("Copy failed.");
+    });
+}
+
 function toggleFavorite(item) {
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     
