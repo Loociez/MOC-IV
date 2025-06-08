@@ -257,8 +257,17 @@ async function fetchAndDisplayItems() {
             const dataCell = document.createElement('td');
             let stats = item.data ? Object.entries(item.data) : [];
             if (item.tile_range) stats.push(['tile range', item.tile_range]);
-            const groupedStats = {};
+            // Exclude certain keys and anything starting with !
+const excludedKeys = [
+    "hue", "move", "spin", "alpha", "scale", "sprite",
+    "brightness", "saturation", "damage stat"
+];
+
+// Group min and max into stat ranges like "atk: 10 - 40"
+const groupedStats = {};
 stats.forEach(([key, value]) => {
+    if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
+
     const match = key.match(/^(min|max)_(.+)$/);
     if (match) {
         const [, bound, statName] = match;
@@ -280,7 +289,6 @@ const formattedData = Object.entries(groupedStats).map(([key, value]) => {
         } else if (max !== undefined) {
             return `${key} (max): ${max}`;
         } else {
-            // Shouldn't happen, but just in case
             return `${key}: ?`;
         }
     }
