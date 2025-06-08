@@ -270,8 +270,19 @@ stats.forEach(([key, value]) => {
 });
 
 const formattedData = Object.entries(groupedStats).map(([key, value]) => {
-    if (typeof value === 'object' && value.min !== undefined && value.max !== undefined) {
-        return `${key}: ${value.min} - ${value.max}`;
+    if (typeof value === 'object') {
+        const min = value.min;
+        const max = value.max;
+        if (min !== undefined && max !== undefined) {
+            return `${key}: ${min} - ${max}`;
+        } else if (min !== undefined) {
+            return `${key} (min): ${min}`;
+        } else if (max !== undefined) {
+            return `${key} (max): ${max}`;
+        } else {
+            // Shouldn't happen, but just in case
+            return `${key}: ?`;
+        }
     }
     return `${key.replace(/_/g, ' ')}: ${value}`;
 }).join('\n');
