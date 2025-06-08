@@ -52,7 +52,7 @@ function updatePrestigeInfo() {
   document.getElementById('luckyTouchInfo').innerText = `Owned: ${prestigeUpgrades.luckyTouch} (+${prestigeUpgrades.luckyTouch * 2}% Crit Chance)`;
   document.getElementById('clickForgeInfo').innerText = `Owned: ${prestigeUpgrades.clickForge} (+${prestigeUpgrades.clickForge} Click Power)`;
   document.getElementById('autoMinerBoostInfo').innerText = `Owned: ${prestigeUpgrades.autoMinerBoost} (+${prestigeUpgrades.autoMinerBoost} Gold/sec)`;
-  document.getElementById('rebirthPowerInfo').innerText = `Owned: ${prestigeUpgrades.rebirthPower} (+${prestigeUpgrades.rebirthPower * 50}% Rebirth Bonus)`;
+  document.getElementById('rebirthPowerInfo').innerText = `Owned: ${prestigeUpgrades.rebirthPower} (+${prestigeUpgrades.rebirthPower * 2}% Rebirth Bonus)`;
   document.getElementById('megaMinerInfo').innerText = `Owned: ${prestigeUpgrades.megaMiner} (+${prestigeUpgrades.megaMiner * 5} Gold/sec)`;
   document.getElementById('critMasteryInfo').innerText = `Owned: ${prestigeUpgrades.critMastery} (+${prestigeUpgrades.critMastery * 0.5}x Crit Damage)`;
   document.getElementById('efficientClicksInfo').innerText = `Owned: ${prestigeUpgrades.efficientClicks} (+${prestigeUpgrades.efficientClicks}% Click Gold Bonus)`;
