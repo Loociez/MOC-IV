@@ -128,7 +128,9 @@
     <button onclick="clearComparison()">Clear Comparison</button>
 	<button onclick="clearFavorites()">Clear Favorites</button>
     <button onclick="generateShareLink()">Share Comparison</button>
-	<button onclick="copySelectedItem()">Copy</button>
+	<button onclick="copyStats()">Copy Stats</button>
+<button onclick="copyDescription()">Copy Description</button>
+
 
     <table id="itemTable">
         <thead>
@@ -530,13 +532,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 100); // Check every 100ms
 }
-function copySelectedItem() {
+function copyStats() {
     if (selectedItems.length === 0) {
         alert("Please select at least one item.");
         return;
     }
 
-    const item = selectedItems[0]; // Copy only the first selected item
+    const item = selectedItems[0];
     const stats = item.data ? Object.entries(item.data) : [];
     const excludedKeys = [
         "hue", "move", "spin", "alpha", "scale", "sprite",
@@ -574,11 +576,28 @@ function copySelectedItem() {
         return `${key.replace(/_/g, ' ')}: ${value}`;
     }).join('\n');
 
-    const textToCopy = `${item.name}\n${item.desc || 'No description'}\n${formattedStats}`;
+    const textToCopy = `${item.name}\n${formattedStats}`;
     navigator.clipboard.writeText(textToCopy).then(() => {
-        alert("Copied to clipboard!");
+        alert("Stats copied to clipboard!");
     }).catch(err => {
-        console.error("Failed to copy:", err);
+        console.error("Failed to copy stats:", err);
+        alert("Copy failed.");
+    });
+}
+
+function copyDescription() {
+    if (selectedItems.length === 0) {
+        alert("Please select at least one item.");
+        return;
+    }
+
+    const item = selectedItems[0];
+    const textToCopy = `${item.name}\n${item.desc || 'No description'}`;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        alert("Description copied to clipboard!");
+    }).catch(err => {
+        console.error("Failed to copy description:", err);
         alert("Copy failed.");
     });
 }
