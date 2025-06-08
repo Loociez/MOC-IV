@@ -59,7 +59,7 @@ function updatePrestigeInfo() {
 }
 
 function updateEvolutionImage() {
-  const stage = Math.min(rebirthLevel, 5);
+  const stage = Math.min(rebirthLevel, 10);
   evolutionImage.src = `images/stage${stage}.png`;
 }
 
