@@ -30786,26 +30786,26 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 0,
-      "max_mp": -15,
-      "max_sp": 0,
-      "max_atk": 340,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 340,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
-      "two_handed": true,
-      "damage_stat": 0,
       "!dragoon_npcaoe_damage": "5",
       "!dragoon_playeraoe_damage": "5",
-      "!barbarian_alldamage_amount": "10"
+      "!barbarian_alldamage_amount": "10",
+      "min_atk": 340,
+      "max_atk": 340,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0,
+      "two_handed": true
     }
   },
   {
@@ -31462,24 +31462,24 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 175,
+      "!cleric_petheal_amount": "150",
+      "!cleric_playerheal_amount": "150",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": -25,
+      "max_def": -15,
+      "min_rat": 130,
+      "max_rat": 130,
+      "min_rdf": -25,
+      "max_rdf": -15,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": -25,
+      "max_mdf": -15,
+      "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": -15,
-      "max_mat": 0,
-      "max_mdf": -15,
-      "max_rat": 150,
-      "max_rdf": -15,
-      "min_atk": 0,
-      "min_def": -15,
-      "min_mat": 0,
-      "min_mdf": -15,
-      "min_rat": 140,
-      "min_rdf": -15,
-      "damage_stat": 2,
-      "!cleric_petheal_amount": "150",
-      "!cleric_playerheal_amount": "150"
+      "damage_stat": 2
     }
   },
   {
@@ -31659,7 +31659,7 @@
     "show_name": false,
     "spawn_delay": 60,
     "type": 1,
-    "uses": 4750,
+    "uses": 8000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -31673,23 +31673,6 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": -1250,
-      "max_mp": -15,
-      "max_sp": -25,
-      "max_atk": 372,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 360,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
-      "two_handed": false,
-      "damage_stat": 0,
       "!cleric_petheal_amount": "80",
       "!dragoon_npcaoe_damage": "3",
       "!necromancer_minion_hp": "10",
@@ -31705,7 +31688,24 @@
       "!assassin_playerpoison_ticks": "1",
       "!samurai_playerriposte_ticks": "1",
       "!assassin_cloak_shorteruptime": "33",
-      "!marksman_playershotgun_damage": "60"
+      "!marksman_playershotgun_damage": "60",
+      "min_atk": 360,
+      "max_atk": 372,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": -700,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0,
+      "two_handed": false
     }
   },
   {
@@ -32907,7 +32907,7 @@
     }
   },
   {
-    "name": "Bloodseeker's Rune",
+    "name": "Bloodseekers Rune",
     "desc": "Increases physical attack on an equipped item slot. [+5 Damage]",
     "revision": 0,
     "sprite": 1226,
@@ -32923,16 +32923,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -32956,16 +32956,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 3000,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 1,
+    "skill_id": 14,
+    "skill_level_req": 25,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -32989,16 +32989,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 10000,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -33022,16 +33022,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 25,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -33667,29 +33667,29 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 400,
-      "max_mp": 0,
-      "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 420,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 0,
-      "min_def": 0,
-      "min_mat": 400,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
-      "two_handed": true,
-      "damage_stat": 4,
       "!cleric_petheal_amount": "110",
       "!warlock_npcaoe_damage": "3",
       "!necromancer_minion_cost": "10",
       "!cleric_playerheal_amount": "120",
       "!warlock_playeraoe_damage": "3",
-      "!necromancer_minion_damage": "-5"
+      "!necromancer_minion_damage": "-5",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 400,
+      "max_mat": 420,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 4,
+      "two_handed": true
     }
   },
   {
@@ -35304,7 +35304,7 @@
     }
   },
   {
-    "name": "Recipe #2",
+    "name": "Recipe: Molten Blade",
     "desc": "Obtained from a vendor within Volcano",
     "revision": 0,
     "sprite": 227,
@@ -35329,13 +35329,13 @@
     "level_req": 50,
     "prof_req_flags": -1,
     "skill_id": 10,
-    "skill_level_req": 20,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 836,
       "amount": 1,
       "chance": 100,
-      "item_id": 836,
       "recipe_items": [
         {
           "amount": 1,
@@ -35381,7 +35381,7 @@
     }
   },
   {
-    "name": "Recipe#1",
+    "name": "Recipe: Reinforced Molten Shield",
     "desc": "Obtained from a vendor within Volcano",
     "revision": 0,
     "sprite": 227,
@@ -35406,13 +35406,13 @@
     "level_req": 50,
     "prof_req_flags": -1,
     "skill_id": 10,
-    "skill_level_req": 20,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 728,
       "amount": 1,
       "chance": 100,
-      "item_id": 728,
       "recipe_items": [
         {
           "amount": 25,
@@ -35459,7 +35459,7 @@
     }
   },
   {
-    "name": "Recipe #3",
+    "name": "Recipe: Flammenschwert",
     "desc": "Obtained from a vendor within Volcano",
     "revision": 0,
     "sprite": 227,
@@ -35484,13 +35484,13 @@
     "level_req": 50,
     "prof_req_flags": -1,
     "skill_id": 10,
-    "skill_level_req": 20,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 725,
       "amount": 1,
       "chance": 100,
-      "item_id": 725,
       "recipe_items": [
         {
           "amount": 1,
@@ -35536,7 +35536,7 @@
     }
   },
   {
-    "name": "Recipe #4",
+    "name": "Recipe: Vial of Ashes",
     "desc": "Obtained from a vendor within Volcano",
     "revision": 0,
     "sprite": 227,
@@ -35565,9 +35565,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 742,
       "amount": 1,
       "chance": 100,
-      "item_id": 742,
       "recipe_items": [
         {
           "amount": 100,
@@ -35943,7 +35943,7 @@
     }
   },
   {
-    "name": "Recipe #5",
+    "name": "Recipe: Burning Binoculars",
     "desc": "Obtained from a vendor in Volcano",
     "revision": 0,
     "sprite": 227,
@@ -35968,13 +35968,13 @@
     "level_req": 50,
     "prof_req_flags": -1,
     "skill_id": 10,
-    "skill_level_req": 20,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 795,
       "amount": 1,
       "chance": 100,
-      "item_id": 795,
       "recipe_items": [
         {
           "amount": 100,
@@ -36397,7 +36397,7 @@
     "show_name": false,
     "spawn_delay": 60,
     "type": 1,
-    "uses": 6000,
+    "uses": 8000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -36411,26 +36411,26 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!dragoon_npcaoe_damage": "3",
+      "!dragoon_playeraoe_damage": "3",
+      "!barbarian_alldamage_amount": "10",
+      "min_atk": 340,
+      "max_atk": 340,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 250,
       "max_mp": -15,
       "max_sp": 0,
-      "max_atk": 340,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 340,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
-      "two_handed": true,
       "damage_stat": 0,
-      "!dragoon_npcaoe_damage": "3",
-      "!dragoon_playeraoe_damage": "3",
-      "!barbarian_alldamage_amount": "10"
+      "two_handed": true
     }
   },
   {
@@ -36956,7 +36956,7 @@
     }
   },
   {
-    "name": "Recipe #6",
+    "name": "Recipe: Volcanic Flower",
     "desc": "Obtained from a vendor in Volcano",
     "revision": 0,
     "sprite": 227,
@@ -36985,9 +36985,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 723,
       "amount": 1,
       "chance": 100,
-      "item_id": 723,
       "recipe_items": [
         {
           "amount": 100,
@@ -37033,7 +37033,7 @@
     }
   },
   {
-    "name": "Recipe #7",
+    "name": "Recipe: Fools Disorientation",
     "desc": "Obtained from a vendor in Volcano",
     "revision": 0,
     "sprite": 227,
@@ -37062,9 +37062,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 909,
       "amount": 1,
       "chance": 100,
-      "item_id": 909,
       "recipe_items": [
         {
           "amount": 150,
@@ -39187,7 +39187,7 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#cc6600",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
     "type": 3,
@@ -39205,21 +39205,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 17,
+      "max_atk": 20,
+      "min_def": 10,
+      "max_def": 20,
+      "min_rat": 17,
+      "max_rat": 20,
+      "min_rdf": 10,
+      "max_rdf": 20,
+      "min_mat": 22,
+      "max_mat": 25,
+      "min_mdf": 10,
+      "max_mdf": 20,
       "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 20,
-      "max_def": 20,
-      "max_mat": 25,
-      "max_mdf": 20,
-      "max_rat": 20,
-      "max_rdf": 20,
-      "min_atk": 17,
-      "min_def": 10,
-      "min_mat": 22,
-      "min_mdf": 10,
-      "min_rat": 17,
-      "min_rdf": 10,
       "damage_stat": 4
     }
   },
@@ -39792,7 +39792,7 @@
     "show_name": false,
     "spawn_delay": 60,
     "type": 1,
-    "uses": 6000,
+    "uses": 8000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -39806,23 +39806,6 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 325,
-      "max_mp": 0,
-      "max_sp": 0,
-      "max_atk": 325,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 15,
-      "max_rat": 0,
-      "max_rdf": 15,
-      "min_atk": 325,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 10,
-      "min_rat": 0,
-      "min_rdf": 10,
-      "two_handed": false,
-      "damage_stat": 0,
       "!bard_buff_uptime": "7",
       "!cleric_petheal_amount": "165",
       "!dragoon_npcaoe_damage": "5",
@@ -39836,7 +39819,24 @@
       "!barbarian_alldamage_amount": "15",
       "!jester_playerconfuse_uptime": "8",
       "!assassin_playerpoison_damage": "7",
-      "!samurai_playerriposte_damage": "10"
+      "!samurai_playerriposte_damage": "10",
+      "min_atk": 325,
+      "max_atk": 325,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 10,
+      "max_rdf": 15,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 10,
+      "max_mdf": 15,
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0,
+      "two_handed": false
     }
   },
   {
@@ -40282,39 +40282,39 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
     "type": 3,
-    "uses": 1,
+    "uses": 6000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
+    "repair_cost": 2450,
+    "break_chance": 5,
+    "recycle_value": 6000,
+    "level_req": 35,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 17,
+      "max_atk": 20,
+      "min_def": 10,
+      "max_def": 20,
+      "min_rat": 22,
+      "max_rat": 25,
+      "min_rdf": 10,
+      "max_rdf": 20,
+      "min_mat": 17,
+      "max_mat": 20,
+      "min_mdf": 10,
+      "max_mdf": 20,
       "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 20,
-      "max_def": 20,
-      "max_mat": 20,
-      "max_mdf": 20,
-      "max_rat": 25,
-      "max_rdf": 20,
-      "min_atk": 17,
-      "min_def": 10,
-      "min_mat": 17,
-      "min_mdf": 10,
-      "min_rat": 22,
-      "min_rdf": 10,
       "damage_stat": 0
     }
   },
@@ -40421,11 +40421,11 @@
     "sprite": 2815,
     "sprite_color": {
       "alpha": 1,
-      "hue": 180,
+      "hue": 0,
       "saturation": 50,
       "brightness": 125
     },
-    "scale": 0.4,
+    "scale": 0.35,
     "color": "#FFA500",
     "show_name": true,
     "spawn_delay": 0,
@@ -41516,19 +41516,19 @@
     }
   },
   {
-    "name": "",
+    "name": "Lesser Essence",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2815,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.3,
+    "color": "#FFA500",
+    "show_name": true,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
@@ -41542,26 +41542,26 @@
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
     }
   },
   {
-    "name": "",
+    "name": "Greater Essence",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2815,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 270,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.4,
+    "color": "#FFA500",
+    "show_name": true,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
@@ -41575,7 +41575,7 @@
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
@@ -45174,9 +45174,9 @@
     }
   },
   {
-    "name": "Pilin Rune",
+    "name": "Pilins Rune",
     "desc": "Increases range attack on an equipped item slot [+3 Damage]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 1224,
     "sprite_color": {
       "alpha": 1,
@@ -45190,16 +45190,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45209,7 +45209,7 @@
   {
     "name": "Tyr Rune",
     "desc": "Increases range attack on an equipped item slot [+1 to 5 Damage]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 1224,
     "sprite_color": {
       "alpha": 1,
@@ -45223,16 +45223,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 25,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45241,8 +45241,8 @@
   },
   {
     "name": "Rune of Life",
-    "desc": "Increases HP on an equipped item slot [+80 HP]",
-    "revision": 0,
+    "desc": "Increases HP on an equipped item slot [+100 HP]",
+    "revision": 1,
     "sprite": 2005,
     "sprite_color": {
       "alpha": 1,
@@ -45260,8 +45260,8 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -45275,7 +45275,7 @@
   {
     "name": "Rune of Magic",
     "desc": "Increases MP on an equipped item slot. [+10 MP]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 2005,
     "sprite_color": {
       "alpha": 1,
@@ -45293,12 +45293,12 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 35,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45308,7 +45308,7 @@
   {
     "name": "Rune of Stamina",
     "desc": "Increases SP on an equipped item slot [+10 SP]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 2005,
     "sprite_color": {
       "alpha": 1,
@@ -45322,16 +45322,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 100,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 35,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45341,7 +45341,7 @@
   {
     "name": "Rune of Hardening",
     "desc": "Increases physical defense on an equipped item slot [+3 Defense]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 2068,
     "sprite_color": {
       "alpha": 1,
@@ -45359,11 +45359,11 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 14,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
@@ -45374,7 +45374,7 @@
   {
     "name": "Rune of Arcane Shielding",
     "desc": "Increases magic defense on an equipped item slot [+3 Defense]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 2068,
     "sprite_color": {
       "alpha": 1,
@@ -45392,11 +45392,11 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 14,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
@@ -45407,7 +45407,7 @@
   {
     "name": "Rune of Pierce Protection",
     "desc": "Increases range defense on an equipped item slot [+3 Defense]",
-    "revision": 0,
+    "revision": 1,
     "sprite": 2068,
     "sprite_color": {
       "alpha": 1,
@@ -45425,8 +45425,8 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -45438,399 +45438,927 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rune of Hardening",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 50,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1031,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 81,
+          "amount": 100
+        },
+        {
+          "item_id": 315,
+          "amount": 50
+        },
+        {
+          "item_id": 29,
+          "amount": 5
+        },
+        {
+          "item_id": 943,
+          "amount": 3
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Recipe: Rune of Arcane Shielding",
+    "desc": "Click to combine resources into a Rune.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 222,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1032,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 82,
+          "amount": 40
+        },
+        {
+          "item_id": 315,
+          "amount": 50
+        },
+        {
+          "item_id": 197,
+          "amount": 3
+        },
+        {
+          "item_id": 943,
+          "amount": 3
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rune of Pierce Protection",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 150,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1033,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 82,
+          "amount": 40
+        },
+        {
+          "item_id": 315,
+          "amount": 50
+        },
+        {
+          "item_id": 196,
+          "amount": 3
+        },
+        {
+          "item_id": 943,
+          "amount": 3
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Bloodseekers Rune",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 339,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 771,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 84,
+          "amount": 60
+        },
+        {
+          "item_id": 37,
+          "amount": 5
+        },
+        {
+          "item_id": 315,
+          "amount": 200
+        },
+        {
+          "item_id": 925,
+          "amount": 10
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Pilins Rune",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 340,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1026,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 83,
+          "amount": 60
+        },
+        {
+          "item_id": 214,
+          "amount": 5
+        },
+        {
+          "item_id": 297,
+          "amount": 20
+        },
+        {
+          "item_id": 925,
+          "amount": 10
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magi's Rune",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 341,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 15,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 773,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 85,
+          "amount": 60
+        },
+        {
+          "item_id": 182,
+          "amount": 5
+        },
+        {
+          "item_id": 193,
+          "amount": 10
+        },
+        {
+          "item_id": 925,
+          "amount": 10
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Death Rune",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 380,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 333,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 25,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 772,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 84,
+          "amount": 80
+        },
+        {
+          "item_id": 879,
+          "amount": 1
+        },
+        {
+          "item_id": 531,
+          "amount": 3
+        },
+        {
+          "item_id": 315,
+          "amount": 300
+        },
+        {
+          "item_id": 925,
+          "amount": 15
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Tyr Rune",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 380,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 111,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 25,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1027,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 83,
+          "amount": 80
+        },
+        {
+          "item_id": 741,
+          "amount": 1
+        },
+        {
+          "item_id": 532,
+          "amount": 3
+        },
+        {
+          "item_id": 297,
+          "amount": 30
+        },
+        {
+          "item_id": 925,
+          "amount": 15
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Uruz Rune",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 380,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 222,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 25,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 774,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 85,
+          "amount": 80
+        },
+        {
+          "item_id": 217,
+          "amount": 1
+        },
+        {
+          "item_id": 536,
+          "amount": 3
+        },
+        {
+          "item_id": 261,
+          "amount": 1
+        },
+        {
+          "item_id": 925,
+          "amount": 15
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rune of Life",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 227,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 35,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1028,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 82,
+          "amount": 500
+        },
+        {
+          "item_id": 83,
+          "amount": 250
+        },
+        {
+          "item_id": 84,
+          "amount": 500
+        },
+        {
+          "item_id": 85,
+          "amount": 250
+        },
+        {
+          "item_id": 81,
+          "amount": 250
+        },
+        {
+          "item_id": 537,
+          "amount": 1
+        },
+        {
+          "item_id": 665,
+          "amount": 100
+        },
+        {
+          "item_id": 944,
+          "amount": 5
+        },
+        {
+          "item_id": 927,
+          "amount": 5
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rune of Magic",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 227,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 222,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 35,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1029,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 82,
+          "amount": 500
+        },
+        {
+          "item_id": 83,
+          "amount": 100
+        },
+        {
+          "item_id": 84,
+          "amount": 100
+        },
+        {
+          "item_id": 85,
+          "amount": 500
+        },
+        {
+          "item_id": 81,
+          "amount": 1000
+        },
+        {
+          "item_id": 537,
+          "amount": 1
+        },
+        {
+          "item_id": 261,
+          "amount": 2
+        },
+        {
+          "item_id": 647,
+          "amount": 150
+        },
+        {
+          "item_id": 944,
+          "amount": 5
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rune of Stamina",
+    "desc": "Click to combine resources into a Rune.",
+    "revision": 1,
+    "sprite": 227,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 65,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 35,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1030,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 82,
+          "amount": 500
+        },
+        {
+          "item_id": 83,
+          "amount": 500
+        },
+        {
+          "item_id": 84,
+          "amount": 250
+        },
+        {
+          "item_id": 85,
+          "amount": 250
+        },
+        {
+          "item_id": 81,
+          "amount": 250
+        },
+        {
+          "item_id": 537,
+          "amount": 1
+        },
+        {
+          "item_id": 384,
+          "amount": 3
+        },
+        {
+          "item_id": 649,
+          "amount": 150
+        },
+        {
+          "item_id": 944,
+          "amount": 5
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
@@ -46773,7 +47301,7 @@
     "cooldown_id": -1,
     "repair_cost": 6000,
     "break_chance": 5,
-    "recycle_value": 0,
+    "recycle_value": 10000,
     "level_req": 60,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -46781,21 +47309,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 150,
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 30,
+      "max_def": 30,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 35,
+      "max_rdf": 35,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 35,
+      "max_mdf": 35,
+      "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 30,
-      "max_mat": 0,
-      "max_mdf": 35,
-      "max_rat": 0,
-      "max_rdf": 35,
-      "min_atk": 0,
-      "min_def": 30,
-      "min_mat": 0,
-      "min_mdf": 35,
-      "min_rat": 0,
-      "min_rdf": 35,
       "damage_stat": 1
     }
   },
@@ -46821,7 +47349,7 @@
     "cooldown_id": -1,
     "repair_cost": 6000,
     "break_chance": 5,
-    "recycle_value": 0,
+    "recycle_value": 10000,
     "level_req": 60,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -46829,21 +47357,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 100,
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 26,
+      "max_def": 30,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 30,
+      "max_rdf": 30,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 30,
+      "max_mdf": 30,
+      "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 30,
-      "max_mat": 0,
-      "max_mdf": 30,
-      "max_rat": 0,
-      "max_rdf": 30,
-      "min_atk": 0,
-      "min_def": 26,
-      "min_mat": 0,
-      "min_mdf": 26,
-      "min_rat": 0,
-      "min_rdf": 26,
       "damage_stat": 1
     }
   },
