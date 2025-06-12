@@ -200,37 +200,18 @@ async function fetchWithTimeout(url, timeout = 5000) {
     });
 }
 
-async function fetchWithFallback() {
-    const proxies = [
-	'', // Direct fetch without proxy
-    'https://api.allorigins.win/get?url=',
-	'https://cors-anywhere.herokuapp.com/',
-    'https://corsproxy.io/?',
-    'https://thingproxy.freeboard.io/fetch/',
-    'https://anyorigin.com/go?url=',
-    'https://crossorigin.me/',
-    ];
-    const targetUrl = 'last.json';
-
-    for (const proxy of proxies) {
-        const url = proxy ? `${proxy}${encodeURIComponent(targetUrl)}` : targetUrl;
-        console.log(`Trying to fetch from: ${proxy || 'Direct fetch'}`); // Debug log
-
-        try {
-            const response = await fetchWithTimeout(url, 5000); // Set a timeout of 5 seconds
-            const data = proxy.includes('allorigins')
-                ? JSON.parse((await response.json()).contents) // Unwrap AllOrigins response
-                : await response.json();
-
-            console.log(`Success! Data fetched from: ${proxy || 'Direct fetch'}`);
-            return data; // Return the fetched data
-        } catch (error) {
-            console.error(`Failed to fetch from: ${proxy || 'Direct fetch'} - ${error.message}`);
-        }
+async function fetchItemData() {
+    try {
+        const response = await fetch('last.json');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        console.log('Fetched item data:', data);
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch item data:', error);
     }
-
-    throw new Error('All proxies failed. Unable to fetch data.');
 }
+
 
 async function fetchAndDisplayItems() {
     try {
