@@ -714,11 +714,28 @@ document.addEventListener("DOMContentLoaded", () => {
         parseQueryAndDisplayComparison();
     </script>
 	<div style="text-align:center; margin: 20px;">
-    Unique Visitors:<br>
-    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Floociez.github.io%2FMOC-IV&count_bg=%237A00C4&title_bg=%23000000&icon=github.svg&icon_color=%23FFFFFF&title=visitors&edge_flat=false" alt="Visitor Counter">
+    Unique Visitors: <span id="visitorCount">Loading...</span>
 </div>
+<script>
+    const namespace = 'ItemViewer';
+    const key = 'unique_visitors';
 
-
+    // Call the CountAPI to increment only if user is new using localStorage
+    if (!localStorage.getItem('hasVisited')) {
+        fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('visitorCount').textContent = data.value;
+                localStorage.setItem('hasVisited', 'true');
+            });
+    } else {
+        fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('visitorCount').textContent = data.value;
+            });
+    }
+</script>
 
 </body>
 </html>
