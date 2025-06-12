@@ -713,5 +713,29 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchAndDisplayItems();
         parseQueryAndDisplayComparison();
     </script>
+	<div style="text-align:center; margin: 20px;">
+    Unique Visitors: <span id="visitorCount">Loading...</span>
+</div>
+<script>
+    const namespace = 'ItemViewer';
+    const key = 'unique_visitors';
+
+    // Call the CountAPI to increment only if user is new using localStorage
+    if (!localStorage.getItem('hasVisited')) {
+        fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('visitorCount').textContent = data.value;
+                localStorage.setItem('hasVisited', 'true');
+            });
+    } else {
+        fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('visitorCount').textContent = data.value;
+            });
+    }
+</script>
+
 </body>
 </html>
