@@ -215,7 +215,7 @@ async function fetchItemData() {
 
 async function fetchAndDisplayItems() {
     try {
-        const items = await fetchWithFallback();
+        const items = await fetchItemData();
         const tableBody = document.getElementById('itemTable').querySelector('tbody');
         tableBody.innerHTML = ''; // Clear existing table content
 
