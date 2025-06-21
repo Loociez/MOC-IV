@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My JS Pastebin</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+    .card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    pre { white-space: pre-wrap; word-wrap: break-word; background: #eee; padding: 10px; border-radius: 5px; }
+    button { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>📜 My JavaScript Scripts</h1>
+  <div id="scripts"></div>
+
+  <script>
+    const scriptList = ['my-script1.js', 'my-script2.js']; // Add your script filenames here
+    const container = document.getElementById('scripts');
+
+    scriptList.forEach(filename => {
+      fetch(`scripts/${filename}`)
+        .then(res => res.text())
+        .then(code => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3>${filename}</h3>
+            <pre id="code-${filename}">${code}</pre>
+            <button onclick="copyToClipboard('code-${filename}')">Copy to Clipboard</button>
+          `;
+          container.appendChild(card);
+        });
+    });
+
+    function copyToClipboard(id) {
+      const code = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(code).then(() => alert("Copied!"));
+    }
+  </script>
+</body>
+</html>
