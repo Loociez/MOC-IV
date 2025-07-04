@@ -16278,7 +16278,9 @@
       "!dragoon_invisible_cost": "5",
       "!warlock_playeraoe_cost": "5",
       "!necromancer_minion_cost": "5",
-      "!barbarian_alldamage_amount": "5"
+      "!samurai_npcriposte_damage": "10",
+      "!barbarian_alldamage_amount": "5",
+      "!samurai_playerriposte_damage": "10"
     }
   },
   {
@@ -28199,7 +28201,7 @@
       "max_hp": 0,
       "max_mp": 30,
       "max_sp": 0,
-      "max_atk": 20,
+      "max_atk": 15,
       "max_def": 0,
       "max_mat": 15,
       "max_mdf": 0,
@@ -28214,8 +28216,8 @@
       "damage_stat": 4,
       "!bard_buff_uptime": "3",
       "!cleric_allheal_radius": "1",
-      "!warlock_npcaoe_damage": "15",
-      "!warlock_playeraoe_damage": "15",
+      "!warlock_npcaoe_damage": "10",
+      "!warlock_playeraoe_damage": "10",
       "!necromancer_minion_damage": "7"
     }
   },
@@ -30335,15 +30337,15 @@
       "max_hp": 100,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 25,
+      "max_atk": 15,
       "max_def": 10,
-      "max_mat": 25,
+      "max_mat": 20,
       "max_mdf": 10,
       "max_rat": 0,
       "max_rdf": 10,
-      "min_atk": 20,
+      "min_atk": 15,
       "min_def": 10,
-      "min_mat": 25,
+      "min_mat": 20,
       "min_mdf": 10,
       "min_rat": 0,
       "min_rdf": 10,
@@ -30786,26 +30788,26 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!dragoon_npcaoe_damage": "5",
-      "!dragoon_playeraoe_damage": "5",
-      "!barbarian_alldamage_amount": "10",
-      "min_atk": 340,
-      "max_atk": 340,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 200,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 340,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 340,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": true,
       "damage_stat": 0,
-      "two_handed": true
+      "!dragoon_npcaoe_damage": "5",
+      "!dragoon_playeraoe_damage": "5",
+      "!barbarian_alldamage_amount": "10"
     }
   },
   {
@@ -31462,24 +31464,24 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!cleric_petheal_amount": "150",
-      "!cleric_playerheal_amount": "150",
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": -25,
-      "max_def": -15,
-      "min_rat": 130,
-      "max_rat": 130,
-      "min_rdf": -25,
-      "max_rdf": -15,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": -25,
-      "max_mdf": -15,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 2
+      "max_atk": 0,
+      "max_def": -15,
+      "max_mat": 0,
+      "max_mdf": -15,
+      "max_rat": 130,
+      "max_rdf": -15,
+      "min_atk": 0,
+      "min_def": -25,
+      "min_mat": 0,
+      "min_mdf": -25,
+      "min_rat": 130,
+      "min_rdf": -25,
+      "damage_stat": 2,
+      "!cleric_petheal_amount": "150",
+      "!cleric_playerheal_amount": "150"
     }
   },
   {
@@ -31673,6 +31675,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "max_hp": -700,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 372,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 360,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0,
       "!cleric_petheal_amount": "80",
       "!dragoon_npcaoe_damage": "3",
       "!necromancer_minion_hp": "10",
@@ -31688,24 +31707,7 @@
       "!assassin_playerpoison_ticks": "1",
       "!samurai_playerriposte_ticks": "1",
       "!assassin_cloak_shorteruptime": "33",
-      "!marksman_playershotgun_damage": "60",
-      "min_atk": 360,
-      "max_atk": 372,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": -700,
-      "max_mp": 0,
-      "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": false
+      "!marksman_playershotgun_damage": "60"
     }
   },
   {
@@ -33667,29 +33669,29 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 420,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 400,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": true,
+      "damage_stat": 4,
       "!cleric_petheal_amount": "110",
       "!warlock_npcaoe_damage": "3",
       "!necromancer_minion_cost": "10",
       "!cleric_playerheal_amount": "120",
       "!warlock_playeraoe_damage": "3",
-      "!necromancer_minion_damage": "-5",
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 400,
-      "max_mat": 420,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": 200,
-      "max_mp": 0,
-      "max_sp": 0,
-      "damage_stat": 4,
-      "two_handed": true
+      "!necromancer_minion_damage": "-5"
     }
   },
   {
@@ -34952,9 +34954,9 @@
       "sprite_rotation": 315,
       "!bard_buff_uptime": "3",
       "!cleric_allheal_radius": "2",
-      "!warlock_npcaoe_damage": "15",
+      "!warlock_npcaoe_damage": "10",
       "!necromancer_minion_cost": "-10",
-      "!warlock_playeraoe_damage": "15",
+      "!warlock_playeraoe_damage": "10",
       "!necromancer_minion_damage": "-5",
       "!warlock_npcaoe_highercost": "30",
       "!warlock_selfaoe_highercost": "30",
@@ -35333,9 +35335,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 836,
       "amount": 1,
       "chance": 100,
+      "item_id": 836,
       "recipe_items": [
         {
           "amount": 1,
@@ -35410,9 +35412,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 728,
       "amount": 1,
       "chance": 100,
+      "item_id": 728,
       "recipe_items": [
         {
           "amount": 25,
@@ -35488,9 +35490,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 725,
       "amount": 1,
       "chance": 100,
+      "item_id": 725,
       "recipe_items": [
         {
           "amount": 1,
@@ -35565,9 +35567,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 742,
       "amount": 1,
       "chance": 100,
+      "item_id": 742,
       "recipe_items": [
         {
           "amount": 100,
@@ -35972,9 +35974,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 795,
       "amount": 1,
       "chance": 100,
+      "item_id": 795,
       "recipe_items": [
         {
           "amount": 100,
@@ -36411,26 +36413,26 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!dragoon_npcaoe_damage": "3",
-      "!dragoon_playeraoe_damage": "3",
-      "!barbarian_alldamage_amount": "10",
-      "min_atk": 340,
-      "max_atk": 340,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 250,
       "max_mp": -15,
       "max_sp": 0,
+      "max_atk": 340,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 340,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": true,
       "damage_stat": 0,
-      "two_handed": true
+      "!dragoon_npcaoe_damage": "3",
+      "!dragoon_playeraoe_damage": "3",
+      "!barbarian_alldamage_amount": "10"
     }
   },
   {
@@ -36985,9 +36987,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 723,
       "amount": 1,
       "chance": 100,
+      "item_id": 723,
       "recipe_items": [
         {
           "amount": 100,
@@ -37062,9 +37064,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 909,
       "amount": 1,
       "chance": 100,
+      "item_id": 909,
       "recipe_items": [
         {
           "amount": 150,
@@ -39205,21 +39207,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 17,
-      "max_atk": 20,
-      "min_def": 10,
-      "max_def": 20,
-      "min_rat": 17,
-      "max_rat": 20,
-      "min_rdf": 10,
-      "max_rdf": 20,
-      "min_mat": 22,
-      "max_mat": 25,
-      "min_mdf": 10,
-      "max_mdf": 20,
       "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 20,
+      "max_def": 20,
+      "max_mat": 25,
+      "max_mdf": 20,
+      "max_rat": 20,
+      "max_rdf": 20,
+      "min_atk": 17,
+      "min_def": 10,
+      "min_mat": 22,
+      "min_mdf": 10,
+      "min_rat": 17,
+      "min_rdf": 10,
       "damage_stat": 4
     }
   },
@@ -39806,6 +39808,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 325,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 15,
+      "max_rat": 0,
+      "max_rdf": 15,
+      "min_atk": 325,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 10,
+      "min_rat": 0,
+      "min_rdf": 10,
+      "two_handed": false,
+      "damage_stat": 0,
       "!bard_buff_uptime": "7",
       "!cleric_petheal_amount": "165",
       "!dragoon_npcaoe_damage": "5",
@@ -39819,24 +39838,7 @@
       "!barbarian_alldamage_amount": "15",
       "!jester_playerconfuse_uptime": "8",
       "!assassin_playerpoison_damage": "7",
-      "!samurai_playerriposte_damage": "10",
-      "min_atk": 325,
-      "max_atk": 325,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 10,
-      "max_rdf": 15,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 10,
-      "max_mdf": 15,
-      "max_hp": 200,
-      "max_mp": 0,
-      "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": false
+      "!samurai_playerriposte_damage": "10"
     }
   },
   {
@@ -40300,21 +40302,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 17,
-      "max_atk": 20,
-      "min_def": 10,
-      "max_def": 20,
-      "min_rat": 22,
-      "max_rat": 25,
-      "min_rdf": 10,
-      "max_rdf": 20,
-      "min_mat": 17,
-      "max_mat": 20,
-      "min_mdf": 10,
-      "max_mdf": 20,
       "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 20,
+      "max_def": 20,
+      "max_mat": 20,
+      "max_mdf": 20,
+      "max_rat": 25,
+      "max_rdf": 20,
+      "min_atk": 17,
+      "min_def": 10,
+      "min_mat": 17,
+      "min_mdf": 10,
+      "min_rat": 22,
+      "min_rdf": 10,
       "damage_stat": 0
     }
   },
@@ -41497,21 +41499,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 300,
-      "max_mp": 10,
-      "max_sp": 10,
-      "max_atk": 35,
-      "max_def": 0,
-      "max_mat": 30,
-      "max_mdf": 0,
-      "max_rat": 30,
-      "max_rdf": 0,
       "min_atk": 35,
+      "max_atk": 35,
       "min_def": 0,
-      "min_mat": 30,
-      "min_mdf": 0,
+      "max_def": 0,
       "min_rat": 30,
+      "max_rat": 30,
       "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 30,
+      "max_mat": 30,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 300,
+      "max_mp": 0,
+      "max_sp": 0,
       "damage_stat": 1
     }
   },
@@ -42775,9 +42777,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 838,
       "amount": 1,
       "chance": 100,
-      "item_id": 838,
       "recipe_items": [
         {
           "amount": 5,
@@ -42856,10 +42858,10 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe:  Potion of Lucidity",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -42867,9 +42869,9 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#dddddd",
     "show_name": false,
-    "spawn_delay": 60,
+    "spawn_delay": 1,
     "type": 0,
     "uses": 1,
     "limit": 0,
@@ -42889,36 +42891,38 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Potion of Lucidity",
+    "desc": "An item being tested and will be eventually wiped.  ",
+    "revision": 1,
+    "sprite": 2580,
     "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
+      "alpha": 0.5,
+      "hue": 290,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.4,
     "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 6,
     "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
+    "limit": 1,
+    "cooldown_delay": 60,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "hp": 0,
+      "mp": 0,
+      "sp": 0
     }
   },
   {
@@ -45264,8 +45268,8 @@
     "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 35,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45467,49 +45471,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1031,
       "amount": 1,
       "chance": 100,
+      "item_id": 1031,
       "recipe_items": [
         {
-          "item_id": 81,
-          "amount": 100
+          "amount": 100,
+          "item_id": 81
         },
         {
-          "item_id": 315,
-          "amount": 50
+          "amount": 50,
+          "item_id": 315
         },
         {
-          "item_id": 29,
-          "amount": 5
+          "amount": 5,
+          "item_id": 29
         },
         {
-          "item_id": 943,
-          "amount": 3
+          "amount": 3,
+          "item_id": 943
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -45544,49 +45548,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1032,
       "amount": 1,
       "chance": 100,
+      "item_id": 1032,
       "recipe_items": [
         {
-          "item_id": 82,
-          "amount": 40
+          "amount": 40,
+          "item_id": 82
         },
         {
-          "item_id": 315,
-          "amount": 50
+          "amount": 50,
+          "item_id": 315
         },
         {
-          "item_id": 197,
-          "amount": 3
+          "amount": 3,
+          "item_id": 197
         },
         {
-          "item_id": 943,
-          "amount": 3
+          "amount": 3,
+          "item_id": 943
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -45621,49 +45625,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1033,
       "amount": 1,
       "chance": 100,
+      "item_id": 1033,
       "recipe_items": [
         {
-          "item_id": 82,
-          "amount": 40
+          "amount": 40,
+          "item_id": 82
         },
         {
-          "item_id": 315,
-          "amount": 50
+          "amount": 50,
+          "item_id": 315
         },
         {
-          "item_id": 196,
-          "amount": 3
+          "amount": 3,
+          "item_id": 196
         },
         {
-          "item_id": 943,
-          "amount": 3
+          "amount": 3,
+          "item_id": 943
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -45698,49 +45702,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 771,
       "amount": 1,
       "chance": 100,
+      "item_id": 771,
       "recipe_items": [
         {
-          "item_id": 84,
-          "amount": 60
+          "amount": 60,
+          "item_id": 84
         },
         {
-          "item_id": 37,
-          "amount": 5
+          "amount": 5,
+          "item_id": 37
         },
         {
-          "item_id": 315,
-          "amount": 200
+          "amount": 200,
+          "item_id": 315
         },
         {
-          "item_id": 925,
-          "amount": 10
+          "amount": 10,
+          "item_id": 925
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -45775,49 +45779,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1026,
       "amount": 1,
       "chance": 100,
+      "item_id": 1026,
       "recipe_items": [
         {
-          "item_id": 83,
-          "amount": 60
+          "amount": 60,
+          "item_id": 83
         },
         {
-          "item_id": 214,
-          "amount": 5
+          "amount": 5,
+          "item_id": 214
         },
         {
-          "item_id": 297,
-          "amount": 20
+          "amount": 20,
+          "item_id": 297
         },
         {
-          "item_id": 925,
-          "amount": 10
+          "amount": 10,
+          "item_id": 925
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -45852,49 +45856,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 773,
       "amount": 1,
       "chance": 100,
+      "item_id": 773,
       "recipe_items": [
         {
-          "item_id": 85,
-          "amount": 60
+          "amount": 60,
+          "item_id": 85
         },
         {
-          "item_id": 182,
-          "amount": 5
+          "amount": 5,
+          "item_id": 182
         },
         {
-          "item_id": 193,
-          "amount": 10
+          "amount": 10,
+          "item_id": 193
         },
         {
-          "item_id": 925,
-          "amount": 10
+          "amount": 10,
+          "item_id": 925
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -45929,49 +45933,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 772,
       "amount": 1,
       "chance": 100,
+      "item_id": 772,
       "recipe_items": [
         {
-          "item_id": 84,
-          "amount": 80
+          "amount": 80,
+          "item_id": 84
         },
         {
-          "item_id": 879,
-          "amount": 1
+          "amount": 1,
+          "item_id": 879
         },
         {
-          "item_id": 531,
-          "amount": 3
+          "amount": 3,
+          "item_id": 531
         },
         {
-          "item_id": 315,
-          "amount": 300
+          "amount": 300,
+          "item_id": 315
         },
         {
-          "item_id": 925,
-          "amount": 15
+          "amount": 15,
+          "item_id": 925
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -46006,49 +46010,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1027,
       "amount": 1,
       "chance": 100,
+      "item_id": 1027,
       "recipe_items": [
         {
-          "item_id": 83,
-          "amount": 80
+          "amount": 80,
+          "item_id": 83
         },
         {
-          "item_id": 741,
-          "amount": 1
+          "amount": 1,
+          "item_id": 741
         },
         {
-          "item_id": 532,
-          "amount": 3
+          "amount": 3,
+          "item_id": 532
         },
         {
-          "item_id": 297,
-          "amount": 30
+          "amount": 30,
+          "item_id": 297
         },
         {
-          "item_id": 925,
-          "amount": 15
+          "amount": 15,
+          "item_id": 925
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -46083,49 +46087,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 774,
       "amount": 1,
       "chance": 100,
+      "item_id": 774,
       "recipe_items": [
         {
-          "item_id": 85,
-          "amount": 80
+          "amount": 80,
+          "item_id": 85
         },
         {
-          "item_id": 217,
-          "amount": 1
+          "amount": 1,
+          "item_id": 217
         },
         {
-          "item_id": 536,
-          "amount": 3
+          "amount": 3,
+          "item_id": 536
         },
         {
-          "item_id": 261,
-          "amount": 1
+          "amount": 1,
+          "item_id": 261
         },
         {
-          "item_id": 925,
-          "amount": 15
+          "amount": 15,
+          "item_id": 925
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -46160,49 +46164,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1028,
       "amount": 1,
       "chance": 100,
+      "item_id": 1028,
       "recipe_items": [
         {
-          "item_id": 82,
-          "amount": 500
+          "amount": 500,
+          "item_id": 82
         },
         {
-          "item_id": 83,
-          "amount": 250
+          "amount": 250,
+          "item_id": 83
         },
         {
-          "item_id": 84,
-          "amount": 500
+          "amount": 500,
+          "item_id": 84
         },
         {
-          "item_id": 85,
-          "amount": 250
+          "amount": 250,
+          "item_id": 85
         },
         {
-          "item_id": 81,
-          "amount": 250
+          "amount": 250,
+          "item_id": 81
         },
         {
-          "item_id": 537,
-          "amount": 1
+          "amount": 1,
+          "item_id": 537
         },
         {
-          "item_id": 665,
-          "amount": 100
+          "amount": 100,
+          "item_id": 665
         },
         {
-          "item_id": 944,
-          "amount": 5
+          "amount": 5,
+          "item_id": 944
         },
         {
-          "item_id": 927,
-          "amount": 5
+          "amount": 5,
+          "item_id": 927
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -46237,49 +46241,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1029,
       "amount": 1,
       "chance": 100,
+      "item_id": 1029,
       "recipe_items": [
         {
-          "item_id": 82,
-          "amount": 500
+          "amount": 500,
+          "item_id": 82
         },
         {
-          "item_id": 83,
-          "amount": 100
+          "amount": 100,
+          "item_id": 83
         },
         {
-          "item_id": 84,
-          "amount": 100
+          "amount": 100,
+          "item_id": 84
         },
         {
-          "item_id": 85,
-          "amount": 500
+          "amount": 500,
+          "item_id": 85
         },
         {
-          "item_id": 81,
-          "amount": 1000
+          "amount": 1000,
+          "item_id": 81
         },
         {
-          "item_id": 537,
-          "amount": 1
+          "amount": 1,
+          "item_id": 537
         },
         {
-          "item_id": 261,
-          "amount": 2
+          "amount": 2,
+          "item_id": 261
         },
         {
-          "item_id": 647,
-          "amount": 150
+          "amount": 150,
+          "item_id": 647
         },
         {
-          "item_id": 944,
-          "amount": 5
+          "amount": 5,
+          "item_id": 944
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -46314,49 +46318,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1030,
       "amount": 1,
       "chance": 100,
+      "item_id": 1030,
       "recipe_items": [
         {
-          "item_id": 82,
-          "amount": 500
+          "amount": 500,
+          "item_id": 82
         },
         {
-          "item_id": 83,
-          "amount": 500
+          "amount": 500,
+          "item_id": 83
         },
         {
-          "item_id": 84,
-          "amount": 250
+          "amount": 250,
+          "item_id": 84
         },
         {
-          "item_id": 85,
-          "amount": 250
+          "amount": 250,
+          "item_id": 85
         },
         {
-          "item_id": 81,
-          "amount": 250
+          "amount": 250,
+          "item_id": 81
         },
         {
-          "item_id": 537,
-          "amount": 1
+          "amount": 1,
+          "item_id": 537
         },
         {
-          "item_id": 384,
-          "amount": 3
+          "amount": 3,
+          "item_id": 384
         },
         {
-          "item_id": 649,
-          "amount": 150
+          "amount": 150,
+          "item_id": 649
         },
         {
-          "item_id": 944,
-          "amount": 5
+          "amount": 5,
+          "item_id": 944
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -47309,21 +47313,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 30,
-      "max_def": 30,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 35,
-      "max_rdf": 35,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 35,
-      "max_mdf": 35,
       "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 30,
+      "max_mat": 0,
+      "max_mdf": 35,
+      "max_rat": 0,
+      "max_rdf": 35,
+      "min_atk": 0,
+      "min_def": 30,
+      "min_mat": 0,
+      "min_mdf": 35,
+      "min_rat": 0,
+      "min_rdf": 35,
       "damage_stat": 1
     }
   },
@@ -47357,21 +47361,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 26,
-      "max_def": 30,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 30,
-      "max_rdf": 30,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 30,
-      "max_mdf": 30,
       "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 30,
+      "max_mat": 0,
+      "max_mdf": 30,
+      "max_rat": 0,
+      "max_rdf": 30,
+      "min_atk": 0,
+      "min_def": 26,
+      "min_mat": 0,
+      "min_mdf": 30,
+      "min_rat": 0,
+      "min_rdf": 30,
       "damage_stat": 1
     }
   },
