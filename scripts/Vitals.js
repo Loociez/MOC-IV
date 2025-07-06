@@ -2,6 +2,7 @@
   let barsEnabled = false;
   let barsLocked = false;
   let barsContainer, hpBar, spBar, mpBar;
+  let hpTextLabel, spTextLabel, mpTextLabel;
   let animationId;
 
   // Create tiny toggle button (to toggle bars on/off)
@@ -82,6 +83,7 @@
       marginBottom: "6px",
       overflow: "hidden",
       position: "relative",
+      userSelect: "none",
     });
     const barFill = document.createElement("div");
     Object.assign(barFill.style, {
@@ -95,9 +97,26 @@
       top: "0",
       left: "0",
       filter: `drop-shadow(0 0 4px ${color})`,
+      zIndex: "1",
     });
+
+    // Create numeric text label inside the bar
+    const textLabel = document.createElement("span");
+    textLabel.style.position = "absolute";
+    textLabel.style.left = "50%";
+    textLabel.style.top = "50%";
+    textLabel.style.transform = "translate(-50%, -50%)";
+    textLabel.style.color = "white";
+    textLabel.style.fontWeight = "bold";
+    textLabel.style.fontSize = "11px";
+    textLabel.style.textShadow = "0 0 3px #000";
+    textLabel.style.zIndex = "2";
+    textLabel.style.userSelect = "none";
+
     barBg.appendChild(barFill);
-    return { barBg, barFill };
+    barBg.appendChild(textLabel);
+
+    return { barBg, barFill, textLabel };
   }
 
   function initBars() {
@@ -129,6 +148,7 @@
 
     const hp = createBar("red");
     hpBar = hp.barFill;
+    hpTextLabel = hp.textLabel;
     barsContainer.appendChild(hp.barBg);
 
     // SP Bar
@@ -139,6 +159,7 @@
 
     const sp = createBar("lime");
     spBar = sp.barFill;
+    spTextLabel = sp.textLabel;
     barsContainer.appendChild(sp.barBg);
 
     // MP Bar
@@ -149,6 +170,7 @@
 
     const mp = createBar("deepskyblue");
     mpBar = mp.barFill;
+    mpTextLabel = mp.textLabel;
     barsContainer.appendChild(mp.barBg);
 
     document.body.appendChild(barsContainer);
@@ -179,7 +201,7 @@
     return parts.map(s => parseInt(s.replace(/\D/g, ""), 10));
   }
 
-  // Animate bar width and glow pulse effect
+  // Animate bar width and glow pulse effect + update numeric labels
   let pulse = 0;
   function animateBars() {
     if (!barsEnabled) return;
@@ -193,18 +215,21 @@
       const percent = Math.min(current / max, 1);
       hpBar.style.width = `${percent * 100}%`;
       hpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse))}px red`;
+      hpTextLabel.textContent = `${current} / ${max}`;
     }
     if (spText) {
       const [current, max] = parseValue(spText);
       const percent = Math.min(current / max, 1);
       spBar.style.width = `${percent * 100}%`;
       spBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 1))}px lime`;
+      spTextLabel.textContent = `${current} / ${max}`;
     }
     if (mpText) {
       const [current, max] = parseValue(mpText);
       const percent = Math.min(current / max, 1);
       mpBar.style.width = `${percent * 100}%`;
       mpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 2))}px deepskyblue`;
+      mpTextLabel.textContent = `${current} / ${max}`;
     }
 
     pulse += 0.05;
