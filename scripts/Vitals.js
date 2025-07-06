@@ -1,14 +1,17 @@
 (() => {
   let barsEnabled = false;
   let barsLocked = false;
-  let barsContainer, hpBar, spBar, mpBar;
-  let hpTextLabel, spTextLabel, mpTextLabel;
+  let barsContainer, hpBar, spBar, mpBar, tpBar;
+  let hpTextSpan, spTextSpan, mpTextSpan, tpTextSpan;
   let animationId;
+
+  // Reference to old vitals container to hide/show
+  const oldVitals = document.getElementById("winVitals");
 
   // Create tiny toggle button (to toggle bars on/off)
   const toggleBtn = document.createElement("button");
   toggleBtn.textContent = "⎯";  // horizontal bar icon
-  toggleBtn.title = "Toggle Animated HP/SP/MP Bars";
+  toggleBtn.title = "Toggle Animated HP/SP/MP/TP Bars";
   Object.assign(toggleBtn.style, {
     position: "fixed",
     top: "4px",
@@ -30,13 +33,11 @@
   toggleBtn.onclick = () => {
     barsEnabled = !barsEnabled;
     toggleBtn.style.opacity = barsEnabled ? "1" : "0.5";
-
-    const winVitals = document.getElementById("winVitals");
     if (barsEnabled) {
-      if (winVitals) winVitals.style.display = "none"; // Hide when bars on
+      if (oldVitals) oldVitals.style.display = "none";  // Hide old bars
       initBars();
     } else {
-      if (winVitals) winVitals.style.display = ""; // Show when bars off
+      if (oldVitals) oldVitals.style.display = "";      // Show old bars
       removeBars();
     }
   };
@@ -83,7 +84,14 @@
       marginBottom: "6px",
       overflow: "hidden",
       position: "relative",
+      color: "white",
+      fontWeight: "bold",
+      fontSize: "11px",
+      lineHeight: "14px",
+      paddingLeft: "6px",
       userSelect: "none",
+      display: "flex",
+      alignItems: "center",
     });
     const barFill = document.createElement("div");
     Object.assign(barFill.style, {
@@ -97,26 +105,28 @@
       top: "0",
       left: "0",
       filter: `drop-shadow(0 0 4px ${color})`,
-      zIndex: "1",
+      zIndex: 1,
     });
 
-    // Create numeric text label inside the bar
-    const textLabel = document.createElement("span");
-    textLabel.style.position = "absolute";
-    textLabel.style.left = "50%";
-    textLabel.style.top = "50%";
-    textLabel.style.transform = "translate(-50%, -50%)";
-    textLabel.style.color = "white";
-    textLabel.style.fontWeight = "bold";
-    textLabel.style.fontSize = "11px";
-    textLabel.style.textShadow = "0 0 3px #000";
-    textLabel.style.zIndex = "2";
-    textLabel.style.userSelect = "none";
+    // Text inside bar, on top of barFill
+    const textSpan = document.createElement("span");
+    Object.assign(textSpan.style, {
+      position: "relative",
+      zIndex: 2,
+      pointerEvents: "none",
+      userSelect: "none",
+      width: "100%",
+      textAlign: "center",
+      color: "white",
+      textShadow: "0 0 4px black",
+      fontWeight: "bold",
+      fontSize: "11px",
+      fontFamily: "Arial, sans-serif",
+    });
 
     barBg.appendChild(barFill);
-    barBg.appendChild(textLabel);
-
-    return { barBg, barFill, textLabel };
+    barBg.appendChild(textSpan);
+    return { barBg, barFill, textSpan };
   }
 
   function initBars() {
@@ -142,13 +152,13 @@
 
     // HP Bar
     const hpLabel = document.createElement("div");
-    hpLabel.textContent = "HP";
+    hpLabel.textContent = "HP ❤️";
     hpLabel.style.marginBottom = "4px";
     barsContainer.appendChild(hpLabel);
 
     const hp = createBar("red");
     hpBar = hp.barFill;
-    hpTextLabel = hp.textLabel;
+    hpTextSpan = hp.textSpan;
     barsContainer.appendChild(hp.barBg);
 
     // SP Bar
@@ -159,7 +169,7 @@
 
     const sp = createBar("lime");
     spBar = sp.barFill;
-    spTextLabel = sp.textLabel;
+    spTextSpan = sp.textSpan;
     barsContainer.appendChild(sp.barBg);
 
     // MP Bar
@@ -170,8 +180,19 @@
 
     const mp = createBar("deepskyblue");
     mpBar = mp.barFill;
-    mpTextLabel = mp.textLabel;
+    mpTextSpan = mp.textSpan;
     barsContainer.appendChild(mp.barBg);
+
+    // TP Bar (new)
+    const tpLabel = document.createElement("div");
+    tpLabel.textContent = "TP";
+    tpLabel.style.marginBottom = "4px";
+    barsContainer.appendChild(tpLabel);
+
+    const tp = createBar("#a64ca6"); // purple color
+    tpBar = tp.barFill;
+    tpTextSpan = tp.textSpan;
+    barsContainer.appendChild(tp.barBg);
 
     document.body.appendChild(barsContainer);
 
@@ -201,7 +222,7 @@
     return parts.map(s => parseInt(s.replace(/\D/g, ""), 10));
   }
 
-  // Animate bar width and glow pulse effect + update numeric labels
+  // Animate bar width and glow pulse effect
   let pulse = 0;
   function animateBars() {
     if (!barsEnabled) return;
@@ -209,27 +230,35 @@
     const hpText = document.getElementById("txtHP")?.textContent;
     const spText = document.getElementById("txtSP")?.textContent;
     const mpText = document.getElementById("txtMP")?.textContent;
+    const tpText = document.getElementById("txtTP")?.textContent;
 
     if (hpText) {
       const [current, max] = parseValue(hpText);
       const percent = Math.min(current / max, 1);
       hpBar.style.width = `${percent * 100}%`;
       hpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse))}px red`;
-      hpTextLabel.textContent = `${current} / ${max}`;
+      hpTextSpan.textContent = `${current} / ${max}`;
     }
     if (spText) {
       const [current, max] = parseValue(spText);
       const percent = Math.min(current / max, 1);
       spBar.style.width = `${percent * 100}%`;
       spBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 1))}px lime`;
-      spTextLabel.textContent = `${current} / ${max}`;
+      spTextSpan.textContent = `${current} / ${max}`;
     }
     if (mpText) {
       const [current, max] = parseValue(mpText);
       const percent = Math.min(current / max, 1);
       mpBar.style.width = `${percent * 100}%`;
       mpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 2))}px deepskyblue`;
-      mpTextLabel.textContent = `${current} / ${max}`;
+      mpTextSpan.textContent = `${current} / ${max}`;
+    }
+    if (tpText) {
+      const [current, max] = parseValue(tpText);
+      const percent = Math.min(current / max, 1);
+      tpBar.style.width = `${percent * 100}%`;
+      tpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 3))}px #a64ca6`;
+      tpTextSpan.textContent = `${current} / ${max}`;
     }
 
     pulse += 0.05;
@@ -252,71 +281,29 @@
     }
   }
 
-  // Draggable helper for bars container
-  function makeDraggable(el) {
-    let isDragging = false;
-    let startX, startY, startLeft, startTop;
-
-    el.addEventListener("mousedown", e => {
+  // Simple drag support for the bars container
+  function makeDraggable(element) {
+    let pos = { x: 0, y: 0, left: 0, top: 0 };
+    function onMouseDown(e) {
       if (barsLocked) return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = el.getBoundingClientRect();
-      startLeft = rect.left;
-      startTop = rect.top;
+      pos.x = e.clientX;
+      pos.y = e.clientY;
+      pos.left = parseInt(element.style.left) || 0;
+      pos.top = parseInt(element.style.top) || 0;
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
       e.preventDefault();
-    });
-
-    window.addEventListener("mousemove", e => {
-      if (!isDragging) return;
-      let newLeft = startLeft + (e.clientX - startX);
-      let newTop = startTop + (e.clientY - startY);
-      // Clamp to viewport edges
-      const maxLeft = window.innerWidth - el.offsetWidth;
-      const maxTop = window.innerHeight - el.offsetHeight;
-      newLeft = Math.min(Math.max(0, newLeft), maxLeft);
-      newTop = Math.min(Math.max(0, newTop), maxTop);
-      el.style.left = newLeft + "px";
-      el.style.top = newTop + "px";
-    });
-
-    window.addEventListener("mouseup", () => {
-      isDragging = false;
-    });
-
-    // Also touch support for mobile
-    el.addEventListener("touchstart", e => {
-      if (barsLocked) return;
-      if (e.touches.length !== 1) return;
-      const touch = e.touches[0];
-      isDragging = true;
-      startX = touch.clientX;
-      startY = touch.clientY;
-      const rect = el.getBoundingClientRect();
-      startLeft = rect.left;
-      startTop = rect.top;
-      e.preventDefault();
-    });
-
-    window.addEventListener("touchmove", e => {
-      if (!isDragging) return;
-      if (e.touches.length !== 1) return;
-      const touch = e.touches[0];
-      let newLeft = startLeft + (touch.clientX - startX);
-      let newTop = startTop + (touch.clientY - startY);
-      // Clamp to viewport edges
-      const maxLeft = window.innerWidth - el.offsetWidth;
-      const maxTop = window.innerHeight - el.offsetHeight;
-      newLeft = Math.min(Math.max(0, newLeft), maxLeft);
-      newTop = Math.min(Math.max(0, newTop), maxTop);
-      el.style.left = newLeft + "px";
-      el.style.top = newTop + "px";
-      e.preventDefault();
-    });
-
-    window.addEventListener("touchend", () => {
-      isDragging = false;
-    });
+    }
+    function onMouseMove(e) {
+      const dx = e.clientX - pos.x;
+      const dy = e.clientY - pos.y;
+      element.style.left = pos.left + dx + "px";
+      element.style.top = pos.top + dy + "px";
+    }
+    function onMouseUp() {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    }
+    element.addEventListener("mousedown", onMouseDown);
   }
 })();
