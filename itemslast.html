@@ -1,281 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Item Table View</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: purple;
-            color: gold;
-            margin: 0;
-            padding: 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background-color: #4b0082;
-            color: gold;
-        }
-        th, td {
-            border: 1px solid gold;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #6a0dad;
-        }
-        tr:nth-child(even) {
-            background-color: #5a0088;
-        }
-        .data {
-            font-size: 0.9em;
-            color: #eee;
-            white-space: pre-line;
-        }
-        #searchBar {
-            margin: 20px auto;
-            display: block;
-            width: 90%;
-            padding: 10px;
-            font-size: 1em;
-            border: 1px solid gold;
-            border-radius: 4px;
-            background-color: #4b0082;
-            color: gold;
-        }
-        #searchBar::placeholder {
-            color: gold;
-        }
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-            color: gold;
-        }
-        select {
-            background-color: #4b0082;
-            color: gold;
-            border: 1px solid gold;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Item Table View</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: purple;
+      color: gold;
+      margin: 0;
+      padding: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: #4b0082;
+      color: gold;
+    }
+    th,
+    td {
+      border: 1px solid gold;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #6a0dad;
+    }
+    tr:nth-child(even) {
+      background-color: #5a0088;
+    }
+    .data {
+      font-size: 0.9em;
+      color: #eee;
+      white-space: pre-line;
+    }
+    #searchBar {
+      margin: 20px auto;
+      display: block;
+      width: 90%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid gold;
+      border-radius: 4px;
+      background-color: #4b0082;
+      color: gold;
+    }
+    #searchBar::placeholder {
+      color: gold;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: gold;
+    }
+    select {
+      background-color: #4b0082;
+      color: gold;
+      border: 1px solid gold;
+    }
+  </style>
 </head>
 <body>
-    <h1 id="itemListHeading">Last Known 07/04/25 - Item List</h1>
-    <select id="languageSelector" onchange="changeLanguage(this.value)">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-    </select>
+  <h1 id="itemListHeading">Last Known 07/04/25 - Item List</h1>
+  <select id="languageSelector" onchange="changeLanguage(this.value)">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+  </select>
 
-    <input type="text" id="searchBar" placeholder="Search for an item..." oninput="filterTable()">
-    <label style="margin-left: 10px;" id="weaponFilterLabel">
-        <input type="checkbox" id="weaponFilter" onclick="filterTable()"> Weapons Only
-    </label>
-    <label style="margin-left: 10px;" id="petFilterLabel">
-        <input type="checkbox" id="petFilter" onclick="filterTable()"> Pets Only
-    </label>
-    <label style="margin-left: 10px;" id="recipeFilterLabel">
-        <input type="checkbox" id="recipeFilter" onclick="filterTable()"> Recipes Only
-    </label>
-    <label style="margin-left: 10px;" id="rareFilterLabel">
-        <input type="checkbox" id="rareFilter" onclick="filterTable()"> Rare+
-    </label>
-    <label style="margin-left: 10px;" id="favoritesFilterLabel">
-        <input type="checkbox" id="favoritesFilter" onclick="filterTable()"> Show Favorites Only
-    </label>
+  <input
+    type="text"
+    id="searchBar"
+    placeholder="Search for an item..."
+    oninput="filterTable()"
+  />
+  <label style="margin-left: 10px;" id="weaponFilterLabel"
+    ><input type="checkbox" id="weaponFilter" onclick="filterTable()" />
+    Weapons Only</label
+  >
+  <label style="margin-left: 10px;" id="petFilterLabel"
+    ><input type="checkbox" id="petFilter" onclick="filterTable()" /> Pets
+    Only</label
+  >
+  <label style="margin-left: 10px;" id="recipeFilterLabel"
+    ><input type="checkbox" id="recipeFilter" onclick="filterTable()" /> Recipes
+    Only</label
+  >
+  <label style="margin-left: 10px;" id="rareFilterLabel"
+    ><input type="checkbox" id="rareFilter" onclick="filterTable()" /> Rare+</label
+  >
+  <label style="margin-left: 10px;" id="favoritesFilterLabel"
+    ><input
+      type="checkbox"
+      id="favoritesFilter"
+      onclick="filterTable()"
+    /> Show Favorites Only</label
+  >
 
-    <!-- ✅ Sort Dropdown -->
-    <label for="sortStat" style="margin-left: 10px;">Sort by:</label>
-    <select id="sortStat" onchange="fetchAndDisplayItems()">
-        <option value="">-- None --</option>
-        <option value="max_atk">Max Physical Attack</option>
-        <option value="max_mat">Max Magical Attack</option>
-        <option value="max_hp">Max HP</option>
-        <option value="max_def">Max Defense</option>
-        <option value="max_mdf">Max M. Defense</option>
-        <option value="max_rat">Max Ranged Attack</option>
-        <option value="max_rdf">Max Ranged Defense</option>
-    </select>
+  <label for="sortStat" style="margin-left: 10px;">Sort by:</label>
+  <select id="sortStat" onchange="filterTable()">
+    <option value="">-- None --</option>
+    <option value="max_atk">Max Physical Attack</option>
+    <option value="max_mat">Max Magical Attack</option>
+    <option value="max_hp">Max HP</option>
+    <option value="max_def">Max Defense</option>
+    <option value="max_mdf">Max M. Defense</option>
+    <option value="max_rat">Max Ranged Attack</option>
+    <option value="max_rdf">Max Ranged Defense</option>
+  </select>
 
-    <button onclick="clearComparison()">Clear Comparison</button>
-    <button onclick="clearFavorites()">Clear Favorites</button>
-    <button onclick="generateShareLink()">Share Comparison</button>
-    <button onclick="copyStats()">Copy Stats</button>
-    <button onclick="copyDescription()">Copy Description</button>
+  <button onclick="clearComparison()">Clear Comparison</button>
+  <button onclick="clearFavorites()">Clear Favorites</button>
+  <button onclick="generateShareLink()">Share Comparison</button>
+  <button onclick="copyStats()">Copy Stats</button>
+  <button onclick="copyDescription()">Copy Description</button>
 
-    <table id="itemTable">
-        <thead>
-            <tr>
-                <th>Select</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Stats</th>
-                <th>Repair Cost</th>
-                <th>Uses</th>
-                <th>Sell Value</th>
-                <th>Handedness</th>
-                <th>Fav's</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be populated here by JavaScript -->
-        </tbody>
-    </table>
+  <table id="itemTable">
+    <thead>
+      <tr>
+        <th>Select</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Stats</th>
+        <th>Repair Cost</th>
+        <th>Uses</th>
+        <th>Sell Value</th>
+        <th>Handedness</th>
+        <th>Fav's</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows populated dynamically -->
+    </tbody>
+  </table>
 
-    <script>
-        let selectedItems = [];
+  <script>
+    let allItems = []; // Store all fetched items globally
+    let selectedItems = [];
 
-        async function fetchItemData() {
-            const response = await fetch('last.json');
-            return await response.json();
+    async function fetchItemData() {
+      const response = await fetch("last.json");
+      return await response.json();
+    }
+
+    async function fetchAndStoreItems() {
+      allItems = await fetchItemData();
+      filterTable(); // Initial render after fetch
+    }
+
+    // This function handles filtering, sorting, and rendering
+    function filterTable() {
+      const searchTerm = document.getElementById("searchBar").value.toLowerCase();
+      const weaponOnly = document.getElementById("weaponFilter").checked;
+      const petOnly = document.getElementById("petFilter").checked;
+      const recipeOnly = document.getElementById("recipeFilter").checked;
+      const rareOnly = document.getElementById("rareFilter").checked;
+      const favoritesOnly = document.getElementById("favoritesFilter").checked;
+      const sortKey = document.getElementById("sortStat").value;
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+      // Filter items based on all filters
+      let filteredItems = allItems.filter((item) => {
+        // Search filter (checks name and description)
+        const matchesSearch =
+          item.name.toLowerCase().includes(searchTerm) ||
+          (item.desc && item.desc.toLowerCase().includes(searchTerm));
+
+        if (!matchesSearch) return false;
+
+        // Filter by weapon only
+        if (weaponOnly && (!item.data || item.data.type !== "weapon")) return false;
+
+        // Filter by pet only
+        if (petOnly && (!item.data || item.data.type !== "pet")) return false;
+
+        // Filter by recipe only
+        if (recipeOnly && (!item.data || item.data.type !== "recipe")) return false;
+
+        // Filter by rare or better (assuming rarity stored in item.data.rarity, example)
+        if (rareOnly) {
+          const rarity = item.data?.rarity || "";
+          const allowedRarities = ["rare", "epic", "legendary", "mythic"];
+          if (!allowedRarities.includes(rarity.toLowerCase())) return false;
         }
 
-        async function fetchAndDisplayItems() {
-            const items = await fetchItemData();
-            const tableBody = document.getElementById('itemTable').querySelector('tbody');
-            tableBody.innerHTML = '';
+        // Filter by favorites only
+        if (favoritesOnly && !favorites.includes(item.name)) return false;
 
-            // ✅ Sorting logic
-            const sortKey = document.getElementById('sortStat')?.value;
-            if (sortKey) {
-                items.sort((a, b) => {
-                    const aVal = a?.data?.[sortKey] ?? -Infinity;
-                    const bVal = b?.data?.[sortKey] ?? -Infinity;
-                    return bVal - aVal;
-                });
-            }
+        return true;
+      });
 
-            items.forEach(item => {
-                const row = document.createElement('tr');
-
-                const selectCell = document.createElement('td');
-                const selectCheckbox = document.createElement('input');
-                selectCheckbox.type = 'checkbox';
-                selectCheckbox.value = item.name;
-                selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-                selectCell.appendChild(selectCheckbox);
-                row.appendChild(selectCell);
-
-                const nameCell = document.createElement('td');
-                nameCell.textContent = item.name;
-                row.appendChild(nameCell);
-
-                const descCell = document.createElement('td');
-                descCell.textContent = item.desc || 'No description';
-                row.appendChild(descCell);
-
-                const dataCell = document.createElement('td');
-                let stats = item.data ? Object.entries(item.data) : [];
-                if (item.tile_range) stats.push(['tile range', item.tile_range]);
-
-                const excludedKeys = [
-                    "hue", "move", "spin", "alpha", "scale", "sprite",
-                    "brightness", "saturation", "damage stat"
-                ];
-
-                const groupedStats = {};
-                stats.forEach(([key, value]) => {
-                    if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
-
-                    const match = key.match(/^(min|max)_(.+)$/);
-                    if (match) {
-                        const [, bound, statName] = match;
-                        if (!groupedStats[statName]) groupedStats[statName] = {};
-                        groupedStats[statName][bound] = value;
-                    } else {
-                        groupedStats[key] = value;
-                    }
-                });
-
-                const formattedData = Object.entries(groupedStats).map(([key, value]) => {
-                    if (typeof value === 'object') {
-                        const min = value.min;
-                        const max = value.max;
-                        if (min !== undefined && max !== undefined) {
-                            return `${key}: ${min} - ${max}`;
-                        } else if (min !== undefined) {
-                            return `${key} (min): ${min}`;
-                        } else if (max !== undefined) {
-                            return `${key} (max): ${max}`;
-                        } else {
-                            return `${key}: ?`;
-                        }
-                    }
-                    return `${key.replace(/_/g, ' ')}: ${value}`;
-                }).join('\n');
-
-                dataCell.textContent = formattedData.trim() || 'No stats';
-                dataCell.classList.add('data');
-                row.appendChild(dataCell);
-
-                const repairCostCell = document.createElement('td');
-                repairCostCell.textContent = item.repair_cost || 'No repair cost';
-                row.appendChild(repairCostCell);
-
-                const usesCell = document.createElement('td');
-                usesCell.textContent = item.uses || 'No uses data';
-                row.appendChild(usesCell);
-
-                const sellValueCell = document.createElement('td');
-                sellValueCell.textContent = item.recycle_value || 'No sell value';
-                row.appendChild(sellValueCell);
-
-                const handednessCell = document.createElement('td');
-                const isTwoHanded = item.data && (item.data.two_handed === true || item.data.two_handed === 'true');
-                handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-                row.appendChild(handednessCell);
-
-                const favoriteCell = document.createElement('td');
-                const favoriteCheckbox = document.createElement('input');
-                favoriteCheckbox.type = 'checkbox';
-                favoriteCheckbox.checked = isFavorite(item.name);
-                favoriteCheckbox.onclick = () => toggleFavorite(item);
-                favoriteCell.appendChild(favoriteCheckbox);
-                row.appendChild(favoriteCell);
-
-                tableBody.appendChild(row);
-            });
-
-            filterTable();
-        }
-
-        function filterTable() {
-            // unchanged
-        }
-        function handleItemSelection(item, checkbox) {
-            // unchanged
-        }
-        function displayComparison(items) {
-            // unchanged
-        }
-        function highlightStats(a, b, cell1, cell2) {
-            // unchanged
-        }
-        function clearComparison() {
-            // unchanged
-        }
-        function closeModal() {
-            // unchanged
-        }
-        function isFavorite(name) {
-            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            return favorites.includes(name);
-        }
-        function toggleFavorite(item) {
-            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            if (favorites.includes(item.name)) {
-                favorites = favorites.filter(name => name !== item.name);
-            } else {
-                favorites.push(item.name);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            fetchAndDisplayItems();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchAndDisplayItems();
+      // Sorting
+      if (sortKey) {
+        filteredItems.sort((a, b) => {
+          const aVal = a?.data?.[sortKey] ?? -Infinity;
+          const bVal = b?.data?.[sortKey] ?? -Infinity;
+          return bVal - aVal;
         });
-    </script>
+      }
+
+      // Now render the filtered and sorted items
+      const tableBody = document.getElementById("itemTable").querySelector("tbody");
+      tableBody.innerHTML = "";
+
+      filteredItems.forEach((item) => {
+        const row = document.createElement("tr");
+
+        // Select checkbox
+        const selectCell = document.createElement("td");
+        const selectCheckbox = document.createElement("input");
+        selectCheckbox.type = "checkbox";
+        selectCheckbox.value = item.name;
+        selectCheckbox.checked = selectedItems.some((i) => i.name === item.name);
+        selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+        selectCell.appendChild(selectCheckbox);
+        row.appendChild(selectCell);
+
+        // Name
+        const nameCell = document.createElement("td");
+        nameCell.textContent = item.name;
+        row.appendChild(nameCell);
+
+        // Description
+        const descCell = document.createElement("td");
+        descCell.textContent = item.desc || "No description";
+        row.appendChild(descCell);
+
+        // Stats
+        const dataCell = document.createElement("td");
+        let stats = item.data ? Object.entries(item.data) : [];
+        if (item.tile_range) stats.push(["tile range", item.tile_range]);
+
+        const excludedKeys = [
+          "hue",
+          "move",
+          "spin",
+          "alpha",
+          "scale",
+          "sprite",
+          "brightness",
+          "saturation",
+          "damage stat",
+        ];
+
+        const groupedStats = {};
+        stats.forEach(([key, value]) => {
+          if (excludedKeys.includes(key.toLowerCase()) || key.startsWith("!")) return;
+
+          const match = key.match(/^(min|max)_(.+)$/);
+          if (match) {
+            const [, bound, statName] = match;
+            if (!groupedStats[statName]) groupedStats[statName] = {};
+            groupedStats[statName][bound] = value;
+          } else {
+            groupedStats[key] = value;
+          }
+        });
+
+        const formattedData = Object.entries(groupedStats)
+          .map(([key, value]) => {
+            if (typeof value === "object") {
+              const min = value.min;
+              const max = value.max;
+              if (min !== undefined && max !== undefined) {
+                return `${key}: ${min} - ${max}`;
+              } else if (min !== undefined) {
+                return `${key} (min): ${min}`;
+              } else if (max !== undefined) {
+                return `${key} (max): ${max}`;
+              } else {
+                return `${key}: ?`;
+              }
+            }
+            return `${key.replace(/_/g, " ")}: ${value}`;
+          })
+          .join("\n");
+
+        dataCell.textContent = formattedData.trim() || "No stats";
+        dataCell.classList.add("data");
+        row.appendChild(dataCell);
+
+        // Repair cost
+        const repairCostCell = document.createElement("td");
+        repairCostCell.textContent = item.repair_cost || "No repair cost";
+        row.appendChild(repairCostCell);
+
+        // Uses
+        const usesCell = document.createElement("td");
+        usesCell.textContent = item.uses || "No uses data";
+        row.appendChild(usesCell);
+
+        // Sell value
+        const sellValueCell = document.createElement("td");
+        sellValueCell.textContent = item.recycle_value || "No sell value";
+        row.appendChild(sellValueCell);
+
+        // Handedness
+        const handednessCell = document.createElement("td");
+        const isTwoHanded =
+          item.data &&
+          (item.data.two_handed === true || item.data.two_handed === "true");
+        handednessCell.textContent = isTwoHanded ? "Two Handed" : "One Handed";
+        row.appendChild(handednessCell);
+
+        // Favorite checkbox
+        const favoriteCell = document.createElement("td");
+        const favoriteCheckbox = document.createElement("input");
+        favoriteCheckbox.type = "checkbox";
+        favoriteCheckbox.checked = isFavorite(item.name);
+        favoriteCheckbox.onclick = () => toggleFavorite(item);
+        favoriteCell.appendChild(favoriteCheckbox);
+        row.appendChild(favoriteCell);
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    function handleItemSelection(item, checkbox) {
+      if (checkbox.checked) {
+        if (!selectedItems.some((i) => i.name === item.name)) {
+          selectedItems.push(item);
+        }
+      } else {
+        selectedItems = selectedItems.filter((i) => i.name !== item.name);
+      }
+      displayComparison(selectedItems);
+    }
+
+    function displayComparison(items) {
+      // Your existing comparison display logic here
+    }
+    function highlightStats(a, b, cell1, cell2) {
+      // Your existing highlight logic here
+    }
+    function clearComparison() {
+      selectedItems = [];
+      displayComparison(selectedItems);
+      filterTable();
+    }
+    function closeModal() {
+      // Your modal close logic here
+    }
+
+    function isFavorite(name) {
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      return favorites.includes(name);
+    }
+
+    function toggleFavorite(item) {
+      let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      if (favorites.includes(item.name)) {
+        favorites = favorites.filter((name) => name !== item.name);
+      } else {
+        favorites.push(item.name);
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      filterTable();
+    }
+
+    // Dummy placeholders for buttons you have
+    function clearFavorites() {
+      localStorage.setItem("favorites", JSON.stringify([]));
+      filterTable();
+    }
+    function generateShareLink() {
+      alert("Share link generated! (implement your logic)");
+    }
+    function copyStats() {
+      alert("Stats copied! (implement your logic)");
+    }
+    function copyDescription() {
+      alert("Description copied! (implement your logic)");
+    }
+
+    // Language change placeholder
+    function changeLanguage(lang) {
+      alert("Language changed to " + lang + ". (Implement translations here)");
+    }
+
+    // Initial fetch and display
+    fetchAndStoreItems();
+  </script>
 </body>
 </html>
