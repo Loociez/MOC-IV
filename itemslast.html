@@ -421,6 +421,17 @@ dataCell.textContent = formattedData.trim() || 'No stats';
             row.style.display = 'none';
         }
     });
+	const sortKey = document.getElementById("sortStat").value;
+
+// Sorting
+if (sortKey) {
+  filteredItems.sort((a, b) => {
+    const aVal = a?.data?.[sortKey] ?? -Infinity;
+    const bVal = b?.data?.[sortKey] ?? -Infinity;
+    return bVal - aVal;
+  });
+}
+
 }
 document.addEventListener('DOMContentLoaded', () => {
     fetchAndDisplayItems();
