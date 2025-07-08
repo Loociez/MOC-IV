@@ -138,6 +138,20 @@
  <script>
 let selectedItems = [];
 
+async function fetchWithTimeout(url, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
+        fetch(url).then(response => {
+            clearTimeout(timer);
+            if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
+            else resolve(response);
+        }).catch(err => {
+            clearTimeout(timer);
+            reject(err);
+        });
+    });
+}
+
 async function fetchItemData() {
     try {
         const response = await fetch('last.json');
@@ -150,69 +164,209 @@ async function fetchItemData() {
 }
 
 function isFavorite(name) {
-    return localStorage.getItem(`fav-${name}`) === 'true';
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    return favorites.includes(name);
 }
 
 function toggleFavorite(item) {
-    const key = `fav-${item.name}`;
-    const current = localStorage.getItem(key) === 'true';
-    localStorage.setItem(key, !current);
-    filterTable(); // Refresh filtering
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    if (favorites.includes(item.name)) {
+        favorites = favorites.filter(name => name !== item.name);
+    } else {
+        favorites.push(item.name);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    filterTable(); // Reapply filter after favorite toggle
+}
+
+async function fetchAndDisplayItems() {
+    try {
+        let items = await fetchItemData();
+
+        const sortKey = document.getElementById("sortStat")?.value;
+        if (sortKey && sortKey !== "none") {
+            items.sort((a, b) => {
+                const aValue = a.data?.[sortKey] ?? -Infinity;
+                const bValue = b.data?.[sortKey] ?? -Infinity;
+                return bValue - aValue;
+            });
+        }
+
+        const tableBody = document.getElementById('itemTable').querySelector('tbody');
+        tableBody.innerHTML = '';
+
+        items.forEach(item => {
+            const row = document.createElement('tr');
+
+            const selectCell = document.createElement('td');
+            const selectCheckbox = document.createElement('input');
+            selectCheckbox.type = 'checkbox';
+            selectCheckbox.value = item.name;
+            selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+            selectCell.appendChild(selectCheckbox);
+            row.appendChild(selectCell);
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            const descCell = document.createElement('td');
+            descCell.textContent = item.desc || 'No description';
+            row.appendChild(descCell);
+
+            const dataCell = document.createElement('td');
+            let stats = item.data ? Object.entries(item.data) : [];
+            if (item.tile_range) stats.push(['tile range', item.tile_range]);
+
+            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
+            const groupedStats = {};
+            stats.forEach(([key, value]) => {
+                if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
+                const match = key.match(/^(min|max)_(.+)$/);
+                if (match) {
+                    const [, bound, statName] = match;
+                    if (!groupedStats[statName]) groupedStats[statName] = {};
+                    groupedStats[statName][bound] = value;
+                } else {
+                    groupedStats[key] = value;
+                }
+            });
+
+            const formattedData = Object.entries(groupedStats).map(([key, value]) => {
+                if (typeof value === 'object') {
+                    const min = value.min;
+                    const max = value.max;
+                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+                    else if (min !== undefined) return `${key} (min): ${min}`;
+                    else if (max !== undefined) return `${key} (max): ${max}`;
+                    else return `${key}: ?`;
+                }
+                return `${key.replace(/_/g, ' ')}: ${value}`;
+            }).join('\n');
+
+            dataCell.textContent = formattedData.trim() || 'No stats';
+            dataCell.classList.add('data');
+            row.appendChild(dataCell);
+
+            const repairCostCell = document.createElement('td');
+            repairCostCell.textContent = item.repair_cost || 'No repair cost';
+            row.appendChild(repairCostCell);
+
+            const usesCell = document.createElement('td');
+            usesCell.textContent = item.uses || 'No uses data';
+            row.appendChild(usesCell);
+
+            const sellValueCell = document.createElement('td');
+            sellValueCell.textContent = item.recycle_value || 'No sell value';
+            row.appendChild(sellValueCell);
+
+            const handednessCell = document.createElement('td');
+            const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
+            handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
+            row.appendChild(handednessCell);
+
+            const favoriteCell = document.createElement('td');
+            const favoriteCheckbox = document.createElement('input');
+            favoriteCheckbox.type = 'checkbox';
+            favoriteCheckbox.checked = isFavorite(item.name);
+            favoriteCheckbox.onclick = () => toggleFavorite(item);
+            favoriteCell.appendChild(favoriteCheckbox);
+            row.appendChild(favoriteCell);
+
+            tableBody.appendChild(row);
+        });
+
+        filterTable(); // Apply filters after display
+    } catch (error) {
+        console.error('Error fetching or displaying data:', error);
+        alert(`Failed to load data: ${error.message}`);
+    }
 }
 
 function handleItemSelection(item, checkbox) {
     if (checkbox.checked) {
         selectedItems.push(item);
     } else {
-        selectedItems = selectedItems.filter(selectedItem => selectedItem.name !== item.name);
+        selectedItems = selectedItems.filter(selectedItem => selectedItem !== item);
     }
-
-    if (selectedItems.length === 2) {
-        displayComparison(selectedItems);
-    } else {
-        document.getElementById('comparisonModal').style.display = 'none';
-    }
+    displayComparison(selectedItems);
 }
 
 function displayComparison(selectedItems) {
-    const [item1, item2] = selectedItems;
     const comparisonTableBody = document.getElementById('comparisonTable').querySelector('tbody');
     comparisonTableBody.innerHTML = '';
 
-    const row = document.createElement('tr');
+    if (selectedItems.length < 2) {
+        document.getElementById('comparisonModal').style.display = 'none';
+        return;
+    }
 
-    const nameCell = document.createElement('td');
-    nameCell.textContent = `${item1.name} vs ${item2.name}`;
-    row.appendChild(nameCell);
-
-    const statsCell1 = document.createElement('td');
-    const statsCell2 = document.createElement('td');
-
+    const [item1, item2] = selectedItems;
     const stats1 = item1.data || {};
     const stats2 = item2.data || {};
     const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin"];
 
+    const row = document.createElement('tr');
+    const nameCell = document.createElement('td');
+    nameCell.textContent = item1.name + " vs " + item2.name;
+    row.appendChild(nameCell);
+
+    const statsCell1 = document.createElement('td');
     Object.entries(stats1).forEach(([key, value]) => {
-        if (excludedFields.includes(key)) return;
-        const span = document.createElement('span');
-        span.textContent = `${key}: ${value}`;
-        statsCell1.appendChild(span);
+        if (excludedFields.includes(key.toLowerCase())) return;
+        const statElement = document.createElement('span');
+        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
+        statsCell1.appendChild(statElement);
         statsCell1.appendChild(document.createElement('br'));
     });
+    row.appendChild(statsCell1);
 
+    const statsCell2 = document.createElement('td');
     Object.entries(stats2).forEach(([key, value]) => {
-        if (excludedFields.includes(key)) return;
-        const span = document.createElement('span');
-        span.textContent = `${key}: ${value}`;
-        statsCell2.appendChild(span);
+        if (excludedFields.includes(key.toLowerCase())) return;
+        const statElement = document.createElement('span');
+        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
+        statsCell2.appendChild(statElement);
         statsCell2.appendChild(document.createElement('br'));
     });
-
-    row.appendChild(statsCell1);
     row.appendChild(statsCell2);
+
+    highlightStats(stats1, stats2, statsCell1, statsCell2);
+
+    const repairCostCell = document.createElement('td');
+    repairCostCell.textContent = item1.repair_cost || 'No repair cost';
+    row.appendChild(repairCostCell);
+
+    const usesCell = document.createElement('td');
+    usesCell.textContent = item1.uses || 'No uses data';
+    row.appendChild(usesCell);
+
+    const sellValueCell = document.createElement('td');
+    sellValueCell.textContent = item1.recycle_value || 'No sell value';
+    row.appendChild(sellValueCell);
+
+    const handednessCell = document.createElement('td');
+    handednessCell.textContent = item1.data && item1.data.two_handed ? 'Two Handed' : 'One Handed';
+    row.appendChild(handednessCell);
 
     comparisonTableBody.appendChild(row);
     document.getElementById('comparisonModal').style.display = 'block';
+}
+
+function highlightStats(stats1, stats2, statsCell1, statsCell2) {
+    const stats1Entries = Object.entries(stats1);
+    const stats2Entries = Object.entries(stats2);
+    stats1Entries.forEach(([key, value], index) => {
+        if (!stats2Entries[index]) return;
+        const otherValue = stats2Entries[index][1];
+        if (value > otherValue) {
+            statsCell1.children[index].classList.add('higher');
+            statsCell2.children[index].classList.add('lower');
+        } else if (value < otherValue) {
+            statsCell1.children[index].classList.add('lower');
+            statsCell2.children[index].classList.add('higher');
+        }
+    });
 }
 
 function clearComparison() {
@@ -225,118 +379,41 @@ function closeModal() {
     document.getElementById('comparisonModal').style.display = 'none';
 }
 
-async function fetchAndDisplayItems() {
-    const items = await fetchItemData();
-    if (!items) return;
-
-    const tableBody = document.getElementById('itemTable').querySelector('tbody');
-    tableBody.innerHTML = '';
-
-    items.forEach(item => {
-        const row = document.createElement('tr');
-
-        const selectCell = document.createElement('td');
-        const selectCheckbox = document.createElement('input');
-        selectCheckbox.type = 'checkbox';
-        selectCheckbox.value = item.name;
-        selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-        selectCell.appendChild(selectCheckbox);
-        row.appendChild(selectCell);
-
-        const nameCell = document.createElement('td');
-        nameCell.textContent = item.name;
-        row.appendChild(nameCell);
-
-        const descCell = document.createElement('td');
-        descCell.textContent = item.desc || 'No description';
-        row.appendChild(descCell);
-
-        const dataCell = document.createElement('td');
-        const stats = item.data ? Object.entries(item.data) : [];
-        const groupedStats = {};
-        stats.forEach(([key, value]) => {
-            const match = key.match(/^(min|max)_(.+)$/);
-            if (match) {
-                const [, bound, statName] = match;
-                if (!groupedStats[statName]) groupedStats[statName] = {};
-                groupedStats[statName][bound] = value;
-            } else {
-                groupedStats[key] = value;
-            }
-        });
-
-        const formattedStats = Object.entries(groupedStats).map(([key, val]) => {
-            if (typeof val === 'object') {
-                return `${key}: ${val.min || '?'} - ${val.max || '?'}`;
-            }
-            return `${key.replace(/_/g, ' ')}: ${val}`;
-        }).join('\n');
-
-        dataCell.textContent = formattedStats || 'No stats';
-        row.appendChild(dataCell);
-
-        const repairCostCell = document.createElement('td');
-        repairCostCell.textContent = item.repair_cost || 'No repair cost';
-        row.appendChild(repairCostCell);
-
-        const usesCell = document.createElement('td');
-        usesCell.textContent = item.uses || 'No uses data';
-        row.appendChild(usesCell);
-
-        const sellValueCell = document.createElement('td');
-        sellValueCell.textContent = item.recycle_value || 'No sell value';
-        row.appendChild(sellValueCell);
-
-        const handednessCell = document.createElement('td');
-        const isTwoHanded = item.data?.two_handed === true || item.data?.two_handed === 'true';
-        handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-        row.appendChild(handednessCell);
-
-        const favoriteCell = document.createElement('td');
-        const favoriteCheckbox = document.createElement('input');
-        favoriteCheckbox.type = 'checkbox';
-        favoriteCheckbox.checked = isFavorite(item.name);
-        favoriteCheckbox.onclick = () => toggleFavorite(item);
-        favoriteCell.appendChild(favoriteCheckbox);
-        row.appendChild(favoriteCell);
-
-        tableBody.appendChild(row);
-    });
-
-    filterTable();
-}
-
 function filterTable() {
-    const searchTerm = document.getElementById('searchBar')?.value?.toLowerCase() || '';
-    const weaponFilter = document.getElementById('weaponFilter')?.checked;
-    const petFilter = document.getElementById('petFilter')?.checked;
-    const recipeFilter = document.getElementById('recipeFilter')?.checked;
-    const rareFilter = document.getElementById('rareFilter')?.checked;
-    const favoritesFilter = document.getElementById('favoritesFilter')?.checked;
-
+    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+    const weaponFilter = document.getElementById('weaponFilter').checked;
+    const petFilter = document.getElementById('petFilter').checked;
+    const recipeFilter = document.getElementById('recipeFilter').checked;
+    const rareFilter = document.getElementById('rareFilter').checked;
+    const favoritesFilter = document.getElementById('favoritesFilter').checked;
     const rows = document.querySelectorAll('#itemTable tbody tr');
+
     rows.forEach(row => {
         const nameCell = row.querySelector('td:nth-child(2)');
-        const descCell = row.querySelector('td:nth-child(3)');
+        const descriptionCell = row.querySelector('td:nth-child(3)');
         const statsCell = row.querySelector('td:nth-child(4)');
+        const matchesSearch =
+            (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
+            (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
+        const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
+        const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
+        const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
+        const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
+        const isFavoriteItem = isFavorite(nameCell.textContent);
 
-        const matchesSearch = nameCell?.textContent.toLowerCase().includes(searchTerm) ||
-                              descCell?.textContent.toLowerCase().includes(searchTerm);
-
-        const matchesWeapon = !weaponFilter || statsCell?.textContent.toLowerCase().includes('two handed');
-        const matchesPet = !petFilter || nameCell?.textContent.includes('🐶');
-        const matchesRecipe = !recipeFilter || nameCell?.textContent.toLowerCase().includes('recipe') || descCell?.textContent.toLowerCase().includes('recipe');
-        const matchesRare = !rareFilter || nameCell?.textContent.includes('*') || descCell?.textContent.includes('*');
-
-        const isFav = isFavorite(nameCell?.textContent);
-
-        const visible = matchesSearch && matchesWeapon && matchesPet && matchesRecipe && matchesRare && (!favoritesFilter || isFav);
-        row.style.display = visible ? '' : 'none';
+        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && (!favoritesFilter || isFavoriteItem)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
     });
 }
 
-document.addEventListener('DOMContentLoaded', fetchAndDisplayItems);
+// Listen for dropdown change
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
+    fetchAndDisplayItems(); // initial load
+});
 </script>
-
 </body>
 </html>
