@@ -1,4 +1,4 @@
-import { Fighter } from './Fighter.js';
+import { Fighter } from './fighter.js';
 
 function getRandomCharacterIndex() {
   return Math.floor(Math.random() * 32);
