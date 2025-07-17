@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mirage Fighter.</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 20px;
+    }
+    canvas {
+      background: #222;
+      display: block;
+      margin: 0 auto;
+      border: 2px solid #555;
+    }
+    #betting {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    #betting button {
+      background: #333;
+      border: 1px solid #555;
+      color: white;
+      padding: 8px 16px;
+      margin: 0 10px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    #betting button:hover {
+      background: #555;
+    }
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 20px;
+      min-height: 24px;
+    }
+    #playerMoneyDisplay {
+      margin-top: 10px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #bettingControls {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+    #bettingControls label {
+      margin-left: 20px;
+      margin-right: 8px;
+      font-weight: normal;
+    }
+    #bettingControls input[type=number] {
+      width: 80px;
+      padding: 4px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background: #222;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>MFB - Mirage Fighter Bot</h1>
+  <button id="resetMoneyBtn">Reset Money to 1000</button>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+  <div id="betting">
+    <div id="bettingControls">
+      <button id="betBlue">Bet on Blue Fighter</button>
+      <button id="betRed">Bet on Red Fighter</button>
+      <label for="betAmountInput">Bet Amount:</label>
+      <input type="number" id="betAmountInput" min="1" max="10000" value="100" />
+    </div>
+    <div id="playerMoneyDisplay">Money: $1000</div>
+    <div id="currentBet">Current bet: None</div>
+    <div id="result"></div>
+  </div>
+
+  <script type="module" src="./game.js"></script>
+
+  <script>
+    // Money display and storage logic:
+    const moneyDisplay = document.getElementById('playerMoneyDisplay');
+    let playerMoney = parseInt(localStorage.getItem('playerMoney')) || 1000;
+
+    function updateMoneyDisplay() {
+      moneyDisplay.textContent = `Money: $${playerMoney}`;
+    }
+    updateMoneyDisplay();
+
+    // Example functions to modify money (replace these with your game logic):
+    function placeBet(amount) {
+      if (amount > playerMoney) {
+        alert("You don't have enough money!");
+        return false;
+      }
+      playerMoney -= amount;
+      localStorage.setItem('playerMoney', playerMoney);
+      updateMoneyDisplay();
+      return true;
+    }
+
+    function payout(amount) {
+      playerMoney += amount;
+      localStorage.setItem('playerMoney', playerMoney);
+      updateMoneyDisplay();
+    }
+
+    // Hooking up buttons as an example (replace with your existing betting code)
+    const betAmountInput = document.getElementById('betAmountInput');
+    const betBlue = document.getElementById('betBlue');
+    const betRed = document.getElementById('betRed');
+    const resultDisplay = document.getElementById('result');
+    const currentBet = document.getElementById('currentBet');
+
+    betBlue.addEventListener('click', () => {
+      const amount = parseInt(betAmountInput.value);
+      if (!placeBet(amount)) return;
+      currentBet.textContent = `Current bet: Blue Fighter, $${amount}`;
+      // Simulate fight outcome:
+      const winner = Math.random() < 0.5 ? 'blue' : 'red';
+      if (winner === 'blue') {
+        payout(amount * 2); // win doubles bet
+        resultDisplay.textContent = `You won $${amount}! Blue Fighter wins!`;
+      } else {
+        resultDisplay.textContent = `You lost $${amount}. Red Fighter wins.`;
+      }
+    });
+
+    betRed.addEventListener('click', () => {
+      const amount = parseInt(betAmountInput.value);
+      if (!placeBet(amount)) return;
+      currentBet.textContent = `Current bet: Red Fighter, $${amount}`;
+      // Simulate fight outcome:
+      const winner = Math.random() < 0.5 ? 'blue' : 'red';
+      if (winner === 'red') {
+        payout(amount * 2); // win doubles bet
+        resultDisplay.textContent = `You won $${amount}! Red Fighter wins!`;
+      } else {
+        resultDisplay.textContent = `You lost $${amount}. Blue Fighter wins.`;
+      }
+    });
+  </script>
+</body>
+</html>

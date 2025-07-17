@@ -1,289 +1,357 @@
-// --- Game Variables ---
-let gold = 0;
-let goldPerClick = 1;
-let goldPerSecond = 0;
+import { Fighter } from './Fighter.js';
 
-let rebirthLevel = 0;
-let rebirthPoints = 0;
-let rebirthCost = 1000;
-let rebirthBonus = 1;
-
-let critChance = 0;
-let critMultiplier = 2;
-let goldBonusPercent = 0;
-
-// --- Prestige Upgrades ---
-let prestigeUpgrades = {
-  goldMagnet: 0,
-  luckyTouch: 0,
-  clickForge: 0,
-  autoMinerBoost: 0,
-  rebirthPower: 0,
-  megaMiner: 0,
-  critMastery: 0,
-  efficientClicks: 0
-};
-
-const upgrades = {
-  clickPower: { cost: 10, power: 1 },
-  autoMiner: { cost: 50, gps: 1 }
-};
-
-// --- DOM Elements ---
-const goldText = document.getElementById('gold');
-const rebirthText = document.getElementById('rebirths');
-const clickPowerCostText = document.getElementById('clickPowerCost');
-const autoMinerCostText = document.getElementById('autoMinerCost');
-const clickEffects = document.getElementById('click-effects');
-const evolutionImage = document.getElementById('evolutionImage');
-
-// --- UI Update ---
-function updateUI() {
-  goldText.innerText = `Gold: ${Math.floor(gold)}`;
-  clickPowerCostText.innerText = upgrades.clickPower.cost;
-  autoMinerCostText.innerText = upgrades.autoMiner.cost;
-  rebirthText.innerText = `Rebirth Level: ${rebirthLevel} | Bonus: x${rebirthBonus.toFixed(2)}`;
-  document.getElementById('rebirthPointsDisplay').innerText = `Rebirth Points: ${rebirthPoints}`;
-  document.getElementById('rebirthBtn').innerText = `Rebirth (Cost: ${rebirthCost} Gold)`;
+function getRandomCharacterIndex() {
+  return Math.floor(Math.random() * 32);
 }
 
-function updatePrestigeInfo() {
-  document.getElementById('goldMagnetInfo').innerText = `Owned: ${prestigeUpgrades.goldMagnet} (+${prestigeUpgrades.goldMagnet * 10}% Gold Bonus)`;
-  document.getElementById('luckyTouchInfo').innerText = `Owned: ${prestigeUpgrades.luckyTouch} (+${prestigeUpgrades.luckyTouch * 2}% Crit Chance)`;
-  document.getElementById('clickForgeInfo').innerText = `Owned: ${prestigeUpgrades.clickForge} (+${prestigeUpgrades.clickForge} Click Power)`;
-  document.getElementById('autoMinerBoostInfo').innerText = `Owned: ${prestigeUpgrades.autoMinerBoost} (+${prestigeUpgrades.autoMinerBoost} Gold/sec)`;
-  document.getElementById('rebirthPowerInfo').innerText = `Owned: ${prestigeUpgrades.rebirthPower} (+${prestigeUpgrades.rebirthPower * 2}% Rebirth Bonus)`;
-  document.getElementById('megaMinerInfo').innerText = `Owned: ${prestigeUpgrades.megaMiner} (+${prestigeUpgrades.megaMiner * 5} Gold/sec)`;
-  document.getElementById('critMasteryInfo').innerText = `Owned: ${prestigeUpgrades.critMastery} (+${prestigeUpgrades.critMastery * 0.5}x Crit Damage)`;
-  document.getElementById('efficientClicksInfo').innerText = `Owned: ${prestigeUpgrades.efficientClicks} (+${prestigeUpgrades.efficientClicks}% Click Gold Bonus)`;
+// --- New: Array of background images ---
+const backgroundImages = [
+  './background1.jpg',
+  './background2.jpg',
+  './background3.jpg',
+];
+
+let background = new Image(); // We will change its src dynamically
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 800;
+canvas.height = 400;
+
+// Betting state
+let playerMoney = parseInt(localStorage.getItem('playerMoney')) || 1000;
+let currentBet = null;  // 'blue' or 'red'
+let betAmount = 0;
+const bettingTime = 15; // seconds
+let bettingActive = true;
+let bettingCountdown = bettingTime;
+let fightActive = false;
+let fightEnded = false;
+
+const stageLeftBound = 50;
+const stageRightBound = 750;
+
+// Screen shake variables
+let shakeTimer = 0;
+const shakeDuration = 15;  // frames
+const shakeIntensity = 5;
+
+// White flash overlay variables (for special effect)
+let specialFlashDuration = 0;
+const specialFlashMaxDuration = 15;
+
+// Function to trigger special effect (shake + flash)
+function triggerSpecialEffect() {
+  shakeTimer = 0;  // reset shake timer to start shaking
+  specialFlashDuration = specialFlashMaxDuration; // start flash
 }
 
-function updateEvolutionImage() {
-  const stage = Math.min(rebirthLevel, 30);
-  evolutionImage.src = `images/stage${stage}.png`;
-}
+// Example bot logics (unchanged)
+function aggressiveBotLogic(self, opponent) {
+  const dist = opponent.x - self.x;
 
-// --- Click & Rebirth ---
-document.getElementById('mineBtn').addEventListener('click', (e) => {
-  let gain = (goldPerClick + prestigeUpgrades.clickForge) * rebirthBonus;
-  gain *= 1 + (goldBonusPercent + prestigeUpgrades.efficientClicks) / 100;
+  if (self.action === 'attack' || self.action === 'hurt') return 'idle';
 
-  const isCrit = Math.random() * 100 < critChance;
-  if (isCrit) gain *= critMultiplier + prestigeUpgrades.critMastery * 0.5;
-
-  showClickEffect(e.clientX, e.clientY, `${isCrit ? 'CRIT! +' : '+'}${Math.floor(gain)}`, isCrit);
-  gold += gain;
-  updateUI();
-});
-
-document.getElementById('clickUpgradeBtn').addEventListener('click', () => {
-  const up = upgrades.clickPower;
-  if (gold >= up.cost) {
-    gold -= up.cost;
-    goldPerClick += up.power;
-    up.cost = Math.floor(up.cost * 1.5);
-    updateUI();
+  if (self.x <= stageLeftBound) {
+    self.patrolDirection = 'right';
+    return 'moveRight';
   }
-});
-
-document.getElementById('autoMinerBtn').addEventListener('click', () => {
-  const up = upgrades.autoMiner;
-  if (gold >= up.cost) {
-    gold -= up.cost;
-    goldPerSecond += up.gps;
-    up.cost = Math.floor(up.cost * 1.7);
-    updateUI();
+  if (self.x >= stageRightBound) {
+    self.patrolDirection = 'left';
+    return 'moveLeft';
   }
-});
 
-document.getElementById('rebirthBtn').addEventListener('click', () => {
-  if (gold >= rebirthCost) {
-    gold = 0;
-    goldPerClick = 1;
-    goldPerSecond = 0;
-    upgrades.clickPower.cost = 10;
-    upgrades.autoMiner.cost = 50;
+  if (!self.patrolDirection) self.patrolDirection = Math.random() < 0.5 ? 'left' : 'right';
 
-    rebirthLevel++;
-    rebirthPoints++;
-    rebirthCost *= 2;
-    recalculateRebirthBonus();
+  if (Math.abs(dist) > 100) return dist > 0 ? 'moveRight' : 'moveLeft';
 
-    updateEvolutionImage();
-    updateUI();
-    updatePrestigeInfo();
-  } else {
-    alert(`You need at least ${rebirthCost} Gold to rebirth!`);
-  }
-});
+  if (Math.abs(dist) < 70 && Math.random() < 0.2) return dist > 0 ? 'moveLeft' : 'moveRight';
 
-// --- Prestige Buying ---
-function buyUpgrade(type) {
-  if (rebirthPoints >= 1) {
-    rebirthPoints--;
-    prestigeUpgrades[type]++;
-    if (type === "goldMagnet") goldBonusPercent += 10;
-    if (type === "luckyTouch") critChance += 2;
-    if (type === "rebirthPower") recalculateRebirthBonus();
-    updateUI();
-    updatePrestigeInfo();
-  } else {
-    alert("You don't have enough Rebirth Points.");
-  }
+  if (Math.abs(dist) <= 100 && Math.random() < 0.3) return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
+
+  if (self.cooldown === 0 && Math.abs(dist) <= 150 && Math.random() < 0.4) return 'shoot';
+
+  if (self.cooldown === 0 && Math.random() < 0.6) return 'attack';
+
+  if (Math.random() < 0.1) return 'jump';
+
+  return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
 }
 
-function recalculateRebirthBonus() {
-  rebirthBonus = 1 + rebirthLevel * (1 + prestigeUpgrades.rebirthPower * 0.5);
-}
+function tacticalBotLogic(self, opponent) {
+  const dist = opponent.x - self.x;
 
-// --- Attach Prestige Buttons ---
-[
-  "goldMagnet",
-  "luckyTouch",
-  "clickForge",
-  "autoMinerBoost",
-  "rebirthPower",
-  "megaMiner",
-  "critMastery",
-  "efficientClicks"
-].forEach(id => {
-  document.getElementById(`buy${capitalize(id)}`).addEventListener('click', () => buyUpgrade(id));
-});
+  if (self.action === 'attack' || self.action === 'hurt') return 'idle';
 
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-// --- Passive Income ---
-setInterval(() => {
-  let gain = (goldPerSecond + prestigeUpgrades.autoMinerBoost + prestigeUpgrades.megaMiner * 5) * rebirthBonus;
-  gain *= 1 + goldBonusPercent / 100;
-  gold += gain;
-  updateUI();
-}, 1000);
-
-// --- Effects ---
-function showClickEffect(x, y, text, isCrit = false) {
-  const span = document.createElement('span');
-  span.className = 'floating-text';
-  span.innerText = text;
-  span.style.left = `${x}px`;
-  span.style.top = `${y}px`;
-  if (isCrit) span.classList.add('crit');
-  clickEffects.appendChild(span);
-  setTimeout(() => span.remove(), 1000);
-  if (isCrit) {
-    createParticleBurst(x, y);
-    shakeScreen();
+  if (self.x <= stageLeftBound) {
+    self.patrolDirection = 'right';
+    return 'moveRight';
   }
-}
-
-function createParticleBurst(x, y) {
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const angle = (i / 8) * 2 * Math.PI;
-    const dist = 30 + Math.random() * 20;
-    p.style.left = `${x}px`;
-    p.style.top = `${y}px`;
-    p.style.setProperty('--x', `${Math.cos(angle) * dist}px`);
-    p.style.setProperty('--y', `${Math.sin(angle) * dist}px`);
-    clickEffects.appendChild(p);
-    setTimeout(() => p.remove(), 700);
+  if (self.x >= stageRightBound) {
+    self.patrolDirection = 'left';
+    return 'moveLeft';
   }
-}
 
-function shakeScreen() {
-  const intensity = 5, duration = 300;
-  let elapsed = 0, interval = 16;
-  const body = document.body, originalStyle = body.style.transform;
-  function shake() {
-    if (elapsed < duration) {
-      const x = (Math.random() - 0.5) * intensity;
-      const y = (Math.random() - 0.5) * intensity;
-      body.style.transform = `translate(${x}px, ${y}px)`;
-      elapsed += interval;
-      setTimeout(shake, interval);
-    } else body.style.transform = originalStyle;
+  if (!self.patrolDirection) self.patrolDirection = Math.random() < 0.5 ? 'left' : 'right';
+
+  if (Math.abs(dist) < 50) {
+    if (Math.random() < 0.5) return dist > 0 ? 'moveLeft' : 'moveRight';
   }
-  shake();
-}
 
-// --- Save/Load/Reset ---
-function saveGame() {
-  const saveData = {
-    gold, goldPerClick, goldPerSecond,
-    rebirthLevel, rebirthPoints, rebirthCost,
-    rebirthBonus, critChance, goldBonusPercent,
-    prestigeUpgrades,
-    upgrades: {
-      clickPowerCost: upgrades.clickPower.cost,
-      autoMinerCost: upgrades.autoMiner.cost
+  if (Math.abs(dist) >= 50 && Math.abs(dist) <= 120) {
+    if (Math.random() < 0.3) {
+      return Math.random() < 0.5
+        ? (dist > 0 ? 'moveRight' : 'moveLeft')
+        : (dist > 0 ? 'moveLeft' : 'moveRight');
     }
-  };
-  localStorage.setItem('idleClickerSave', JSON.stringify(saveData));
+    if (Math.random() < 0.3) return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
+  }
+
+  if (Math.abs(dist) > 120) return dist > 0 ? 'moveRight' : 'moveLeft';
+
+  if (self.cooldown === 0 && Math.abs(dist) <= 150 && Math.random() < 0.3) return 'shoot';
+
+  if (self.cooldown === 0 && Math.abs(dist) <= 90 && Math.random() < 0.5) return 'attack';
+
+  if (Math.random() < 0.15) return 'jump';
+
+  return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
 }
 
-function loadGame() {
-  const saved = localStorage.getItem('idleClickerSave');
-  if (!saved) return;
+// Change from const to let to allow reassignment
+let fighter1 = new Fighter(150, 'blue', aggressiveBotLogic, getRandomCharacterIndex());
+let fighter2 = new Fighter(600, 'red', tacticalBotLogic, getRandomCharacterIndex());
 
-  try {
-    const data = JSON.parse(saved);
+// UI elements from document (outside module)
+const betBlueBtn = document.getElementById('betBlue');
+const betRedBtn = document.getElementById('betRed');
+const currentBetDisplay = document.getElementById('currentBet');
+const resultDisplay = document.getElementById('result');
+const playerMoneyDisplay = document.getElementById('playerMoneyDisplay');
+const betAmountInput = document.getElementById('betAmountInput'); // New input for bet amount
 
-    // Validate essential fields
-    if (
-      typeof data.gold !== 'number' ||
-      typeof data.goldPerClick !== 'number' ||
-      typeof data.goldPerSecond !== 'number' ||
-      typeof data.rebirthLevel !== 'number' ||
-      typeof data.rebirthPoints !== 'number'
-    ) throw new Error("Corrupted save data");
+const resetMoneyBtn = document.getElementById('resetMoneyBtn');
 
-    // Assign safely
-    gold = data.gold;
-    goldPerClick = data.goldPerClick;
-    goldPerSecond = data.goldPerSecond;
-
-    rebirthLevel = data.rebirthLevel;
-    rebirthPoints = data.rebirthPoints;
-    rebirthCost = data.rebirthCost ?? 1000;
-    rebirthBonus = data.rebirthBonus ?? 1;
-
-    critChance = data.critChance ?? 0;
-    goldBonusPercent = data.goldBonusPercent ?? 0;
-
-    prestigeUpgrades = data.prestigeUpgrades || prestigeUpgrades;
-
-    upgrades.clickPower.cost = data.upgrades?.clickPowerCost || 10;
-    upgrades.autoMiner.cost = data.upgrades?.autoMinerCost || 50;
-
-    recalculateRebirthBonus();
-    updateUI();
-    updateEvolutionImage();
-    updatePrestigeInfo();
-
-  } catch (e) {
-    console.warn("Failed to load save data. Resetting.", e);
-    localStorage.removeItem('idleClickerSave');
-    alert("Save data was corrupted and has been reset.");
-    location.reload(); // Clean reload
+function updateMoneyDisplay() {
+  if (playerMoneyDisplay) {
+    playerMoneyDisplay.textContent = `Money: $${playerMoney}`;
   }
 }
 
+if (resetMoneyBtn) {
+  resetMoneyBtn.addEventListener('click', () => {
+    playerMoney = 1000;
+    localStorage.setItem('playerMoney', playerMoney);
+    updateMoneyDisplay();
+  });
+}
 
+function placeBet(color) {
+  if (!bettingActive) return; // no bets if fight started
+  if (!betAmountInput) {
+    alert('Bet amount input not found!');
+    return;
+  }
+  let amount = parseInt(betAmountInput.value, 10);
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid bet amount greater than 0');
+    return;
+  }
+  if (playerMoney < amount) {
+    alert("You don't have enough money to bet!");
+    return;
+  }
+  // Deduct money immediately on bet
+  playerMoney -= amount;
+  localStorage.setItem('playerMoney', playerMoney);
+  updateMoneyDisplay();
 
-function resetGame() {
-  if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
-    localStorage.removeItem('idleClickerSave');
-    location.reload();
+  currentBet = color;
+  betAmount = amount;
+  if (currentBetDisplay) {
+    currentBetDisplay.textContent = `Current bet: ${color.charAt(0).toUpperCase() + color.slice(1)} Fighter ($${betAmount})`;
+  }
+  if (resultDisplay) {
+    resultDisplay.textContent = '';
+  }
+
+  if (betBlueBtn) betBlueBtn.disabled = true;
+  if (betRedBtn) betRedBtn.disabled = true;
+  if (betAmountInput) betAmountInput.disabled = true;
+}
+
+if (betBlueBtn) {
+  betBlueBtn.addEventListener('click', () => placeBet('blue'));
+}
+if (betRedBtn) {
+  betRedBtn.addEventListener('click', () => placeBet('red'));
+}
+
+// --- New function to select random background image ---
+function selectRandomBackground() {
+  const index = Math.floor(Math.random() * backgroundImages.length);
+  background.src = backgroundImages[index];
+}
+
+function resetFight() {
+  // Recreate fighters with new random characters and logic
+  fighter1 = new Fighter(150, 'blue', aggressiveBotLogic, getRandomCharacterIndex());
+  fighter2 = new Fighter(600, 'red', tacticalBotLogic, getRandomCharacterIndex());
+
+  // --- New: Pick a new random background on each fight reset ---
+  selectRandomBackground();
+
+  fightEnded = false;
+  fightActive = false;
+  bettingActive = true;
+  bettingCountdown = bettingTime;
+  currentBet = null;
+  betAmount = 0;
+
+  if (currentBetDisplay) currentBetDisplay.textContent = 'Current bet: None';
+  if (resultDisplay) resultDisplay.textContent = '';
+  if (betBlueBtn) betBlueBtn.disabled = false;
+  if (betRedBtn) betRedBtn.disabled = false;
+  if (betAmountInput) {
+    betAmountInput.disabled = false;
+    betAmountInput.value = ''; // reset input
   }
 }
 
-document.getElementById('resetBtn').addEventListener('click', resetGame);
+function drawHPBar(fighter, x, y) {
+  const width = 150;
+  const height = 15;
+  const hpPercent = Math.max(0, fighter.hp) / 100;
+  ctx.fillStyle = 'gray';
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = fighter.color;
+  ctx.fillRect(x, y, width * hpPercent, height);
+  ctx.strokeStyle = 'black';
+  ctx.strokeRect(x, y, width, height);
+}
 
-setInterval(saveGame, 15000);
-loadGame();
-updateUI();
-updateEvolutionImage();
-updatePrestigeInfo();
+let frameCount = 0;
+
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();  // Save context before applying shake
+
+  // Apply screen shake if active
+  if (shakeTimer < shakeDuration) {
+    const dx = (Math.random() * 2 - 1) * shakeIntensity;
+    const dy = (Math.random() * 2 - 1) * shakeIntensity;
+    shakeTimer++;
+    ctx.translate(dx, dy);
+  }
+
+  // Draw background (uses the dynamic background Image object)
+  if (background.complete && background.naturalWidth !== 0) {
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = 'lightgray';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  ctx.restore(); // Restore context after shake
+
+  // White flash overlay for special effect
+  if (specialFlashDuration > 0) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${specialFlashDuration / specialFlashMaxDuration})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    specialFlashDuration--;
+  }
+
+   // Draw fighters and HP bars
+  fighter1.draw(ctx);
+  fighter2.draw(ctx);
+
+  drawHPBar(fighter1, 50, 10);
+  drawHPBar(fighter2, 600, 10);
+
+  // White flash overlay for special effect (after fighters)
+  if (specialFlashDuration > 0) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${specialFlashDuration / specialFlashMaxDuration})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    specialFlashDuration--;
+  }
+
+    // Betting countdown and fight start logic
+  if (bettingActive) {
+    if (bettingCountdown > 0) {
+      if (currentBetDisplay) {
+        const betText = currentBet
+          ? `Betting on: ${currentBet.charAt(0).toUpperCase() + currentBet.slice(1)} Fighter ($${betAmount})`
+          : 'No bet placed yet';
+        currentBetDisplay.textContent = `Place your bet! Time left: ${bettingCountdown}s | ${betText}`;
+      }
+      if (frameCount % 60 === 0) bettingCountdown--;
+    } else {
+      bettingActive = false;
+      fightActive = true;
+      if (currentBetDisplay) currentBetDisplay.textContent = 'Fight started!';
+    }
+  }
+
+  // Show cooldown timers visually for both fighters
+  ctx.fillStyle = 'white';
+  ctx.font = '20px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 20, canvas.height - 340);
+  ctx.fillText(`Red cooldown: ${fighter2.cooldown}`, 620, canvas.height - 340);
+
+
+
+  // Fight update
+  if (fightActive) {
+    fighter1.update(fighter2);
+    fighter2.update(fighter1);
+
+    // Check if one fighter is dead
+    if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+      fightActive = false;
+      fightEnded = true;
+
+      let winnerColor = fighter1.hp > 0 ? 'blue' : 'red';
+      if (resultDisplay) {
+        resultDisplay.textContent = `Fight ended! Winner: ${winnerColor.charAt(0).toUpperCase() + winnerColor.slice(1)} Fighter`;
+      }
+
+      // Check betting result
+      if (currentBet === winnerColor) {
+        // Player wins: payout 2x the bet amount
+        playerMoney += betAmount * 2;
+        if (resultDisplay) resultDisplay.textContent += ' - You won the bet!';
+      } else if (currentBet) {
+        if (resultDisplay) resultDisplay.textContent += ' - You lost the bet.';
+      } else {
+        if (resultDisplay) resultDisplay.textContent += ' - You did not place a bet.';
+      }
+
+      localStorage.setItem('playerMoney', playerMoney);
+      updateMoneyDisplay();
+
+      if (betBlueBtn) betBlueBtn.disabled = true;
+      if (betRedBtn) betRedBtn.disabled = true;
+      if (betAmountInput) betAmountInput.disabled = true;
+    
+	setTimeout(() => {
+    resetFight();
+    if (betBlueBtn) betBlueBtn.disabled = false;
+    if (betRedBtn) betRedBtn.disabled = false;
+    if (betAmountInput) betAmountInput.disabled = false;
+  }, 5000); // 5 seconds after fight ends
+}
+  }
+
+  frameCount++;
+  requestAnimationFrame(gameLoop);
+}
+
+// Start background image initially
+selectRandomBackground();
+
+// Start the game loop
+updateMoneyDisplay();
+resetFight();
+gameLoop();
