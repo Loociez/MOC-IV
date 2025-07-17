@@ -353,11 +353,28 @@ export class Fighter {
     ctx.fillRect(this.x, this.y - (this.height * 2) - 12, (this.hp / 100) * this.width * 2, 6);
     ctx.shadowBlur = 0;
 
-    if (this.floatingText) {
-      ctx.font = '10px Arial';
-      ctx.fillStyle = this.floatingText.color;
-      ctx.fillText(this.floatingText.text, this.x, this.y - (this.height * 2) - 20 - this.floatingText.yOffset);
-    }
+   if (this.floatingText) {
+  ctx.save();
+  ctx.font = 'bold 12px Verdana, Geneva, sans-serif'; // larger, cleaner font
+  ctx.fillStyle = this.floatingText.color;
+
+  // Optional: Glow around text
+  ctx.shadowColor = 'black';
+  ctx.shadowBlur = 8;
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(
+    this.floatingText.text,
+    this.x + this.width, // center of the fighter sprite
+    this.y - (this.height * 2) - 20 - this.floatingText.yOffset
+  );
+
+  ctx.shadowColor = 'transparent'; // reset shadow
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
 
    // ✅ Taunt text (safely drawn) with glow and improved font
 if (this.tauntTimer > 0) {
