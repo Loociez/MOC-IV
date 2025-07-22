@@ -135,317 +135,178 @@
     </tbody>
   </table>
 
- <script>
+<script>
 let selectedItems = [];
 
 async function fetchWithTimeout(url, timeout = 5000) {
-    return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
-        fetch(url).then(response => {
-            clearTimeout(timer);
-            if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
-            else resolve(response);
-        }).catch(err => {
-            clearTimeout(timer);
-            reject(err);
-        });
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
+    fetch(url).then(response => {
+      clearTimeout(timer);
+      if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
+      else resolve(response);
+    }).catch(err => {
+      clearTimeout(timer);
+      reject(err);
     });
+  });
 }
 
 async function fetchItemData() {
-    try {
-        const response = await fetch('last.json');
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Failed to fetch item data:', error);
-    }
+  try {
+    const response = await fetch('last.json');
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch item data:', error);
+  }
 }
 
 function isFavorite(name) {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    return favorites.includes(name);
+  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  return favorites.includes(name);
 }
 
 function toggleFavorite(item) {
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    if (favorites.includes(item.name)) {
-        favorites = favorites.filter(name => name !== item.name);
-    } else {
-        favorites.push(item.name);
-    }
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    filterTable(); // Reapply filter after favorite toggle
+  let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  if (favorites.includes(item.name)) {
+    favorites = favorites.filter(name => name !== item.name);
+  } else {
+    favorites.push(item.name);
+  }
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+  filterTable();
 }
 
 async function fetchAndDisplayItems() {
-    try {
-        let items = await fetchItemData();
+  try {
+    let items = await fetchItemData();
 
-        const sortKey = document.getElementById("sortStat")?.value;
-        if (sortKey && sortKey !== "none") {
-            items.sort((a, b) => {
-                const aValue = a.data?.[sortKey] ?? -Infinity;
-                const bValue = b.data?.[sortKey] ?? -Infinity;
-                return bValue - aValue;
-            });
-        }
-
-        const tableBody = document.getElementById('itemTable').querySelector('tbody');
-        tableBody.innerHTML = '';
-
-       items.forEach(item => {
-    const row = document.createElement('tr');
-
-    const selectCell = document.createElement('td');
-    const selectCheckbox = document.createElement('input');
-    selectCheckbox.type = 'checkbox';
-    selectCheckbox.value = item.name;
-    selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-    selectCell.appendChild(selectCheckbox);
-    row.appendChild(selectCell);
-
-    const nameCell = document.createElement('td');
-    nameCell.innerHTML = item.name;
-    if (item.data?.level_req !== undefined) {
-        nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${item.data.level_req}</span>`;
+    const sortKey = document.getElementById("sortStat")?.value;
+    if (sortKey && sortKey !== "none") {
+      items.sort((a, b) => {
+        const aValue = a.data?.[sortKey] ?? -Infinity;
+        const bValue = b.data?.[sortKey] ?? -Infinity;
+        return bValue - aValue;
+      });
     }
-    row.appendChild(nameCell);
 
-    const descCell = document.createElement('td');
-    descCell.textContent = item.desc || 'No description';
-    row.appendChild(descCell);
+    const tableBody = document.getElementById('itemTable').querySelector('tbody');
+    tableBody.innerHTML = '';
 
-    const dataCell = document.createElement('td');
-    let stats = item.data ? Object.entries(item.data) : [];
-    if (item.tile_range) stats.push(['tile range', item.tile_range]);
+    items.forEach(item => {
+      const row = document.createElement('tr');
 
-    const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
-    const groupedStats = {};
-    stats.forEach(([key, value]) => {
+      const selectCell = document.createElement('td');
+      const selectCheckbox = document.createElement('input');
+      selectCheckbox.type = 'checkbox';
+      selectCheckbox.value = item.name;
+      selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+      selectCell.appendChild(selectCheckbox);
+      row.appendChild(selectCell);
+
+      const nameCell = document.createElement('td');
+      const levelReq = item.data?.level_req;
+      nameCell.innerHTML = item.name;
+      if (levelReq !== undefined) {
+        nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${levelReq}</span>`;
+      }
+      row.appendChild(nameCell);
+
+      const descCell = document.createElement('td');
+      descCell.textContent = item.desc || 'No description';
+      row.appendChild(descCell);
+
+      const dataCell = document.createElement('td');
+      let stats = item.data ? Object.entries(item.data) : [];
+      if (item.tile_range) stats.push(['tile range', item.tile_range]);
+
+      const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
+      const groupedStats = {};
+      stats.forEach(([key, value]) => {
         if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
         const match = key.match(/^(min|max)_(.+)$/);
         if (match) {
-            const [, bound, statName] = match;
-            if (!groupedStats[statName]) groupedStats[statName] = {};
-            groupedStats[statName][bound] = value;
+          const [, bound, statName] = match;
+          if (!groupedStats[statName]) groupedStats[statName] = {};
+          groupedStats[statName][bound] = value;
         } else {
-            groupedStats[key] = value;
+          groupedStats[key] = value;
         }
-    });
+      });
 
-
-            let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
-    if (typeof value === 'object') {
-        const min = value.min;
-        const max = value.max;
-        if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
-        else if (min !== undefined) return `${key} (min): ${min}`;
-        else if (max !== undefined) return `${key} (max): ${max}`;
-        else return `${key}: ?`;
-    }
-    return `${key.replace(/_/g, ' ')}: ${value}`;
-});
-
-// Add Level if present
-if (item.data?.level_req !== undefined) {
-    formattedLines.push(`Level: ${item.data.level_req}`);
-}
-
-// Spell Amp handling
-const spellAmpKeys = [
-    "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
-    "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
-    "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
-    "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
-    "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
-    "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
-];
-
-const spellAmpEntries = spellAmpKeys
-    .filter(key => item.data?.[key] !== undefined)
-    .map(key => `${key.replace(/_/g, ' ')}: ${item.data[key]}`);
-
-if (spellAmpEntries.length > 0) {
-    formattedLines.push(""); // visual space
-    formattedLines.push("Spell Amp:");
-    formattedLines.push(...spellAmpEntries);
-}
-
-const formattedData = formattedLines.join('\n');
-
-
-            dataCell.textContent = formattedData.trim() || 'No stats';
-            dataCell.classList.add('data');
-            row.appendChild(dataCell);
-
-            const repairCostCell = document.createElement('td');
-            repairCostCell.textContent = item.repair_cost || 'No repair cost';
-            row.appendChild(repairCostCell);
-
-            const usesCell = document.createElement('td');
-            usesCell.textContent = item.uses || 'No uses data';
-            row.appendChild(usesCell);
-
-            const sellValueCell = document.createElement('td');
-            sellValueCell.textContent = item.recycle_value || 'No sell value';
-            row.appendChild(sellValueCell);
-
-            const handednessCell = document.createElement('td');
-            const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
-            handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-            row.appendChild(handednessCell);
-
-            const favoriteCell = document.createElement('td');
-            const favoriteCheckbox = document.createElement('input');
-            favoriteCheckbox.type = 'checkbox';
-            favoriteCheckbox.checked = isFavorite(item.name);
-            favoriteCheckbox.onclick = () => toggleFavorite(item);
-            favoriteCell.appendChild(favoriteCheckbox);
-            row.appendChild(favoriteCell);
-
-            tableBody.appendChild(row);
-        });
-
-        filterTable(); // Apply filters after display
-    } catch (error) {
-        console.error('Error fetching or displaying data:', error);
-        alert(`Failed to load data: ${error.message}`);
-    }
-}
-
-function handleItemSelection(item, checkbox) {
-    if (checkbox.checked) {
-        selectedItems.push(item);
-    } else {
-        selectedItems = selectedItems.filter(selectedItem => selectedItem !== item);
-    }
-    displayComparison(selectedItems);
-}
-
-function displayComparison(selectedItems) {
-    const comparisonTableBody = document.getElementById('comparisonTable').querySelector('tbody');
-    comparisonTableBody.innerHTML = '';
-
-    if (selectedItems.length < 2) {
-        document.getElementById('comparisonModal').style.display = 'none';
-        return;
-    }
-
-    const [item1, item2] = selectedItems;
-    const stats1 = item1.data || {};
-    const stats2 = item2.data || {};
-    const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin"];
-
-    const row = document.createElement('tr');
-    const nameCell = document.createElement('td');
-    nameCell.textContent = item1.name + " vs " + item2.name;
-    row.appendChild(nameCell);
-
-    const statsCell1 = document.createElement('td');
-    Object.entries(stats1).forEach(([key, value]) => {
-        if (excludedFields.includes(key.toLowerCase())) return;
-        const statElement = document.createElement('span');
-        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
-        statsCell1.appendChild(statElement);
-        statsCell1.appendChild(document.createElement('br'));
-    });
-    row.appendChild(statsCell1);
-
-    const statsCell2 = document.createElement('td');
-    Object.entries(stats2).forEach(([key, value]) => {
-        if (excludedFields.includes(key.toLowerCase())) return;
-        const statElement = document.createElement('span');
-        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
-        statsCell2.appendChild(statElement);
-        statsCell2.appendChild(document.createElement('br'));
-    });
-    row.appendChild(statsCell2);
-
-    highlightStats(stats1, stats2, statsCell1, statsCell2);
-
-    const repairCostCell = document.createElement('td');
-    repairCostCell.textContent = item1.repair_cost || 'No repair cost';
-    row.appendChild(repairCostCell);
-
-    const usesCell = document.createElement('td');
-    usesCell.textContent = item1.uses || 'No uses data';
-    row.appendChild(usesCell);
-
-    const sellValueCell = document.createElement('td');
-    sellValueCell.textContent = item1.recycle_value || 'No sell value';
-    row.appendChild(sellValueCell);
-
-    const handednessCell = document.createElement('td');
-    handednessCell.textContent = item1.data && item1.data.two_handed ? 'Two Handed' : 'One Handed';
-    row.appendChild(handednessCell);
-
-    comparisonTableBody.appendChild(row);
-    document.getElementById('comparisonModal').style.display = 'block';
-}
-
-function highlightStats(stats1, stats2, statsCell1, statsCell2) {
-    const stats1Entries = Object.entries(stats1);
-    const stats2Entries = Object.entries(stats2);
-    stats1Entries.forEach(([key, value], index) => {
-        if (!stats2Entries[index]) return;
-        const otherValue = stats2Entries[index][1];
-        if (value > otherValue) {
-            statsCell1.children[index].classList.add('higher');
-            statsCell2.children[index].classList.add('lower');
-        } else if (value < otherValue) {
-            statsCell1.children[index].classList.add('lower');
-            statsCell2.children[index].classList.add('higher');
+      let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
+        if (typeof value === 'object') {
+          const min = value.min;
+          const max = value.max;
+          if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+          else if (min !== undefined) return `${key} (min): ${min}`;
+          else if (max !== undefined) return `${key} (max): ${max}`;
+          else return `${key}: ?`;
         }
+        return `${key.replace(/_/g, ' ')}: ${value}`;
+      });
+
+      const spellAmpKeys = [
+        "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
+        "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
+        "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
+        "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
+        "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
+        "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
+      ];
+
+      const spellAmpEntries = spellAmpKeys
+        .filter(key => item.data?.[key] !== undefined)
+        .map(key => `${key.replace(/_/g, ' ')}: ${item.data[key]}`);
+
+      if (spellAmpEntries.length > 0) {
+        formattedLines.push("");
+        formattedLines.push("Spell Amp:");
+        formattedLines.push(...spellAmpEntries);
+      }
+
+      const formattedData = formattedLines.join('\n');
+
+      dataCell.textContent = formattedData.trim() || 'No stats';
+      dataCell.classList.add('data');
+      row.appendChild(dataCell);
+
+      const repairCostCell = document.createElement('td');
+      repairCostCell.textContent = item.repair_cost || 'No repair cost';
+      row.appendChild(repairCostCell);
+
+      const usesCell = document.createElement('td');
+      usesCell.textContent = item.uses || 'No uses data';
+      row.appendChild(usesCell);
+
+      const sellValueCell = document.createElement('td');
+      sellValueCell.textContent = item.recycle_value || 'No sell value';
+      row.appendChild(sellValueCell);
+
+      const handednessCell = document.createElement('td');
+      const isTwoHanded = item.data && (item.data.two_handed === true || item.data.two_handed === 'true');
+      handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
+      row.appendChild(handednessCell);
+
+      const favoriteCell = document.createElement('td');
+      const favoriteCheckbox = document.createElement('input');
+      favoriteCheckbox.type = 'checkbox';
+      favoriteCheckbox.checked = isFavorite(item.name);
+      favoriteCheckbox.onclick = () => toggleFavorite(item);
+      favoriteCell.appendChild(favoriteCheckbox);
+      row.appendChild(favoriteCell);
+
+      tableBody.appendChild(row);
     });
+
+    filterTable();
+  } catch (error) {
+    console.error('Error fetching or displaying data:', error);
+    alert(`Failed to load data: ${error.message}`);
+  }
 }
-
-function clearComparison() {
-    selectedItems = [];
-    document.querySelectorAll('#itemTable input[type="checkbox"]').forEach(cb => cb.checked = false);
-    document.getElementById('comparisonModal').style.display = 'none';
-}
-
-function closeModal() {
-    document.getElementById('comparisonModal').style.display = 'none';
-}
-
-function filterTable() {
-    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-    const weaponFilter = document.getElementById('weaponFilter').checked;
-    const petFilter = document.getElementById('petFilter').checked;
-    const recipeFilter = document.getElementById('recipeFilter').checked;
-    const rareFilter = document.getElementById('rareFilter').checked;
-    const favoritesFilter = document.getElementById('favoritesFilter').checked;
-    const rows = document.querySelectorAll('#itemTable tbody tr');
-
-    rows.forEach(row => {
-        const nameCell = row.querySelector('td:nth-child(2)');
-        const descriptionCell = row.querySelector('td:nth-child(3)');
-        const statsCell = row.querySelector('td:nth-child(4)');
-        const matchesSearch =
-            (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
-            (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
-        const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
-        const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
-        const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
-        const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
-        const isFavoriteItem = isFavorite(nameCell.textContent);
-
-        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && (!favoritesFilter || isFavoriteItem)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-// Listen for dropdown change
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
-    fetchAndDisplayItems(); // initial load
-});
 </script>
 </body>
 </html>
