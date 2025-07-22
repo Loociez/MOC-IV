@@ -232,17 +232,45 @@ async function fetchAndDisplayItems() {
                 }
             });
 
-            const formattedData = Object.entries(groupedStats).map(([key, value]) => {
-                if (typeof value === 'object') {
-                    const min = value.min;
-                    const max = value.max;
-                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
-                    else if (min !== undefined) return `${key} (min): ${min}`;
-                    else if (max !== undefined) return `${key} (max): ${max}`;
-                    else return `${key}: ?`;
-                }
-                return `${key.replace(/_/g, ' ')}: ${value}`;
-            }).join('\n');
+            let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
+    if (typeof value === 'object') {
+        const min = value.min;
+        const max = value.max;
+        if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+        else if (min !== undefined) return `${key} (min): ${min}`;
+        else if (max !== undefined) return `${key} (max): ${max}`;
+        else return `${key}: ?`;
+    }
+    return `${key.replace(/_/g, ' ')}: ${value}`;
+});
+
+// Add Level if present
+if (item.data?.level_req !== undefined) {
+    formattedLines.push(`Level: ${item.data.level_req}`);
+}
+
+// Spell Amp handling
+const spellAmpKeys = [
+    "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
+    "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
+    "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
+    "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
+    "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
+    "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
+];
+
+const spellAmpEntries = spellAmpKeys
+    .filter(key => item.data?.[key] !== undefined)
+    .map(key => `${key.replace(/_/g, ' ')}: ${item.data[key]}`);
+
+if (spellAmpEntries.length > 0) {
+    formattedLines.push(""); // visual space
+    formattedLines.push("Spell Amp:");
+    formattedLines.push(...spellAmpEntries);
+}
+
+const formattedData = formattedLines.join('\n');
+
 
             dataCell.textContent = formattedData.trim() || 'No stats';
             dataCell.classList.add('data');
