@@ -248,11 +248,6 @@ async function fetchAndDisplayItems() {
     return `${key.replace(/_/g, ' ')}: ${value}`;
 });
 
-// Add Level if present
-if (item.level_req !== undefined) {
-    formattedLines.push(`Lvl Requirement: ${item.level_req}`);
-}
-
 // Spell Amp handling
 const spellAmpKeys = [
     "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
