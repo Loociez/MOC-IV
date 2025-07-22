@@ -248,25 +248,38 @@ async function fetchAndDisplayItems() {
     return `${key.replace(/_/g, ' ')}: ${value}`;
 });
 
-// Spell Amp handling
-const spellAmpKeys = [
-    "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
-    "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
-    "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
-    "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
-    "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
-    "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
-];
+// Mapping of long keys to short labels
+const spellAmpLabels = {
+  "!bard_buff_uptime": "Bard Buff Up",
+  "!jester_confuse_cost": "Jest Confuse Cost",
+  "!cleric_petheal_amount": "Cleric Pet Heal",
+  "!dragoon_npcaoe_damage": "Dragoon NPC AOE",
+  "!warlock_npcaoe_damage": "Warlock NPC AOE",
+  "!cleric_playerheal_amount": "Cleric Player Heal",
+  "!dragoon_playeraoe_damage": "Dragoon Player AOE",
+  "!warlock_playeraoe_damage": "Warlock Player AOE",
+  "!assassin_npcpoison_damage": "Assass NPC Poison",
+  "!necromancer_minion_damage": "Necro Minion Dmg",
+  "!samurai_npcriposte_damage": "Samurai NPC Riposte",
+  "!barbarian_alldamage_amount": "Barbarian All Dmg",
+  "!marksman_npcshotgun_damage": "Marks NPC Shotgun",
+  "!assassin_playerpoison_damage": "Assass Player Poison",
+  "!samurai_playerriposte_damage": "Samurai Player Rip",
+  "!marksman_playershotgun_damage": "Marks Player Shotgun",
+  "!vampire_npclifesteal_amount": "Vamp NPC Lifesteal",
+  "!vampire_playerlifesteal_amount": "Vamp Player Lifesteal"
+};
 
 const spellAmpEntries = spellAmpKeys
-    .filter(key => item.data?.[key] !== undefined)
-    .map(key => `${key.replace(/_/g, ' ')}: ${item.data[key]}`);
+  .filter(key => item.data?.[key] !== undefined)
+  .map(key => `${spellAmpLabels[key] || key.replace(/_/g, ' ')}: ${item.data[key]}`);
 
 if (spellAmpEntries.length > 0) {
-    formattedLines.push(""); // visual space
-    formattedLines.push("Spell Amp:");
-    formattedLines.push(...spellAmpEntries);
+  formattedLines.push(""); // visual space
+  formattedLines.push("Spell Amp:");
+  formattedLines.push(...spellAmpEntries);
 }
+
 
 const formattedData = formattedLines.join('\n');
 
