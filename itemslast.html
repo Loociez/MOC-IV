@@ -206,9 +206,13 @@ async function fetchAndDisplayItems() {
             selectCell.appendChild(selectCheckbox);
             row.appendChild(selectCell);
 
-            const nameCell = document.createElement('td');
-            nameCell.textContent = item.name;
-            row.appendChild(nameCell);
+           const nameCell = document.createElement('td');
+nameCell.innerHTML = item.name;
+if (item.data?.level_req !== undefined) {
+    nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${item.data.level_req}</span>`;
+}
+row.appendChild(nameCell);
+
 
             const descCell = document.createElement('td');
             descCell.textContent = item.desc || 'No description';
