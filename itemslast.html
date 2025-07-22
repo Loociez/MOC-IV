@@ -195,46 +195,46 @@ async function fetchAndDisplayItems() {
         const tableBody = document.getElementById('itemTable').querySelector('tbody');
         tableBody.innerHTML = '';
 
-        items.forEach(item => {
-            const row = document.createElement('tr');
+       items.forEach(item => {
+    const row = document.createElement('tr');
 
-            const selectCell = document.createElement('td');
-            const selectCheckbox = document.createElement('input');
-            selectCheckbox.type = 'checkbox';
-            selectCheckbox.value = item.name;
-            selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-            selectCell.appendChild(selectCheckbox);
-            row.appendChild(selectCell);
+    const selectCell = document.createElement('td');
+    const selectCheckbox = document.createElement('input');
+    selectCheckbox.type = 'checkbox';
+    selectCheckbox.value = item.name;
+    selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+    selectCell.appendChild(selectCheckbox);
+    row.appendChild(selectCell);
 
-           const nameCell = document.createElement('td');
-nameCell.innerHTML = item.name;
-if (item.data?.level_req !== undefined) {
-    nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${item.data.level_req}</span>`;
-}
-row.appendChild(nameCell);
+    const nameCell = document.createElement('td');
+    nameCell.innerHTML = item.name;
+    if (item.data?.level_req !== undefined) {
+        nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${item.data.level_req}</span>`;
+    }
+    row.appendChild(nameCell);
 
+    const descCell = document.createElement('td');
+    descCell.textContent = item.desc || 'No description';
+    row.appendChild(descCell);
 
-            const descCell = document.createElement('td');
-            descCell.textContent = item.desc || 'No description';
-            row.appendChild(descCell);
+    const dataCell = document.createElement('td');
+    let stats = item.data ? Object.entries(item.data) : [];
+    if (item.tile_range) stats.push(['tile range', item.tile_range]);
 
-            const dataCell = document.createElement('td');
-            let stats = item.data ? Object.entries(item.data) : [];
-            if (item.tile_range) stats.push(['tile range', item.tile_range]);
+    const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
+    const groupedStats = {};
+    stats.forEach(([key, value]) => {
+        if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
+        const match = key.match(/^(min|max)_(.+)$/);
+        if (match) {
+            const [, bound, statName] = match;
+            if (!groupedStats[statName]) groupedStats[statName] = {};
+            groupedStats[statName][bound] = value;
+        } else {
+            groupedStats[key] = value;
+        }
+    });
 
-            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
-            const groupedStats = {};
-            stats.forEach(([key, value]) => {
-                if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
-                const match = key.match(/^(min|max)_(.+)$/);
-                if (match) {
-                    const [, bound, statName] = match;
-                    if (!groupedStats[statName]) groupedStats[statName] = {};
-                    groupedStats[statName][bound] = value;
-                } else {
-                    groupedStats[key] = value;
-                }
-            });
 
             let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
     if (typeof value === 'object') {
