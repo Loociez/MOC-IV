@@ -248,204 +248,159 @@ async function fetchAndDisplayItems() {
     return `${key.replace(/_/g, ' ')}: ${value}`;
 });
 
-// Add Level if present
+// ** Added level_req display here under stats as requested **
 if (item.data?.level_req !== undefined) {
     formattedLines.push(`Level: ${item.data.level_req}`);
 }
 
-// Spell Amp handling
 const spellAmpKeys = [
-    "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
-    "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
-    "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
-    "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
-    "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
-    "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
+    "!bard_buff_uptime", "!jester_confuse_cost", "!bard_critical_chance", "!bard_dps", "!bard_fire_dot",
+    "!bard_fire_dot_aoe", "!bard_ice_dot", "!bard_ice_dot_aoe", "!bard_pet_bonus", "!bard_summon_bonus",
+    "!bard_warcry_bonus", "!bard_wind_dot", "!bard_wind_dot_aoe", "!bard_wind_resistance", "!bard_wind_spell_resistance",
+    "!bard_wind_spell_damage", "!bard_wind_spell_healing", "!bard_wind_spell_range", "!bard_wind_spell_radius"
 ];
 
-const spellAmpEntries = spellAmpKeys
-    .filter(key => item.data?.[key] !== undefined)
-    .map(key => `${key.replace(/_/g, ' ')}: ${item.data[key]}`);
+formattedLines = formattedLines.filter(line => !spellAmpKeys.some(key => line.toLowerCase().includes(key)));
 
-if (spellAmpEntries.length > 0) {
-    formattedLines.push(""); // visual space
-    formattedLines.push("Spell Amp:");
-    formattedLines.push(...spellAmpEntries);
-}
+dataCell.innerHTML = `<pre class="data">${formattedLines.join('\n')}</pre>`;
+row.appendChild(dataCell);
 
-const formattedData = formattedLines.join('\n');
+    const repairCell = document.createElement('td');
+    repairCell.textContent = item.repair?.cost || '-';
+    row.appendChild(repairCell);
 
+    const usesCell = document.createElement('td');
+    usesCell.textContent = item.uses ?? '-';
+    row.appendChild(usesCell);
 
-            dataCell.textContent = formattedData.trim() || 'No stats';
-            dataCell.classList.add('data');
-            row.appendChild(dataCell);
+    const sellCell = document.createElement('td');
+    sellCell.textContent = item.sell_value ?? '-';
+    row.appendChild(sellCell);
 
-            const repairCostCell = document.createElement('td');
-            repairCostCell.textContent = item.repair_cost || 'No repair cost';
-            row.appendChild(repairCostCell);
+    const handedCell = document.createElement('td');
+    handedCell.textContent = item.handed ?? '-';
+    row.appendChild(handedCell);
 
-            const usesCell = document.createElement('td');
-            usesCell.textContent = item.uses || 'No uses data';
-            row.appendChild(usesCell);
+    const favCell = document.createElement('td');
+    const favCheckbox = document.createElement('input');
+    favCheckbox.type = 'checkbox';
+    favCheckbox.checked = isFavorite(item.name);
+    favCheckbox.onclick = () => toggleFavorite(item);
+    favCell.appendChild(favCheckbox);
+    row.appendChild(favCell);
 
-            const sellValueCell = document.createElement('td');
-            sellValueCell.textContent = item.recycle_value || 'No sell value';
-            row.appendChild(sellValueCell);
+    tableBody.appendChild(row);
+});
 
-            const handednessCell = document.createElement('td');
-            const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
-            handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-            row.appendChild(handednessCell);
-
-            const favoriteCell = document.createElement('td');
-            const favoriteCheckbox = document.createElement('input');
-            favoriteCheckbox.type = 'checkbox';
-            favoriteCheckbox.checked = isFavorite(item.name);
-            favoriteCheckbox.onclick = () => toggleFavorite(item);
-            favoriteCell.appendChild(favoriteCheckbox);
-            row.appendChild(favoriteCell);
-
-            tableBody.appendChild(row);
-        });
-
-        filterTable(); // Apply filters after display
+        filterTable();
     } catch (error) {
-        console.error('Error fetching or displaying data:', error);
-        alert(`Failed to load data: ${error.message}`);
+        console.error('Error loading items:', error);
     }
 }
 
 function handleItemSelection(item, checkbox) {
     if (checkbox.checked) {
-        selectedItems.push(item);
-    } else {
-        selectedItems = selectedItems.filter(selectedItem => selectedItem !== item);
-    }
-    displayComparison(selectedItems);
-}
-
-function displayComparison(selectedItems) {
-    const comparisonTableBody = document.getElementById('comparisonTable').querySelector('tbody');
-    comparisonTableBody.innerHTML = '';
-
-    if (selectedItems.length < 2) {
-        document.getElementById('comparisonModal').style.display = 'none';
-        return;
-    }
-
-    const [item1, item2] = selectedItems;
-    const stats1 = item1.data || {};
-    const stats2 = item2.data || {};
-    const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin"];
-
-    const row = document.createElement('tr');
-    const nameCell = document.createElement('td');
-    nameCell.textContent = item1.name + " vs " + item2.name;
-    row.appendChild(nameCell);
-
-    const statsCell1 = document.createElement('td');
-    Object.entries(stats1).forEach(([key, value]) => {
-        if (excludedFields.includes(key.toLowerCase())) return;
-        const statElement = document.createElement('span');
-        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
-        statsCell1.appendChild(statElement);
-        statsCell1.appendChild(document.createElement('br'));
-    });
-    row.appendChild(statsCell1);
-
-    const statsCell2 = document.createElement('td');
-    Object.entries(stats2).forEach(([key, value]) => {
-        if (excludedFields.includes(key.toLowerCase())) return;
-        const statElement = document.createElement('span');
-        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
-        statsCell2.appendChild(statElement);
-        statsCell2.appendChild(document.createElement('br'));
-    });
-    row.appendChild(statsCell2);
-
-    highlightStats(stats1, stats2, statsCell1, statsCell2);
-
-    const repairCostCell = document.createElement('td');
-    repairCostCell.textContent = item1.repair_cost || 'No repair cost';
-    row.appendChild(repairCostCell);
-
-    const usesCell = document.createElement('td');
-    usesCell.textContent = item1.uses || 'No uses data';
-    row.appendChild(usesCell);
-
-    const sellValueCell = document.createElement('td');
-    sellValueCell.textContent = item1.recycle_value || 'No sell value';
-    row.appendChild(sellValueCell);
-
-    const handednessCell = document.createElement('td');
-    handednessCell.textContent = item1.data && item1.data.two_handed ? 'Two Handed' : 'One Handed';
-    row.appendChild(handednessCell);
-
-    comparisonTableBody.appendChild(row);
-    document.getElementById('comparisonModal').style.display = 'block';
-}
-
-function highlightStats(stats1, stats2, statsCell1, statsCell2) {
-    const stats1Entries = Object.entries(stats1);
-    const stats2Entries = Object.entries(stats2);
-    stats1Entries.forEach(([key, value], index) => {
-        if (!stats2Entries[index]) return;
-        const otherValue = stats2Entries[index][1];
-        if (value > otherValue) {
-            statsCell1.children[index].classList.add('higher');
-            statsCell2.children[index].classList.add('lower');
-        } else if (value < otherValue) {
-            statsCell1.children[index].classList.add('lower');
-            statsCell2.children[index].classList.add('higher');
+        if (!selectedItems.find(i => i.name === item.name)) {
+            selectedItems.push(item);
         }
+    } else {
+        selectedItems = selectedItems.filter(i => i.name !== item.name);
+    }
+}
+
+function filterTable() {
+    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+    const weaponOnly = document.getElementById('weaponFilter').checked;
+    const petsOnly = document.getElementById('petFilter').checked;
+    const recipesOnly = document.getElementById('recipeFilter').checked;
+    const rareOnly = document.getElementById('rareFilter').checked;
+    const favOnly = document.getElementById('favoritesFilter').checked;
+    const sortStat = document.getElementById('sortStat').value;
+
+    const tableBody = document.getElementById('itemTable').querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    rows.forEach(row => {
+        const cells = row.cells;
+        const name = cells[1].textContent.toLowerCase();
+        const desc = cells[2].textContent.toLowerCase();
+        const stats = cells[3].textContent.toLowerCase();
+
+        let show = true;
+
+        if (searchTerm && !name.includes(searchTerm) && !desc.includes(searchTerm)) show = false;
+
+        if (weaponOnly && !name.includes('sword') && !name.includes('axe') && !name.includes('dagger') && !name.includes('bow') && !name.includes('weapon')) show = false;
+        if (petsOnly && !desc.includes('pet')) show = false;
+        if (recipesOnly && !desc.includes('recipe')) show = false;
+        if (rareOnly && !desc.includes('rare') && !desc.includes('legendary')) show = false;
+        if (favOnly && !cells[8].querySelector('input').checked) show = false;
+
+        row.style.display = show ? '' : 'none';
     });
 }
 
 function clearComparison() {
     selectedItems = [];
-    document.querySelectorAll('#itemTable input[type="checkbox"]').forEach(cb => cb.checked = false);
-    document.getElementById('comparisonModal').style.display = 'none';
+    const checkboxes = document.querySelectorAll('#itemTable tbody input[type="checkbox"]');
+    checkboxes.forEach(cb => (cb.checked = false));
 }
 
-function closeModal() {
-    document.getElementById('comparisonModal').style.display = 'none';
+function clearFavorites() {
+    localStorage.removeItem('favorites');
+    filterTable();
 }
 
-function filterTable() {
-    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-    const weaponFilter = document.getElementById('weaponFilter').checked;
-    const petFilter = document.getElementById('petFilter').checked;
-    const recipeFilter = document.getElementById('recipeFilter').checked;
-    const rareFilter = document.getElementById('rareFilter').checked;
-    const favoritesFilter = document.getElementById('favoritesFilter').checked;
-    const rows = document.querySelectorAll('#itemTable tbody tr');
+function generateShareLink() {
+    if (selectedItems.length === 0) {
+        alert('No items selected to share!');
+        return;
+    }
+    const baseUrl = window.location.href.split('?')[0];
+    const itemNames = selectedItems.map(i => encodeURIComponent(i.name)).join(',');
+    const shareUrl = `${baseUrl}?items=${itemNames}`;
+    prompt('Share this URL:', shareUrl);
+}
 
-    rows.forEach(row => {
-        const nameCell = row.querySelector('td:nth-child(2)');
-        const descriptionCell = row.querySelector('td:nth-child(3)');
-        const statsCell = row.querySelector('td:nth-child(4)');
-        const matchesSearch =
-            (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
-            (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
-        const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
-        const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
-        const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
-        const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
-        const isFavoriteItem = isFavorite(nameCell.textContent);
-
-        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && (!favoritesFilter || isFavoriteItem)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
+function copyStats() {
+    if (selectedItems.length === 0) {
+        alert('No items selected!');
+        return;
+    }
+    let text = '';
+    selectedItems.forEach(item => {
+        text += `${item.name}\n`;
+        if (item.data) {
+            for (const [key, value] of Object.entries(item.data)) {
+                text += `${key}: ${value}\n`;
+            }
         }
+        text += '\n';
     });
+    navigator.clipboard.writeText(text);
+    alert('Stats copied to clipboard.');
 }
 
-// Listen for dropdown change
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
-    fetchAndDisplayItems(); // initial load
-});
+function copyDescription() {
+    if (selectedItems.length === 0) {
+        alert('No items selected!');
+        return;
+    }
+    let text = '';
+    selectedItems.forEach(item => {
+        text += `${item.name}: ${item.desc}\n\n`;
+    });
+    navigator.clipboard.writeText(text);
+    alert('Descriptions copied to clipboard.');
+}
+
+function changeLanguage(lang) {
+    // Stub for language change
+    alert(`Language change to ${lang} not implemented yet.`);
+}
+
+// Load items on page load
+window.onload = fetchAndDisplayItems;
 </script>
 </body>
 </html>
