@@ -195,94 +195,91 @@ async function fetchAndDisplayItems() {
         const tableBody = document.getElementById('itemTable').querySelector('tbody');
         tableBody.innerHTML = '';
 
-       items.forEach(item => {
-    const row = document.createElement('tr');
+        items.forEach(item => {
+            const row = document.createElement('tr');
 
-    const selectCell = document.createElement('td');
-    const selectCheckbox = document.createElement('input');
-    selectCheckbox.type = 'checkbox';
-    selectCheckbox.value = item.name;
-    selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-    selectCell.appendChild(selectCheckbox);
-    row.appendChild(selectCell);
+            const selectCell = document.createElement('td');
+            const selectCheckbox = document.createElement('input');
+            selectCheckbox.type = 'checkbox';
+            selectCheckbox.value = item.name;
+            selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+            selectCell.appendChild(selectCheckbox);
+            row.appendChild(selectCell);
 
-    const nameCell = document.createElement('td');
-    nameCell.innerHTML = item.name;
-  if (item.level_req !== undefined) {
-    nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
-}
-    row.appendChild(nameCell);
+            const nameCell = document.createElement('td');
+            nameCell.innerHTML = item.name;
+            if (item.level_req !== undefined) {
+                nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
+            }
+            row.appendChild(nameCell);
 
-    const descCell = document.createElement('td');
-    descCell.textContent = item.desc || 'No description';
-    row.appendChild(descCell);
+            const descCell = document.createElement('td');
+            descCell.textContent = item.desc || 'No description';
+            row.appendChild(descCell);
 
-    const dataCell = document.createElement('td');
-    let stats = item.data ? Object.entries(item.data) : [];
-    if (item.tile_range) stats.push(['tile range', item.tile_range]);
+            const dataCell = document.createElement('td');
+            let stats = item.data ? Object.entries(item.data) : [];
+            if (item.tile_range) stats.push(['tile range', item.tile_range]);
 
-    const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
-    const groupedStats = {};
-    stats.forEach(([key, value]) => {
-        if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
-        const match = key.match(/^(min|max)_(.+)$/);
-        if (match) {
-            const [, bound, statName] = match;
-            if (!groupedStats[statName]) groupedStats[statName] = {};
-            groupedStats[statName][bound] = value;
-        } else {
-            groupedStats[key] = value;
-        }
-    });
-
+            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
+            const groupedStats = {};
+            stats.forEach(([key, value]) => {
+                if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
+                const match = key.match(/^(min|max)_(.+)$/);
+                if (match) {
+                    const [, bound, statName] = match;
+                    if (!groupedStats[statName]) groupedStats[statName] = {};
+                    groupedStats[statName][bound] = value;
+                } else {
+                    groupedStats[key] = value;
+                }
+            });
 
             let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
-    if (typeof value === 'object') {
-        const min = value.min;
-        const max = value.max;
-        if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
-        else if (min !== undefined) return `${key} (min): ${min}`;
-        else if (max !== undefined) return `${key} (max): ${max}`;
-        else return `${key}: ?`;
-    }
-    return `${key.replace(/_/g, ' ')}: ${value}`;
-});
+                if (typeof value === 'object') {
+                    const min = value.min;
+                    const max = value.max;
+                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+                    else if (min !== undefined) return `${key} (min): ${min}`;
+                    else if (max !== undefined) return `${key} (max): ${max}`;
+                    else return `${key}: ?`;
+                }
+                return `${key.replace(/_/g, ' ')}: ${value}`;
+            });
 
-// Mapping of long keys to short labels
-const spellAmpLabels = {
-  "!bard_buff_uptime": "Bard Buff Up",
-  "!jester_confuse_cost": "Jest Confuse Cost",
-  "!cleric_petheal_amount": "Cleric Pet Heal",
-  "!dragoon_npcaoe_damage": "Dragoon NPC AOE",
-  "!warlock_npcaoe_damage": "Warlock NPC AOE",
-  "!cleric_playerheal_amount": "Cleric Player Heal",
-  "!dragoon_playeraoe_damage": "Dragoon Player AOE",
-  "!warlock_playeraoe_damage": "Warlock Player AOE",
-  "!assassin_npcpoison_damage": "Assass NPC Poison",
-  "!necromancer_minion_damage": "Necro Minion Dmg",
-  "!samurai_npcriposte_damage": "Samurai NPC Riposte",
-  "!barbarian_alldamage_amount": "Barbarian All Dmg",
-  "!marksman_npcshotgun_damage": "Marks NPC Shotgun",
-  "!assassin_playerpoison_damage": "Assass Player Poison",
-  "!samurai_playerriposte_damage": "Samurai Player Rip",
-  "!marksman_playershotgun_damage": "Marks Player Shotgun",
-  "!vampire_npclifesteal_amount": "Vamp NPC Lifesteal",
-  "!vampire_playerlifesteal_amount": "Vamp Player Lifesteal"
-};
+            // Spell Amp shortened display
+            const spellAmpLabels = {
+                "!bard_buff_uptime": "Bard Buff Uptime",
+                "!jester_confuse_cost": "Jester Confuse Cost",
+                "!cleric_petheal_amount": "Cleric Pet Heal",
+                "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
+                "!warlock_npcaoe_damage": "Warlock NPC AoE",
+                "!cleric_playerheal_amount": "Cleric Player Heal",
+                "!dragoon_playeraoe_damage": "Dragoon Player AoE",
+                "!warlock_playeraoe_damage": "Warlock Player AoE",
+                "!assassin_npcpoison_damage": "Assassin NPC Poison",
+                "!necromancer_minion_damage": "Necromancer Minion",
+                "!samurai_npcriposte_damage": "Samurai NPC Riposte",
+                "!barbarian_alldamage_amount": "Barbarian All Damage",
+                "!marksman_npcshotgun_damage": "Marksman NPC Shotgun",
+                "!assassin_playerpoison_damage": "Assassin Player Poison",
+                "!samurai_playerriposte_damage": "Samurai Player Riposte",
+                "!marksman_playershotgun_damage": "Marksman Player Shotgun",
+                "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
+                "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
+            };
 
-const spellAmpEntries = spellAmpKeys
-  .filter(key => item.data?.[key] !== undefined)
-  .map(key => `${spellAmpLabels[key] || key.replace(/_/g, ' ')}: ${item.data[key]}`);
+            const spellAmpEntries = Object.entries(spellAmpLabels)
+                .filter(([key]) => item.data?.[key] !== undefined)
+                .map(([key, label]) => `${label}: ${item.data[key]}`);
 
-if (spellAmpEntries.length > 0) {
-  formattedLines.push(""); // visual space
-  formattedLines.push("Spell Amp:");
-  formattedLines.push(...spellAmpEntries);
-}
+            if (spellAmpEntries.length > 0) {
+                formattedLines.push("");
+                formattedLines.push("Spell Amp:");
+                formattedLines.push(...spellAmpEntries);
+            }
 
-
-const formattedData = formattedLines.join('\n');
-
+            const formattedData = formattedLines.join('\n');
 
             dataCell.textContent = formattedData.trim() || 'No stats';
             dataCell.classList.add('data');
@@ -449,7 +446,6 @@ function filterTable() {
     });
 }
 
-// Listen for dropdown change
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
     fetchAndDisplayItems(); // initial load
