@@ -75,28 +75,11 @@
     placeholder="Search for an item..."
     oninput="filterTable()"
   />
-  <label style="margin-left: 10px;" id="weaponFilterLabel"
-    ><input type="checkbox" id="weaponFilter" onclick="filterTable()" />
-    Weapons Only</label
-  >
-  <label style="margin-left: 10px;" id="petFilterLabel"
-    ><input type="checkbox" id="petFilter" onclick="filterTable()" /> Pets
-    Only</label
-  >
-  <label style="margin-left: 10px;" id="recipeFilterLabel"
-    ><input type="checkbox" id="recipeFilter" onclick="filterTable()" /> Recipes
-    Only</label
-  >
-  <label style="margin-left: 10px;" id="rareFilterLabel"
-    ><input type="checkbox" id="rareFilter" onclick="filterTable()" /> Rare+</label
-  >
-  <label style="margin-left: 10px;" id="favoritesFilterLabel"
-    ><input
-      type="checkbox"
-      id="favoritesFilter"
-      onclick="filterTable()"
-    /> Show Favorites Only</label
-  >
+  <label style="margin-left: 10px;"><input type="checkbox" id="weaponFilter" onclick="filterTable()" /> Weapons Only</label>
+  <label style="margin-left: 10px;"><input type="checkbox" id="petFilter" onclick="filterTable()" /> Pets Only</label>
+  <label style="margin-left: 10px;"><input type="checkbox" id="recipeFilter" onclick="filterTable()" /> Recipes Only</label>
+  <label style="margin-left: 10px;"><input type="checkbox" id="rareFilter" onclick="filterTable()" /> Rare+</label>
+  <label style="margin-left: 10px;"><input type="checkbox" id="favoritesFilter" onclick="filterTable()" /> Show Favorites Only</label>
 
   <label for="sortStat" style="margin-left: 10px;">Sort by:</label>
   <select id="sortStat" onchange="filterTable()">
@@ -130,183 +113,181 @@
         <th>Fav's</th>
       </tr>
     </thead>
-    <tbody>
-      <!-- Rows populated dynamically -->
-    </tbody>
+    <tbody></tbody>
   </table>
 
-<script>
-let selectedItems = [];
+  <script>
+    async function fetchItemData() {
+      try {
+        const response = await fetch('last.json');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch item data:', error);
+        return [];
+      }
+    }
 
-async function fetchWithTimeout(url, timeout = 5000) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
-    fetch(url).then(response => {
-      clearTimeout(timer);
-      if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
-      else resolve(response);
-    }).catch(err => {
-      clearTimeout(timer);
-      reject(err);
-    });
-  });
-}
+    function isFavorite(name) {
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      return favorites.includes(name);
+    }
 
-async function fetchItemData() {
-  try {
-    const response = await fetch('last.json');
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch item data:', error);
-  }
-}
+    function toggleFavorite(item) {
+      let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      if (favorites.includes(item.name)) {
+        favorites = favorites.filter(name => name !== item.name);
+      } else {
+        favorites.push(item.name);
+      }
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      filterTable();
+    }
 
-function isFavorite(name) {
-  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-  return favorites.includes(name);
-}
+    async function fetchAndDisplayItems() {
+      const items = await fetchItemData();
+      const sortKey = document.getElementById("sortStat").value;
+      if (sortKey) {
+        items.sort((a, b) => {
+          const aVal = a.data?.[sortKey] ?? -Infinity;
+          const bVal = b.data?.[sortKey] ?? -Infinity;
+          return bVal - aVal;
+        });
+      }
 
-function toggleFavorite(item) {
-  let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-  if (favorites.includes(item.name)) {
-    favorites = favorites.filter(name => name !== item.name);
-  } else {
-    favorites.push(item.name);
-  }
-  localStorage.setItem('favorites', JSON.stringify(favorites));
-  filterTable();
-}
+      const tbody = document.querySelector('#itemTable tbody');
+      tbody.innerHTML = '';
 
-async function fetchAndDisplayItems() {
-  try {
-    let items = await fetchItemData();
+      items.forEach(item => {
+        const row = document.createElement('tr');
 
-    const sortKey = document.getElementById("sortStat")?.value;
-    if (sortKey && sortKey !== "none") {
-      items.sort((a, b) => {
-        const aValue = a.data?.[sortKey] ?? -Infinity;
-        const bValue = b.data?.[sortKey] ?? -Infinity;
-        return bValue - aValue;
+        const select = document.createElement('td');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.onclick = () => toggleFavorite(item);
+        select.appendChild(cb);
+        row.appendChild(select);
+
+        const nameCell = document.createElement('td');
+        const levelReq = item.data?.level_req;
+        nameCell.innerHTML = item.name;
+        if (levelReq !== undefined) {
+          nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${levelReq}</span>`;
+        }
+        row.appendChild(nameCell);
+
+        const desc = document.createElement('td');
+        desc.textContent = item.desc || 'No description';
+        row.appendChild(desc);
+
+        const statsCell = document.createElement('td');
+        const excluded = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
+        const grouped = {};
+
+        let stats = item.data ? Object.entries(item.data) : [];
+        stats.forEach(([key, value]) => {
+          if (excluded.includes(key.toLowerCase()) || key.startsWith('!')) return;
+          const match = key.match(/^(min|max)_(.+)$/);
+          if (match) {
+            const [, bound, stat] = match;
+            grouped[stat] = grouped[stat] || {};
+            grouped[stat][bound] = value;
+          } else {
+            grouped[key] = value;
+          }
+        });
+
+        let output = Object.entries(grouped).map(([key, val]) => {
+          if (typeof val === 'object') {
+            if (val.min !== undefined && val.max !== undefined) return `${key}: ${val.min} - ${val.max}`;
+            if (val.min !== undefined) return `${key} (min): ${val.min}`;
+            if (val.max !== undefined) return `${key} (max): ${val.max}`;
+            return `${key}: ?`;
+          }
+          return `${key.replace(/_/g, ' ')}: ${val}`;
+        });
+
+        const ampKeys = [
+          "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
+          "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
+          "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
+          "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
+          "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
+          "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
+        ];
+
+        const ampStats = ampKeys
+          .filter(k => item.data?.[k] !== undefined)
+          .map(k => `${k.replace(/_/g, ' ')}: ${item.data[k]}`);
+
+        if (ampStats.length > 0) {
+          output.push('', 'Spell Amp:', ...ampStats);
+        }
+
+        statsCell.textContent = output.join('\n');
+        statsCell.className = 'data';
+        row.appendChild(statsCell);
+
+        const repair = document.createElement('td');
+        repair.textContent = item.repair_cost || 'No repair cost';
+        row.appendChild(repair);
+
+        const uses = document.createElement('td');
+        uses.textContent = item.uses || 'No uses data';
+        row.appendChild(uses);
+
+        const sell = document.createElement('td');
+        sell.textContent = item.recycle_value || 'No sell value';
+        row.appendChild(sell);
+
+        const handed = document.createElement('td');
+        const isTwo = item.data?.two_handed === true || item.data?.two_handed === 'true';
+        handed.textContent = isTwo ? 'Two Handed' : 'One Handed';
+        row.appendChild(handed);
+
+        const fav = document.createElement('td');
+        const favCb = document.createElement('input');
+        favCb.type = 'checkbox';
+        favCb.checked = isFavorite(item.name);
+        favCb.onclick = () => toggleFavorite(item);
+        fav.appendChild(favCb);
+        row.appendChild(fav);
+
+        tbody.appendChild(row);
+      });
+
+      filterTable();
+    }
+
+    function filterTable() {
+      const search = document.getElementById('searchBar').value.toLowerCase();
+      const onlyWeapons = document.getElementById('weaponFilter').checked;
+      const onlyPets = document.getElementById('petFilter').checked;
+      const onlyRecipes = document.getElementById('recipeFilter').checked;
+      const onlyRare = document.getElementById('rareFilter').checked;
+      const onlyFavs = document.getElementById('favoritesFilter').checked;
+
+      const rows = document.querySelectorAll('#itemTable tbody tr');
+      rows.forEach(row => {
+        const name = row.children[1]?.textContent.toLowerCase() || '';
+        const desc = row.children[2]?.textContent.toLowerCase() || '';
+        const stats = row.children[3]?.textContent.toLowerCase() || '';
+        const isFav = row.children[8]?.querySelector('input')?.checked;
+
+        const matches = name.includes(search) || desc.includes(search);
+        const matchesWeapon = !onlyWeapons || stats.includes('two handed');
+        const matchesPet = !onlyPets || name.includes('🐶');
+        const matchesRecipe = !onlyRecipes || name.includes('recipe') || desc.includes('recipe');
+        const matchesRare = !onlyRare || name.includes('*') || desc.includes('*');
+        const matchesFav = !onlyFavs || isFav;
+
+        row.style.display = matches && matchesWeapon && matchesPet && matchesRecipe && matchesRare && matchesFav
+          ? ''
+          : 'none';
       });
     }
 
-    const tableBody = document.getElementById('itemTable').querySelector('tbody');
-    tableBody.innerHTML = '';
-
-    items.forEach(item => {
-      const row = document.createElement('tr');
-
-      const selectCell = document.createElement('td');
-      const selectCheckbox = document.createElement('input');
-      selectCheckbox.type = 'checkbox';
-      selectCheckbox.value = item.name;
-      selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-      selectCell.appendChild(selectCheckbox);
-      row.appendChild(selectCell);
-
-      const nameCell = document.createElement('td');
-      const levelReq = item.data?.level_req;
-      nameCell.innerHTML = item.name;
-      if (levelReq !== undefined) {
-        nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Level: ${levelReq}</span>`;
-      }
-      row.appendChild(nameCell);
-
-      const descCell = document.createElement('td');
-      descCell.textContent = item.desc || 'No description';
-      row.appendChild(descCell);
-
-      const dataCell = document.createElement('td');
-      let stats = item.data ? Object.entries(item.data) : [];
-      if (item.tile_range) stats.push(['tile range', item.tile_range]);
-
-      const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
-      const groupedStats = {};
-      stats.forEach(([key, value]) => {
-        if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
-        const match = key.match(/^(min|max)_(.+)$/);
-        if (match) {
-          const [, bound, statName] = match;
-          if (!groupedStats[statName]) groupedStats[statName] = {};
-          groupedStats[statName][bound] = value;
-        } else {
-          groupedStats[key] = value;
-        }
-      });
-
-      let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
-        if (typeof value === 'object') {
-          const min = value.min;
-          const max = value.max;
-          if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
-          else if (min !== undefined) return `${key} (min): ${min}`;
-          else if (max !== undefined) return `${key} (max): ${max}`;
-          else return `${key}: ?`;
-        }
-        return `${key.replace(/_/g, ' ')}: ${value}`;
-      });
-
-      const spellAmpKeys = [
-        "!bard_buff_uptime", "!jester_confuse_cost", "!cleric_petheal_amount",
-        "!dragoon_npcaoe_damage", "!warlock_npcaoe_damage", "!cleric_playerheal_amount",
-        "!dragoon_playeraoe_damage", "!warlock_playeraoe_damage", "!assassin_npcpoison_damage",
-        "!necromancer_minion_damage", "!samurai_npcriposte_damage", "!barbarian_alldamage_amount",
-        "!marksman_npcshotgun_damage", "!assassin_playerpoison_damage", "!samurai_playerriposte_damage",
-        "!marksman_playershotgun_damage", "!vampire_npclifesteal_amount", "!vampire_playerlifesteal_amount"
-      ];
-
-      const spellAmpEntries = spellAmpKeys
-        .filter(key => item.data?.[key] !== undefined)
-        .map(key => `${key.replace(/_/g, ' ')}: ${item.data[key]}`);
-
-      if (spellAmpEntries.length > 0) {
-        formattedLines.push("");
-        formattedLines.push("Spell Amp:");
-        formattedLines.push(...spellAmpEntries);
-      }
-
-      const formattedData = formattedLines.join('\n');
-
-      dataCell.textContent = formattedData.trim() || 'No stats';
-      dataCell.classList.add('data');
-      row.appendChild(dataCell);
-
-      const repairCostCell = document.createElement('td');
-      repairCostCell.textContent = item.repair_cost || 'No repair cost';
-      row.appendChild(repairCostCell);
-
-      const usesCell = document.createElement('td');
-      usesCell.textContent = item.uses || 'No uses data';
-      row.appendChild(usesCell);
-
-      const sellValueCell = document.createElement('td');
-      sellValueCell.textContent = item.recycle_value || 'No sell value';
-      row.appendChild(sellValueCell);
-
-      const handednessCell = document.createElement('td');
-      const isTwoHanded = item.data && (item.data.two_handed === true || item.data.two_handed === 'true');
-      handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-      row.appendChild(handednessCell);
-
-      const favoriteCell = document.createElement('td');
-      const favoriteCheckbox = document.createElement('input');
-      favoriteCheckbox.type = 'checkbox';
-      favoriteCheckbox.checked = isFavorite(item.name);
-      favoriteCheckbox.onclick = () => toggleFavorite(item);
-      favoriteCell.appendChild(favoriteCheckbox);
-      row.appendChild(favoriteCell);
-
-      tableBody.appendChild(row);
-    });
-
-    filterTable();
-  } catch (error) {
-    console.error('Error fetching or displaying data:', error);
-    alert(`Failed to load data: ${error.message}`);
-  }
-}
-</script>
+    document.addEventListener('DOMContentLoaded', fetchAndDisplayItems);
+  </script>
 </body>
 </html>
