@@ -89,6 +89,13 @@
       background-color: red;
       color: white;
     }
+	.sprite {
+  width: 32px;
+  height: 32px;
+  background-size: 1024px 1024px;
+  image-rendering: pixelated;
+  margin-top: 5px;
+}
   </style>
 </head>
 <body>
@@ -151,7 +158,31 @@ function displayNPCs(npcs) {
     row.appendChild(selectCell);
 
     const nameCell = document.createElement('td');
-    nameCell.textContent = npc.name;
+    const nameDiv = document.createElement('div');
+    nameDiv.textContent = npc.name;
+
+    // Add sprite under name
+    if (typeof npc.sprite === 'number') {
+      const SPRITE_SIZE = 32;
+      const SPRITES_PER_SHEET = 1024;
+      const spritesPerRow = 32;
+
+      const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
+      const spriteIndex = npc.sprite % SPRITES_PER_SHEET;
+
+      const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+      const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+
+      const spriteDiv = document.createElement('div');
+      spriteDiv.className = 'sprite';
+      spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
+      spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+
+      nameDiv.appendChild(document.createElement('br'));
+      nameDiv.appendChild(spriteDiv);
+    }
+
+    nameCell.appendChild(nameDiv);
     row.appendChild(nameCell);
 
     const descCell = document.createElement('td');
@@ -167,12 +198,12 @@ function displayNPCs(npcs) {
         .join('\n');
     }
 
-   if (npc.vitals) {
-  const { hp, mp, sp } = npc.vitals;
-  statsText += (statsText ? '\n' : '') + `HP: ${hp}`;
-  if (mp) statsText += `\nMP: ${mp}`;
-  if (sp) statsText += `\nSP: ${sp}`;
-}
+    if (npc.vitals) {
+      const { hp, mp, sp } = npc.vitals;
+      statsText += (statsText ? '\n' : '') + `HP: ${hp}`;
+      if (mp) statsText += `\nMP: ${mp}`;
+      if (sp) statsText += `\nSP: ${sp}`;
+    }
 
     statsCell.textContent = statsText || 'No stats';
     statsCell.style.whiteSpace = 'pre-line';
@@ -181,7 +212,6 @@ function displayNPCs(npcs) {
     tbody.appendChild(row);
   });
 }
-
 
 function handleSelection(npc, checkbox) {
   if (checkbox.checked) {
@@ -199,7 +229,6 @@ function showComparison(npc1, npc2) {
   const table = document.querySelector('#comparisonTable tbody');
   table.innerHTML = '';
 
-  // Merge stats and vitals into a single comparison object
   const stats1 = { ...npc1.stats };
   const stats2 = { ...npc2.stats };
 
@@ -241,7 +270,6 @@ function showComparison(npc1, npc2) {
   document.getElementById('comparisonModal').style.display = 'flex';
 }
 
-
 function closeModal() {
   document.getElementById('comparisonModal').style.display = 'none';
 }
@@ -257,6 +285,5 @@ document.getElementById('searchBar').addEventListener('input', () => {
 
 document.addEventListener('DOMContentLoaded', loadNPCs);
 </script>
-
 </body>
 </html>
