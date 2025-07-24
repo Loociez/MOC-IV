@@ -451,5 +451,43 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchAndDisplayItems(); // initial load
 });
 </script>
+
+<!-- Comparison Modal -->
+<div id="comparisonModal" class="modal" style="display:none; position:fixed; top:10%; left:5%; width:90%; height:80%; background:#222; color:white; border:2px solid gold; padding:20px; overflow:auto; z-index:1000;">
+  <button onclick="closeModal()" style="float:right; background:red; color:white; border:none; padding:5px 10px; cursor:pointer;">Close</button>
+  <table id="comparisonTable" style="background-color:#333; color:white; width:100%;">
+    <thead>
+      <tr><th>Name</th><th>Stats 1</th><th>Stats 2</th><th>Repair</th><th>Uses</th><th>Value</th><th>Handedness</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+function copyStats() {
+  const selected = document.querySelectorAll('#itemTable tbody input[type=checkbox]:checked');
+  if (!selected.length) return alert("No items selected.");
+  const stats = Array.from(selected).map(cb => {
+    const row = cb.closest('tr');
+    const name = row.cells[1].textContent.trim();
+    const data = row.cells[3].textContent.trim();
+    return `Name: ${name}\nStats:\n${data}`;
+  }).join('\n\n');
+  navigator.clipboard.writeText(stats).then(() => alert("Stats copied to clipboard!"));
+}
+
+function copyDescription() {
+  const selected = document.querySelectorAll('#itemTable tbody input[type=checkbox]:checked');
+  if (!selected.length) return alert("No items selected.");
+  const descs = Array.from(selected).map(cb => {
+    const row = cb.closest('tr');
+    const name = row.cells[1].textContent.trim();
+    const desc = row.cells[2].textContent.trim();
+    return `Name: ${name}\nDescription:\n${desc}`;
+  }).join('\n\n');
+  navigator.clipboard.writeText(descs).then(() => alert("Descriptions copied to clipboard!"));
+}
+</script>
+
 </body>
 </html>
