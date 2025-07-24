@@ -172,7 +172,7 @@ function displayNPCs(npcs) {
   const SPRITES_PER_SHEET = 1024;
   const spritesPerRow = 32;
 
-  const startingFrameIndex = (npc.sprite - 1) * FRAMES_PER_SPRITE;
+  const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;  // no -1
   const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
   const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
 
