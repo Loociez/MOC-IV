@@ -163,24 +163,31 @@ function displayNPCs(npcs) {
 
     // Add sprite under name
     if (typeof npc.sprite === 'number') {
-      const SPRITE_SIZE = 32;
-      const SPRITES_PER_SHEET = 1024;
-      const spritesPerRow = 32;
+  const SPRITE_SIZE = 32;
+  const FRAMES_PER_SPRITE = 12;
+  const SPRITES_PER_SHEET = 1024;  // still needed if you have multiple sheets
+  const spritesPerRow = 32;
 
-      const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
-      const spriteIndex = npc.sprite % SPRITES_PER_SHEET;
+  // Calculate the index of the first frame of this sprite's animation
+  const startingFrameIndex = (npc.sprite - 1) * FRAMES_PER_SPRITE;
 
-      const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
-      const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+  const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
+  const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
 
-      const spriteDiv = document.createElement('div');
-      spriteDiv.className = 'sprite';
-      spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
-      spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+  const x = (frameIndexInSheet % spritesPerRow) * SPRITE_SIZE;
+  const y = Math.floor(frameIndexInSheet / spritesPerRow) * SPRITE_SIZE;
 
-      nameDiv.appendChild(document.createElement('br'));
-      nameDiv.appendChild(spriteDiv);
-    }
+  const spriteDiv = document.createElement('div');
+  spriteDiv.className = 'sprite';
+  spriteDiv.style.width = SPRITE_SIZE + 'px';
+  spriteDiv.style.height = SPRITE_SIZE + 'px';
+  spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
+  spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+
+  nameDiv.appendChild(document.createElement('br'));
+  nameDiv.appendChild(spriteDiv);
+}
+
 
     nameCell.appendChild(nameDiv);
     row.appendChild(nameCell);
