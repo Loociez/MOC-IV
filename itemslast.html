@@ -72,7 +72,7 @@
   </style>
 </head>
 <body>
-  <h1 id="itemListHeading">Last Known 07/04/25 - Item List</h1>
+  <h1 id="itemListHeading">Last Known 07/24/25 - Item List</h1>
   <select id="languageSelector" onchange="changeLanguage(this.value)">
     <option value="en">English</option>
     <option value="es">Español</option>
@@ -223,16 +223,15 @@ if (item.level_req !== undefined) {
 
 if (typeof item.sprite === 'number') {
     const SPRITE_SIZE = 32;
-    const SPRITES_PER_SHEET = 1024; // now full sheet capacity
+    const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
     const spritesPerRow = 32;        // 32 sprites horizontally
-    const spritesPerColumn = 32;     // 32 sprites vertically
 
     const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET) + 1;
     const spriteIndex = item.sprite % SPRITES_PER_SHEET;
 
-    // For vertical reading (top to bottom):
-    const x = Math.floor(spriteIndex / spritesPerColumn) * SPRITE_SIZE;
-    const y = (spriteIndex % spritesPerColumn) * SPRITE_SIZE;
+    // Left to right, top to bottom:
+    const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+    const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
 
     const backgroundImage = `url('images/items${sheetIndex}.png')`;
 

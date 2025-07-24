@@ -263,7 +263,7 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.9,
+    "scale": 0.75,
     "color": "#ffd11a",
     "show_name": false,
     "spawn_delay": 0,
@@ -41480,7 +41480,7 @@
       "saturation": 150,
       "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#ff66ff",
     "show_name": false,
     "spawn_delay": 60,
@@ -41499,21 +41499,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 35,
+      "max_hp": 200,
+      "max_mp": 15,
+      "max_sp": 15,
       "max_atk": 35,
-      "min_def": 0,
       "max_def": 0,
-      "min_rat": 30,
-      "max_rat": 30,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 30,
       "max_mat": 30,
-      "min_mdf": 0,
       "max_mdf": 0,
-      "max_hp": 300,
-      "max_mp": 0,
-      "max_sp": 0,
+      "max_rat": 30,
+      "max_rdf": 0,
+      "min_atk": 35,
+      "min_def": 0,
+      "min_mat": 30,
+      "min_mdf": 0,
+      "min_rat": 30,
+      "min_rdf": 0,
       "damage_stat": 1
     }
   },
@@ -42777,9 +42777,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 838,
       "amount": 1,
       "chance": 100,
+      "item_id": 838,
       "recipe_items": [
         {
           "amount": 5,
