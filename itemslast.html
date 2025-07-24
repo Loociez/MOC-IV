@@ -207,10 +207,26 @@ async function fetchAndDisplayItems() {
             row.appendChild(selectCell);
 
             const nameCell = document.createElement('td');
-            nameCell.innerHTML = item.name;
-            if (item.level_req !== undefined) {
-                nameCell.innerHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
-            }
+           let nameHTML = item.name;
+if (item.level_req !== undefined) {
+    nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
+}
+
+if (typeof item.sprite === 'number') {
+    const SPRITE_SIZE = 32;
+    const SPRITES_PER_SHEET = 256; // Adjust if needed
+    const spritesPerRow = 8; // Adjust based on your sprite sheet width
+    const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET) + 1;
+    const spriteIndex = item.sprite % SPRITES_PER_SHEET;
+    const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+    const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+    const backgroundImage = `url('images/items${sheetIndex}.png')`;
+
+    nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px;"></div>`;
+}
+
+nameCell.innerHTML = nameHTML;
+
             row.appendChild(nameCell);
 
             const descCell = document.createElement('td');
