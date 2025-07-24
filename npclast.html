@@ -96,6 +96,10 @@
   image-rendering: pixelated;
   margin-top: 5px;
 }
+.sprite {
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
   </style>
 </head>
 <body>
@@ -162,15 +166,13 @@ function displayNPCs(npcs) {
     nameDiv.textContent = npc.name;
 
     // Add sprite under name
-    if (typeof npc.sprite === 'number') {
+   if (typeof npc.sprite === 'number') {
   const SPRITE_SIZE = 32;
   const FRAMES_PER_SPRITE = 12;
-  const SPRITES_PER_SHEET = 1024;  // still needed if you have multiple sheets
+  const SPRITES_PER_SHEET = 1024;
   const spritesPerRow = 32;
 
-  // Calculate the index of the first frame of this sprite's animation
-  const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;  // no -1
-
+  const startingFrameIndex = (npc.sprite - 1) * FRAMES_PER_SPRITE;
   const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
   const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
 
@@ -183,10 +185,36 @@ function displayNPCs(npcs) {
   spriteDiv.style.height = SPRITE_SIZE + 'px';
   spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
   spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+  spriteDiv.style.backgroundRepeat = 'no-repeat';
+  spriteDiv.style.imageRendering = 'pixelated';
+
+  // Animation on hover
+  let frame = 0;
+  let animationInterval = null;
+
+  spriteDiv.addEventListener('mouseenter', () => {
+    animationInterval = setInterval(() => {
+      const currentFrameIndex = startingFrameIndex + frame;
+      const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
+      const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
+      spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+
+      frame = (frame + 1) % FRAMES_PER_SPRITE;
+    }, 100); // Adjust speed here (ms per frame)
+  });
+
+  spriteDiv.addEventListener('mouseleave', () => {
+    clearInterval(animationInterval);
+    frame = 0;
+
+    // Reset to first frame
+    spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+  });
 
   nameDiv.appendChild(document.createElement('br'));
   nameDiv.appendChild(spriteDiv);
 }
+
 
 
     nameCell.appendChild(nameDiv);
