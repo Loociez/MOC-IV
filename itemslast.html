@@ -226,10 +226,9 @@ if (typeof item.sprite === 'number') {
     const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
     const spritesPerRow = 32;        // 32 sprites horizontally
 
-    const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET) + 1;
+    const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
     const spriteIndex = item.sprite % SPRITES_PER_SHEET;
 
-    // Left to right, top to bottom:
     const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
     const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
 
@@ -237,6 +236,7 @@ if (typeof item.sprite === 'number') {
 
     nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
 }
+
 
 nameCell.innerHTML = nameHTML;
 
