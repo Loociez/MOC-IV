@@ -964,12 +964,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 10,
+      "hp": 1000,
       "mp": 10,
       "sp": 10
     },
     "stats": {
-      "atk": 0,
+      "atk": 5000,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -37646,14 +37646,14 @@
     },
     "drop_items": [
       {
-        "item_id": 29,
-        "amount": 1,
-        "chance": 25
-      },
-      {
         "item_id": -1,
         "amount": 0,
         "chance": 0
+      },
+      {
+        "item_id": 29,
+        "amount": 1,
+        "chance": 30
       },
       {
         "item_id": -1,
@@ -61526,7 +61526,7 @@
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": 0,
-    "shop_id": -1,
+    "shop_id": 108,
     "vitals": {
       "hp": 0,
       "mp": 0,
@@ -61594,7 +61594,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Endora",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -61602,33 +61602,33 @@
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
-    "show_name": true,
+    "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "",
+    "kill_verb": "killed",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 1,
+    "sprite": 599,
     "sprite_color": {
       "alpha": 1,
-      "hue": 60,
-      "saturation": 200,
-      "brightness": 125
+      "hue": 333,
+      "saturation": 125,
+      "brightness": 100
     },
-    "scale": 0,
-    "color": "",
+    "scale": 1.1,
+    "color": "#ff99cc",
     "spawn_delay": 1,
     "regen_rate": 1,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 0,
-    "behavior": 5,
+    "flee_threshold": 10,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
       "hp": 0,
@@ -67888,7 +67888,7 @@
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "burnt",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
@@ -68094,7 +68094,7 @@
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "scorched",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
@@ -68134,19 +68134,19 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 734,
+        "amount": 1,
+        "chance": 1
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 587,
+        "amount": 1,
+        "chance": 10
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 84,
+        "amount": 10,
+        "chance": 2
       },
       {
         "item_id": -1,
@@ -68403,7 +68403,7 @@
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "seared",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
@@ -68506,7 +68506,7 @@
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "cooked",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
@@ -70246,58 +70246,58 @@
     ]
   },
   {
-    "name": "",
+    "name": "Shadow Kanji",
     "desc": "",
-    "tag": "",
+    "tag": "👤",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "turned into dust",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 615,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 200,
+      "brightness": 25
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
-    "regen_rate": 1,
+    "scale": 1.4,
+    "color": "#ff33ff",
+    "spawn_delay": 4,
+    "regen_rate": 0.25,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 80,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 80,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 150000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
-      "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
+      "atk": 1500,
+      "def": 50,
+      "rat": 10000,
+      "rdf": 50,
+      "mat": 2000,
+      "mdf": 50
     },
     "drop_items": [
       {
-        "item_id": -1,
+        "item_id": 217,
         "amount": 0,
         "chance": 0
       },
@@ -70992,7 +70992,7 @@
     "scale": 1,
     "color": "#FFA8b5",
     "spawn_delay": 1,
-    "regen_rate": 1,
+    "regen_rate": 0.25,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
@@ -71070,9 +71070,9 @@
     ]
   },
   {
-    "name": "",
+    "name": "Vampiric Rat",
     "desc": "",
-    "tag": "",
+    "tag": "🐁",
     "pursue_run": false,
     "equip_drops": false,
     "spawn_day": true,
@@ -71081,43 +71081,43 @@
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "gnawed",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 623,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 333,
+      "saturation": 150,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
+    "scale": 0.65,
+    "color": "#ff66ff",
+    "spawn_delay": 6,
     "regen_rate": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 70,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 80,
+    "flee_threshold": 0,
+    "behavior": 2,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 3750,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 800,
+      "def": 25,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 25,
       "mat": 0,
-      "mdf": 0
+      "mdf": 25
     },
     "drop_items": [
       {
@@ -71173,58 +71173,58 @@
     ]
   },
   {
-    "name": "",
+    "name": "Donte",
     "desc": "",
-    "tag": "",
+    "tag": "🔫",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "sniped",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 22,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 65,
+      "saturation": 200,
+      "brightness": 55
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "spawn_delay": 1,
     "regen_rate": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 80,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 60,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 50000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
-      "rat": 0,
-      "rdf": 0,
+      "atk": 5000,
+      "def": 25,
+      "rat": 1500,
+      "rdf": 25,
       "mat": 0,
-      "mdf": 0
+      "mdf": 25
     },
     "drop_items": [
       {
-        "item_id": -1,
+        "item_id": 571,
         "amount": 0,
         "chance": 0
       },
@@ -113960,11 +113960,11 @@
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 2000,
       "def": 0,
-      "rat": 0,
+      "rat": 2000,
       "rdf": 0,
-      "mat": 0,
+      "mat": 2000,
       "mdf": 0
     },
     "drop_items": [
@@ -114063,11 +114063,11 @@
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 2000,
       "def": 0,
-      "rat": 0,
+      "rat": 2000,
       "rdf": 0,
-      "mat": 0,
+      "mat": 2000,
       "mdf": 0
     },
     "drop_items": [
@@ -114166,11 +114166,11 @@
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 2000,
       "def": 0,
-      "rat": 0,
+      "rat": 2000,
       "rdf": 0,
-      "mat": 0,
+      "mat": 2000,
       "mdf": 0
     },
     "drop_items": [
@@ -114269,11 +114269,11 @@
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 2000,
       "def": 0,
-      "rat": 0,
+      "rat": 2000,
       "rdf": 0,
-      "mat": 0,
+      "mat": 2000,
       "mdf": 0
     },
     "drop_items": [
