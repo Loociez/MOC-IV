@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ordered NPC Drop Item Checker</title>
+  <title>NPC Drop Item Checker (ID starts at 0)</title>
 </head>
 <body>
-  <h2>NPC Drop Item Usage (Ordered by ID)</h2>
+  <h2>NPC Drop Item Usage (Item IDs start at 0)</h2>
   <p>Upload <code>last.json</code> and <code>npc.json</code>. Then click Check.</p>
 
   <input type="file" id="lastJson" accept=".json">
@@ -56,27 +56,27 @@
         return;
       }
 
-      // Gather all used item IDs
+      // Gather all valid item IDs from NPCs (ignore -1 or less)
       const usedIds = new Set();
-      for (const npc of npcList) {
+      npcList.forEach(npc => {
         if (Array.isArray(npc.drop_items)) {
-          for (const drop of npc.drop_items) {
-            if (typeof drop.item_id === 'number' && drop.item_id > 0) {
+          npc.drop_items.forEach(drop => {
+            if (typeof drop.item_id === 'number' && drop.item_id >= 0) {
               usedIds.add(drop.item_id);
             }
-          }
+          });
         }
-      }
+      });
 
-      // Check from item 1 to N
+      // Check from ID 0 to N-1
       const resultLines = [];
       for (let i = 0; i < lastItems.length; i++) {
-        const itemId = i + 1;
         const item = lastItems[i];
-        if (usedIds.has(itemId)) {
-          resultLines.push(`${itemId}: ${item.name || '(Unnamed)'}`);
+        const name = item?.name || '(Unnamed)';
+        if (usedIds.has(i)) {
+          resultLines.push(`${i}: ${name}`);
         } else {
-          resultLines.push(`${itemId}: (not dropped)`);
+          resultLines.push(`${i}: (not dropped)`);
         }
       }
 
