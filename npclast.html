@@ -155,11 +155,18 @@ td:hover .npc-tooltip {
 let allNPCs = [];
 let selectedNPCs = [];
 let itemData = [];
+let itemIDMap = {};
 
 async function loadNPCs() {
+  // Load item data (unused in this version, but retained)
   const itemResponse = await fetch('last.json');
   itemData = await itemResponse.json();
 
+  // Load item name mapping from itemids.json
+  const idResponse = await fetch('itemids.json');
+  itemIDMap = await idResponse.json();
+
+  // Load NPCs
   const response = await fetch('npc.json');
   const npcs = await response.json();
   allNPCs = npcs;
@@ -227,7 +234,7 @@ function displayNPCs(npcs) {
         spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
       });
 
-      // Tooltip for item drops (sprites only)
+      // Tooltip using itemids.json
       if (npc.drop_items?.length) {
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
@@ -244,27 +251,14 @@ function displayNPCs(npcs) {
         document.body.appendChild(tooltip);
 
         spriteDiv.addEventListener('mouseenter', e => {
-          tooltip.innerHTML = npc.drop_items.map(drop => {
-            const itemID = drop.item_id;
-            const spriteSheet = Math.floor(itemID / 1024);
-            const frameIndex = (itemID - 1) % 1024;
-            const spriteX = (frameIndex % 32) * 32;
-            const spriteY = Math.floor(frameIndex / 32) * 32;
-
-            return `
-              <div style="display:flex; align-items:center; margin-bottom:4px;">
-                <div style="
-                  width:32px; height:32px;
-                  background-image:url('images/items${spriteSheet}.png');
-                  background-position:-${spriteX}px -${spriteY}px;
-                  background-repeat:no-repeat;
-                  image-rendering:pixelated;
-                  margin-right:6px;">
-                </div>
-                <div>x${drop.amount}</div>
-              </div>
-            `;
-          }).join('');
+          tooltip.innerHTML = npc.drop_items
+            .map(drop => {
+              const itemName = itemIDMap[drop.item_id];
+              if (!itemName || itemName === "(not dropped)") return null;
+              return `<div style="margin-bottom:4px;">${itemName} x${drop.amount}</div>`;
+            })
+            .filter(Boolean)
+            .join('');
 
           tooltip.style.display = 'block';
           const rect = spriteDiv.getBoundingClientRect();
@@ -384,6 +378,7 @@ document.getElementById('searchBar').addEventListener('input', () => {
 
 document.addEventListener('DOMContentLoaded', loadNPCs);
 </script>
+
 
 </body>
 </html>
