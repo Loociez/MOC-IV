@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NPC Drop Item Checker</title>
+</head>
+<body>
+  <h2>NPC Drop Item Match Checker</h2>
+  <p>Upload <code>last.json</code> and <code>npc.json</code> to see which drop items match.</p>
+
+  <input type="file" id="lastJson" accept=".json">
+  <input type="file" id="npcJson" accept=".json">
+  <button onclick="checkMatches()">Check Matches</button>
+
+  <h3>Matched Items:</h3>
+  <pre id="output">Waiting for input...</pre>
+
+  <script>
+    let lastItems = [];
+    let npcList = [];
+
+    document.getElementById('lastJson').addEventListener('change', function(e) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        try {
+          lastItems = JSON.parse(reader.result);
+        } catch (err) {
+          alert("Invalid last.json");
+        }
+      };
+      reader.readAsText(e.target.files[0]);
+    });
+
+    document.getElementById('npcJson').addEventListener('change', function(e) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        try {
+          npcList = JSON.parse(reader.result);
+        } catch (err) {
+          alert("Invalid npc.json");
+        }
+      };
+      reader.readAsText(e.target.files[0]);
+    });
+
+    function checkMatches() {
+      const output = document.getElementById('output');
+      output.textContent = '';
+
+      if (!Array.isArray(lastItems)) {
+        output.textContent = 'Error: last.json must be an array.';
+        return;
+      }
+
+      if (!Array.isArray(npcList)) {
+        output.textContent = 'Error: npc.json must be an array.';
+        return;
+      }
+
+      const foundIds = new Set();
+
+      npcList.forEach(npc => {
+        if (Array.isArray(npc.drop_items)) {
+          npc.drop_items.forEach(drop => {
+            if (drop.item_id !== undefined && drop.item_id >= 1) {
+              foundIds.add(drop.item_id);
+            }
+          });
+        }
+      });
+
+      const matches = [];
+      foundIds.forEach(id => {
+        const item = lastItems[id - 1]; // 1-based index
+        if (item && item.name) {
+          matches.push(`${id}: ${item.name}`);
+        }
+      });
+
+      if (matches.length === 0) {
+        output.textContent = 'No matches found.';
+      } else {
+        output.textContent = matches.join('\n');
+      }
+    }
+  </script>
+</body>
+</html>
