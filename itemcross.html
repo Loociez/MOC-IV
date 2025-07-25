@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NPC Drop Item Checker</title>
+  <title>Ordered NPC Drop Item Checker</title>
 </head>
 <body>
-  <h2>NPC Drop Item Match Checker</h2>
-  <p>Upload <code>last.json</code> and <code>npc.json</code> to see which drop items match.</p>
+  <h2>NPC Drop Item Usage (Ordered by ID)</h2>
+  <p>Upload <code>last.json</code> and <code>npc.json</code>. Then click Check.</p>
 
   <input type="file" id="lastJson" accept=".json">
   <input type="file" id="npcJson" accept=".json">
   <button onclick="checkMatches()">Check Matches</button>
 
-  <h3>Matched Items:</h3>
+  <h3>Results:</h3>
   <pre id="output">Waiting for input...</pre>
 
   <script>
@@ -56,31 +56,31 @@
         return;
       }
 
-      const foundIds = new Set();
-
-      npcList.forEach(npc => {
+      // Gather all used item IDs
+      const usedIds = new Set();
+      for (const npc of npcList) {
         if (Array.isArray(npc.drop_items)) {
-          npc.drop_items.forEach(drop => {
-            if (drop.item_id !== undefined && drop.item_id >= 1) {
-              foundIds.add(drop.item_id);
+          for (const drop of npc.drop_items) {
+            if (typeof drop.item_id === 'number' && drop.item_id > 0) {
+              usedIds.add(drop.item_id);
             }
-          });
+          }
         }
-      });
-
-      const matches = [];
-      foundIds.forEach(id => {
-        const item = lastItems[id - 1]; // 1-based index
-        if (item && item.name) {
-          matches.push(`${id}: ${item.name}`);
-        }
-      });
-
-      if (matches.length === 0) {
-        output.textContent = 'No matches found.';
-      } else {
-        output.textContent = matches.join('\n');
       }
+
+      // Check from item 1 to N
+      const resultLines = [];
+      for (let i = 0; i < lastItems.length; i++) {
+        const itemId = i + 1;
+        const item = lastItems[i];
+        if (usedIds.has(itemId)) {
+          resultLines.push(`${itemId}: ${item.name || '(Unnamed)'}`);
+        } else {
+          resultLines.push(`${itemId}: (not dropped)`);
+        }
+      }
+
+      output.textContent = resultLines.join('\n');
     }
   </script>
 </body>
