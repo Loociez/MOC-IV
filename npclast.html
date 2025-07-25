@@ -100,6 +100,22 @@
   background-repeat: no-repeat;
   image-rendering: pixelated;
 }
+.npc-tooltip {
+  display: none;
+  position: absolute;
+  background: #111;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 6px;
+  font-size: 12px;
+  top: 100%;
+  left: 0;
+  white-space: nowrap;
+  z-index: 10;
+}
+td:hover .npc-tooltip {
+  display: block;
+}
   </style>
 </head>
 <body>
@@ -138,13 +154,60 @@
 
 <script>
 let allNPCs = [];
+let allItems = [];
 let selectedNPCs = [];
 
 async function loadNPCs() {
-  const response = await fetch('npc.json');
-  const npcs = await response.json();
+  const [npcResponse, itemResponse] = await Promise.all([
+    fetch('npc.json'),
+    fetch('last.json')
+  ]);
+  const npcs = await npcResponse.json();
+  const items = await itemResponse.json();
   allNPCs = npcs;
+  allItems = items;
   displayNPCs(allNPCs);
+}
+
+function getItemById(id) {
+  return allItems.find(item => item.id === id);
+}
+
+function createDropTooltip(npc) {
+  if (!npc.drop_items || npc.drop_items.length === 0) return '';
+
+  let tooltipHTML = '<strong>Drops:</strong><br>';
+
+  npc.drop_items.forEach(drop => {
+    const item = getItemById(drop.item_id);
+    if (!item) return;
+
+    const SPRITE_SIZE = 32;
+    const spritesPerRow = 32;
+
+    const spriteIndex = item.sprite;
+    const sheetIndex = Math.floor(spriteIndex / (spritesPerRow * spritesPerRow));
+    const indexInSheet = spriteIndex % (spritesPerRow * spritesPerRow);
+
+    const x = (indexInSheet % spritesPerRow) * SPRITE_SIZE;
+    const y = Math.floor(indexInSheet / spritesPerRow) * SPRITE_SIZE;
+
+    tooltipHTML += `
+      <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+        <div style="
+          width: 32px; height: 32px;
+          background-image: url('images/items${sheetIndex}.png');
+          background-position: -${x}px -${y}px;
+          background-repeat: no-repeat;
+          background-size: 1024px 1024px;
+          image-rendering: pixelated;
+        "></div>
+        <span>${item.name} x${drop.amount} (${drop.chance}%)</span>
+      </div>
+    `;
+  });
+
+  return tooltipHTML;
 }
 
 function displayNPCs(npcs) {
@@ -164,58 +227,63 @@ function displayNPCs(npcs) {
     const nameCell = document.createElement('td');
     const nameDiv = document.createElement('div');
     nameDiv.textContent = npc.name;
+    nameDiv.style.position = 'relative';
+    nameDiv.style.cursor = 'help';
+
+    const tooltip = createDropTooltip(npc);
+    if (tooltip) {
+      const tooltipDiv = document.createElement('div');
+      tooltipDiv.className = 'npc-tooltip';
+      tooltipDiv.innerHTML = tooltip;
+      nameDiv.appendChild(tooltipDiv);
+    }
 
     // Add sprite under name
-   if (typeof npc.sprite === 'number') {
-  const SPRITE_SIZE = 32;
-  const FRAMES_PER_SPRITE = 12;
-  const SPRITES_PER_SHEET = 1024;
-  const spritesPerRow = 32;
+    if (typeof npc.sprite === 'number') {
+      const SPRITE_SIZE = 32;
+      const FRAMES_PER_SPRITE = 12;
+      const SPRITES_PER_SHEET = 1024;
+      const spritesPerRow = 32;
 
-  const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;  // no -1
-  const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
-  const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
+      const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;
+      const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
+      const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
 
-  const x = (frameIndexInSheet % spritesPerRow) * SPRITE_SIZE;
-  const y = Math.floor(frameIndexInSheet / spritesPerRow) * SPRITE_SIZE;
+      const x = (frameIndexInSheet % spritesPerRow) * SPRITE_SIZE;
+      const y = Math.floor(frameIndexInSheet / spritesPerRow) * SPRITE_SIZE;
 
-  const spriteDiv = document.createElement('div');
-  spriteDiv.className = 'sprite';
-  spriteDiv.style.width = SPRITE_SIZE + 'px';
-  spriteDiv.style.height = SPRITE_SIZE + 'px';
-  spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
-  spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
-  spriteDiv.style.backgroundRepeat = 'no-repeat';
-  spriteDiv.style.imageRendering = 'pixelated';
+      const spriteDiv = document.createElement('div');
+      spriteDiv.className = 'sprite';
+      spriteDiv.style.width = SPRITE_SIZE + 'px';
+      spriteDiv.style.height = SPRITE_SIZE + 'px';
+      spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
+      spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+      spriteDiv.style.backgroundRepeat = 'no-repeat';
+      spriteDiv.style.imageRendering = 'pixelated';
 
-  // Animation on hover
-  let frame = 0;
-  let animationInterval = null;
+      // Animation on hover
+      let frame = 0;
+      let animationInterval = null;
 
-  spriteDiv.addEventListener('mouseenter', () => {
-    animationInterval = setInterval(() => {
-      const currentFrameIndex = startingFrameIndex + frame;
-      const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
-      const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
-      spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+      spriteDiv.addEventListener('mouseenter', () => {
+        animationInterval = setInterval(() => {
+          const currentFrameIndex = startingFrameIndex + frame;
+          const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
+          const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
+          spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+          frame = (frame + 1) % FRAMES_PER_SPRITE;
+        }, 100);
+      });
 
-      frame = (frame + 1) % FRAMES_PER_SPRITE;
-    }, 100); // Adjust speed here (ms per frame)
-  });
+      spriteDiv.addEventListener('mouseleave', () => {
+        clearInterval(animationInterval);
+        frame = 0;
+        spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+      });
 
-  spriteDiv.addEventListener('mouseleave', () => {
-    clearInterval(animationInterval);
-    frame = 0;
-
-    // Reset to first frame
-    spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
-  });
-
-  nameDiv.appendChild(document.createElement('br'));
-  nameDiv.appendChild(spriteDiv);
-}
-
-
+      nameDiv.appendChild(document.createElement('br'));
+      nameDiv.appendChild(spriteDiv);
+    }
 
     nameCell.appendChild(nameDiv);
     row.appendChild(nameCell);
