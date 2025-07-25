@@ -184,7 +184,6 @@ function displayNPCs(npcs) {
     const nameDiv = document.createElement('div');
     nameDiv.textContent = npc.name;
 
-    // Add sprite under name
     if (typeof npc.sprite === 'number') {
       const SPRITE_SIZE = 32;
       const FRAMES_PER_SPRITE = 12;
@@ -207,7 +206,7 @@ function displayNPCs(npcs) {
       spriteDiv.style.backgroundRepeat = 'no-repeat';
       spriteDiv.style.imageRendering = 'pixelated';
 
-      // Animation on hover
+      // Hover animation
       let frame = 0;
       let animationInterval = null;
 
@@ -228,7 +227,7 @@ function displayNPCs(npcs) {
         spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
       });
 
-      // Tooltip for drops
+      // Tooltip for item drops (sprites only)
       if (npc.drop_items?.length) {
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
@@ -246,26 +245,23 @@ function displayNPCs(npcs) {
 
         spriteDiv.addEventListener('mouseenter', e => {
           tooltip.innerHTML = npc.drop_items.map(drop => {
-            const item = itemData.find(i => i.id === drop.item_id);
-            if (!item) return `Unknown Item (${drop.item_id})`;
-
-            const itemIndex = item.sprite || drop.item_id;
-            const spriteSheet = Math.floor(itemIndex / 1024);
-            const frameIndex = itemIndex % 1024;
+            const itemID = drop.item_id;
+            const spriteSheet = Math.floor(itemID / 1024);
+            const frameIndex = itemID % 1024;
             const spriteX = (frameIndex % 32) * 32;
             const spriteY = Math.floor(frameIndex / 32) * 32;
 
             return `
               <div style="display:flex; align-items:center; margin-bottom:4px;">
                 <div style="
-                  width:32px; height:32px; background-image:url('images/sprites${spriteSheet}.png');
+                  width:32px; height:32px;
+                  background-image:url('images/items${spriteSheet}.png');
                   background-position:-${spriteX}px -${spriteY}px;
-                  background-repeat:no-repeat; image-rendering:pixelated; margin-right:6px;">
+                  background-repeat:no-repeat;
+                  image-rendering:pixelated;
+                  margin-right:6px;">
                 </div>
-                <div>
-                  <strong>${item.name}</strong><br>
-                  x${drop.amount} (${drop.chance}%)
-                </div>
+                <div>x${drop.amount}</div>
               </div>
             `;
           }).join('');
