@@ -151,63 +151,19 @@ td:hover .npc-tooltip {
     </table>
   </div>
 </div>
-
 <script>
 let allNPCs = [];
-let allItems = [];
 let selectedNPCs = [];
+let itemData = [];
 
 async function loadNPCs() {
-  const [npcResponse, itemResponse] = await Promise.all([
-    fetch('npc.json'),
-    fetch('last.json')
-  ]);
-  const npcs = await npcResponse.json();
-  const items = await itemResponse.json();
+  const itemResponse = await fetch('last.json');
+  itemData = await itemResponse.json();
+
+  const response = await fetch('npc.json');
+  const npcs = await response.json();
   allNPCs = npcs;
-  allItems = items;
   displayNPCs(allNPCs);
-}
-
-function getItemById(id) {
-  return allItems.find(item => item.id === id);
-}
-
-function createDropTooltip(npc) {
-  if (!npc.drop_items || npc.drop_items.length === 0) return '';
-
-  let tooltipHTML = '<strong>Drops:</strong><br>';
-
-  npc.drop_items.forEach(drop => {
-    const item = getItemById(drop.item_id);
-    if (!item) return;
-
-    const SPRITE_SIZE = 32;
-    const spritesPerRow = 32;
-
-    const spriteIndex = item.sprite;
-    const sheetIndex = Math.floor(spriteIndex / (spritesPerRow * spritesPerRow));
-    const indexInSheet = spriteIndex % (spritesPerRow * spritesPerRow);
-
-    const x = (indexInSheet % spritesPerRow) * SPRITE_SIZE;
-    const y = Math.floor(indexInSheet / spritesPerRow) * SPRITE_SIZE;
-
-    tooltipHTML += `
-      <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-        <div style="
-          width: 32px; height: 32px;
-          background-image: url('images/items${sheetIndex}.png');
-          background-position: -${x}px -${y}px;
-          background-repeat: no-repeat;
-          background-size: 1024px 1024px;
-          image-rendering: pixelated;
-        "></div>
-        <span>${item.name} x${drop.amount} (${drop.chance}%)</span>
-      </div>
-    `;
-  });
-
-  return tooltipHTML;
 }
 
 function displayNPCs(npcs) {
@@ -227,16 +183,6 @@ function displayNPCs(npcs) {
     const nameCell = document.createElement('td');
     const nameDiv = document.createElement('div');
     nameDiv.textContent = npc.name;
-    nameDiv.style.position = 'relative';
-    nameDiv.style.cursor = 'help';
-
-    const tooltip = createDropTooltip(npc);
-    if (tooltip) {
-      const tooltipDiv = document.createElement('div');
-      tooltipDiv.className = 'npc-tooltip';
-      tooltipDiv.innerHTML = tooltip;
-      nameDiv.appendChild(tooltipDiv);
-    }
 
     // Add sprite under name
     if (typeof npc.sprite === 'number') {
@@ -271,6 +217,7 @@ function displayNPCs(npcs) {
           const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
           const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
           spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+
           frame = (frame + 1) % FRAMES_PER_SPRITE;
         }, 100);
       });
@@ -280,6 +227,59 @@ function displayNPCs(npcs) {
         frame = 0;
         spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
       });
+
+      // Tooltip for drops
+      if (npc.drop_items?.length) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.style.position = 'absolute';
+        tooltip.style.display = 'none';
+        tooltip.style.background = '#111';
+        tooltip.style.color = '#fff';
+        tooltip.style.padding = '6px';
+        tooltip.style.border = '1px solid #555';
+        tooltip.style.zIndex = 1000;
+        tooltip.style.fontSize = '12px';
+        tooltip.style.maxWidth = '200px';
+
+        document.body.appendChild(tooltip);
+
+        spriteDiv.addEventListener('mouseenter', e => {
+          tooltip.innerHTML = npc.drop_items.map(drop => {
+            const item = itemData.find(i => i.id === drop.item_id);
+            if (!item) return `Unknown Item (${drop.item_id})`;
+
+            const itemIndex = item.sprite || drop.item_id;
+            const spriteSheet = Math.floor(itemIndex / 1024);
+            const frameIndex = itemIndex % 1024;
+            const spriteX = (frameIndex % 32) * 32;
+            const spriteY = Math.floor(frameIndex / 32) * 32;
+
+            return `
+              <div style="display:flex; align-items:center; margin-bottom:4px;">
+                <div style="
+                  width:32px; height:32px; background-image:url('images/sprites${spriteSheet}.png');
+                  background-position:-${spriteX}px -${spriteY}px;
+                  background-repeat:no-repeat; image-rendering:pixelated; margin-right:6px;">
+                </div>
+                <div>
+                  <strong>${item.name}</strong><br>
+                  x${drop.amount} (${drop.chance}%)
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          tooltip.style.display = 'block';
+          const rect = spriteDiv.getBoundingClientRect();
+          tooltip.style.left = rect.right + 5 + 'px';
+          tooltip.style.top = rect.top + window.scrollY + 'px';
+        });
+
+        spriteDiv.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      }
 
       nameDiv.appendChild(document.createElement('br'));
       nameDiv.appendChild(spriteDiv);
@@ -380,7 +380,7 @@ function closeModal() {
 document.getElementById('searchBar').addEventListener('input', () => {
   const term = document.getElementById('searchBar').value.toLowerCase();
   const filtered = allNPCs.filter(npc =>
-    npc.name.toLowerCase().includes(term) || 
+    npc.name.toLowerCase().includes(term) ||
     (npc.desc && npc.desc.toLowerCase().includes(term))
   );
   displayNPCs(filtered);
@@ -388,5 +388,6 @@ document.getElementById('searchBar').addEventListener('input', () => {
 
 document.addEventListener('DOMContentLoaded', loadNPCs);
 </script>
+
 </body>
 </html>
