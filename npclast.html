@@ -247,7 +247,7 @@ function displayNPCs(npcs) {
           tooltip.innerHTML = npc.drop_items.map(drop => {
             const itemID = drop.item_id;
             const spriteSheet = Math.floor(itemID / 1024);
-            const frameIndex = itemID % 1024;
+            const frameIndex = (itemID - 1) % 1024;
             const spriteX = (frameIndex % 32) * 32;
             const spriteY = Math.floor(frameIndex / 32) * 32;
 
