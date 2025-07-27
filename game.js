@@ -231,10 +231,19 @@ function gameLoop() {
     }
   }
 
-  ctx.fillStyle = 'white';
-  ctx.font = '10px Arial';
-  ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 50, canvas.height - 360);
-  ctx.fillText(`Red cooldown: ${fighter2.cooldown}`, 620, canvas.height - 360);
+ ctx.fillStyle = 'white';
+ctx.font = '10px Arial';
+ctx.shadowColor = 'black';
+ctx.shadowBlur = 2;
+ctx.shadowOffsetX = 1;
+ctx.shadowOffsetY = 1;
+
+ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 50, canvas.height - 360);
+ctx.fillText(`Red cooldown: ${fighter2.cooldown}`, 620, canvas.height - 360);
+
+// Reset shadow to avoid affecting other drawings
+ctx.shadowColor = 'transparent';
+
 
   if (fightActive) {
     fighter1.update(fighter2);
