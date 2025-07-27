@@ -221,13 +221,20 @@ function resetFight() {
 function drawHPBar(fighter, x, y) {
   const width = 150;
   const height = 15;
-  const hpPercent = Math.max(0, fighter.hp) / 100;
+  const hpPercent = Math.max(0, fighter.hp) / fighter.maxHp;
+
   ctx.fillStyle = 'gray';
   ctx.fillRect(x, y, width, height);
   ctx.fillStyle = fighter.color;
   ctx.fillRect(x, y, width * hpPercent, height);
   ctx.strokeStyle = 'black';
   ctx.strokeRect(x, y, width, height);
+
+  // Fighter name above the HP bar
+  ctx.font = 'bold 14px Arial';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.fillText(fighter.name, x + width / 2, y - 5);
 }
 
 let frameCount = 0;

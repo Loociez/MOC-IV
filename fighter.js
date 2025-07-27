@@ -6,8 +6,13 @@ export class Fighter {
     this.vy = 0;
     this.width = 32;
     this.height = 32;
+
+    // Randomized HP (90–110) and attack range (75–85)
+    this.hp = 90 + Math.floor(Math.random() * 21); // 90–110
+    this.maxHp = this.hp;
+    this.attackRange = 75 + Math.floor(Math.random() * 11); // 75–85
+
     this.color = color;
-    this.hp = 100;
     this.facing = 'right';
     this.cooldown = 0;
     this.botLogic = botLogic;
@@ -21,40 +26,33 @@ export class Fighter {
     this.justHit = false;
     this.lastAttackWasProjectile = false;
 
-    // ✅ Use specified sprite sheet index (1 through 6)
-    const index = Math.max(1, Math.min(spriteSheetIndex, 6)); // Clamp to 1–6
+    const index = Math.max(1, Math.min(spriteSheetIndex, 6));
     this.spriteSheet = new Image();
     this.spriteSheet.src = `./sprites/sprites${index}.png`;
     this.spriteSheet.onload = () => {
       this.ready = true;
     };
 
-    // Floating text for damage/miss feedback
     this.floatingText = null;
-
-    // Projectile related
     this.projectiles = [];
     this.isShootingProjectile = false;
-
-    // New special move flag
     this.specialUsed = false;
     this.specialEffectTimer = 0;
 
-    // Pre-fight taunts
     const taunts = [
-      "You're going down!",
-      "Let's make this quick!",
-      "Is that all you've got?",
-      "Time to end this!",
-      "This won't take long!",
-      "EZ."
+      "You're going down!", "Let's make this quick!", "Is that all you've got?",
+      "Time to end this!", "This won't take long!", "EZ."
     ];
     this.taunt = taunts[Math.floor(Math.random() * taunts.length)];
     this.tauntTimer = 120;
+
+    // Random names
+    const names = ["Raze", "Vex", "Shade", "Nyx", "Zero", "Nova", "Flint", "Kai", "Blitz"];
+    this.name = names[Math.floor(Math.random() * names.length)];
   }
 
   shootProjectile(targetX, targetY) {
-    if (this.isShootingProjectile) return; // prevent spamming
+    if (this.isShootingProjectile) return;
     this.isShootingProjectile = true;
     setTimeout(() => { this.isShootingProjectile = false; }, 250);
 
@@ -73,7 +71,7 @@ export class Fighter {
       update() {
         const dx = this.targetX - this.x;
         const dy = this.targetY - this.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
+        const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < this.speed) {
           this.active = false;
         } else {
@@ -95,7 +93,6 @@ export class Fighter {
 
   update(opponent) {
     if (!this.ready) return;
-
     if (this.cooldown > 0) this.cooldown--;
 
     if (!['attack', 'hurt', 'special'].includes(this.action)) {
@@ -103,7 +100,6 @@ export class Fighter {
       this.handleAction(action, opponent);
     }
 
-    // Gravity
     if (!this.isOnGround) {
       this.vy += 0.5;
       this.y += this.vy;
@@ -117,8 +113,7 @@ export class Fighter {
     this.x += this.vx;
     this.vx = 0;
 
-    // Prevent overlap: push fighters apart if too close
-    const minDist = 45; // about double sprite width + some margin
+    const minDist = 45;
     const distX = opponent.x - this.x;
     if (Math.abs(distX) < minDist) {
       const push = (minDist - Math.abs(distX)) / 2;
@@ -131,21 +126,15 @@ export class Fighter {
       }
     }
 
-    // Determine facing based on opponent position
-    if (this.x + this.width / 2 < opponent.x + opponent.width / 2) {
-      this.facing = 'right';
-    } else {
-      this.facing = 'left';
-    }
+    this.facing = this.x + this.width / 2 < opponent.x + opponent.width / 2 ? 'right' : 'left';
 
-    // Animate frames
     this.frameTimer++;
     if (this.frameTimer >= 10) {
       this.frameTimer = 0;
 
       if (this.action === 'run') {
         this.frame = (this.frame + 1) % 2;
-      } else if (this.action === 'attack' || this.action === 'hurt' || this.action === 'special') {
+      } else if (['attack', 'hurt', 'special'].includes(this.action)) {
         this.frame++;
         const maxFrame = this.action === 'special' ? 2 : 1;
         if (this.frame > maxFrame) {
@@ -159,19 +148,13 @@ export class Fighter {
       }
     }
 
-    // Attack logic
     if (this.action === 'attack' && this.frame === 1 && !this.attackHasHit) {
-      const attackRange = 80;
-      const selfCenter = this.x + (this.width * 2) / 2;
-      const oppCenter = opponent.x + (opponent.width * 2) / 2;
-      const dist = Math.abs(selfCenter - oppCenter);
-
-      if (dist <= attackRange) {
+      const dist = Math.abs(this.x + this.width - (opponent.x + opponent.width));
+      if (dist <= this.attackRange) {
         const hitChance = 0.75;
         if (Math.random() <= hitChance) {
           let damage = Math.floor(Math.random() * 8) + 3;
-          const critChance = 0.15;
-          if (Math.random() < critChance) {
+          if (Math.random() < 0.15) {
             damage *= 2;
             opponent.showDamage(`CRIT ${damage}`);
           } else {
@@ -185,14 +168,9 @@ export class Fighter {
       this.attackHasHit = true;
     }
 
-    // Special move logic
     if (this.action === 'special' && this.frame === 1 && !this.attackHasHit) {
-      const attackRange = 100;
-      const selfCenter = this.x + (this.width * 2) / 2;
-      const oppCenter = opponent.x + (opponent.width * 2) / 2;
-      const dist = Math.abs(selfCenter - oppCenter);
-
-      if (dist <= attackRange) {
+      const dist = Math.abs(this.x + this.width - (opponent.x + opponent.width));
+      if (dist <= 100) {
         const hitChance = 0.9;
         if (Math.random() <= hitChance) {
           const damage = Math.floor(opponent.hp * 0.35);
@@ -209,11 +187,9 @@ export class Fighter {
       this.specialEffectTimer = 30;
     }
 
-    // Update projectiles
     this.projectiles = this.projectiles.filter(p => p.active);
     this.projectiles.forEach(p => p.update());
 
-    // Check projectile hits
     this.projectiles.forEach(p => {
       if (p.active) {
         const distX = Math.abs(p.x - (opponent.x + opponent.width / 2));
@@ -227,60 +203,43 @@ export class Fighter {
       }
     });
 
-    // Floating text
     if (this.floatingText) {
       this.floatingText.timer--;
       this.floatingText.yOffset += 0.5;
-      if (this.floatingText.timer <= 0) {
-        this.floatingText = null;
-      }
+      if (this.floatingText.timer <= 0) this.floatingText = null;
     }
 
-    if (this.specialEffectTimer > 0) {
-      this.specialEffectTimer--;
-    }
+    if (this.specialEffectTimer > 0) this.specialEffectTimer--;
   }
 
   handleAction(action, opponent) {
     switch (action) {
-      case 'moveLeft':
-        this.vx = -2;
-        this.action = 'run';
-        this.facing = 'left';
-        break;
-      case 'moveRight':
-        this.vx = 2;
-        this.action = 'run';
-        this.facing = 'right';
-        break;
+      case 'moveLeft': this.vx = -2; this.action = 'run'; this.facing = 'left'; break;
+      case 'moveRight': this.vx = 2; this.action = 'run'; this.facing = 'right'; break;
       case 'jump':
         if (this.isOnGround) {
           this.vy = -10;
           this.isOnGround = false;
-        }
-        break;
+        } break;
       case 'attack':
         if (this.cooldown === 0) {
           this.action = 'attack';
           this.frame = 0;
           this.cooldown = 30;
           this.attackHasHit = false;
-        }
-        break;
+        } break;
       case 'shoot':
         if (!this.isShootingProjectile && this.cooldown === 0) {
           this.shootProjectile(opponent.x + opponent.width / 2, opponent.y + opponent.height / 2);
           this.cooldown = 60;
-        }
-        break;
+        } break;
       case 'special':
         if (!this.specialUsed && this.cooldown === 0) {
           this.action = 'special';
           this.frame = 0;
           this.cooldown = 90;
           this.attackHasHit = false;
-        }
-        break;
+        } break;
       default:
         if (!['attack', 'hurt', 'special'].includes(this.action)) {
           this.action = 'idle';
@@ -295,33 +254,10 @@ export class Fighter {
     if (!this.ready) return;
 
     let frameIndex;
-
     switch (this.facing) {
-      case 'away':
-        if (this.action === 'run') frameIndex = this.frame;
-        else if (this.action === 'attack') frameIndex = 2;
-        else if (this.action === 'special') frameIndex = 4;
-        else frameIndex = 0;
-        break;
-      case 'towards':
-        if (this.action === 'run') frameIndex = 3 + this.frame;
-        else if (this.action === 'attack') frameIndex = 5;
-        else if (this.action === 'special') frameIndex = 7;
-        else frameIndex = 3;
-        break;
-      case 'left':
-        if (this.action === 'run') frameIndex = 6 + this.frame;
-        else if (this.action === 'attack') frameIndex = 8;
-        else if (this.action === 'special') frameIndex = 10;
-        else frameIndex = 6;
-        break;
+      case 'left': frameIndex = this.action === 'run' ? 6 + this.frame : (this.action === 'attack' ? 8 : (this.action === 'special' ? 10 : 6)); break;
       case 'right':
-      default:
-        if (this.action === 'run') frameIndex = 9 + this.frame;
-        else if (this.action === 'attack') frameIndex = 11;
-        else if (this.action === 'special') frameIndex = 13;
-        else frameIndex = 9;
-        break;
+      default: frameIndex = this.action === 'run' ? 9 + this.frame : (this.action === 'attack' ? 11 : (this.action === 'special' ? 13 : 9)); break;
     }
 
     const characterRow = this.character || 0;
@@ -350,76 +286,51 @@ export class Fighter {
     ctx.fillStyle = '#440000';
     ctx.fillRect(this.x, this.y - (this.height * 2) - 12, this.width * 2, 6);
     ctx.fillStyle = 'red';
-    ctx.fillRect(this.x, this.y - (this.height * 2) - 12, (this.hp / 100) * this.width * 2, 6);
+    ctx.fillRect(this.x, this.y - (this.height * 2) - 12, (this.hp / this.maxHp) * this.width * 2, 6);
     ctx.shadowBlur = 0;
 
-   if (this.floatingText) {
-  ctx.save();
-  ctx.font = 'bold 12px Verdana, Geneva, sans-serif'; // larger, cleaner font
-  ctx.fillStyle = this.floatingText.color;
+    if (this.floatingText) {
+      ctx.save();
+      ctx.font = 'bold 12px Verdana, Geneva, sans-serif';
+      ctx.fillStyle = this.floatingText.color;
+      ctx.shadowColor = 'black';
+      ctx.shadowBlur = 8;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(
+        this.floatingText.text,
+        this.x + this.width,
+        this.y - (this.height * 2) - 20 - this.floatingText.yOffset
+      );
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
 
-  // Optional: Glow around text
-  ctx.shadowColor = 'black';
-  ctx.shadowBlur = 8;
-
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'bottom';
-  ctx.fillText(
-    this.floatingText.text,
-    this.x + this.width, // center of the fighter sprite
-    this.y - (this.height * 2) - 20 - this.floatingText.yOffset
-  );
-
-  ctx.shadowColor = 'transparent'; // reset shadow
-  ctx.shadowBlur = 0;
-  ctx.restore();
-}
-
-
-   // ✅ Taunt text (safely drawn) with glow and improved font
-if (this.tauntTimer > 0) {
-  ctx.font = 'bold 16px Verdana, Geneva, Tahoma, sans-serif'; // nicer font and a bit bigger
-
-  // Glow effect using shadow properties
-  ctx.shadowColor = 'rgba(0, 255, 0, 0.7)'; // green glow color
-  ctx.shadowBlur = 5;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
-
-  ctx.fillStyle = 'White'; // main text color
-  ctx.fillText(this.taunt, this.x, this.y - (this.height * 2) - 35);
-
-  // Reset shadow to avoid affecting other drawings
-  ctx.shadowColor = 'transparent';
-  ctx.shadowBlur = 0;
-
-  this.tauntTimer--;
-}
-
+    if (this.tauntTimer > 0) {
+      ctx.font = 'bold 16px Verdana, Geneva, Tahoma, sans-serif';
+      ctx.shadowColor = 'rgba(0, 255, 0, 0.7)';
+      ctx.shadowBlur = 5;
+      ctx.fillStyle = 'White';
+      ctx.fillText(this.taunt, this.x, this.y - (this.height * 2) - 35);
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      this.tauntTimer--;
+    }
 
     this.projectiles.forEach(p => p.draw(ctx));
   }
 
-  takeDamage(damage) {
-    this.hp -= damage;
+  takeDamage(dmg) {
+    this.hp -= dmg;
     if (this.hp < 0) this.hp = 0;
   }
 
-  showDamage(damage) {
-    this.floatingText = {
-      text: `-${damage}`,
-      color: 'red',
-      timer: 30,
-      yOffset: 0
-    };
+  showDamage(dmg) {
+    this.floatingText = { text: `-${dmg}`, color: 'red', timer: 30, yOffset: 0 };
   }
 
   showMiss() {
-    this.floatingText = {
-      text: 'Miss',
-      color: 'white',
-      timer: 30,
-      yOffset: 0
-    };
+    this.floatingText = { text: 'Miss', color: 'white', timer: 30, yOffset: 0 };
   }
 }
