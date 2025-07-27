@@ -272,85 +272,50 @@ export class Fighter {
 
   draw(ctx) {
     if (!this.ready) return;
+    ctx.save();
 
-    let frameIndex;
-    switch (this.facing) {
-      case 'left': frameIndex = this.action === 'run' ? 6 + this.frame : (this.action === 'attack' ? 8 : (this.action === 'special' ? 10 : 6)); break;
-      case 'right':
-      default: frameIndex = this.action === 'run' ? 9 + this.frame : (this.action === 'attack' ? 11 : (this.action === 'special' ? 13 : 9)); break;
-    }
+    // Draw fighter rectangle base
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    const characterRow = this.character || 0;
-    const sx = frameIndex * 32;
-    const sy = characterRow * 32;
-
-    if (this.specialEffectTimer > 0) {
-      ctx.save();
-      ctx.shadowColor = 'cyan';
-      ctx.shadowBlur = 30;
-      ctx.fillStyle = `rgba(0, 255, 255, ${this.specialEffectTimer / 30})`;
-      ctx.fillRect(this.x - 6, this.y - (this.height * 2) - 6, this.width * 2 + 12, this.height * 2 + 12);
-      ctx.restore();
-    }
-
-    ctx.drawImage(
-      this.spriteSheet,
-      sx, sy,
-      32, 32,
-      this.x, this.y - (this.height * 2),
-      this.width * 2, this.height * 2
-    );
-
-    ctx.shadowColor = 'lime';
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = '#440000';
-    ctx.fillRect(this.x, this.y - (this.height * 2) - 12, this.width * 2, 6);
+    // Draw health bar
     ctx.fillStyle = 'red';
-    ctx.fillRect(this.x, this.y - (this.height * 2) - 12, (this.hp / this.maxHp) * this.width * 2, 6);
-    ctx.shadowBlur = 0;
+    ctx.fillRect(this.x, this.y - 15, this.width, 6);
+    ctx.fillStyle = 'lime';
+    ctx.fillRect(this.x, this.y - 15, (this.hp / this.maxHp) * this.width, 6);
 
+    // Draw rarity text
+    ctx.fillStyle = 'white';
+    ctx.font = '10px Arial';
+    ctx.fillText(this.rarity, this.x, this.y - 20);
+
+    // Draw floating text if any
     if (this.floatingText) {
-      ctx.save();
-      ctx.font = 'bold 12px Verdana, Geneva, sans-serif';
       ctx.fillStyle = this.floatingText.color;
-      ctx.shadowColor = 'black';
-      ctx.shadowBlur = 8;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText(
-        this.floatingText.text,
-        this.x + this.width,
-        this.y - (this.height * 2) - 20 - this.floatingText.yOffset
-      );
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      ctx.font = '14px Arial';
+      ctx.fillText(this.floatingText.text, this.x, this.y - 30 - this.floatingText.yOffset);
     }
 
-    if (this.tauntTimer > 0) {
-      ctx.font = 'bold 16px Verdana, Geneva, Tahoma, sans-serif';
-      ctx.shadowColor = 'rgba(0, 255, 0, 0.7)';
-      ctx.shadowBlur = 5;
-      ctx.fillStyle = 'White';
-      ctx.fillText(this.taunt, this.x, this.y - (this.height * 2) - 35);
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      this.tauntTimer--;
-    }
-
+    // Draw projectiles
     this.projectiles.forEach(p => p.draw(ctx));
+
+    ctx.restore();
   }
 
-  takeDamage(dmg) {
-    this.hp -= dmg;
-    if (this.hp < 0) this.hp = 0;
+  takeDamage(amount) {
+    this.hp -= amount;
+    this.justHit = true;
+    if (this.hp <= 0) {
+      this.hp = 0;
+      // Possibly add death handling here, e.g. reset round or fight
+    }
   }
 
-  showDamage(dmg) {
-    this.floatingText = { text: `-${dmg}`, color: 'red', timer: 30, yOffset: 0 };
+  showDamage(text) {
+    this.floatingText = { text: text.toString(), color: 'red', timer: 60, yOffset: 0 };
   }
 
   showMiss() {
-    this.floatingText = { text: 'Miss', color: 'white', timer: 30, yOffset: 0 };
+    this.floatingText = { text: 'MISS', color: 'gray', timer: 60, yOffset: 0 };
   }
 }
