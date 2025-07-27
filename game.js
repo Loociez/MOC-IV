@@ -223,19 +223,26 @@ function drawHPBar(fighter, x, y) {
   const height = 15;
   const hpPercent = Math.max(0, fighter.hp) / fighter.maxHp;
 
+  // Background bar
   ctx.fillStyle = 'gray';
   ctx.fillRect(x, y, width, height);
+
+  // Colored health fill
   ctx.fillStyle = fighter.color;
   ctx.fillRect(x, y, width * hpPercent, height);
+
+  // Border
   ctx.strokeStyle = 'black';
   ctx.strokeRect(x, y, width, height);
 
-  // Fighter name above the HP bar
-  ctx.font = 'bold 14px Arial';
+  // Fighter name (centered inside the bar)
+  ctx.font = 'bold 12px Arial';
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
-  ctx.fillText(fighter.name, x + width / 2, y - 5);
+  ctx.textBaseline = 'middle';
+  ctx.fillText(fighter.name, x + width / 2, y + height / 2);
 }
+
 
 let frameCount = 0;
 
