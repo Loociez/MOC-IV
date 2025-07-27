@@ -232,8 +232,8 @@ function gameLoop() {
   }
 
   ctx.fillStyle = 'white';
-  ctx.font = '20px Arial';
-  ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 30, canvas.height - 340);
+  ctx.font = '10px Arial';
+  ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 50, canvas.height - 340);
   ctx.fillText(`Red cooldown: ${fighter2.cooldown}`, 620, canvas.height - 340);
 
   if (fightActive) {
