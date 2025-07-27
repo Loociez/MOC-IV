@@ -4,133 +4,82 @@ function getRandomCharacterIndex() {
   return Math.floor(Math.random() * 32);
 }
 
-// --- New: Array of background images ---
 const backgroundImages = [
   './background1.jpg',
   './background2.jpg',
   './background3.jpg',
 ];
 
-let background = new Image(); // We will change its src dynamically
-
+let background = new Image();
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 400;
 
-// Betting state
 let playerMoney = parseInt(localStorage.getItem('playerMoney')) || 1000;
-let currentBet = null;  // 'blue' or 'red'
+let currentBet = null;
 let betAmount = 0;
-const bettingTime = 15; // seconds
+const bettingTime = 15;
 let bettingActive = true;
 let bettingCountdown = bettingTime;
 let fightActive = false;
 let fightEnded = false;
+let roundNumber = 1;
 
 const stageLeftBound = 50;
 const stageRightBound = 750;
 
-// Screen shake variables
 let shakeTimer = 0;
-const shakeDuration = 15;  // frames
+const shakeDuration = 15;
 const shakeIntensity = 5;
 
-// White flash overlay variables (for special effect)
 let specialFlashDuration = 0;
 const specialFlashMaxDuration = 15;
 
-// Function to trigger special effect (shake + flash)
 function triggerSpecialEffect() {
-  shakeTimer = 0;  // reset shake timer to start shaking
-  specialFlashDuration = specialFlashMaxDuration; // start flash
+  shakeTimer = 0;
+  specialFlashDuration = specialFlashMaxDuration;
 }
 
-// Example bot logics (unchanged)
 function aggressiveBotLogic(self, opponent) {
   const dist = opponent.x - self.x;
-
   if (self.action === 'attack' || self.action === 'hurt') return 'idle';
-
-  if (self.x <= stageLeftBound) {
-    self.patrolDirection = 'right';
-    return 'moveRight';
-  }
-  if (self.x >= stageRightBound) {
-    self.patrolDirection = 'left';
-    return 'moveLeft';
-  }
-
-  if (!self.patrolDirection) self.patrolDirection = Math.random() < 0.5 ? 'left' : 'right';
-
+  if (self.x <= stageLeftBound) return 'moveRight';
+  if (self.x >= stageRightBound) return 'moveLeft';
   if (Math.abs(dist) > 100) return dist > 0 ? 'moveRight' : 'moveLeft';
-
   if (Math.abs(dist) < 70 && Math.random() < 0.2) return dist > 0 ? 'moveLeft' : 'moveRight';
-
-  if (Math.abs(dist) <= 100 && Math.random() < 0.3) return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
-
+  if (Math.random() < 0.4 && Math.abs(dist) <= 100) return 'moveLeft';
   if (self.cooldown === 0 && Math.abs(dist) <= 150 && Math.random() < 0.4) return 'shoot';
-
   if (self.cooldown === 0 && Math.random() < 0.6) return 'attack';
-
   if (Math.random() < 0.1) return 'jump';
-
-  return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
+  return 'moveRight';
 }
 
 function tacticalBotLogic(self, opponent) {
   const dist = opponent.x - self.x;
-
   if (self.action === 'attack' || self.action === 'hurt') return 'idle';
-
-  if (self.x <= stageLeftBound) {
-    self.patrolDirection = 'right';
-    return 'moveRight';
-  }
-  if (self.x >= stageRightBound) {
-    self.patrolDirection = 'left';
-    return 'moveLeft';
-  }
-
-  if (!self.patrolDirection) self.patrolDirection = Math.random() < 0.5 ? 'left' : 'right';
-
-  if (Math.abs(dist) < 50) {
-    if (Math.random() < 0.5) return dist > 0 ? 'moveLeft' : 'moveRight';
-  }
-
-  if (Math.abs(dist) >= 50 && Math.abs(dist) <= 120) {
-    if (Math.random() < 0.3) {
-      return Math.random() < 0.5
-        ? (dist > 0 ? 'moveRight' : 'moveLeft')
-        : (dist > 0 ? 'moveLeft' : 'moveRight');
-    }
-    if (Math.random() < 0.3) return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
-  }
-
+  if (self.x <= stageLeftBound) return 'moveRight';
+  if (self.x >= stageRightBound) return 'moveLeft';
+  if (Math.abs(dist) < 50 && Math.random() < 0.5) return dist > 0 ? 'moveLeft' : 'moveRight';
+  if (Math.abs(dist) >= 50 && Math.abs(dist) <= 120 && Math.random() < 0.3) return dist > 0 ? 'moveRight' : 'moveLeft';
   if (Math.abs(dist) > 120) return dist > 0 ? 'moveRight' : 'moveLeft';
-
   if (self.cooldown === 0 && Math.abs(dist) <= 150 && Math.random() < 0.3) return 'shoot';
-
   if (self.cooldown === 0 && Math.abs(dist) <= 90 && Math.random() < 0.5) return 'attack';
-
   if (Math.random() < 0.15) return 'jump';
-
-  return self.patrolDirection === 'left' ? 'moveLeft' : 'moveRight';
+  return 'moveLeft';
 }
 
-// Change from const to let to allow reassignment
 let fighter1 = new Fighter(150, 'blue', aggressiveBotLogic, getRandomCharacterIndex());
 let fighter2 = new Fighter(600, 'red', tacticalBotLogic, getRandomCharacterIndex());
 
-// UI elements from document (outside module)
 const betBlueBtn = document.getElementById('betBlue');
 const betRedBtn = document.getElementById('betRed');
 const currentBetDisplay = document.getElementById('currentBet');
 const resultDisplay = document.getElementById('result');
 const playerMoneyDisplay = document.getElementById('playerMoneyDisplay');
-const betAmountInput = document.getElementById('betAmountInput'); // New input for bet amount
-
+const betAmountInput = document.getElementById('betAmountInput');
 const resetMoneyBtn = document.getElementById('resetMoneyBtn');
+const roundDisplay = document.getElementById('roundDisplay'); // NEW
 
 function updateMoneyDisplay() {
   if (playerMoneyDisplay) {
@@ -147,7 +96,7 @@ if (resetMoneyBtn) {
 }
 
 function placeBet(color) {
-  if (!bettingActive) return; // no bets if fight started
+  if (!bettingActive) return;
   if (!betAmountInput) {
     alert('Bet amount input not found!');
     return;
@@ -161,7 +110,6 @@ function placeBet(color) {
     alert("You don't have enough money to bet!");
     return;
   }
-  // Deduct money immediately on bet
   playerMoney -= amount;
   localStorage.setItem('playerMoney', playerMoney);
   updateMoneyDisplay();
@@ -171,34 +119,24 @@ function placeBet(color) {
   if (currentBetDisplay) {
     currentBetDisplay.textContent = `Current bet: ${color.charAt(0).toUpperCase() + color.slice(1)} Fighter ($${betAmount})`;
   }
-  if (resultDisplay) {
-    resultDisplay.textContent = '';
-  }
+  if (resultDisplay) resultDisplay.textContent = '';
 
   if (betBlueBtn) betBlueBtn.disabled = true;
   if (betRedBtn) betRedBtn.disabled = true;
   if (betAmountInput) betAmountInput.disabled = true;
 }
 
-if (betBlueBtn) {
-  betBlueBtn.addEventListener('click', () => placeBet('blue'));
-}
-if (betRedBtn) {
-  betRedBtn.addEventListener('click', () => placeBet('red'));
-}
+if (betBlueBtn) betBlueBtn.addEventListener('click', () => placeBet('blue'));
+if (betRedBtn) betRedBtn.addEventListener('click', () => placeBet('red'));
 
-// --- New function to select random background image ---
 function selectRandomBackground() {
   const index = Math.floor(Math.random() * backgroundImages.length);
   background.src = backgroundImages[index];
 }
 
 function resetFight() {
-  // Recreate fighters with new random characters and logic
   fighter1 = new Fighter(150, 'blue', aggressiveBotLogic, getRandomCharacterIndex());
   fighter2 = new Fighter(600, 'red', tacticalBotLogic, getRandomCharacterIndex());
-
-  // --- New: Pick a new random background on each fight reset ---
   selectRandomBackground();
 
   fightEnded = false;
@@ -210,11 +148,13 @@ function resetFight() {
 
   if (currentBetDisplay) currentBetDisplay.textContent = 'Current bet: None';
   if (resultDisplay) resultDisplay.textContent = '';
+  if (roundDisplay) roundDisplay.textContent = `Round: ${roundNumber}`;
+
   if (betBlueBtn) betBlueBtn.disabled = false;
   if (betRedBtn) betRedBtn.disabled = false;
   if (betAmountInput) {
     betAmountInput.disabled = false;
-    betAmountInput.value = ''; // reset input
+    betAmountInput.value = '';
   }
 }
 
@@ -223,35 +163,30 @@ function drawHPBar(fighter, x, y) {
   const height = 15;
   const hpPercent = Math.max(0, fighter.hp) / fighter.maxHp;
 
-  // Background bar
   ctx.fillStyle = 'gray';
   ctx.fillRect(x, y, width, height);
 
-  // Colored health fill
   ctx.fillStyle = fighter.color;
   ctx.fillRect(x, y, width * hpPercent, height);
 
-  // Border
   ctx.strokeStyle = 'black';
   ctx.strokeRect(x, y, width, height);
 
-  // Fighter name (centered inside the bar)
-  ctx.font = 'bold 12px Arial';
+  ctx.font = 'bold 11px Arial';
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(fighter.name, x + width / 2, y + height / 2);
+  ctx.fillText(`${fighter.name} (${fighter.rarity})`, x + width / 2, y + height / 2 - 7);
+  ctx.font = '10px Arial';
+  ctx.fillText(`${fighter.hp} / ${fighter.maxHp} HP`, x + width / 2, y + height / 2 + 5);
 }
-
 
 let frameCount = 0;
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
 
-  ctx.save();  // Save context before applying shake
-
-  // Apply screen shake if active
   if (shakeTimer < shakeDuration) {
     const dx = (Math.random() * 2 - 1) * shakeIntensity;
     const dy = (Math.random() * 2 - 1) * shakeIntensity;
@@ -259,7 +194,6 @@ function gameLoop() {
     ctx.translate(dx, dy);
   }
 
-  // Draw background (uses the dynamic background Image object)
   if (background.complete && background.naturalWidth !== 0) {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   } else {
@@ -267,30 +201,20 @@ function gameLoop() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  ctx.restore(); // Restore context after shake
+  ctx.restore();
 
-  // White flash overlay for special effect
   if (specialFlashDuration > 0) {
     ctx.fillStyle = `rgba(255, 255, 255, ${specialFlashDuration / specialFlashMaxDuration})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     specialFlashDuration--;
   }
 
-   // Draw fighters and HP bars
   fighter1.draw(ctx);
   fighter2.draw(ctx);
 
   drawHPBar(fighter1, 50, 10);
   drawHPBar(fighter2, 600, 10);
 
-  // White flash overlay for special effect (after fighters)
-  if (specialFlashDuration > 0) {
-    ctx.fillStyle = `rgba(255, 255, 255, ${specialFlashDuration / specialFlashMaxDuration})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    specialFlashDuration--;
-  }
-
-    // Betting countdown and fight start logic
   if (bettingActive) {
     if (bettingCountdown > 0) {
       if (currentBetDisplay) {
@@ -307,33 +231,28 @@ function gameLoop() {
     }
   }
 
-  // Show cooldown timers visually for both fighters
   ctx.fillStyle = 'white';
   ctx.font = '20px Arial';
-  ctx.textAlign = 'left';
   ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 20, canvas.height - 340);
   ctx.fillText(`Red cooldown: ${fighter2.cooldown}`, 620, canvas.height - 340);
 
-
-
-  // Fight update
   if (fightActive) {
     fighter1.update(fighter2);
     fighter2.update(fighter1);
 
-    // Check if one fighter is dead
     if (fighter1.hp <= 0 || fighter2.hp <= 0) {
       fightActive = false;
       fightEnded = true;
 
       let winnerColor = fighter1.hp > 0 ? 'blue' : 'red';
+      let winner = winnerColor === 'blue' ? fighter1 : fighter2;
+      winner.wins = (winner.wins || 0) + 1;
+
       if (resultDisplay) {
-        resultDisplay.textContent = `Fight ended! Winner: ${winnerColor.charAt(0).toUpperCase() + winnerColor.slice(1)} Fighter`;
+        resultDisplay.textContent = `Fight ended! Winner: ${winnerColor.charAt(0).toUpperCase() + winnerColor.slice(1)} Fighter (${winner.name})\nWins — Blue: ${fighter1.wins || 0}, Red: ${fighter2.wins || 0}`;
       }
 
-      // Check betting result
       if (currentBet === winnerColor) {
-        // Player wins: payout 2x the bet amount
         playerMoney += betAmount * 2;
         if (resultDisplay) resultDisplay.textContent += ' - You won the bet!';
       } else if (currentBet) {
@@ -344,28 +263,26 @@ function gameLoop() {
 
       localStorage.setItem('playerMoney', playerMoney);
       updateMoneyDisplay();
+      roundNumber++;
 
       if (betBlueBtn) betBlueBtn.disabled = true;
       if (betRedBtn) betRedBtn.disabled = true;
       if (betAmountInput) betAmountInput.disabled = true;
-    
-	setTimeout(() => {
-    resetFight();
-    if (betBlueBtn) betBlueBtn.disabled = false;
-    if (betRedBtn) betRedBtn.disabled = false;
-    if (betAmountInput) betAmountInput.disabled = false;
-  }, 5000); // 5 seconds after fight ends
-}
+
+      setTimeout(() => {
+        resetFight();
+        if (betBlueBtn) betBlueBtn.disabled = false;
+        if (betRedBtn) betRedBtn.disabled = false;
+        if (betAmountInput) betAmountInput.disabled = false;
+      }, 5000);
+    }
   }
 
   frameCount++;
   requestAnimationFrame(gameLoop);
 }
 
-// Start background image initially
 selectRandomBackground();
-
-// Start the game loop
 updateMoneyDisplay();
 resetFight();
 gameLoop();

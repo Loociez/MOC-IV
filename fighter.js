@@ -7,11 +7,6 @@ export class Fighter {
     this.width = 32;
     this.height = 32;
 
-    // Randomized HP (90–110) and attack range (75–85)
-    this.hp = 90 + Math.floor(Math.random() * 21); // 90–110
-    this.maxHp = this.hp;
-    this.attackRange = 75 + Math.floor(Math.random() * 11); // 75–85
-
     this.color = color;
     this.facing = 'right';
     this.cooldown = 0;
@@ -39,6 +34,7 @@ export class Fighter {
     this.specialUsed = false;
     this.specialEffectTimer = 0;
 
+    // Random taunt
     const taunts = [
       "You're going down!", "Let's make this quick!", "Is that all you've got?",
       "Time to end this!", "This won't take long!", "EZ."
@@ -46,9 +42,33 @@ export class Fighter {
     this.taunt = taunts[Math.floor(Math.random() * taunts.length)];
     this.tauntTimer = 120;
 
-    // Random names
+    // Random name
     const names = ["Raze", "Vex", "Shade", "Nyx", "Zero", "Nova", "Flint", "Kai", "Blitz"];
     this.name = names[Math.floor(Math.random() * names.length)];
+
+    // --- NEW: Rarity system ---
+    const rarityRoll = Math.random();
+    if (rarityRoll < 0.6) {
+      this.rarity = 'Common';
+      this.hp = 90 + Math.floor(Math.random() * 11); // 90–100
+      this.attackRange = 75 + Math.floor(Math.random() * 6); // 75–80
+    } else if (rarityRoll < 0.85) {
+      this.rarity = 'Rare';
+      this.hp = 100 + Math.floor(Math.random() * 11); // 100–110
+      this.attackRange = 80 + Math.floor(Math.random() * 6); // 80–85
+    } else if (rarityRoll < 0.97) {
+      this.rarity = 'Epic';
+      this.hp = 110 + Math.floor(Math.random() * 11); // 110–120
+      this.attackRange = 85 + Math.floor(Math.random() * 6); // 85–90
+    } else {
+      this.rarity = 'Legendary';
+      this.hp = 125 + Math.floor(Math.random() * 6); // 125–130
+      this.attackRange = 90 + Math.floor(Math.random() * 6); // 90–95
+    }
+    this.maxHp = this.hp;
+
+    // --- NEW: Track wins per fighter in-session ---
+    this.wins = 0;
   }
 
   shootProjectile(targetX, targetY) {
