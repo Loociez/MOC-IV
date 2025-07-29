@@ -4,14 +4,51 @@
   <meta charset="UTF-8">
   <title>My MoC Scripts Pastebin</title>
   <style>
-    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
-    .card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    pre { white-space: pre-wrap; word-wrap: break-word; background: #eee; padding: 10px; border-radius: 5px; }
-    button { margin-top: 5px; }
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    button {
+      margin-top: 5px;
+    }
+    #menu {
+      margin-bottom: 30px;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    #menu a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    #menu a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <h1>📜 My MoC Scripts Pastebin</h1>
+
+  <div id="menu">Loading menu...</div>
   <div id="scripts"></div>
 
   <script>
@@ -21,7 +58,7 @@
         title: '🧭 Loot Tracker',
         description: 'Tracks and displays the loot drops on the map.'
       },
-	   {
+      {
         file: 'BankEnhance.js',
         title: '💰 Bank Enhancement',
         description: 'Enhances the bank with color and filters.'
@@ -31,17 +68,17 @@
         title: '🗡️ Kill Tracker',
         description: 'Counts and logs player NPC kills during a session. *buggy*'
       },
-	  {
+      {
         file: 'replay.js',
         title: '▶️  Screen Recorder',
         description: 'Allows the user to record their mirage gameplay via a button click. saves to default downloads folder.'
       },
-	   {
+      {
         file: 'Vitals.js',
         title: '❤️ Player Vitals Bars',
         description: 'Tracks players Vitals bars, allows you to move and lock them, hides old bars.'
       },
-	  {
+      {
         file: 'PTrack.js',
         title: '🧭 Player Tracker',
         description: 'Tracks players and objects within the room and lists them. *WIP*'
@@ -54,17 +91,33 @@
     ];
 
     const container = document.getElementById('scripts');
+    const menu = document.getElementById('menu');
 
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // Build menu links
+    menu.innerHTML = scriptList.map(script =>
+      `<a href="#card-${script.file}">${script.title}</a>`
+    ).join('');
+
+    // Load and render script content
     scriptList.forEach(script => {
       fetch(`scripts/${script.file}`)
         .then(res => res.text())
         .then(code => {
+          const escaped = escapeHTML(code);
           const card = document.createElement('div');
           card.className = 'card';
+          card.id = `card-${script.file}`;
           card.innerHTML = `
             <h2>${script.title}</h2>
             <p>${script.description}</p>
-            <pre id="code-${script.file}">${code}</pre>
+            <pre id="code-${script.file}">${escaped}</pre>
             <button onclick="copyToClipboard('code-${script.file}')">Copy to Clipboard</button>
           `;
           container.appendChild(card);
