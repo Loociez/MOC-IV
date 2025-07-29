@@ -108,8 +108,8 @@
         <select class="inv-sort">
           <option value="name">Name (A-Z)</option>
           <option value="name-desc">Name (Z-A)</option>
-          <option value="quantity">Quantity (High → Low)</option>
-          <option value="quantity-asc">Quantity (Low → High)</option>
+          <option value="quantity">Quantity (Low → High)</option>
+          <option value="quantity-asc">Quantity (High → Low)</option>
           <option value="stat:max_atk">Physical Attack</option>
           <option value="stat:max_mat">Magical Attack</option>
           <option value="stat:max_rat">Ranged Attack</option>
