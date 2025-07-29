@@ -49,9 +49,9 @@
       if (by === "quantity") {
         const qtyA = parseInt(a.text.match(/x(\d+)/)?.[1] || "0");
         const qtyB = parseInt(b.text.match(/x(\d+)/)?.[1] || "0");
-        return descending ? qtyA - qtyB : qtyB - qtyA;
+        return descending ? qtyB - qtyA : qtyA - qtyB;
       } else if (by.startsWith("stat:")) {
-        const stat = by.split(":" )[1];
+        const stat = by.split(":")[1];
         const aStat = config.statsCache[nameA]?.[stat] || 0;
         const bStat = config.statsCache[nameB]?.[stat] || 0;
         return descending ? bStat - aStat : aStat - bStat;
@@ -108,8 +108,8 @@
         <select class="inv-sort">
           <option value="name">Name (A-Z)</option>
           <option value="name-desc">Name (Z-A)</option>
-          <option value="quantity">Quantity (Low → High)</option>
           <option value="quantity-asc">Quantity (High → Low)</option>
+          <option value="quantity">Quantity (Low → High)</option>
           <option value="stat:max_atk">Physical Attack</option>
           <option value="stat:max_mat">Magical Attack</option>
           <option value="stat:max_rat">Ranged Attack</option>
@@ -134,10 +134,19 @@
 
     function applySort() {
       const sortValue = sortDropdown.value;
-      const [sortBy, sortDir] = sortValue.includes('-') && !sortValue.startsWith('stat')
-        ? sortValue.split('-')
-        : [sortValue, 'desc'];
-      sortSelectOptions(selectEl, sortBy, sortDir === 'desc');
+
+      const sortMap = {
+        "name": { by: "name", desc: false },         // A → Z
+        "name-desc": { by: "name", desc: true },     // Z → A
+        "quantity": { by: "quantity", desc: false }, // Low → High
+        "quantity-asc": { by: "quantity", desc: true }, // High → Low
+      };
+
+      const isStat = sortValue.startsWith("stat:");
+      const sortBy = isStat ? sortValue : (sortMap[sortValue]?.by || "name");
+      const descending = isStat ? true : (sortMap[sortValue]?.desc ?? false);
+
+      sortSelectOptions(selectEl, sortBy, descending);
       filterSelectOptions(selectEl, input.value);
       colorizeOptions(selectEl);
     }
