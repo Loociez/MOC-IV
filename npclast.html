@@ -390,15 +390,54 @@ document.getElementById('searchBar').addEventListener('input', () => {
   displayNPCs(filtered);
 });
 
-document.addEventListener('DOMContentLoaded', loadNPCs);
+document.addEventListener('DOMContentLoaded', () => {
+  loadNPCs();
+  
+  document.getElementById('itemDropBtn').addEventListener('click', () => {
+    document.getElementById('itemDropModal').style.display = 'flex';
+    populateItemDropList();
+  });
+
+  document.getElementById('itemSearch').addEventListener('input', () => {
+    populateItemDropList();
+  });
+
+  function populateItemDropList() {
+    const search = document.getElementById('itemSearch').value.toLowerCase();
+    const table = document.getElementById('itemDropTable');
+    table.innerHTML = '';
+
+    const itemToMonsters = {};
+
+    for (const npc of allNPCs) {
+      if (!npc.drop_items) continue;
+      for (const drop of npc.drop_items) {
+        const itemName = itemIDMap[drop.item_id];
+        if (!itemName || itemName === "(not dropped)") continue;
+
+        if (!itemToMonsters[itemName]) itemToMonsters[itemName] = [];
+        itemToMonsters[itemName].push(npc.name);
+      }
+    }
+
+    Object.entries(itemToMonsters).forEach(([itemName, monsters]) => {
+      if (!itemName.toLowerCase().includes(search)) return;
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${itemName}</td>
+        <td>${[...new Set(monsters)].join(', ')}</td>
+      `;
+      table.appendChild(row);
+    });
+  }
+
+});
 document.getElementById('itemDropBtn').addEventListener('click', () => {
   document.getElementById('itemDropModal').style.display = 'flex';
   populateItemDropList();
 });
 
-document.getElementById('itemSearch').addEventListener('input', () => {
-  populateItemDropList();
-});
 
 function populateItemDropList() {
   const search = document.getElementById('itemSearch').value.toLowerCase();
