@@ -121,6 +121,11 @@ td:hover .npc-tooltip {
 <body>
 
 <h1>NPC List 07/24/25</h1>
+
+<button id="itemDropBtn" style="margin: 10px auto; display: block; padding: 10px 20px; background-color: gold; color: purple; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">
+  Show Item Drop List
+</button>
+
 <input type="text" id="searchBar" placeholder="Search for an NPC...">
 
 <table id="npcTable">
@@ -381,6 +386,63 @@ document.getElementById('searchBar').addEventListener('input', () => {
 });
 
 document.addEventListener('DOMContentLoaded', loadNPCs);
+document.getElementById('itemDropBtn').addEventListener('click', () => {
+  document.getElementById('itemDropModal').style.display = 'flex';
+  populateItemDropList();
+});
+
+document.getElementById('itemSearch').addEventListener('input', () => {
+  populateItemDropList();
+});
+
+function populateItemDropList() {
+  const search = document.getElementById('itemSearch').value.toLowerCase();
+  const table = document.getElementById('itemDropTable');
+  table.innerHTML = '';
+
+  const itemToMonsters = {};
+
+  for (const npc of allNPCs) {
+    if (!npc.drop_items) continue;
+    for (const drop of npc.drop_items) {
+      const itemName = itemIDMap[drop.item_id];
+      if (!itemName || itemName === "(not dropped)") continue;
+
+      if (!itemToMonsters[itemName]) itemToMonsters[itemName] = [];
+      itemToMonsters[itemName].push(npc.name);
+    }
+  }
+
+  Object.entries(itemToMonsters).forEach(([itemName, monsters]) => {
+    if (!itemName.toLowerCase().includes(search)) return;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${itemName}</td>
+      <td>${[...new Set(monsters)].join(', ')}</td>
+    `;
+    table.appendChild(row);
+  });
+}
+
 </script>
+
+<div id="itemDropModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="document.getElementById('itemDropModal').style.display='none'">&times;</span>
+    <h2>Item Drop List</h2>
+    <input type="text" id="itemSearch" placeholder="Search for an item..." style="width:100%; padding: 8px; margin-bottom: 10px;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Dropped By</th>
+        </tr>
+      </thead>
+      <tbody id="itemDropTable"></tbody>
+    </table>
+  </div>
+</div>
+
 </body>
 </html>
