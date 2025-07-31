@@ -1,7 +1,15 @@
 viewBankAsGrid = false;
+banoperationInProgress = false;
 
 frmBank = document.getElementById('winBank');
 buttons = frmBank.getElementsByTagName("button");
+timers = [];
+
+removeTimer = (th) => timers = timers.filter((v) => v != th);
+
+killAllTimers = () => timers.forEach((th) => clearTimeout(th));
+
+sleep = async (t) => new Promise((resolve, reject) => { let th = -1; timers.push(th = setTimeout(() => { removeTimer(th); resolve(); }, t)); });
 
 if (buttons.length < 4) {
     btnToggleContainer = buttons[0].parentNode.parentNode.appendChild(document.createElement('li'));
@@ -42,6 +50,8 @@ changeView = async (gridView, frm) => {
         frm.insertBefore(gridsContainer, divs[1]);
         gridsContainer.innerText = "";
         gridsContainer.style.display = "block";
+		
+		
 
         const renderGridItems = (items, gridsContainer, headerContent, select) => {
 
@@ -62,19 +72,43 @@ changeView = async (gridView, frm) => {
                 return `rgba(${r}, ${g}, ${b}, ${alpha})`;
             };
 
+            const apply = (target, props) => {
+                for (let prop in props) {
+                    target[prop] = props[prop];
+                }
+                return target;
+            };
+
+
             const createBadge = (text, borderColor = 'blue', backgroundColor = '#ffffff', color = '#000000') => {
                 let el = document.createElement('span');
-                el.style.position = 'absolute';
                 el.innerText = text;
-                el.style.border = "2px solid " + borderColor;
-                el.style.backgroundColor = colorHex2Rgba(backgroundColor, 0.7);
-                el.style.padding = "2px";
-                el.style.borderRadius = "5px";
-                el.style.color = colorHex2Rgba(color, 0.9);
-                el.style.fontWeight = "bold";
-                el.style.fontSize = "11px";
+                apply(el.style, {
+                    position: 'absolute',
+                    border: "2px solid " + borderColor,
+                    backgroundColor: colorHex2Rgba(backgroundColor, 0.7),
+                    padding: "2px",
+                    borderRadius: "5px",
+                    color: colorHex2Rgba(color, 0.9),
+                    fontWeight: "bold",
+                    fontSize: "11px",
+                });
                 return el;
             };
+
+            const createBadgeStar = (text, outline = "gold") => {
+                let el = createBadge(text, "#ffffff", outline, "#000000", "#ffffff");
+                apply(el.style, {
+                    color: "#FFFFFF",
+                    background: "rgba(0,0,0,0)",
+                    textShadow: "2px 2px 0 #4074b5, 2px -2px 0 #4074b5, -2px 2px 0 #4074b5, -2px -2px 0 #4074b5, 2px 0px 0 #4074b5, 0px 2px 0 #4074b5, -2px 0px 0 #4074b5, 0px -2px 0 #4074b5".replace(/#4074b5/g, outline),
+                    borderColor: "rgba(0,0,0,0)",
+                    fontSize: "14px",
+                    fontWeight: "normal",
+                });
+
+                return el;
+            }
 
             const buildTooltip = (itemName, itemObj) => {
                 const lines = [itemName];
@@ -141,8 +175,8 @@ changeView = async (gridView, frm) => {
             }
             items = Object.values(squeezedItems);
             const makeStarsCount = (color) => {
-                let starsCount = { "#cc6600": 4, "#bf80ff": 3, "#008b8b": 2, "#66ff66": 1 }[("" + color).toLowerCase()] || 0;
-                return ((new Array(starsCount)).fill('★').join(""));
+                let starsCount = { "#cc6600": 1, "#bf80ff": 1, "#008b8b": 1, "#66ff66": 1 }[("" + color).toLowerCase()] || 0;
+                return starsCount;
             }
             for (let item of items) {
                 let currentItemData = itemData.filter((v) => v.name && v.name.length > 0 && item.name.indexOf(v.name) === 0);
@@ -154,26 +188,31 @@ changeView = async (gridView, frm) => {
 
                     div.title = buildTooltip(item.name, currentItemData);
 
-                    div.style.position = 'relative';
-                    div.style.borderRadius = "5px";
-                    div.style.border = "3px solid black";
-                    div.style.height = div.style.width = "34px";
-                    div.style.margin = '6px';
-                    div.style.display = 'inline-block';
-                    div.style.padding = "6px";
+                    apply(div.style,
+                        {
+                            position: 'relative',
+                            borderRadius: "5px",
+                            border: "3px solid black",
+                            height: "34px",
+                            width: "34px",
+                            margin: '6px',
+                            display: 'inline-block',
+                            padding: "6px",
+                        });
+
                     gridsContainer.appendChild(div);
 
                     let amount = item.count;
                     if (amount > 1) {
                         let amountEl = createBadge(makeShortAmountText(amount));
-                        amountEl.style.top = "-10px";
-                        amountEl.style.right = "-10px";
+                        amountEl.style.bottom = "-10px";
+                        amountEl.style.left = "-10px";
                         div.appendChild(amountEl);
                     }
 
                     let starsCount = makeStarsCount(currentItemData.color);
-                    if (starsCount.length > 0) {
-                        let starsEl = createBadge(starsCount, "gold", "#000000", "#ffffff");
+                    if (starsCount) {
+                        let starsEl = createBadgeStar("*", currentItemData.color, "#000000", "#ffffff");
                         starsEl.style.top = "-10px";
                         starsEl.style.left = "-10px";
                         div.appendChild(starsEl);
@@ -206,30 +245,48 @@ changeView = async (gridView, frm) => {
                         nameHTML = `<div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
                         div.innerHTML += nameHTML;
 
-                        const selectItem = () => {
+                        const selectItem = async (all = false) => {
+                            if (banoperationInProgress) {
+                                return;
+                            }
+                            banoperationInProgress = true;
+
                             select.value = item.slots[0];
                             select.dispatchEvent(new Event('change'));
+                            await (sleep(50))
                             select.dispatchEvent(new Event('dblclick'));
-
+                            await (sleep(50))
                             if (item.slots.length == 1 && amount > 1) {
-                                setTimeout(() => {
-                                    document.getElementById('winPopup').getElementsByTagName('button')[0].addEventListener('click', (e) => {
-                                        setTimeout(() => changeView(true, frm), 200);
-                                    });
+                                setTimeout(async () => {
+                                    let btnOk = document.getElementById('winPopup').getElementsByTagName('button')[0];
+                                    let btnCancel = document.getElementById('winPopup').getElementsByTagName('button')[1];
+
+                                    if (all === false) {
+                                        const handler = (e) => {
+                                            setTimeout(() => changeView(true, frm), 200);
+                                            btnOk.removeEventListener('click', handler);
+                                        };
+                                        btnCancel.addEventListener('click', e => banoperationInProgress = false);
+                                        btnOk.addEventListener('click', handler);
+                                    } else {
+                                        btnOk.click();
+                                        await (sleep(50))
+                                        setTimeout(() => { banoperationInProgress = false; changeView(true, frm) }, 200);
+                                    }
                                 }, 200);
                             } else {
-                                setTimeout(() => changeView(true, frm), 200);
+                                setTimeout(() => { banoperationInProgress = false; changeView(true, frm) }, 200);
                             }
                         };
 
-                        div.querySelector('div').addEventListener("click", (e) => {
+                        div.addEventListener("click", (e) => {
                             e.preventDefault();
                             selectItem();
                         });
 
-                        div.querySelector('div').addEventListener("contextmenu", (e) => {
+                        div.addEventListener("contextmenu", (e) => {
                             e.preventDefault();
-                            selectItem();
+                            selectItem(true);
                         });
                     }
                 }
@@ -246,6 +303,54 @@ changeView = async (gridView, frm) => {
         div.style.overflow = "auto";
         gridsContainer.appendChild(div);
         renderGridItems(items, div, 'Bank', selectBankInv);
+		
+		// --- Create polished bank slots bar ---
+const slotInfo = document.getElementById("txtBankSlots")?.innerText;
+let current = 0, max = 500;
+
+if (slotInfo) {
+    const match = slotInfo.match(/(\d+)\s*\/\s*(\d+)/);
+    if (match) {
+        current = parseInt(match[1]);
+        max = parseInt(match[2]);
+    }
+}
+
+// Create or update the slot bar container
+let slotBar = document.getElementById("bankSlotBar");
+if (!slotBar) {
+    slotBar = document.createElement("div");
+    slotBar.id = "bankSlotBar";
+    slotBar.style.margin = "6px";
+    slotBar.style.padding = "4px";
+    slotBar.style.border = "1px solid #555";
+    slotBar.style.borderRadius = "6px";
+    slotBar.style.backgroundColor = "#222";
+    slotBar.style.fontSize = "12px";
+    slotBar.style.fontWeight = "bold";
+
+    // Progress bar itself
+    let barFill = document.createElement("div");
+    barFill.id = "bankSlotBarFill";
+    barFill.style.height = "16px";
+    barFill.style.marginTop = "4px";
+    barFill.style.borderRadius = "4px";
+    barFill.style.background = "linear-gradient(to right, #66ff66, #009900)";
+    barFill.style.width = "0%";
+
+    slotBar.appendChild(document.createTextNode(`Bank Inventory: ${current}/${max}`));
+    slotBar.appendChild(barFill);
+    div.appendChild(slotBar);
+} else {
+    // Update text and fill % on rerender
+    slotBar.firstChild.nodeValue = `Bank Inventory: ${current}/${max}`;
+    const barFill = document.getElementById("bankSlotBarFill");
+    if (barFill) {
+        const pct = Math.min((current / max) * 100, 100);
+        barFill.style.width = `${pct}%`;
+    }
+}
+
 
         let selCurrentInv = (frm.querySelector("select[name='selCurrentInv']"));
         items = Array.from(selCurrentInv.querySelectorAll("option")).map(v => [v.value, v.innerText]);
@@ -256,6 +361,60 @@ changeView = async (gridView, frm) => {
         div.style.margin = div.style.padding = "0";
         div.style.overflow = "auto";
         gridsContainer.appendChild(div);
+		// --- Create polished bank slots bar on RIGHT side (inventory panel) ---
+const slotInfo = document.getElementById("txtBankSlots")?.innerText;
+let current = 0, max = 500;
+
+if (slotInfo) {
+    const match = slotInfo.match(/(\d+)\s*\/\s*(\d+)/);
+    if (match) {
+        current = parseInt(match[1]);
+        max = parseInt(match[2]);
+    }
+}
+
+// Remove previous bar if it exists
+const existing = div.querySelector("#bankSlotBar");
+if (existing) existing.remove();
+
+// Create new slot bar
+const slotBar = document.createElement("div");
+slotBar.id = "bankSlotBar";
+slotBar.style.margin = "6px 6px 12px 6px";
+slotBar.style.padding = "6px";
+slotBar.style.border = "1px solid #555";
+slotBar.style.borderRadius = "6px";
+slotBar.style.backgroundColor = "#222";
+slotBar.style.fontSize = "13px";
+slotBar.style.fontWeight = "bold";
+slotBar.style.color = "#fff";
+
+// Label
+const label = document.createElement("div");
+label.innerText = `Bank Inventory: ${current}/${max}`;
+slotBar.appendChild(label);
+
+// Bar container
+const barContainer = document.createElement("div");
+barContainer.style.marginTop = "6px";
+barContainer.style.width = "100%";
+barContainer.style.height = "14px";
+barContainer.style.backgroundColor = "#444";
+barContainer.style.borderRadius = "4px";
+barContainer.style.overflow = "hidden";
+
+// Bar fill
+const barFill = document.createElement("div");
+const percent = Math.min((current / max) * 100, 100);
+barFill.style.width = `${percent}%`;
+barFill.style.height = "100%";
+barFill.style.background = "linear-gradient(to right, #66ff66, #009900)";
+barFill.style.transition = "width 0.3s ease";
+
+barContainer.appendChild(barFill);
+slotBar.appendChild(barContainer);
+div.appendChild(slotBar);
+
         renderGridItems(items, div, 'Inventory', selCurrentInv);
 
     } else {
