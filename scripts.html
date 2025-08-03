@@ -121,23 +121,24 @@
     ).join('');
 
     // Load and render script content
-    scriptList.forEach(script => {
-      fetch(`scripts/${script.file}`)
-        .then(res => res.text())
-        .then(code => {
-          const escaped = escapeHTML(code);
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.id = `card-${script.file}`;
-          card.innerHTML = `
-            <h2>${script.title}</h2>
-            <p>${script.description}</p>
-            <pre id="code-${script.file}">${escaped}</pre>
-            <button onclick="copyToClipboard('code-${script.file}')">Copy to Clipboard</button>
-          `;
-          container.appendChild(card);
-        });
+   scriptList.forEach(script => {
+  fetch(`scripts/${script.file}`)
+    .then(res => res.text())
+    .then(code => {
+      const escaped = escapeHTML(code);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${script.file}`;
+      card.innerHTML = `
+        <h2>${script.title}</h2>
+        <p>${script.description}</p>
+        <button onclick="copyToClipboard('code-${script.file}')">Copy to Clipboard</button>
+        <pre id="code-${script.file}">${escaped}</pre>
+      `;
+      container.appendChild(card);
     });
+});
+
 
     function copyToClipboard(id) {
       const code = document.getElementById(id).innerText;
