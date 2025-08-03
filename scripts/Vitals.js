@@ -1,16 +1,15 @@
 (() => {
   let barsEnabled = false;
   let barsLocked = false;
-  let barsContainer, hpBar, spBar, mpBar, tpBar;
-  let hpTextSpan, spTextSpan, mpTextSpan, tpTextSpan;
+  let barsContainer;
+  let hpBar, spBar, mpBar, tpBar, xpBar;
+  let hpTextSpan, spTextSpan, mpTextSpan, tpTextSpan, xpTextSpan;
   let animationId;
 
-  // Reference to old vitals container to hide/show
   const oldVitals = document.getElementById("winVitals");
 
-  // Create tiny toggle button (to toggle bars on/off)
   const toggleBtn = document.createElement("button");
-  toggleBtn.textContent = "⎯";  // horizontal bar icon
+  toggleBtn.textContent = "⎯";
   toggleBtn.title = "Toggle Animated HP/SP/MP/TP Bars";
   Object.assign(toggleBtn.style, {
     position: "fixed",
@@ -34,17 +33,16 @@
     barsEnabled = !barsEnabled;
     toggleBtn.style.opacity = barsEnabled ? "1" : "0.5";
     if (barsEnabled) {
-      if (oldVitals) oldVitals.style.display = "none";  // Hide old bars
+      if (oldVitals) oldVitals.style.display = "none";
       initBars();
     } else {
-      if (oldVitals) oldVitals.style.display = "";      // Show old bars
+      if (oldVitals) oldVitals.style.display = "";
       removeBars();
     }
   };
   toggleBtn.style.opacity = "0.5";
   document.body.appendChild(toggleBtn);
 
-  // Create lock toggle button
   const lockBtn = document.createElement("button");
   lockBtn.textContent = "🔓";
   lockBtn.title = "Lock/Unlock Bars Position";
@@ -63,7 +61,7 @@
     lineHeight: "1",
     width: "auto",
     height: "auto",
-    display: "none", // hidden until bars are created
+    display: "none",
     userSelect: "none",
   });
   lockBtn.onclick = () => {
@@ -72,8 +70,7 @@
   };
   document.body.appendChild(lockBtn);
 
-  // Create bars container & bars
-  function createBar(color) {
+  function createBar(color, tooltipCallback) {
     const barBg = document.createElement("div");
     Object.assign(barBg.style, {
       width: "150px",
@@ -84,15 +81,10 @@
       marginBottom: "6px",
       overflow: "hidden",
       position: "relative",
-      color: "white",
-      fontWeight: "bold",
-      fontSize: "11px",
-      lineHeight: "14px",
-      paddingLeft: "6px",
-      userSelect: "none",
       display: "flex",
       alignItems: "center",
     });
+
     const barFill = document.createElement("div");
     Object.assign(barFill.style, {
       height: "100%",
@@ -108,7 +100,6 @@
       zIndex: 1,
     });
 
-    // Text inside bar, on top of barFill
     const textSpan = document.createElement("span");
     Object.assign(textSpan.style, {
       position: "relative",
@@ -124,13 +115,20 @@
       fontFamily: "Arial, sans-serif",
     });
 
+    if (tooltipCallback) {
+      barBg.title = "";
+      barBg.onmouseenter = () => {
+        barBg.title = tooltipCallback();
+      };
+    }
+
     barBg.appendChild(barFill);
     barBg.appendChild(textSpan);
     return { barBg, barFill, textSpan };
   }
 
   function initBars() {
-    if (barsContainer) return; // already created
+    if (barsContainer) return;
 
     barsContainer = document.createElement("div");
     Object.assign(barsContainer.style, {
@@ -150,60 +148,50 @@
       cursor: "move",
     });
 
-    // HP Bar
-    const hpLabel = document.createElement("div");
-    hpLabel.textContent = "HP ❤️";
-    hpLabel.style.marginBottom = "4px";
-    barsContainer.appendChild(hpLabel);
+    function addBar(label, color, assignVars, tooltipCb) {
+      const labelEl = document.createElement("div");
+      labelEl.textContent = label;
+      labelEl.style.marginBottom = "4px";
+      barsContainer.appendChild(labelEl);
+      const { barBg, barFill, textSpan } = createBar(color, tooltipCb);
+      assignVars.bar = barFill;
+      assignVars.text = textSpan;
+      barsContainer.appendChild(barBg);
+    }
 
-    const hp = createBar("red");
-    hpBar = hp.barFill;
-    hpTextSpan = hp.textSpan;
-    barsContainer.appendChild(hp.barBg);
+    const ref = {};
 
-    // SP Bar
-    const spLabel = document.createElement("div");
-    spLabel.textContent = "SP";
-    spLabel.style.marginBottom = "4px";
-    barsContainer.appendChild(spLabel);
+    addBar("HP ❤️", "red", ref);
+    hpBar = ref.bar;
+    hpTextSpan = ref.text;
 
-    const sp = createBar("lime");
-    spBar = sp.barFill;
-    spTextSpan = sp.textSpan;
-    barsContainer.appendChild(sp.barBg);
+    addBar("SP", "lime", ref);
+    spBar = ref.bar;
+    spTextSpan = ref.text;
 
-    // MP Bar
-    const mpLabel = document.createElement("div");
-    mpLabel.textContent = "MP";
-    mpLabel.style.marginBottom = "4px";
-    barsContainer.appendChild(mpLabel);
+    addBar("MP", "deepskyblue", ref);
+    mpBar = ref.bar;
+    mpTextSpan = ref.text;
 
-    const mp = createBar("deepskyblue");
-    mpBar = mp.barFill;
-    mpTextSpan = mp.textSpan;
-    barsContainer.appendChild(mp.barBg);
+    addBar("TP", "#a64ca6", ref);
+    tpBar = ref.bar;
+    tpTextSpan = ref.text;
 
-    // TP Bar (new)
-    const tpLabel = document.createElement("div");
-    tpLabel.textContent = "TP";
-    tpLabel.style.marginBottom = "4px";
-    barsContainer.appendChild(tpLabel);
-
-    const tp = createBar("#a64ca6"); // purple color
-    tpBar = tp.barFill;
-    tpTextSpan = tp.textSpan;
-    barsContainer.appendChild(tp.barBg);
+    addBar("XP", "goldenrod", ref, () => {
+      const txt = document.getElementById("txtXP")?.textContent;
+      const match = txt?.match(/(\d+)\s*\/\s*(\d+)/);
+      if (!match) return "";
+      const [_, cur, max] = match;
+      return `${(+max - +cur).toLocaleString()} XP to next level`;
+    });
+    xpBar = ref.bar;
+    xpTextSpan = ref.text;
 
     document.body.appendChild(barsContainer);
-
-    // Show lock button now
     lockBtn.style.display = "inline-block";
     barsLocked = false;
     updateLockState();
-
-    // Make bars container draggable unless locked
     makeDraggable(barsContainer);
-
     animateBars();
   }
 
@@ -222,7 +210,6 @@
     return parts.map(s => parseInt(s.replace(/\D/g, ""), 10));
   }
 
-  // Animate bar width and glow pulse effect
   let pulse = 0;
   function animateBars() {
     if (!barsEnabled) return;
@@ -231,48 +218,58 @@
     const spText = document.getElementById("txtSP")?.textContent;
     const mpText = document.getElementById("txtMP")?.textContent;
     const tpText = document.getElementById("txtTP")?.textContent;
+    const xpText = document.getElementById("txtXP")?.textContent;
 
     if (hpText) {
-      const [current, max] = parseValue(hpText);
-      const percent = Math.min(current / max, 1);
+      const [cur, max] = parseValue(hpText);
+      const percent = Math.min(cur / max, 1);
       hpBar.style.width = `${percent * 100}%`;
       hpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse))}px red`;
-      hpTextSpan.textContent = `${current} / ${max}`;
+      hpTextSpan.textContent = `${cur} / ${max}`;
     }
     if (spText) {
-      const [current, max] = parseValue(spText);
-      const percent = Math.min(current / max, 1);
+      const [cur, max] = parseValue(spText);
+      const percent = Math.min(cur / max, 1);
       spBar.style.width = `${percent * 100}%`;
       spBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 1))}px lime`;
-      spTextSpan.textContent = `${current} / ${max}`;
+      spTextSpan.textContent = `${cur} / ${max}`;
     }
     if (mpText) {
-      const [current, max] = parseValue(mpText);
-      const percent = Math.min(current / max, 1);
+      const [cur, max] = parseValue(mpText);
+      const percent = Math.min(cur / max, 1);
       mpBar.style.width = `${percent * 100}%`;
       mpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 2))}px deepskyblue`;
-      mpTextSpan.textContent = `${current} / ${max}`;
+      mpTextSpan.textContent = `${cur} / ${max}`;
     }
     if (tpText) {
-      const [current, max] = parseValue(tpText);
-      const percent = Math.min(current / max, 1);
+      const [cur, max] = parseValue(tpText);
+      const percent = Math.min(cur / max, 1);
       tpBar.style.width = `${percent * 100}%`;
       tpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 3))}px #a64ca6`;
-      tpTextSpan.textContent = `${current} / ${max}`;
+      tpTextSpan.textContent = `${cur} / ${max}`;
+    }
+    if (xpText) {
+      const match = xpText.match(/(\d+)\s*\/\s*(\d+)/);
+      if (match) {
+        const cur = parseInt(match[1]), max = parseInt(match[2]);
+        const percent = Math.min(cur / max, 1);
+        xpBar.style.width = `${percent * 100}%`;
+        xpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 4))}px goldenrod`;
+        xpTextSpan.textContent = `${cur.toLocaleString()} / ${max.toLocaleString()}`;
+      }
     }
 
     pulse += 0.05;
     animationId = requestAnimationFrame(animateBars);
   }
 
-  // Update lock state styles and behavior
   function updateLockState() {
     if (!barsContainer) return;
     if (barsLocked) {
       lockBtn.textContent = "🔒";
       lockBtn.style.color = "red";
       barsContainer.style.cursor = "default";
-      barsContainer.style.pointerEvents = "none"; // make click-through
+      barsContainer.style.pointerEvents = "none";
     } else {
       lockBtn.textContent = "🔓";
       lockBtn.style.color = "lightgreen";
@@ -281,7 +278,6 @@
     }
   }
 
-  // Simple drag support for the bars container
   function makeDraggable(element) {
     let pos = { x: 0, y: 0, left: 0, top: 0 };
     function onMouseDown(e) {
