@@ -8,22 +8,66 @@
     statsCache: {},
   };
 
-  // Load item data from remote JSON
+  const persistentSettings = {
+    currentInv: { filter: '', sort: 'name' },
+    bankInv: { filter: '', sort: 'name' }
+  };
+
+  const SPELL_AMP_KEYS = {
+    "!bard_buff_uptime": "Bard Buff Uptime",
+    "!bard_buff_cost": "Bard Buff Cost",
+    "!jester_confuse_cost": "Jester Confuse Cost",
+    "!jester_playerconfuse_uptime": "Jester Player Uptime",
+    "!jester_npcconfuse_uptime": "Jester NPC Uptime",
+    "!cleric_petheal_amount": "Cleric Pet Heal",
+    "!cleric_petheal_cost": "Cleric Pet Heal Cost",
+    "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
+    "!dragoon_invisible_cost": "Dragoon Invis Cost",
+    "!warlock_npcaoe_damage": "Warlock NPC AoE",
+    "!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
+    "!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
+    "!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
+    "!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
+    "!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
+    "!cleric_playerheal_amount": "Cleric Player Heal",
+    "!cleric_playerheal_cost": "Cleric Player Heal Cost",
+    "!cleric_allheal_cooldown": "Cleric Cooldown",
+    "!dragoon_playeraoe_damage": "Dragoon Player AoE",
+    "!warlock_playeraoe_damage": "Warlock Player AoE",
+    "!assassin_npcpoison_damage": "Assassin NPC Poison",
+    "!assassin_cloak_cost": "Assassin Cloak Cost",
+    "!assassins_npcpoison_ticks": "Assassin NPC Ticks",
+    "!assassins_playerpoison_ticks": "Assassin Player Ticks",
+    "!necromancer_minion_damage": "Necromancer Minion DMG",
+    "!necromancer_minion_hp": "Necromancer Minion HP",
+    "!necromancer_minion_cost": "Necromancer Minion Cost",
+    "!necromancer_minion_cooldown": "Necromancer Minion Cooldown",
+    "!samurai_npcriposte_damage": "Samurai NPC Riposte",
+    "!samurai_riposte_cooldown": "Samurai Riposte Cooldown",
+    "!samurai_riposte_cost": "Samurai Riposte Cost",
+    "!barbarian_alldamage_amount": "Barbarian All Damage",
+    "!marksman_npcshotgun_damage": "Marksman NPC Shotgun",
+    "!marksman_shotgun_cooldown": "Marksman Shotgun Cooldown",
+    "!assassin_playerpoison_damage": "Assassin Player Poison",
+    "!assassin_cloak_cooldown": "Assassin Cloak Cooldown",
+    "!samurai_playerriposte_damage": "Samurai Player Riposte",
+    "!marksman_playershotgun_damage": "Marksman Player Shotgun",
+    "!marksman_shotgun_cost": "Marksman Shotgun Cost",
+    "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
+    "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
+  };
+
+  // Load item data
   fetch("https://loociez.github.io/MOC-IV/last.json")
     .then(response => response.json())
     .then(data => {
       data.forEach(item => {
         if (item.name) {
           const name = item.name.trim();
-          if (typeof item.recycle_value === 'number') {
-            config.valueCache[name.toLowerCase()] = item.recycle_value;
-          }
-          if (item.color) {
-            config.colorCache[name.toLowerCase()] = item.color;
-          }
-          if (item.data) {
-            config.statsCache[name.toLowerCase()] = item.data;
-          }
+          const lower = name.toLowerCase();
+          if (typeof item.recycle_value === 'number') config.valueCache[lower] = item.recycle_value;
+          if (item.color) config.colorCache[lower] = item.color;
+          if (item.data) config.statsCache[lower] = item.data;
         }
       });
       enhanceBankWindow();
@@ -31,9 +75,9 @@
     .catch(console.error);
 
   function expandBankView(compact = false) {
+    const size = compact ? config.minItemCount : config.visibleItemCount;
     const currentInv = document.querySelector('select[name="selCurrentInv"]');
     const bankInv = document.querySelector('select[name="selBankInv"]');
-    const size = compact ? config.minItemCount : config.visibleItemCount;
     if (currentInv) currentInv.size = size;
     if (bankInv) bankInv.size = size;
   }
@@ -85,6 +129,26 @@
     }
   }
 
+ function calculateTotalValue(selectEl, totalBox) {
+  let total = 0;
+  Array.from(selectEl.options).forEach(option => {
+    if (option.hidden) return;
+    const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+    const quantity = parseInt(option.text.match(/x(\d+)/)?.[1] || '1');
+
+    if (itemName.includes('gold coin')) {
+      total += quantity; // treat as gold itself
+    } else {
+      const value = config.valueCache[itemName];
+      if (value !== undefined) {
+        total += quantity * value;
+      }
+    }
+  });
+  totalBox.textContent = `Total Est. Value: ~${total.toLocaleString()}g`;
+}
+
+
   function attachValueTracker(selectEl) {
     const box = document.createElement('div');
     box.style.color = 'gold';
@@ -95,7 +159,30 @@
     selectEl.addEventListener('change', () => updateValueDisplay(selectEl, box));
   }
 
+  function addTooltips(selectEl) {
+    Array.from(selectEl.options).forEach(option => {
+      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+      const stats = config.statsCache[name];
+      if (!stats) return;
+
+      let lines = [];
+
+      Object.keys(SPELL_AMP_KEYS).forEach(key => {
+        if (stats[key]) {
+          lines.push(`${SPELL_AMP_KEYS[key]}: ${stats[key]}`);
+        }
+      });
+
+      if (stats.tile_range !== undefined) {
+        lines.push(`Tile Range: ${stats.tile_range}`);
+      }
+
+      option.title = lines.join('\n');
+    });
+  }
+
   function injectControls(selectEl, labelText) {
+    const id = selectEl.name === 'selCurrentInv' ? 'currentInv' : 'bankInv';
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '5px';
     wrapper.innerHTML = `
@@ -121,25 +208,33 @@
           <option value="stat:max_sp">Stamina</option>
         </select>
       </label>
-      <label style="color: white; font-size: 12px; margin-left: 10px;">
-        <input type="checkbox" class="inv-compact"> Compact View
-      </label>
     `;
 
     selectEl.parentElement.prepend(wrapper);
 
     const input = wrapper.querySelector('.inv-filter');
     const sortDropdown = wrapper.querySelector('.inv-sort');
-    const compactToggle = wrapper.querySelector('.inv-compact');
 
-    function applySort() {
+    const totalBox = document.createElement('div');
+    totalBox.style.color = 'gold';
+    totalBox.style.fontSize = '12px';
+    totalBox.style.textAlign = 'right';
+    totalBox.style.marginTop = '3px';
+    selectEl.parentElement.appendChild(totalBox);
+
+    input.value = persistentSettings[id].filter;
+    sortDropdown.value = persistentSettings[id].sort;
+
+    function applySortAndFilter() {
       const sortValue = sortDropdown.value;
+      persistentSettings[id].sort = sortValue;
+      persistentSettings[id].filter = input.value;
 
       const sortMap = {
-        "name": { by: "name", desc: false },         // A → Z
-        "name-desc": { by: "name", desc: true },     // Z → A
-        "quantity": { by: "quantity", desc: false }, // Low → High
-        "quantity-asc": { by: "quantity", desc: true }, // High → Low
+        "name": { by: "name", desc: false },
+        "name-desc": { by: "name", desc: true },
+        "quantity": { by: "quantity", desc: false },
+        "quantity-asc": { by: "quantity", desc: true },
       };
 
       const isStat = sortValue.startsWith("stat:");
@@ -149,19 +244,21 @@
       sortSelectOptions(selectEl, sortBy, descending);
       filterSelectOptions(selectEl, input.value);
       colorizeOptions(selectEl);
+      calculateTotalValue(selectEl, totalBox);
+      addTooltips(selectEl);
     }
 
-    input.addEventListener('input', () => filterSelectOptions(selectEl, input.value));
-    sortDropdown.addEventListener('change', applySort);
-    compactToggle.addEventListener('change', () => expandBankView(compactToggle.checked));
-    applySort();
+    input.addEventListener('input', applySortAndFilter);
+    sortDropdown.addEventListener('change', applySortAndFilter);
+    expandBankView(true);
+    applySortAndFilter();
     attachValueTracker(selectEl);
   }
 
   function colorizeOptions(selectEl) {
     Array.from(selectEl.options).forEach(option => {
-      const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
-      const color = config.colorCache[itemName];
+      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+      const color = config.colorCache[name];
       if (color) option.style.color = color;
     });
   }
