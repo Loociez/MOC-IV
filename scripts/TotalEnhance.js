@@ -273,7 +273,7 @@
       lockBtn.textContent = "🔒";
       lockBtn.style.color = "red";
       barsContainer.style.cursor = "default";
-      barsContainer.style.pointerEvents = "none";
+      barsContainer.style.pointerEvents = "auto";
     } else {
       lockBtn.textContent = "🔓";
       lockBtn.style.color = "lightgreen";

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JSON Formatter</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 2em; }
+  textarea { width: 45%; height: 300px; }
+  #container { display: flex; gap: 1em; }
+  button { margin-top: 1em; padding: 0.5em 1em; }
+  pre { white-space: pre-wrap; background: #f4f4f4; padding: 1em; border: 1px solid #ccc; height: 300px; overflow-y: auto; width: 45%; }
+</style>
+</head>
+<body>
+<h2>Convert List to Proper JSON Format (MoC)</h2>
+<div id="container">
+  <textarea id="input" placeholder="Paste your input here, e.g.&#10;0: Robe&#10;1: Chainmail&#10;2: (not dropped)"></textarea>
+  <pre id="output" aria-label="Output JSON"></pre>
+</div>
+<button id="convertBtn">Convert to JSON</button>
+
+<script>
+  document.getElementById('convertBtn').addEventListener('click', () => {
+    const inputText = document.getElementById('input').value.trim();
+    if (!inputText) {
+      alert('Please paste your input first.');
+      return;
+    }
+    
+    const lines = inputText.split('\n');
+    const resultObj = {};
+    let valid = true;
+    
+    for (const line of lines) {
+      // Expect format: number: value (value can have colons inside, so split only on first colon)
+      const colonIndex = line.indexOf(':');
+      if (colonIndex === -1) {
+        valid = false;
+        break;
+      }
+      const key = line.slice(0, colonIndex).trim();
+      const value = line.slice(colonIndex + 1).trim();
+      
+      // Check key is a number (integer)
+      if (!/^\d+$/.test(key)) {
+        valid = false;
+        break;
+      }
+      resultObj[key] = value;
+    }
+    
+    if (!valid) {
+      document.getElementById('output').textContent = 'Invalid input format. Please use lines like:\n0: Robe\n1: Chainmail\n2: (not dropped)';
+      return;
+    }
+    
+    // Format output JSON with 2 spaces indent and without outer braces, as you requested
+    const jsonLines = [];
+    for (const key of Object.keys(resultObj)) {
+      jsonLines.push(`"${key}": "${resultObj[key].replace(/"/g, '\\"')}",`);
+    }
+    
+    // Remove last comma on last line
+    if (jsonLines.length > 0) {
+      const last = jsonLines.length - 1;
+      jsonLines[last] = jsonLines[last].replace(/,$/, '');
+    }
+    
+    document.getElementById('output').textContent = jsonLines.join('\n');
+  });
+</script>
+</body>
+</html>
