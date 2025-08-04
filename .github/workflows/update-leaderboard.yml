@@ -10,25 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout repo
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        ref: main  # Your default branch is 'main'
+        ref: main
 
     - name: Fetch leaderboard data
-      run: curl -s https://play.mirageonlineclassic.com/leaderboard.json -o leaderboard_cache.json
+      run: |
+        curl -s https://play.mirageonlineclassic.com/leaderboard.json -o leaderboard_cache.json
+        cat leaderboard_cache.json
 
     - name: Configure Git
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-    - name: Commit and push if changed
+    - name: Check for changes and commit
       run: |
-        git add leaderboard_cache.json
-        if git diff --cached --quiet; then
+        git add leaderboard_cache.json || true
+        if git diff --staged --quiet; then
           echo "No changes to commit."
         else
           git commit -m "Update leaderboard data"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Loociez/MOC-IV.git main
+          git push origin main
+        fi
