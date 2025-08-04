@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mirage Leaderboards</title>
+  <style>
+    body { font-family: sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Mirage Online Classic Leaderboards</h1>
+  <div id="leaderboard-container">Loading...</div>
+
+  <script>
+    fetch('leaderboard_cache.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('leaderboard-container');
+        container.innerHTML = '';
+
+        for (const [category, entries] of Object.entries(data)) {
+          const table = document.createElement('table');
+          const caption = document.createElement('caption');
+          caption.textContent = category;
+          table.appendChild(caption);
+
+          const header = document.createElement('tr');
+          Object.keys(entries[0]).forEach(key => {
+            const th = document.createElement('th');
+            th.textContent = key;
+            header.appendChild(th);
+          });
+          table.appendChild(header);
+
+          entries.forEach(entry => {
+            const row = document.createElement('tr');
+            Object.values(entry).forEach(value => {
+              const td = document.createElement('td');
+              td.textContent = value;
+              row.appendChild(td);
+            });
+            table.appendChild(row);
+          });
+
+          container.appendChild(table);
+        }
+      })
+      .catch(err => {
+        document.getElementById('leaderboard-container').textContent = 'Failed to load leaderboard data.';
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
