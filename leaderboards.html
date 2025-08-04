@@ -11,49 +11,96 @@
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0f172a;
-      color: #e0e7ff;
+      background: #1e1b2e;
+      color: #ddd6f7;
       margin: 0;
-      padding: 2rem;
+      padding: 5rem 2rem 2rem; /* padding top for fixed menu */
       min-height: 100vh;
       line-height: 1.5;
     }
     h1 {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       font-weight: 700;
       font-size: 2.5rem;
-      color: #60a5fa;
-      text-shadow: 0 0 8px #3b82f6;
+      color: #a78bfa;
+      text-shadow: 0 0 8px #8b5cf6;
     }
+
+    /* Fixed top nav */
+    nav#menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #2c2650;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
+      padding: 0.75rem 1rem;
+      z-index: 999;
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #a78bfa transparent;
+    }
+    nav#menu::-webkit-scrollbar {
+      height: 6px;
+    }
+    nav#menu::-webkit-scrollbar-thumb {
+      background: #a78bfa;
+      border-radius: 3px;
+    }
+    nav#menu a {
+      color: #c4b5fd;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: background-color 0.2s ease;
+      user-select: none;
+    }
+    nav#menu a:hover,
+    nav#menu a:focus {
+      background: #8b5cf6;
+      color: white;
+      outline: none;
+    }
+
     #leaderboard-container {
       max-width: 1200px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem 1.5rem;
     }
 
     /* Each leaderboard block */
     section.leaderboard {
-      background: #1e293b;
+      background: #2c2650;
       border-radius: 12px;
-      box-shadow: 0 8px 20px rgb(96 165 250 / 0.3);
-      margin-bottom: 3rem;
-      padding: 1.5rem 1rem 1rem;
+      box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
+      padding: 1rem 1rem 1rem;
       transition: background 0.3s ease;
+      scroll-margin-top: 4.5rem; /* for anchor offset below fixed nav */
+      max-height: 480px;
+      overflow-y: auto;
     }
     section.leaderboard:hover {
-      background: #334155;
+      background: #3b2f6e;
     }
 
     section.leaderboard > h2 {
       margin-top: 0;
       margin-bottom: 1rem;
-      font-size: 1.75rem;
-      color: #93c5fd;
+      font-size: 1.4rem;
+      color: #d8b4fe;
       text-align: center;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
+      letter-spacing: 1.1px;
       font-weight: 600;
-      text-shadow: 0 0 5px #2563eb;
+      text-shadow: 0 0 4px #a78bfa;
+      user-select: text;
     }
 
     /* Table styling */
@@ -62,20 +109,21 @@
       border-collapse: collapse;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 0 8px rgb(96 165 250 / 0.4);
+      box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+      font-size: 0.9rem;
     }
 
     caption {
       caption-side: top;
-      padding: 0.5rem 0;
+      padding: 0.3rem 0;
       font-weight: 700;
-      font-size: 1.2rem;
-      color: #60a5fa;
+      font-size: 1.1rem;
+      color: #a78bfa;
       text-align: center;
     }
 
     thead tr {
-      background-color: #2563eb;
+      background-color: #7c3aed;
       color: white;
       position: sticky;
       top: 0;
@@ -83,20 +131,21 @@
     }
 
     th, td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #334155;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #4c3d9b;
       text-align: left;
-      font-variant-numeric: tabular-nums; /* aligns numbers nicely */
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
 
     tbody tr:nth-child(even) {
-      background-color: #1e293b;
+      background-color: #3a2f63;
     }
     tbody tr:nth-child(odd) {
-      background-color: #283747;
+      background-color: #392f62;
     }
     tbody tr:hover {
-      background-color: #3b82f6;
+      background-color: #8b5cf6;
       color: #fff;
       cursor: default;
       transition: background-color 0.2s ease;
@@ -105,7 +154,15 @@
     /* Responsive tweaks */
     @media (max-width: 768px) {
       body {
-        padding: 1rem;
+        padding: 6rem 1rem 2rem;
+      }
+      #leaderboard-container {
+        display: block;
+      }
+      section.leaderboard {
+        max-height: none;
+        margin-bottom: 3rem;
+        overflow-y: visible;
       }
       table, thead, tbody, th, td, tr {
         display: block;
@@ -116,15 +173,16 @@
       tbody tr {
         margin-bottom: 1rem;
         border-radius: 8px;
-        box-shadow: 0 0 12px rgb(96 165 250 / 0.3);
+        box-shadow: 0 0 12px rgba(167, 139, 250, 0.4);
         padding: 1rem;
-        background: #1e293b;
+        background: #2c2650;
       }
       tbody tr td {
         border: none;
         padding: 0.3rem 0;
         position: relative;
         padding-left: 50%;
+        white-space: normal;
       }
       tbody tr td::before {
         position: absolute;
@@ -133,20 +191,21 @@
         transform: translateY(-50%);
         white-space: nowrap;
         font-weight: 600;
-        color: #60a5fa;
+        color: #a78bfa;
       }
-      /* Insert headers as labels in mobile */
       tbody tr td:nth-of-type(1)::before { content: attr(data-label-0); }
       tbody tr td:nth-of-type(2)::before { content: attr(data-label-1); }
       tbody tr td:nth-of-type(3)::before { content: attr(data-label-2); }
       tbody tr td:nth-of-type(4)::before { content: attr(data-label-3); }
       tbody tr td:nth-of-type(5)::before { content: attr(data-label-4); }
-      /* Add more if your tables have more columns */
     }
   </style>
 </head>
 <body>
   <h1>Mirage Online Classic Leaderboards</h1>
+
+  <nav id="menu" aria-label="Leaderboard navigation"></nav>
+
   <div id="leaderboard-container">Loading...</div>
 
   <script>
@@ -154,13 +213,26 @@
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('leaderboard-container');
+        const menu = document.getElementById('menu');
         container.innerHTML = '';
+        menu.innerHTML = '';
 
         for (const [category, entries] of Object.entries(data)) {
+          // Sanitize and create a slug for IDs and menu links
+          const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]/g, '');
+
+          // Create menu link
+          const link = document.createElement('a');
+          link.href = `#${slug}`;
+          link.textContent = category.replace(/_/g, ' ').toUpperCase();
+          menu.appendChild(link);
+
+          // Create leaderboard section
           const section = document.createElement('section');
           section.classList.add('leaderboard');
+          section.id = slug;
 
-          // Add category heading (cleaned text)
+          // Add category heading
           const heading = document.createElement('h2');
           heading.textContent = category.replace(/_/g, ' ').toUpperCase();
           section.appendChild(heading);
