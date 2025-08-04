@@ -1,285 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mirage Online Classic Leaderboards</title>
+  <title>Mirage Leaderboards</title>
   <style>
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #1e1b2e;
-      color: #ddd6f7;
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e002e;
+      color: #e0d1ff;
       margin: 0;
-      padding: 5rem 2rem 2rem; /* padding top for fixed menu */
-      min-height: 100vh;
-      line-height: 1.5;
+      padding: 0 20px;
     }
     h1 {
       text-align: center;
-      margin-bottom: 3rem;
-      font-weight: 700;
-      font-size: 2.5rem;
-      color: #a78bfa;
-      text-shadow: 0 0 8px #8b5cf6;
+      padding: 20px 0;
+      font-size: 2.5em;
+      color: #d6b3ff;
     }
-
-    /* Fixed top nav */
-    nav#menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #2c2650;
-      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
-      padding: 0.75rem 1rem;
-      z-index: 999;
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #a78bfa transparent;
-    }
-    nav#menu::-webkit-scrollbar {
-      height: 6px;
-    }
-    nav#menu::-webkit-scrollbar-thumb {
-      background: #a78bfa;
-      border-radius: 3px;
-    }
-    nav#menu a {
-      color: #c4b5fd;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      white-space: nowrap;
-      transition: background-color 0.2s ease;
-      user-select: none;
-    }
-    nav#menu a:hover,
-    nav#menu a:focus {
-      background: #8b5cf6;
-      color: white;
-      outline: none;
-    }
-
-    #leaderboard-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem 1.5rem;
-    }
-
-    /* Each leaderboard block */
-    section.leaderboard {
-      background: #2c2650;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
-      padding: 1rem 1rem 1rem;
-      transition: background 0.3s ease;
-      scroll-margin-top: 4.5rem; /* for anchor offset below fixed nav */
-      max-height: 480px;
-      overflow-y: auto;
-    }
-    section.leaderboard:hover {
-      background: #3b2f6e;
-    }
-
-    section.leaderboard > h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      font-size: 1.4rem;
-      color: #d8b4fe;
+    nav {
+      background: #2b0040;
+      padding: 10px;
       text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 1.1px;
-      font-weight: 600;
-      text-shadow: 0 0 4px #a78bfa;
-      user-select: text;
-    }
-
-    /* Table styling */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
-      font-size: 0.9rem;
-    }
-
-    caption {
-      caption-side: top;
-      padding: 0.3rem 0;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #a78bfa;
-      text-align: center;
-    }
-
-    thead tr {
-      background-color: #7c3aed;
-      color: white;
       position: sticky;
       top: 0;
-      z-index: 2;
+      z-index: 100;
     }
-
+    nav a {
+      color: #e0d1ff;
+      text-decoration: none;
+      margin: 0 12px;
+      font-weight: bold;
+    }
+    section {
+      margin: 40px 0;
+    }
+    section h2 {
+      border-bottom: 2px solid #aa80ff;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      width: 90%;
+      background: #2e004d;
+      box-shadow: 0 0 10px #000;
+    }
+    caption {
+      background: #3d0063;
+      padding: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #ffd6ff;
+    }
     th, td {
-      padding: 0.5rem 0.75rem;
-      border-bottom: 1px solid #4c3d9b;
+      border: 1px solid #552080;
+      padding: 8px 12px;
       text-align: left;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
     }
-
-    tbody tr:nth-child(even) {
-      background-color: #3a2f63;
+    th {
+      background: #4d0073;
     }
-    tbody tr:nth-child(odd) {
-      background-color: #392f62;
-    }
-    tbody tr:hover {
-      background-color: #8b5cf6;
-      color: #fff;
-      cursor: default;
-      transition: background-color 0.2s ease;
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 768px) {
-      body {
-        padding: 6rem 1rem 2rem;
-      }
-      #leaderboard-container {
-        display: block;
-      }
-      section.leaderboard {
-        max-height: none;
-        margin-bottom: 3rem;
-        overflow-y: visible;
-      }
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      thead tr {
-        display: none; /* Hide table headers on small screens */
-      }
-      tbody tr {
-        margin-bottom: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 0 12px rgba(167, 139, 250, 0.4);
-        padding: 1rem;
-        background: #2c2650;
-      }
-      tbody tr td {
-        border: none;
-        padding: 0.3rem 0;
-        position: relative;
-        padding-left: 50%;
-        white-space: normal;
-      }
-      tbody tr td::before {
-        position: absolute;
-        top: 50%;
-        left: 1rem;
-        transform: translateY(-50%);
-        white-space: nowrap;
-        font-weight: 600;
-        color: #a78bfa;
-      }
-      tbody tr td:nth-of-type(1)::before { content: 'Rank'; }
-      tbody tr td:nth-of-type(n+2)::before {
-        content: attr(data-label-);
-      }
+    tr:nth-child(even) {
+      background: #3d005a;
     }
   </style>
 </head>
 <body>
   <h1>Mirage Online Classic Leaderboards</h1>
-
-  <nav id="menu" aria-label="Leaderboard navigation"></nav>
-
+  <nav id="menu"></nav>
   <div id="leaderboard-container">Loading...</div>
 
   <script>
+    const SECTIONS = {
+      "Players": ["overall", "player", "pve", "pvp", "rebirth", "sulk", "battle royale"],
+      "Guild": ["guild"],
+      "Completions": ["victories"],
+      "Skills": ["fishing", "prospecting", "lumber", "weaving", "adventurer", "hunting", "gathering", "cooking", "alchemy", "crafting", "forging", "idling", "slaying", "treasure", "scavenging", "heroism", "turn hitting"],
+      "Speedruns": ["speedrun"]
+    };
+
+    function getSection(category) {
+      const key = category.toLowerCase();
+      for (const [section, terms] of Object.entries(SECTIONS)) {
+        if (terms.some(term => key.includes(term))) return section;
+      }
+      return "Other";
+    }
+
     fetch('leaderboard_cache.json')
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('leaderboard-container');
-        const menu = document.getElementById('menu');
         container.innerHTML = '';
-        menu.innerHTML = '';
+        const sectionMap = {};
 
         for (const [category, entries] of Object.entries(data)) {
-          // Sanitize and create a slug for IDs and menu links
-          const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]/g, '');
+          const section = getSection(category);
+          if (!sectionMap[section]) sectionMap[section] = [];
 
-          // Create menu link
-          const link = document.createElement('a');
-          link.href = `#${slug}`;
-          link.textContent = category.replace(/_/g, ' ').toUpperCase();
-          menu.appendChild(link);
-
-          // Create leaderboard section
-          const section = document.createElement('section');
-          section.classList.add('leaderboard');
-          section.id = slug;
-
-          // Add category heading
-          const heading = document.createElement('h2');
-          heading.textContent = category.replace(/_/g, ' ').toUpperCase();
-          section.appendChild(heading);
-
-          // Create table
           const table = document.createElement('table');
+          const caption = document.createElement('caption');
+          caption.textContent = category;
+          table.appendChild(caption);
 
-          // Table head
-          const thead = document.createElement('thead');
-          const headerRow = document.createElement('tr');
+          const header = document.createElement('tr');
+          header.innerHTML = `<th>Rank</th><th>${Object.keys(entries[0])[0]}</th><th>${Object.keys(entries[0])[1]}</th>`;
+          table.appendChild(header);
 
-          // Add "Rank" as first header column
-          const rankTh = document.createElement('th');
-          rankTh.textContent = 'Rank';
-          headerRow.appendChild(rankTh);
-
-          const keys = Object.keys(entries[0] || {});
-          keys.forEach(key => {
-            const th = document.createElement('th');
-            th.textContent = key;
-            headerRow.appendChild(th);
+          entries.forEach((entry, i) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${i + 1}</td><td>${entry.name}</td><td>${entry.value}</td>`;
+            table.appendChild(row);
           });
-          thead.appendChild(headerRow);
-          table.appendChild(thead);
 
-          // Table body
-          const tbody = document.createElement('tbody');
-          entries.forEach((entry, index) => {
-            const tr = document.createElement('tr');
+          sectionMap[section].push(table);
+        }
 
-            // Add rank cell
-            const rankTd = document.createElement('td');
-            rankTd.textContent = index + 1;
-            tr.appendChild(rankTd);
+        const menu = document.getElementById('menu');
+        for (const section of Object.keys(sectionMap)) {
+          const anchor = document.createElement('a');
+          anchor.href = `#section-${section}`;
+          anchor.textContent = section;
+          menu.appendChild(anchor);
+        }
 
-            keys.forEach((key, i) => {
-              const td = document.createElement('td');
-              td.textContent = entry[key];
-              // Add attribute for responsive labels (index + 1 because rank column shifted all indices by 1)
-              td.setAttribute(`data-label-${i + 1}`, key);
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-          });
-          table.appendChild(tbody);
-
-          section.appendChild(table);
-          container.appendChild(section);
+        for (const [section, tables] of Object.entries(sectionMap)) {
+          const sec = document.createElement('section');
+          sec.id = `section-${section}`;
+          const heading = document.createElement('h2');
+          heading.textContent = section;
+          sec.appendChild(heading);
+          tables.forEach(tbl => sec.appendChild(tbl));
+          container.appendChild(sec);
         }
       })
       .catch(err => {
