@@ -1,0 +1,36 @@
+name: Update Leaderboard
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Every 12 hours
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # needed to allow pushing
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Fetch leaderboard data
+      run: curl -s https://play.mirageonlineclassic.com/leaderboard.json -o leaderboard_cache.json
+
+    - name: Configure Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Loociez/MOC-IV.git
+
+    - name: Commit and push if changed
+      run: |
+        git add leaderboard_cache.json
+        if git diff --staged --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m "Update leaderboard data"
+          git push origin main
+        fi
