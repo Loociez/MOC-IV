@@ -224,22 +224,33 @@
   <div id="leaderboard-container">Loading...</div>
 
   <script>
+    // First fetch the last modified date using a HEAD request
+    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json', { method: 'HEAD' })
+      .then(response => {
+        const lastModified = response.headers.get('Last-Modified');
+        const lastUpdatedDiv = document.getElementById('last-updated');
+        if (lastModified) {
+          const date = new Date(lastModified);
+          lastUpdatedDiv.textContent = `Last updated: ${date.toLocaleString()}`;
+        } else {
+          lastUpdatedDiv.textContent = 'Last updated date not available';
+        }
+      })
+      .catch(() => {
+        document.getElementById('last-updated').textContent = 'Failed to load last updated date';
+      });
+
+    // Then fetch the actual leaderboard JSON and build the tables
     fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json')
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('leaderboard-container');
         const menu = document.getElementById('menu');
-        const lastUpdatedDiv = document.getElementById('last-updated');
         container.innerHTML = '';
         menu.innerHTML = '';
 
-        // Set last updated timestamp
-        if (data.last_updated) {
-          const dateStr = new Date(data.last_updated).toLocaleString();
-          lastUpdatedDiv.textContent = `Last updated: ${dateStr}`;
-        }
-
         for (const [category, entries] of Object.entries(data)) {
+          // We no longer skip last_updated since it doesn't exist or is not relevant
           if (category === 'last_updated') continue;
 
           const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]/g, '');
