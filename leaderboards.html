@@ -14,20 +14,27 @@
       background: #1e1b2e;
       color: #ddd6f7;
       margin: 0;
-      padding: 5rem 2rem 2rem; /* padding top for fixed menu */
+      padding: 5rem 2rem 2rem;
       min-height: 100vh;
       line-height: 1.5;
     }
     h1 {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 0.5rem;
       font-weight: 700;
       font-size: 2.5rem;
       color: #a78bfa;
       text-shadow: 0 0 8px #8b5cf6;
     }
 
-    /* Fixed top nav */
+    #last-updated {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #c4b5fd;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
     nav#menu {
       position: fixed;
       top: 0;
@@ -75,14 +82,13 @@
       gap: 2rem 1.5rem;
     }
 
-    /* Each leaderboard block */
     section.leaderboard {
       background: #2c2650;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
       padding: 1rem 1rem 1rem;
       transition: background 0.3s ease;
-      scroll-margin-top: 4.5rem; /* for anchor offset below fixed nav */
+      scroll-margin-top: 4.5rem;
       max-height: 480px;
       overflow-y: auto;
     }
@@ -103,7 +109,6 @@
       user-select: text;
     }
 
-    /* Table styling */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -151,7 +156,19 @@
       transition: background-color 0.2s ease;
     }
 
-    /* Responsive tweaks */
+    tbody tr.gold {
+      background-color: #FFD700 !important;
+      color: #000;
+    }
+    tbody tr.silver {
+      background-color: #C0C0C0 !important;
+      color: #000;
+    }
+    tbody tr.bronze {
+      background-color: #cd7f32 !important;
+      color: #000;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 6rem 1rem 2rem;
@@ -168,7 +185,7 @@
         display: block;
       }
       thead tr {
-        display: none; /* Hide table headers on small screens */
+        display: none;
       }
       tbody tr {
         margin-bottom: 1rem;
@@ -202,48 +219,48 @@
 </head>
 <body>
   <h1>Mirage Online Classic Leaderboards</h1>
-
+  <div id="last-updated">Loading last updated timestamp...</div>
   <nav id="menu" aria-label="Leaderboard navigation"></nav>
-
   <div id="leaderboard-container">Loading...</div>
 
   <script>
-    fetch('leaderboard_cache.json')
+    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json')
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('leaderboard-container');
         const menu = document.getElementById('menu');
+        const lastUpdatedDiv = document.getElementById('last-updated');
         container.innerHTML = '';
         menu.innerHTML = '';
 
+        // Set last updated timestamp
+        if (data.last_updated) {
+          const dateStr = new Date(data.last_updated).toLocaleString();
+          lastUpdatedDiv.textContent = `Last updated: ${dateStr}`;
+        }
+
         for (const [category, entries] of Object.entries(data)) {
-          // Sanitize and create a slug for IDs and menu links
+          if (category === 'last_updated') continue;
+
           const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]/g, '');
 
-          // Create menu link
           const link = document.createElement('a');
           link.href = `#${slug}`;
           link.textContent = category.replace(/_/g, ' ').toUpperCase();
           menu.appendChild(link);
 
-          // Create leaderboard section
           const section = document.createElement('section');
           section.classList.add('leaderboard');
           section.id = slug;
 
-          // Add category heading
           const heading = document.createElement('h2');
           heading.textContent = category.replace(/_/g, ' ').toUpperCase();
           section.appendChild(heading);
 
-          // Create table
           const table = document.createElement('table');
 
-          // Table head
           const thead = document.createElement('thead');
           const headerRow = document.createElement('tr');
-
-          // Add "Rank" as first header column
           const rankTh = document.createElement('th');
           rankTh.textContent = 'Rank';
           headerRow.appendChild(rankTh);
@@ -257,12 +274,13 @@
           thead.appendChild(headerRow);
           table.appendChild(thead);
 
-          // Table body
           const tbody = document.createElement('tbody');
           entries.forEach((entry, index) => {
             const tr = document.createElement('tr');
+            if (index === 0) tr.classList.add('gold');
+            else if (index === 1) tr.classList.add('silver');
+            else if (index === 2) tr.classList.add('bronze');
 
-            // Add rank cell
             const rankTd = document.createElement('td');
             rankTd.textContent = index + 1;
             tr.appendChild(rankTd);
@@ -270,7 +288,6 @@
             keys.forEach((key, i) => {
               const td = document.createElement('td');
               td.textContent = entry[key];
-              // Add attribute for responsive labels (index + 1 because rank column shifted all indices by 1)
               td.setAttribute(`data-label-${i + 1}`, key);
               tr.appendChild(td);
             });
