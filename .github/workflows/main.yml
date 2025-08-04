@@ -16,6 +16,13 @@ jobs:
     - name: Fetch leaderboard data
       run: curl -s https://play.mirageonlineclassic.com/leaderboard.json -o leaderboard_cache.json
 
+    - name: Check for changes
+      run: |
+        if git diff --quiet leaderboard_cache.json; then
+          echo "No changes in leaderboard. Skipping commit."
+          exit 0
+        fi
+
     - name: Commit and push changes
       run: |
         git config --global user.name "github-actions"
