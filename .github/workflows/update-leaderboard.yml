@@ -1,0 +1,31 @@
+name: Update Leaderboard
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Every 12 hours
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Fetch leaderboard data
+      run: curl -s https://play.mirageonlineclassic.com/leaderboard.json -o leaderboard_cache.json
+
+    - name: Commit and push changes
+      run: |
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git add leaderboard_cache.json
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m "Update leaderboard data"
+          git push
+        fi
