@@ -5,6 +5,559 @@ frmBank = document.getElementById('winBank');
 buttons = frmBank.getElementsByTagName("button");
 timers = [];
 
+/**
+ * Monkey Patch utility function
+ * Overrides a function on an object with a new function.
+ *
+ * @param {object} obj The object containing the function to override.
+ * @param {string} functionName The name of the function to override.
+ * @param {Function} newFunction The new function that will replace the original.
+ * This new function will receive the original function as its first parameter,
+ * followed by the original arguments.
+ * @returns {Function} A function that can be called to restore the original function.
+ */
+function overrideFunction(obj, functionName, newFunction) {
+    // 1. Store a reference to the original function.
+    const originalFunction = obj[functionName];
+
+    // 2. Ensure the property we're trying to override is actually a function.
+    if (typeof originalFunction !== 'function') {
+        throw new Error(`Error: Property "${functionName}" is not a function on the provided object.`);
+    }
+
+    // 3. Replace the function on the object with a new one.
+    obj[functionName] = function (...args) {
+        // 4. Call the user-provided `newFunction`. The key is to pass the original
+        //    function as the first argument. We use `.bind(this)` to ensure the
+        //    `this` context is correctly maintained if `originalFunction` is called.
+        return newFunction.call(this, originalFunction.bind(this), ...args);
+    };
+
+    // 5. Return a "restore" function that puts the original function back.
+    return function restore() {
+        obj[functionName] = originalFunction;
+    };
+}
+
+/*
+OUTGOING
+{
+    "type": 117,
+    "channel_id": 2,
+    "text": "You tell Playername, 'msg me'",
+    "color": "#00ff00",
+    "temp": false,
+    "author": "Playername"
+}
+*/
+
+/*
+{
+    "type": 117,
+    "channel_id": 2,
+    "text": "X tells you, 'Hi'",
+    "color": "#00ff00",
+    "temp": false,
+    "author": "Player"
+}
+
+*/
+
+if (typeof (enhancerModuleVars) == 'undefined') {
+    enhancerModuleVars = {
+        hookedIntoReceive: false,
+        receiveFnOriginal: false,
+        receiveFnHooked: false,
+        whisperHistory: {},
+    };
+}
+(function injectActiveTabStyle() {
+    const style = document.createElement('style');
+    style.textContent = `
+        #winWhispersTabs .caption.active-tab {
+            background-color: #333;
+            color: #fff;
+            font-weight: bold;
+            border: 1px solid gold;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+apply = (target, props) => {
+    for (let prop in props) {
+        target[prop] = props[prop];
+    }
+    return target;
+};
+
+showWhispeHistory = (playerName) => {
+    console.log(`history [${playerName}]`);
+    if (typeof (enhancerModuleVars.whisperHistory) === 'undefined') {
+        console.log('no history');
+        return;
+    }
+    if (typeof (enhancerModuleVars.whisperHistory[playerName]) === 'undefined') {
+        console.log('no history for player');
+        return;
+    }
+    let history = enhancerModuleVars.whisperHistory[playerName];
+
+    const elements = document.getElementById("txtChatbox");
+    if (!elements) {
+        console.log('no element');
+        return;
+    }
+    elements.innerHTML = "";
+
+    for (let i = 0; i < history.length; ++i) {
+        let li = document.createElement("li");
+        li.innerHTML = history[i].msg.text;
+        elements.appendChild(li);
+        if (history[i].msg.author != playerName) {
+            li.style.color = "blue";
+            li.innerHTML = li.innerHTML.replace(`You tell ${playerName},`, ">");
+        } else {
+            li.style.color = "gold";
+            li.innerHTML = li.innerHTML.replace(`${playerName} tells you,`, "<");
+
+        }
+        li.innerHTML = "<span>" + (new Date(history[i].timestamp)).toLocaleString().split(" ")[1] + ":</span>" + li.innerHTML;
+        li.innerHTML = li.innerHTML.replace(/['"]+/g, '');
+        apply(li.querySelector("span").style, {
+            fontSize: 'small',
+            fontWeight: 'bold',
+            color: 'white',
+        });
+
+
+    }
+}
+
+handleChatMessage = (message) => {
+    console.log('handleChatMessage');
+    //enhancerModuleVars.whisperTabsCreated = false;
+    if (message.channel_id != 2) {
+        //console.log('wrong channel');
+        return;
+    }
+    let container = document.getElementById("winWhispersTabs");;
+    const playerName = message.text.indexOf("You tell ") === 0 ? message.text.replace("You tell ", "").split(",")[0] : message.author;
+
+    const buttonsContainer = document.getElementById('winPlayer');
+    if ((!enhancerModuleVars.whisperTabsCreated) || container == null) {
+        enhancerModuleVars.whisperTabsCreated = true;
+
+        if (buttonsContainer) {
+            container = document.createElement('div');
+            buttonsContainer.appendChild(container);
+            container.id = "winWhispersTabs";
+        }
+    }
+
+    apply(container.style, {
+        height: "20px",
+        fontSize: "10px",
+        overflow: "hidden",
+        padding: "8px",
+        border: "none",
+    });
+
+    if (typeof (enhancerModuleVars.whisperHistory) === 'undefined') {
+        enhancerModuleVars.whisperHistory = {};
+    }
+    if (typeof (enhancerModuleVars.whisperHistory[playerName]) === 'undefined') {
+        enhancerModuleVars.whisperHistory[playerName] = [];
+    }
+    enhancerModuleVars.whisperHistory[playerName].push({ msg: message, timestamp: Date.now() });
+
+    if (buttonsContainer) {
+        buttonsContainer.appendChild(container);
+    }
+
+    if (container) {
+        let div = container.querySelector(`div[data-author="${playerName}"]`);
+        let btn = document.createElement('div');
+        btn.className = "caption";
+
+        if (!div) {
+            div = document.createElement('div');
+            container.appendChild(div);
+            div.dataset.author = playerName;
+            div.appendChild(btn);
+            let closeBtn = document.createElement('div');
+            closeBtn.innerText = "X";
+            apply(closeBtn.style, {
+                display: "inline-block",
+                marginLeft: "10px",
+            })
+            div.appendChild(closeBtn);
+            closeBtn.addEventListener('click', (e) => {
+                div.remove();
+            });
+            btn.addEventListener('click', (e) => {
+    // Remove active class from all tabs
+    let allTabs = document.querySelectorAll('#winWhispersTabs .caption');
+    allTabs.forEach(tab => tab.classList.remove('active-tab'));
+
+    // Add active class to the clicked one
+    btn.classList.add('active-tab');
+
+    showWhispeHistory(playerName);
+
+    let el = document.getElementById('txtChatMessage');
+    el.value = `@"${playerName}" `;
+});
+
+        } else {
+            btn = div.querySelector("div.caption");
+        }
+        apply(btn.style, {
+            display: "inline-block",
+        });
+
+        apply(div.style, {
+            display: "inline-block",
+            padding: "4px",
+            margin: "4px",
+            border: "1px solid green",
+            cursor: "pointer",
+        });
+
+        btn.innerHTML = playerName;
+
+
+        container.appendChild(div);
+    }
+
+    showWhispeHistory(playerName);
+
+};
+
+handleInventoryChange = (message) => {
+    if (typeof (enhancerModuleVars.hookedIntoWINGUI) !== "undefined" || enhancerModuleVars.hookedIntoWINGUI === true) {
+        enhancerModuleVars.syncSelects && enhancerModuleVars.syncSelects();
+    }
+}
+
+fnReceiveHook = (v) => {
+    switch (v.type) {
+        case 115://inventory change
+            handleInventoryChange(v);
+            break;
+        case 117://chat
+
+            //
+            //console.log(v);
+            handleChatMessage(v);
+            break;
+    }
+    //console.log(v);
+}
+
+if (enhancerModuleVars.hookedIntoReceive === false) {
+    for (let s in window) {
+        if (window.hasOwnProperty(s) && typeof (window[s]) == 'object') {
+            let o = window[s];
+            try {
+                if (typeof (o.g) == 'object' && typeof (o.g.v) == 'function') {
+                    enhancerModuleVars.hookedIntoReceive = true;
+                    enhancerModuleVars.receiveFnOriginal = o.g.v.bind(o.g);
+                    enhancerModuleVars.receiveFnHooked = (originalFn, v) => { originalFn(v); try { fnReceiveHook(v); } catch (e) { } };
+                    overrideFunction(o.g, 'v', enhancerModuleVars.receiveFnHooked);
+                }
+            } catch (e) { }
+        }
+    }
+}
+
+/** BUY SELL DEPOSIT START */
+
+/*
+
+(async function setupMergedShopUI() {
+
+    let isInSellProcess = false;
+
+    if (typeof (enhancerModuleVars.hookedIntoWINGUI) !== "undefined" && enhancerModuleVars.hookedIntoWINGUI === true) {
+        if (enhancerModuleVars.originalGUI) {
+            window.GUI = enhancerModuleVars.originalGUI;
+            enhancerModuleVars.originalGUI = null;
+        }
+        enhancerModuleVars.hookedIntoWINGUI = false;
+    }
+
+
+    if (typeof (enhancerModuleVars.hookedIntoWINGUI) === "undefined" || enhancerModuleVars.hookedIntoWINGUI === false) {
+        enhancerModuleVars.hookedIntoWINGUI = true;
+        const originalGUI = window.GUI;
+        enhancerModuleVars.originalGUI = originalGUI;
+        enhancerModuleVars.syncSelects = syncSelects;
+
+        originalGUI('winGame', 'Shop');
+        await (sleep(100));
+
+        originalGUI('winShop', 'Back');
+
+        await (sleep(100));
+        originalGUI('winGame', 'Recycle');
+
+        await (sleep(100));
+        originalGUI('winRecycle', 'Back');
+        await (sleep(100));
+        originalGUI('winShop', 'Back');
+        await (sleep(100));
+
+        window.GUI = function (win, action) {
+            // Call the original GUI handler first
+            originalGUI(win, action);
+
+            // If merged shop UI is opened, sync immediately
+            if (win === 'winGame' && action === 'Shop') {
+                showMergedShopUI();
+                setTimeout(() => {
+                    syncSelects();
+                }, 50);
+                return;
+            }
+
+            // For shop or recycle window actions that affect inventory lists, sync clones shortly after
+            if (win === 'winShop' || win === 'winRecycle') {
+                const actionsToSync = ['Trade', 'Recycle', 'Repair', 'Bank', 'Back', 'Shop'];
+                if (actionsToSync.includes(action)) {
+                    // setTimeout(() => {
+                    //     syncSelects();
+                    // }, 50);
+                }
+            }
+        };
+    }
+
+    function showMergedShopUI() {
+        const existing = document.querySelector('#winShopMerged');
+        if (existing) {
+            existing.style.display = 'grid';
+            setTimeout(syncSelects, 100);
+            return;
+        }
+
+        const shop = document.querySelector('#winShop');
+        const recycle = document.querySelector('#winRecycle');
+        if (!shop || !recycle) {
+            console.warn('Missing original shop or recycle UI');
+            return;
+        }
+
+        // Ensure originals are open and updating
+        makeOriginalsInvisibleButVisible();
+
+        // Original selects
+        const selInventory = shop.querySelector('select[name="selInventory"]');
+        const selRecycle = recycle.querySelector('select[name="selRecycle"]');
+
+        // === Create cloned selects ===
+        const cloneInventory = selInventory.cloneNode(true);
+        cloneInventory.name = 'selInventoryClone';
+        cloneInventory.onchange = () => selInventory.onchange();
+        cloneInventory.ondblclick = () => selInventory.ondblclick();
+
+        const cloneRecycle = selRecycle.cloneNode(true);
+        cloneRecycle.name = 'selRecycleClone';
+        cloneRecycle.onchange = () => selRecycle.onchange();
+        cloneRecycle.ondblclick = () => selRecycle.ondblclick();
+
+        styleSelect(cloneInventory);
+        styleSelect(cloneRecycle);
+
+        const container = document.createElement('form');
+        container.id = 'winShopMerged';
+        container.name = 'frmShopMerged';
+        container.className = 'gameWindowEven fadeIn';
+        container.style.position = 'absolute';
+        container.style.left = '50%';
+        container.style.top = '50%';
+        container.style.transform = 'translate(-50%, -50%)';
+        container.style.background = '#111';
+        container.style.padding = '12px';
+        container.style.border = '2px solid #333';
+        container.style.zIndex = '9999';
+        container.style.color = '#fff';
+        container.style.width = '1000px';
+        container.style.height = '600px';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+
+        const contentRow = document.createElement('div');
+        contentRow.style.flex = '1';
+        contentRow.style.display = 'flex';
+        contentRow.style.gap = '16px';
+        contentRow.style.overflow = 'hidden';
+
+        // BUY PANEL
+        const buyPanel = document.createElement('div');
+        buyPanel.style.flex = '1';
+        buyPanel.style.display = 'flex';
+        buyPanel.style.flexDirection = 'column';
+
+        const buyTitle = document.createElement('h3');
+        buyTitle.textContent = 'Shop - Buy';
+
+        const buyCanvasTop = shop.querySelector('#cvsShopTake');
+        const buyCanvasBottom = shop.querySelector('#cvsShopGive');
+        const buyDesc = shop.querySelector('#txtShopDesc');
+
+        buyPanel.append(
+            buyTitle,
+            buyCanvasTop,
+            cloneInventory,
+            buyCanvasBottom,
+            buyDesc,
+            createButton("Buy", async () => { selInventory.value = cloneInventory.value; await (sleep(50)); selInventory.dispatchEvent(new Event("change")); window.GUI('winShop', 'Trade') }),
+            createButton("Repair", async () => window.GUI('winShop', 'Repair'))
+        );
+
+        // SELL PANEL
+        const sellPanel = document.createElement('div');
+        sellPanel.style.flex = '1';
+        sellPanel.style.display = 'flex';
+        sellPanel.style.flexDirection = 'column';
+
+        const sellTitle = document.createElement('h3');
+        sellTitle.textContent = 'Shop - Sell';
+
+        const sellCanvasTop = recycle.querySelector('#cvsRecycleTake');
+        const sellCanvasBottom = recycle.querySelector('#cvsRecycleGive');
+
+
+        sellPanel.append(
+            sellTitle,
+            sellCanvasTop,
+            cloneRecycle,
+            sellCanvasBottom,
+            createButton("Sell", async () => {
+                if (isInSellProcess) {
+                    return;
+                }
+                selRecycle.value = cloneRecycle.value;
+                await (sleep(50));
+                enhancerModuleVars.originalGUI('winGame', 'Shop');
+                setTimeout(async () => {
+                    enhancerModuleVars.originalGUI('winShop', 'Recycle');
+                    await (sleep(50));
+                    selInventory.dispatchEvent(new Event("change"));
+                    enhancerModuleVars.originalGUI('winRecycle', 'Recycle');
+
+                    if (cloneRecycle.innerHTML.indexOf('x') < 0) {
+                        enhancerModuleVars.originalGUI('winShop', 'Back');
+                        isInSellProcess = false;
+                    } else {
+                        isInSellProcess = true;
+                        container.style.display = 'none';
+                    }
+                }, 100);
+            }),
+        );
+
+        // FOOTER
+        const footer = document.createElement('div');
+        footer.style.display = 'flex';
+        footer.style.justifyContent = 'space-between';
+        footer.style.marginTop = '12px';
+        footer.innerHTML = `
+      <button type="button" onclick="window.GUI('winShop','Bank')">Bank</button>
+      <button type="button" onclick="window.GUI('winShop','Back'); document.querySelector('#winShopMerged').style.display='none';">Back</button>
+    `;
+
+        contentRow.appendChild(buyPanel);
+        contentRow.appendChild(sellPanel);
+        container.appendChild(contentRow);
+        container.appendChild(footer);
+
+        document.body.appendChild(container);
+        document.body.appendChild(document.querySelector("#winPopup"));
+
+    }
+
+    function createButton(label, onclick) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.style.marginTop = '6px';
+        btn.style.fontSize = '13px';
+        btn.style.padding = '4px 10px';
+        btn.onclick = onclick;
+        return btn;
+    }
+
+    function styleSelect(select) {
+        select.style.flex = '1';
+        select.style.height = '100%';
+        select.style.minHeight = '250px';
+        select.style.fontSize = '13px';
+        select.style.background = '#222';
+        select.style.color = '#fff';
+        select.style.border = '1px solid #666';
+        select.size = 15;
+    }
+
+    async function syncSelects() {
+        enhancerModuleVars.originalGUI('winGame', 'Shop');
+        setTimeout(async () => {
+            enhancerModuleVars.originalGUI('winShop', 'Recycle');
+            await (sleep(100));
+
+            const origShop = document.querySelector('#winShop select[name="selInventory"]');
+            const cloneShop = document.querySelector('#winShopMerged select[name="selInventoryClone"]');
+            if (origShop && cloneShop) {
+                cloneOptions(cloneShop, origShop);
+            }
+
+            const origRec = document.querySelector('#winRecycle select[name="selRecycle"]');
+            const cloneRec = document.querySelector('#winShopMerged select[name="selRecycleClone"]');
+            if (origRec && cloneRec) {
+                cloneOptions(cloneRec, origRec);
+            }
+            setTimeout(() => {
+                if (isInSellProcess) {
+                    isInSellProcess = false;
+                    showMergedShopUI();
+                }
+            }, 200);
+        }, 100);
+    }
+
+    function cloneOptions(cloneSelect, originalSelect) {
+        cloneSelect.innerHTML = '';
+        [...originalSelect.options].forEach(opt => {
+            const clone = opt.cloneNode(true);
+            cloneSelect.appendChild(clone);
+        });
+    }
+
+    function makeOriginalsInvisibleButVisible() {
+        const winShop = document.querySelector('#winShop');
+        const winRecycle = document.querySelector('#winRecycle');
+        [winShop, winRecycle].forEach(win => {
+            if (win) {
+                win.style.display = 'block';
+                win.style.position = 'absolute';
+                win.style.left = '-9999px';
+                win.style.top = '-9999px';
+                win.style.zIndex = '-1';
+                win.style.opacity = '0';
+                win.style.pointerEvents = 'none';
+            }
+        });
+    }
+})();
+
+/** BUY SELL DEPOSIT END */
+
+
+
+
 removeTimer = (th) => timers = timers.filter((v) => v != th);
 
 killAllTimers = () => timers.forEach((th) => clearTimeout(th));
@@ -50,8 +603,6 @@ changeView = async (gridView, frm) => {
         frm.insertBefore(gridsContainer, divs[1]);
         gridsContainer.innerText = "";
         gridsContainer.style.display = "block";
-		
-		
 
         const renderGridItems = (items, gridsContainer, headerContent, select) => {
 
@@ -72,12 +623,7 @@ changeView = async (gridView, frm) => {
                 return `rgba(${r}, ${g}, ${b}, ${alpha})`;
             };
 
-            const apply = (target, props) => {
-                for (let prop in props) {
-                    target[prop] = props[prop];
-                }
-                return target;
-            };
+
 
 
             const createBadge = (text, borderColor = 'blue', backgroundColor = '#ffffff', color = '#000000') => {
@@ -242,7 +788,7 @@ changeView = async (gridView, frm) => {
                         const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
                         const backgroundImage = `url('https://loociez.github.io/MOC-IV/images/items${sheetIndex}.png')`;
 
-                        nameHTML = `<div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
+                        nameHTML = `<div class= "sprite" style = "background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;" ></div > `;
                         div.innerHTML += nameHTML;
 
                         const selectItem = async (all = false) => {
@@ -263,7 +809,7 @@ changeView = async (gridView, frm) => {
 
                                     if (all === false) {
                                         const handler = (e) => {
-                                            setTimeout(() => changeView(true, frm), 200);
+                                            setTimeout(() => { changeView(true, frm); banoperationInProgress = false }, 200);
                                             btnOk.removeEventListener('click', handler);
                                         };
                                         btnCancel.addEventListener('click', e => banoperationInProgress = false);
@@ -303,54 +849,6 @@ changeView = async (gridView, frm) => {
         div.style.overflow = "auto";
         gridsContainer.appendChild(div);
         renderGridItems(items, div, 'Bank', selectBankInv);
-		
-		// --- Create polished bank slots bar ---
-const slotInfo = document.getElementById("txtBankSlots")?.innerText;
-let current = 0, max = 500;
-
-if (slotInfo) {
-    const match = slotInfo.match(/(\d+)\s*\/\s*(\d+)/);
-    if (match) {
-        current = parseInt(match[1]);
-        max = parseInt(match[2]);
-    }
-}
-
-// Create or update the slot bar container
-let slotBar = document.getElementById("bankSlotBar");
-if (!slotBar) {
-    slotBar = document.createElement("div");
-    slotBar.id = "bankSlotBar";
-    slotBar.style.margin = "6px";
-    slotBar.style.padding = "4px";
-    slotBar.style.border = "1px solid #555";
-    slotBar.style.borderRadius = "6px";
-    slotBar.style.backgroundColor = "#222";
-    slotBar.style.fontSize = "12px";
-    slotBar.style.fontWeight = "bold";
-
-    // Progress bar itself
-    let barFill = document.createElement("div");
-    barFill.id = "bankSlotBarFill";
-    barFill.style.height = "16px";
-    barFill.style.marginTop = "4px";
-    barFill.style.borderRadius = "4px";
-    barFill.style.background = "linear-gradient(to right, #66ff66, #009900)";
-    barFill.style.width = "0%";
-
-    slotBar.appendChild(document.createTextNode(`Bank Inventory: ${current}/${max}`));
-    slotBar.appendChild(barFill);
-    div.appendChild(slotBar);
-} else {
-    // Update text and fill % on rerender
-    slotBar.firstChild.nodeValue = `Bank Inventory: ${current}/${max}`;
-    const barFill = document.getElementById("bankSlotBarFill");
-    if (barFill) {
-        const pct = Math.min((current / max) * 100, 100);
-        barFill.style.width = `${pct}%`;
-    }
-}
-
 
         let selCurrentInv = (frm.querySelector("select[name='selCurrentInv']"));
         items = Array.from(selCurrentInv.querySelectorAll("option")).map(v => [v.value, v.innerText]);
@@ -361,60 +859,6 @@ if (!slotBar) {
         div.style.margin = div.style.padding = "0";
         div.style.overflow = "auto";
         gridsContainer.appendChild(div);
-		// --- Create polished bank slots bar on RIGHT side (inventory panel) ---
-const slotInfo = document.getElementById("txtBankSlots")?.innerText;
-let current = 0, max = 500;
-
-if (slotInfo) {
-    const match = slotInfo.match(/(\d+)\s*\/\s*(\d+)/);
-    if (match) {
-        current = parseInt(match[1]);
-        max = parseInt(match[2]);
-    }
-}
-
-// Remove previous bar if it exists
-const existing = div.querySelector("#bankSlotBar");
-if (existing) existing.remove();
-
-// Create new slot bar
-const slotBar = document.createElement("div");
-slotBar.id = "bankSlotBar";
-slotBar.style.margin = "6px 6px 12px 6px";
-slotBar.style.padding = "6px";
-slotBar.style.border = "1px solid #555";
-slotBar.style.borderRadius = "6px";
-slotBar.style.backgroundColor = "#222";
-slotBar.style.fontSize = "13px";
-slotBar.style.fontWeight = "bold";
-slotBar.style.color = "#fff";
-
-// Label
-const label = document.createElement("div");
-label.innerText = `Bank Inventory: ${current}/${max}`;
-slotBar.appendChild(label);
-
-// Bar container
-const barContainer = document.createElement("div");
-barContainer.style.marginTop = "6px";
-barContainer.style.width = "100%";
-barContainer.style.height = "14px";
-barContainer.style.backgroundColor = "#444";
-barContainer.style.borderRadius = "4px";
-barContainer.style.overflow = "hidden";
-
-// Bar fill
-const barFill = document.createElement("div");
-const percent = Math.min((current / max) * 100, 100);
-barFill.style.width = `${percent}%`;
-barFill.style.height = "100%";
-barFill.style.background = "linear-gradient(to right, #66ff66, #009900)";
-barFill.style.transition = "width 0.3s ease";
-
-barContainer.appendChild(barFill);
-slotBar.appendChild(barContainer);
-div.appendChild(slotBar);
-
         renderGridItems(items, div, 'Inventory', selCurrentInv);
 
     } else {
