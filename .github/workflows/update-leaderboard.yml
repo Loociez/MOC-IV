@@ -14,6 +14,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        ref: main  # Your default branch is 'main'
 
     - name: Fetch leaderboard data
       run: curl -s https://play.mirageonlineclassic.com/leaderboard.json -o leaderboard_cache.json
@@ -30,5 +31,4 @@ jobs:
           echo "No changes to commit."
         else
           git commit -m "Update leaderboard data"
-          git push origin HEAD
-        fi
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Loociez/MOC-IV.git main
