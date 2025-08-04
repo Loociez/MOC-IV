@@ -193,11 +193,10 @@
         font-weight: 600;
         color: #a78bfa;
       }
-      tbody tr td:nth-of-type(1)::before { content: attr(data-label-0); }
-      tbody tr td:nth-of-type(2)::before { content: attr(data-label-1); }
-      tbody tr td:nth-of-type(3)::before { content: attr(data-label-2); }
-      tbody tr td:nth-of-type(4)::before { content: attr(data-label-3); }
-      tbody tr td:nth-of-type(5)::before { content: attr(data-label-4); }
+      tbody tr td:nth-of-type(1)::before { content: 'Rank'; }
+      tbody tr td:nth-of-type(n+2)::before {
+        content: attr(data-label-);
+      }
     }
   </style>
 </head>
@@ -243,6 +242,12 @@
           // Table head
           const thead = document.createElement('thead');
           const headerRow = document.createElement('tr');
+
+          // Add "Rank" as first header column
+          const rankTh = document.createElement('th');
+          rankTh.textContent = 'Rank';
+          headerRow.appendChild(rankTh);
+
           const keys = Object.keys(entries[0] || {});
           keys.forEach(key => {
             const th = document.createElement('th');
@@ -254,15 +259,19 @@
 
           // Table body
           const tbody = document.createElement('tbody');
-          entries.forEach(entry => {
+          entries.forEach((entry, index) => {
             const tr = document.createElement('tr');
+
+            // Add rank cell
+            const rankTd = document.createElement('td');
+            rankTd.textContent = index + 1;
+            tr.appendChild(rankTd);
+
             keys.forEach((key, i) => {
               const td = document.createElement('td');
               td.textContent = entry[key];
-
-              // For responsive labels on mobile:
-              td.setAttribute(`data-label-${i}`, key);
-
+              // Add attribute for responsive labels (index + 1 because rank column shifted all indices by 1)
+              td.setAttribute(`data-label-${i + 1}`, key);
               tr.appendChild(td);
             });
             tbody.appendChild(tr);
@@ -274,8 +283,7 @@
         }
       })
       .catch(err => {
-        const container = document.getElementById('leaderboard-container');
-        container.textContent = 'Failed to load leaderboard data.';
+        document.getElementById('leaderboard-container').textContent = 'Failed to load leaderboard data.';
         console.error(err);
       });
   </script>
