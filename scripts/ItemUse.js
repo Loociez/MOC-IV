@@ -1,5 +1,6 @@
 (() => {
   let highlightedIndex = null;
+  let oKeyDown = false; // track if O is already pressed
 
   // Highlight or unhighlight item on middle click
   document.querySelector('#winInventory').addEventListener('mousedown', (e) => {
@@ -49,16 +50,27 @@
     }, 150);
   }
 
-  // Press O to "use" the highlighted item slot
+  // Key down: only trigger once per press
   document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'o' && highlightedIndex !== null) {
+    if (e.key.toLowerCase() === 'o' && !oKeyDown && highlightedIndex !== null) {
+      oKeyDown = true;
       const canvases = document.querySelectorAll('#winInventory canvas');
       const slotCanvas = canvases[highlightedIndex];
       if (slotCanvas) {
         simulateDoubleClickOnCanvas(slotCanvas);
       }
+      // Optional: clear highlight after use to avoid accidental repeats
+      // slotCanvas.style.outline = '';
+      // highlightedIndex = null;
     }
   });
 
-  console.log('Itoggle');
+  // Reset key flag when released
+  document.addEventListener('keyup', (e) => {
+    if (e.key.toLowerCase() === 'o') {
+      oKeyDown = false;
+    }
+  });
+
+  console.log('Highlight');
 })();
