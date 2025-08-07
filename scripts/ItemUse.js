@@ -1,18 +1,25 @@
 (() => {
   let highlightedIndex = null;
 
-  // Highlight item on middle click
+  // Highlight or unhighlight item on middle click
   document.querySelector('#winInventory').addEventListener('mousedown', (e) => {
     if (e.button === 1) { // middle mouse button
       e.preventDefault();
       const canvases = Array.from(document.querySelectorAll('#winInventory canvas'));
       const idx = canvases.findIndex(c => c === e.target);
+
       if (idx !== -1) {
-        // Remove highlight from all
-        canvases.forEach(c => c.style.outline = '');
-        // Highlight clicked slot
-        e.target.style.outline = 'gold solid 2px';
-        highlightedIndex = idx;
+        if (highlightedIndex === idx) {
+          // If clicking the same highlighted slot → clear highlight
+          e.target.style.outline = '';
+          highlightedIndex = null;
+        } else {
+          // Remove highlight from all
+          canvases.forEach(c => c.style.outline = '');
+          // Highlight clicked slot
+          e.target.style.outline = 'green solid 2px';
+          highlightedIndex = idx;
+        }
       }
     }
   });
@@ -53,5 +60,5 @@
     }
   });
 
-  console.log('Highlight and use module loaded: Middle-click to highlight an item, press O to use it.');
+  console.log('Itoggle');
 })();
