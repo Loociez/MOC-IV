@@ -5451,7 +5451,7 @@
       "min_rat": 8,
       "min_rdf": 10,
       "damage_stat": 1,
-      "!necromancer_minon_cost": "10"
+      "!necromancer_minion_cost": "10"
     }
   },
   {
@@ -9697,7 +9697,7 @@
       "two_handed": false,
       "damage_stat": 4,
       "sprite_rotation": 0,
-      "!necromancer_minon_hp": "10",
+      "!necromancer_minion_hp": "10",
       "!warlock_npcaoe_damage": "10",
       "!cleric_allheal_cooldown": "10",
       "!warlock_playeraoe_damage": "10",
@@ -19604,7 +19604,7 @@
   },
   {
     "name": "Specter's Blade",
-    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minon damage & HP. 5% Break chance upon repair",
+    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minion damage & HP. 5% Break chance upon repair",
     "revision": 1,
     "sprite": 1186,
     "sprite_color": {
@@ -33119,7 +33119,7 @@
       "min_rat": 20,
       "min_rdf": 5,
       "damage_stat": 0,
-      "!necromancer_minon_hp": "10"
+      "!necromancer_minion_hp": "10"
     }
   },
   {
@@ -34278,7 +34278,7 @@
       "!cleric_playerheal_amount": "65",
       "!samurai_riposte_cooldown": "5",
       "!warlock_selfaoe_cooldown": "5",
-      "!necromancer_minon_cooldown": "5",
+      "!necromancer_minion_cooldown": "5",
       "!warlock_playeraoe_cooldown": "5"
     }
   },
