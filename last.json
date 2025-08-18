@@ -5451,7 +5451,7 @@
       "min_rat": 8,
       "min_rdf": 10,
       "damage_stat": 1,
-      "!necromancer_minion_cost": "10"
+      "!necromancer_minon_cost": "10"
     }
   },
   {
@@ -9339,7 +9339,7 @@
   },
   {
     "name": "Rock Smasher",
-    "desc": "Used to mine only rocks; Equip and press the attack key while facing rocks to collect ore",
+    "desc": "Used to mine only rocks; Equip and press the attack key while facing tiles that can be mined",
     "revision": 0,
     "sprite": 676,
     "sprite_color": {
@@ -9367,6 +9367,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -9384,9 +9387,9 @@
   },
   {
     "name": "Specialized Edge",
-    "desc": "Used to cut only timber;  Equip and press the attack key while facing trees to collect timber ",
+    "desc": "Used to extract nuts from trees;  Equip and press the attack key while facing trees to collect nuts",
     "revision": 0,
-    "sprite": 673,
+    "sprite": 1506,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -9412,18 +9415,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
       "min_atk": 0,
+      "max_atk": 0,
       "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
+      "max_def": 0,
       "min_rat": 0,
+      "max_rat": 0,
       "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "damage_stat": 0
     }
   },
@@ -9691,7 +9697,7 @@
       "two_handed": false,
       "damage_stat": 4,
       "sprite_rotation": 0,
-      "!necromancer_minion_hp": "10",
+      "!necromancer_minon_hp": "10",
       "!warlock_npcaoe_damage": "10",
       "!cleric_allheal_cooldown": "10",
       "!warlock_playeraoe_damage": "10",
@@ -10511,7 +10517,7 @@
   },
   {
     "name": "Kings Wrappings",
-    "desc": "",
+    "desc": "Rare armor from the Dead King's Pyramid. 5% Break chance upon repair",
     "revision": 0,
     "sprite": 45,
     "sprite_color": {
@@ -10521,32 +10527,45 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
-    "spawn_delay": 10,
+    "spawn_delay": 0,
     "type": 3,
-    "uses": 1500,
-    "limit": 5,
+    "uses": 7000,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
+    "repair_cost": 2850,
+    "break_chance": 5,
+    "recycle_value": 4000,
+    "level_req": 30,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "damage_stat": 1,
-      "max_protection": 14,
-      "min_protection": 5
+      "max_hp": 325,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 28,
+      "max_mat": 0,
+      "max_mdf": 28,
+      "max_rat": 0,
+      "max_rdf": 28,
+      "min_atk": 0,
+      "min_def": 28,
+      "min_mat": 0,
+      "min_mdf": 28,
+      "min_rat": 0,
+      "min_rdf": 28,
+      "damage_stat": 1
     }
   },
   {
     "name": "Firerune",
-    "desc": "",
+    "desc": "Rare weapon from the Dead King's Pyramid. 5% Break chance upon repair",
     "revision": 0,
     "sprite": 69,
     "sprite_color": {
@@ -10556,26 +10575,40 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#66ff66",
     "show_name": false,
-    "spawn_delay": 10,
+    "spawn_delay": 0,
     "type": 1,
-    "uses": 1500,
-    "limit": 5,
+    "uses": 7000,
+    "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "repair_cost": 2450,
+    "break_chance": 5,
+    "recycle_value": 4000,
+    "level_req": 30,
+    "prof_req_flags": -1025,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_damage": 18,
-      "min_damage": 12,
+      "max_hp": 275,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 215,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 215,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
       "damage_stat": 0
     }
   },
@@ -13767,20 +13800,20 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 1,
-    "sprite": 0,
+    "name": "Strangler's Skull",
+    "desc": "Trade in for a reward at Erlington's Skill Shop in Crendale",
+    "revision": 0,
+    "sprite": 1529,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 180,
+      "saturation": 0,
+      "brightness": 50
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
+    "scale": 0.6,
+    "color": "#FFA500",
+    "show_name": true,
+    "spawn_delay": 0,
     "type": 0,
     "uses": 1,
     "limit": 0,
@@ -13788,12 +13821,12 @@
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
@@ -19571,7 +19604,7 @@
   },
   {
     "name": "Specter's Blade",
-    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minion damage & HP. 5% Break chance upon repair",
+    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minon damage & HP. 5% Break chance upon repair",
     "revision": 1,
     "sprite": 1186,
     "sprite_color": {
@@ -19815,7 +19848,7 @@
   {
     "name": "God Armor",
     "desc": "",
-    "revision": 1,
+    "revision": 2,
     "sprite": 123,
     "sprite_color": {
       "alpha": 1,
@@ -20492,7 +20525,7 @@
   {
     "name": "God Weapon",
     "desc": "Ownership of this item without telling an Admin is a serious offense.",
-    "revision": 0,
+    "revision": 1,
     "sprite": 0,
     "sprite_color": {
       "alpha": 1,
@@ -30257,7 +30290,7 @@
   },
   {
     "name": "Brigandine",
-    "desc": "A rare armor found from the Crags. Increases Barbarians 3rd strike. 5% Break chance upon repair",
+    "desc": "A rare armor found from the Crags. Increases Barbarians 3rd strike by 20%. 5% Break chance upon repair",
     "revision": 0,
     "sprite": 1340,
     "sprite_color": {
@@ -30285,23 +30318,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!barbarian_alldamage_amount": "10",
+      "min_atk": 15,
+      "max_atk": 15,
+      "min_def": 15,
+      "max_def": 20,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 15,
+      "max_rdf": 20,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 15,
+      "max_mdf": 20,
       "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 15,
-      "max_def": 20,
-      "max_mat": 0,
-      "max_mdf": 20,
-      "max_rat": 0,
-      "max_rdf": 20,
-      "min_atk": 15,
-      "min_def": 15,
-      "min_mat": 0,
-      "min_mdf": 15,
-      "min_rat": 0,
-      "min_rdf": 15,
-      "damage_stat": 1,
-      "!barbarian_alldamage_amount": "10"
+      "damage_stat": 1
     }
   },
   {
@@ -30409,7 +30442,7 @@
   },
   {
     "name": "Horned Mask",
-    "desc": "A rare helmet found from the Crags. Increases Barbarian 3rd strike. 5% Break chance upon repair",
+    "desc": "A rare helmet found from the Crags. Increases Barbarian 3rd strike by 10%. 5% Break chance upon repair",
     "revision": 0,
     "sprite": 1576,
     "sprite_color": {
@@ -30437,23 +30470,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!barbarian_alldamage_amount": "5",
+      "min_atk": 20,
+      "max_atk": 20,
+      "min_def": 15,
+      "max_def": 15,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 10,
+      "max_rdf": 15,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 10,
+      "max_mdf": 15,
       "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 20,
-      "max_def": 15,
-      "max_mat": 0,
-      "max_mdf": 15,
-      "max_rat": 0,
-      "max_rdf": 15,
-      "min_atk": 20,
-      "min_def": 15,
-      "min_mat": 0,
-      "min_mdf": 10,
-      "min_rat": 0,
-      "min_rdf": 10,
-      "damage_stat": 1,
-      "!barbarian_alldamage_amount": "5"
+      "damage_stat": 1
     }
   },
   {
@@ -32910,7 +32943,7 @@
   },
   {
     "name": "Bloodseekers Rune",
-    "desc": "Increases physical attack on an equipped item slot. [+5 Damage]",
+    "desc": "Increases physical attack on an equipped item slot. [+5 ATK]",
     "revision": 0,
     "sprite": 1226,
     "sprite_color": {
@@ -32943,7 +32976,7 @@
   },
   {
     "name": "Death Rune",
-    "desc": "Increases physical attack on an equipped item slot. [+1 to 7 Damage]",
+    "desc": "Increases physical attack on an equipped item slot. [+1 to 7 ATK]",
     "revision": 0,
     "sprite": 1227,
     "sprite_color": {
@@ -32976,7 +33009,7 @@
   },
   {
     "name": "Magi's Rune",
-    "desc": "Increases magic attack on an equipped item slot. [+3 Damage]",
+    "desc": "Increases magic attack on an equipped item slot. [+3 MAT]",
     "revision": 0,
     "sprite": 1226,
     "sprite_color": {
@@ -33009,7 +33042,7 @@
   },
   {
     "name": "Uruz Rune",
-    "desc": "Increases magic attack on an equipped item slot [+1 to 5 Damage]",
+    "desc": "Increases magic attack on an equipped item slot [+1 to 5 MAT]",
     "revision": 0,
     "sprite": 1225,
     "sprite_color": {
@@ -33086,7 +33119,7 @@
       "min_rat": 20,
       "min_rdf": 5,
       "damage_stat": 0,
-      "!necromancer_minion_hp": "10"
+      "!necromancer_minon_hp": "10"
     }
   },
   {
@@ -34245,7 +34278,7 @@
       "!cleric_playerheal_amount": "65",
       "!samurai_riposte_cooldown": "5",
       "!warlock_selfaoe_cooldown": "5",
-      "!necromancer_minion_cooldown": "5",
+      "!necromancer_minon_cooldown": "5",
       "!warlock_playeraoe_cooldown": "5"
     }
   },
@@ -39113,13 +39146,13 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 340,
+      "max_atk": 325,
       "max_def": 10,
       "max_mat": 0,
       "max_mdf": 10,
       "max_rat": 0,
       "max_rdf": 10,
-      "min_atk": 340,
+      "min_atk": 325,
       "min_def": 1,
       "min_mat": 0,
       "min_mdf": 10,
@@ -45179,7 +45212,7 @@
   },
   {
     "name": "Pilins Rune",
-    "desc": "Increases range attack on an equipped item slot [+3 Damage]",
+    "desc": "Increases range attack on an equipped item slot [+3 RAT]",
     "revision": 1,
     "sprite": 1224,
     "sprite_color": {
@@ -45212,7 +45245,7 @@
   },
   {
     "name": "Tyr Rune",
-    "desc": "Increases range attack on an equipped item slot [+1 to 5 Damage]",
+    "desc": "Increases range attack on an equipped item slot [+1 to 5 RAT]",
     "revision": 1,
     "sprite": 1224,
     "sprite_color": {
@@ -45344,7 +45377,7 @@
   },
   {
     "name": "Rune of Hardening",
-    "desc": "Increases physical defense on an equipped item slot [+3 Defense]",
+    "desc": "Increases physical defense on an equipped item slot [+3 DEF]",
     "revision": 1,
     "sprite": 2068,
     "sprite_color": {
@@ -45368,7 +45401,7 @@
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": 14,
-    "skill_level_req": 0,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45377,7 +45410,7 @@
   },
   {
     "name": "Rune of Arcane Shielding",
-    "desc": "Increases magic defense on an equipped item slot [+3 Defense]",
+    "desc": "Increases magic defense on an equipped item slot [+3 MDF]",
     "revision": 1,
     "sprite": 2068,
     "sprite_color": {
@@ -45401,7 +45434,7 @@
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": 14,
-    "skill_level_req": 0,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45410,7 +45443,7 @@
   },
   {
     "name": "Rune of Pierce Protection",
-    "desc": "Increases range defense on an equipped item slot [+3 Defense]",
+    "desc": "Increases range defense on an equipped item slot [+3 RDF]",
     "revision": 1,
     "sprite": 2068,
     "sprite_color": {
@@ -45433,8 +45466,8 @@
     "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 14,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -45443,7 +45476,7 @@
   },
   {
     "name": "Recipe: Rune of Hardening",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+3 DEF]",
     "revision": 1,
     "sprite": 379,
     "sprite_color": {
@@ -45520,7 +45553,7 @@
   },
   {
     "name": "Recipe: Rune of Arcane Shielding",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+3 MDF]",
     "revision": 0,
     "sprite": 379,
     "sprite_color": {
@@ -45597,7 +45630,7 @@
   },
   {
     "name": "Recipe: Rune of Pierce Protection",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+3 RDF]",
     "revision": 1,
     "sprite": 379,
     "sprite_color": {
@@ -45674,7 +45707,7 @@
   },
   {
     "name": "Recipe: Bloodseekers Rune",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+5 ATK]",
     "revision": 1,
     "sprite": 339,
     "sprite_color": {
@@ -45751,7 +45784,7 @@
   },
   {
     "name": "Recipe: Pilins Rune",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+3 RAT]",
     "revision": 1,
     "sprite": 340,
     "sprite_color": {
@@ -45828,7 +45861,7 @@
   },
   {
     "name": "Recipe: Magi's Rune",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+3 MAT]",
     "revision": 1,
     "sprite": 341,
     "sprite_color": {
@@ -45905,7 +45938,7 @@
   },
   {
     "name": "Recipe: Death Rune",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+1-7 ATK]",
     "revision": 1,
     "sprite": 380,
     "sprite_color": {
@@ -45933,9 +45966,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 772,
       "amount": 1,
       "chance": 100,
-      "item_id": 772,
       "recipe_items": [
         {
           "amount": 80,
@@ -45982,7 +46015,7 @@
   },
   {
     "name": "Recipe: Tyr Rune",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+1-5 RAT]",
     "revision": 1,
     "sprite": 380,
     "sprite_color": {
@@ -46010,9 +46043,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 1027,
       "amount": 1,
       "chance": 100,
-      "item_id": 1027,
       "recipe_items": [
         {
           "amount": 80,
@@ -46059,7 +46092,7 @@
   },
   {
     "name": "Recipe: Uruz Rune",
-    "desc": "Click to combine resources into a Rune.",
+    "desc": "Click to combine resources into a Rune. [+1-5 MAT]",
     "revision": 1,
     "sprite": 380,
     "sprite_color": {
@@ -46087,9 +46120,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "item_id": 774,
       "amount": 1,
       "chance": 100,
-      "item_id": 774,
       "recipe_items": [
         {
           "amount": 80,
@@ -52075,168 +52108,388 @@
     }
   },
   {
-    "name": "",
+    "name": "Timber Missions #1",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 13,
+    "uses": 5,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
+    "skill_id": 2,
+    "skill_level_req": 5,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 584,
+      "recipe_items": [
+        {
+          "amount": 1000,
+          "item_id": 290
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Timber Missions #2",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 13,
+    "uses": 5,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
+    "skill_id": 2,
+    "skill_level_req": 10,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 2,
+      "chance": 100,
+      "item_id": 584,
+      "recipe_items": [
+        {
+          "amount": 2000,
+          "item_id": 290
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Timber Missions #3",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 13,
+    "uses": 5,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
+    "skill_id": 2,
+    "skill_level_req": 15,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 3,
+      "chance": 100,
+      "item_id": 584,
+      "recipe_items": [
+        {
+          "amount": 3000,
+          "item_id": 290
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Timber Missions #4",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 13,
+    "uses": 5,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
+    "skill_id": 2,
+    "skill_level_req": 20,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 4,
+      "chance": 100,
+      "item_id": 584,
+      "recipe_items": [
+        {
+          "amount": 4000,
+          "item_id": 290
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Timber Missions #5",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 13,
+    "uses": 5,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
+    "skill_id": 2,
+    "skill_level_req": 25,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 5,
+      "chance": 100,
+      "item_id": 584,
+      "recipe_items": [
+        {
+          "amount": 5000,
+          "item_id": 290
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
