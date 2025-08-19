@@ -1065,40 +1065,35 @@
     console.warn("Chatbox not found!");
     return;
   }
-
   const chatObserver = new MutationObserver(mutations => {
   mutations.forEach(mutation => {
     mutation.addedNodes.forEach(node => {
       if (node.nodeType !== 1) return;
 
-      let msg = node.innerText;
-      if (!msg) return;
+      try {
+        let msg = node.innerText;
+        if (!msg) return;
 
-      // Strip timestamp "(14:18) "
-      msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
+        msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
 
-      // Get current player name
-      const nameInput = document.querySelector("#winStats input[name='txtName']");
-      const playerName = nameInput ? nameInput.value.trim() : "";
+        const nameInput = document.querySelector("#winStats input[name='txtName']");
+        const playerName = nameInput ? nameInput.value.trim() : "";
+        if (!playerName) return;
 
-      if (!playerName) return;
+        const highlightColor = qolSettings.highlightColor || "#ffff00";
 
-      // Get highlight color from settings
-      const highlightColor = qolSettings.highlightColor || "#ffff00";
+        const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
+        const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
 
-      // Check if message contains my name but is not my own message
-      const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
-      const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
-
-      if (mentionsMe && !isOwnMessage) {
-        // Escape any HTML in msg to prevent injection
-        const escapedMsg = msg.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-        // Replace only your name with a highlighted span
-        const regex = new RegExp(`(${playerName})`, "gi");
-        node.innerHTML = escapedMsg.replace(regex, `<span style="background-color:${highlightColor}; font-weight:bold;">$1</span>`);
-      } else {
-        node.innerHTML = msg; // keep original text, preserve colors
+        if (mentionsMe && !isOwnMessage) {
+          // Only set background safely
+          if (node.style) {
+            node.style.backgroundColor = highlightColor;
+            node.style.fontWeight = "bold";
+          }
+        }
+      } catch (e) {
+        console.warn("Safe chat highlight skipped:", e);
       }
     });
   });
