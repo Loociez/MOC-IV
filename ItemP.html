@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Item Class Viewer</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+  table { border-collapse: collapse; width: 100%; background: #fff; }
+  th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+  th { background: #eee; }
+</style>
+</head>
+<body>
+<h1>Item Class Viewer</h1>
+<input type="file" id="fileInput" accept=".json">
+<p>Select your <code>last.json</code> file to load items.</p>
+<table id="itemTable">
+  <thead>
+    <tr>
+      <th>Item Name</th>
+      <th>Classes</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+// Map bit positions to class names
+const classBits = {
+  0: "Samurai",
+  1: "Warlock",
+  2: "Cleric",
+  3: "Assassin",
+  4: "Barbarian",
+  5: "Marksman",
+  6: "Necromancer",
+  7: "Bard",
+  8: "Dragoon",
+  9: "Jester",
+  10: "Vampire"
+};
+
+// Correctly check a bit in a signed 32-bit number
+function isBitSet(flags, bit) {
+  // Convert to unsigned 32-bit to handle negative numbers
+  const uflags = flags >>> 0;
+  return (uflags & (1 << bit)) !== 0;
+}
+
+function getItemClasses(prof_req_flags) {
+  const itemClasses = [];
+  for (const bit in classBits) {
+    if (isBitSet(prof_req_flags, bit)) {
+      itemClasses.push(classBits[bit]);
+    }
+  }
+  return itemClasses.length > 0 ? itemClasses.join(', ') : "All Classes";
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      const data = JSON.parse(evt.target.result);
+      const tbody = document.querySelector("#itemTable tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(item => {
+        const tr = document.createElement("tr");
+        const tdName = document.createElement("td");
+        tdName.textContent = item.name;
+        const tdClasses = document.createElement("td");
+        tdClasses.textContent = getItemClasses(item.prof_req_flags);
+        tr.appendChild(tdName);
+        tr.appendChild(tdClasses);
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      alert("Error parsing JSON: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+</script>
+</body>
+</html>
