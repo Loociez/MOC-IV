@@ -252,9 +252,6 @@ if (item.level_req !== undefined) {
     nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
 }
 
-    nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
-}
-
 if (typeof item.sprite === 'number') {
     const SPRITE_SIZE = 32;
     const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
@@ -270,18 +267,18 @@ if (typeof item.sprite === 'number') {
 
     nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
 }
+
+
 nameCell.innerHTML = nameHTML;
-row.appendChild(nameCell);
 
-const descCell = document.createElement('td');
+            row.appendChild(nameCell);
+
+            const descCell = document.createElement('td');
 let descHTML = item.desc || 'No description';
-
-// Add profession requirements under description
 if (item.prof_req_flags !== undefined) {
     const classesText = getItemClasses(item.prof_req_flags);
     descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
 }
-
 descCell.innerHTML = descHTML;
 row.appendChild(descCell);
 
