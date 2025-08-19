@@ -289,7 +289,8 @@ row.appendChild(descCell);
             const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "brightness", "saturation", "damage stat"];
             const groupedStats = {};
             stats.forEach(([key, value]) => {
-                if (excludedKeys.includes(key.toLowerCase()) || key.startsWith('!')) return;
+                const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
+                if (excludedKeys.includes(normalizedKey) || key.startsWith('!')) return;
                 const match = key.match(/^(min|max)_(.+)$/);
                 if (match) {
                     const [, bound, statName] = match;
