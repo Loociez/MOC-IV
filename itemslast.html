@@ -286,7 +286,7 @@ row.appendChild(descCell);
             let stats = item.data ? Object.entries(item.data) : [];
             if (item.tile_range) stats.push(['tile range', item.tile_range]);
 
-            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite rotation", "brightness", "saturation", "damage stat"];
+            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
             const groupedStats = {};
             stats.forEach(([key, value]) => {
                 const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
