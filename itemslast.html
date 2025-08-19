@@ -252,10 +252,6 @@ if (item.level_req !== undefined) {
     nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
 }
 
-if (item.prof_req_flags !== undefined) {
-    const classesText = getItemClasses(item.prof_req_flags);
-    nameHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
-}
     nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
 }
 
@@ -281,7 +277,12 @@ nameCell.innerHTML = nameHTML;
             row.appendChild(nameCell);
 
             const descCell = document.createElement('td');
-            descCell.textContent = item.desc || 'No description';
+            let descHTML = item.desc || 'No description';
+if (item.prof_req_flags !== undefined) {
+    const classesText = getItemClasses(item.prof_req_flags);
+    descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
+}
+descCell.innerHTML = descHTML;
             row.appendChild(descCell);
 
             const dataCell = document.createElement('td');
