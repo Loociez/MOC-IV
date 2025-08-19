@@ -1067,37 +1067,43 @@
   }
 
   const chatObserver = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      mutation.addedNodes.forEach(node => {
-        if (node.nodeType !== 1) return;
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (node.nodeType !== 1) return;
 
-        let msg = node.innerText;
-        if (!msg) return;
+      let msg = node.innerText;
+      if (!msg) return;
 
-        // Strip timestamp "(14:18) "
-        msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
-        node.innerText = msg;
+      // Strip timestamp "(14:18) "
+      msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
 
-        // Get current player name
-        const nameInput = document.querySelector("#winStats input[name='txtName']");
-        const playerName = nameInput ? nameInput.value.trim() : "";
+      // Get current player name
+      const nameInput = document.querySelector("#winStats input[name='txtName']");
+      const playerName = nameInput ? nameInput.value.trim() : "";
 
-        if (!playerName) return;
+      if (!playerName) return;
 
-        // Get highlight color from settings
-        const highlightColor = qolSettings.highlightColor;
+      // Get highlight color from settings
+      const highlightColor = qolSettings.highlightColor || "#ffff00";
 
-        // Check if message contains my name but is not my own message
-        const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
-        const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
+      // Check if message contains my name but is not my own message
+      const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
+      const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
 
-        if (mentionsMe && !isOwnMessage) {
-          node.style.backgroundColor = highlightColor;
-          node.style.fontWeight = "bold";
-        }
-      });
+      if (mentionsMe && !isOwnMessage) {
+        // Escape any HTML in msg to prevent injection
+        const escapedMsg = msg.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        // Replace only your name with a highlighted span
+        const regex = new RegExp(`(${playerName})`, "gi");
+        node.innerHTML = escapedMsg.replace(regex, `<span style="background-color:${highlightColor}; font-weight:bold;">$1</span>`);
+      } else {
+        node.innerHTML = msg; // keep original text, preserve colors
+      }
     });
   });
+});
+
 
   chatObserver.observe(chatBox, { childList: true, subtree: true });
 
