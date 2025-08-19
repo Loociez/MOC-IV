@@ -429,7 +429,7 @@ function displayComparison(selectedItems) {
     const [item1, item2] = selectedItems;
     const stats1 = item1.data || {};
     const stats2 = item2.data || {};
-    const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin"];
+    const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin", "damage stat", "sprite rotation"];
 
     const row = document.createElement('tr');
     const nameCell = document.createElement('td');
