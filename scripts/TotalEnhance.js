@@ -1080,7 +1080,7 @@
         const playerName = nameInput ? nameInput.value.trim() : "";
         if (!playerName) return;
 
-        const highlightColor = qolSettings.highlightColor || "#ffff00";
+        const highlightColor = qolSettings.highlightColor || "#07175e";
 
         const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
         const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
@@ -1194,3 +1194,34 @@
 
   observer.observe(document.body, { childList: true, subtree: true });
 })();
+
+function colorShopItems() {
+    const shopSelect = document.querySelector("select[name='selInventory']");
+    if (!shopSelect) return;
+
+    for (let option of shopSelect.options) {
+        const text = option.text;
+
+        if (text.includes("Potion of Cavalier Health")) {
+            option.style.color = "red";
+        } else if (text.includes("Potion of Mana Restoration")) {
+            option.style.color = "blue";
+        } else if (text.includes("Potion of Restored Vivacity") || text.includes("Coffee")) {
+            option.style.color = "green";
+        } else if (text.includes("Currency Note") || text.includes("Tome of Revival")) {
+            option.style.color = "gold"; // yellow/gold for currency and tomes
+        } else {
+            option.style.color = ""; // default color for other items
+        }
+    }
+}
+
+// Apply colors initially
+colorShopItems();
+
+// Watch for changes to the shop select element
+const shopSelect = document.querySelector("select[name='selInventory']");
+if (shopSelect) {
+    const observer = new MutationObserver(colorShopItems);
+    observer.observe(shopSelect, { childList: true, subtree: true });
+}
