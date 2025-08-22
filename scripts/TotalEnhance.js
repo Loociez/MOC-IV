@@ -1225,3 +1225,77 @@ if (shopSelect) {
     const observer = new MutationObserver(colorShopItems);
     observer.observe(shopSelect, { childList: true, subtree: true });
 }
+
+//emoji start
+// Custom Emoji + GIF Module for Mirage Online Classic Chat
+(function() {
+    const emojiMap = {
+        ':moc:': 'https://loociez.github.io/MOC-IV/images/emoji/moc.png',
+        ':vibe:': 'https://loociez.github.io/MOC-IV/images/emoji/vibe.gif',
+        ':rick:': 'https://loociez.github.io/MOC-IV/images/emoji/rick.gif',
+        ':pain:': 'https://loociez.github.io/MOC-IV/images/emoji/pain.gif',
+        ':verycat:': 'https://loociez.github.io/MOC-IV/images/emoji/verycat.gif',
+        ':boohoo:': 'https://loociez.github.io/MOC-IV/images/emoji/boohoo.png',
+        ':kek:': 'https://loociez.github.io/MOC-IV/images/emoji/kek.png',
+		':swag:': 'https://loociez.github.io/MOC-IV/images/emoji/swag.gif',
+		':cry:': 'https://loociez.github.io/MOC-IV/images/emoji/cry.gif',
+		':sasuke:': 'https://loociez.github.io/MOC-IV/images/emoji/sasuke.gif',
+		':bruh:': 'https://loociez.github.io/MOC-IV/images/emoji/bruh.gif',
+		':jam:': 'https://loociez.github.io/MOC-IV/images/emoji/jam.gif',
+		':noway:': 'https://loociez.github.io/MOC-IV/images/emoji/noway.gif',
+        // Add more emojis/GIFs here
+     };
+
+    // Replace emoji codes in text
+    function replaceEmojis(text) {
+        return text.replace(/:\w+:/g, match => {
+            if (emojiMap[match]) {
+                return `<img src="${emojiMap[match]}" alt="${match}" style="width:2em;height:2em;vertical-align:middle;">`;
+            }
+            return match;
+        });
+    }
+
+    // Recursively replace text nodes safely
+    function replaceTextNodes(node) {
+        node.childNodes.forEach(child => {
+            if (child.nodeType === Node.TEXT_NODE) {
+                if (child.parentNode.dataset.emojiProcessed) return;
+                const span = document.createElement('span');
+                span.innerHTML = replaceEmojis(child.textContent);
+                span.dataset.emojiProcessed = "true";
+                child.replaceWith(span);
+            } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'IMG') {
+                replaceTextNodes(child);
+            }
+        });
+    }
+
+    // Initialize the observer
+    function initEmojiObserver() {
+        const chatContainer = document.querySelector('#txtChatbox');
+        if (!chatContainer) {
+            setTimeout(initEmojiObserver, 500);
+            return;
+        }
+
+        // Replace emojis in existing messages
+        replaceTextNodes(chatContainer);
+
+        // Observe new messages
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        replaceTextNodes(node);
+                    }
+                });
+            });
+        });
+
+        observer.observe(chatContainer, { childList: true, subtree: true });
+        console.log('Safe Custom emoji + GIF module loaded at 2x size!');
+    }
+
+    initEmojiObserver();
+})();
