@@ -1343,9 +1343,9 @@ if (shopSelect) {
                 cursor: 'pointer',
             });
 
-            // Apply gold trim to bottom row (last 5 slots)
+            // Apply green trim to bottom row (last 5 slots)
             if(index >= canvases.length - slotsPerRow){
-                c.style.border = '2px solid gold';
+                c.style.border = '2px solid green';
             }
 
             ['mouseenter','mouseleave','mousedown','mouseup'].forEach(evt => c.addEventListener(evt, () => {
