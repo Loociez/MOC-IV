@@ -1053,7 +1053,7 @@
     </div>
     <div>
       <label>Highlight Color:
-        <input type="color" name="highlightColor" value="#ffff00">
+        <input type="color" name="highlightColor" value=""#07175e">
       </label>
     </div>
   `;
