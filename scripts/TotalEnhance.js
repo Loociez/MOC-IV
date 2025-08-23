@@ -1158,7 +1158,7 @@
   // === Settings Listeners ===
   const qolSettings = {
     fontStyle: "",
-    highlightColor: "#ffff00",
+    highlightColor: "#07175e",
     fpsPosition: "top-right"
   };
 
