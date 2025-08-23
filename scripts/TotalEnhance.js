@@ -155,7 +155,7 @@
     function addBar(label, color, assignVars, tooltipCb) {
       const labelEl = document.createElement("div");
       labelEl.textContent = label;
-      labelEl.style.marginBottom = "4px";
+      labelEl.style.marginBottom = "3px";
       barsContainer.appendChild(labelEl);
       const { barBg, barFill, textSpan } = createBar(color, tooltipCb);
       assignVars.bar = barFill;
@@ -772,7 +772,7 @@
     totalBox.style.color = 'gold';
     totalBox.style.fontSize = '12px';
     totalBox.style.textAlign = 'right';
-    totalBox.style.marginTop = '3px';
+    totalBox.style.marginTop = '2px';
     selectEl.parentElement.appendChild(totalBox);
 
     input.value = persistentSettings[id].filter;
@@ -1298,4 +1298,144 @@ if (shopSelect) {
     }
 
     initEmojiObserver();
+})();
+
+// UI + Vitals
+(function() {
+    // --- Inventory ---
+    const inv = document.getElementById('winInventory');
+    if (inv) {
+        const slotsPerRow = 5;
+        const slotSize = 42;
+        const horizontalGap = 25;
+        const verticalGap = horizontalGap * 0.1; // ~2.5px
+
+        const baseWidth = (slotsPerRow * slotSize) + (horizontalGap * (slotsPerRow - 1));
+        const finalWidth = baseWidth * 1.15;
+
+        Object.assign(inv.style, {
+            display: 'grid',
+            gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
+            gridAutoRows: `${slotSize}px`,
+            columnGap: `${horizontalGap}px`,
+            rowGap: `${verticalGap}px`,
+            padding: '1px 6px 6px 6px',
+            background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
+            border: '2px solid #444',
+            borderRadius: '8px',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+            width: `${finalWidth}px`,
+            margin: '0 auto 10px auto',
+            overflow: 'visible',
+            boxSizing: 'border-box',
+        });
+
+        const canvases = Array.from(inv.querySelectorAll('canvas'));
+        canvases.forEach((c, index) => {
+            Object.assign(c.style, {
+                width: `${slotSize - 3}px`,
+                height: `${slotSize - 3}px`,
+                border: '1px solid #666',
+                borderRadius: '4px',
+                background: '#222',
+                boxShadow: 'inset 0 0 3px rgba(255,255,255,0.1)',
+                transition: 'transform 0.15s, box-shadow 0.15s',
+                cursor: 'pointer',
+            });
+
+            // Apply gold trim to bottom row (last 5 slots)
+            if(index >= canvases.length - slotsPerRow){
+                c.style.border = '2px solid gold';
+            }
+
+            ['mouseenter','mouseleave','mousedown','mouseup'].forEach(evt => c.addEventListener(evt, () => {
+                if(evt==='mouseenter'){c.style.transform='scale(1.1)'; c.style.boxShadow='0 0 6px rgba(255,255,255,0.6)';}
+                if(evt==='mouseleave'){c.style.transform='scale(1)'; c.style.boxShadow='inset 0 0 3px rgba(255,255,255,0.1)';}
+                if(evt==='mousedown'){c.style.transform='scale(1.2)'; c.style.boxShadow='0 0 10px rgba(255,255,255,0.8)';}
+                if(evt==='mouseup'){c.style.transform='scale(1.1)'; c.style.boxShadow='0 0 6px rgba(255,255,255,0.6)';}
+            }));
+        });
+    }
+
+    // --- Vitals ---
+    const vitals = document.getElementById('winVitals');
+    if (vitals) {
+        Object.assign(vitals.style, {
+            display: 'grid',
+            gridTemplateColumns: '50px 1fr',
+            gridAutoRows: '1.3rem',
+            gap: '4px 6px',
+            padding: '2px 6px',
+            background: 'linear-gradient(145deg, #1a1a1a, #2e2e2e)',
+            border: '2px solid #555',
+            borderRadius: '6px',
+            boxShadow: '0 3px 6px rgba(0,0,0,0.4)',
+            color: '#fff',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '0.8rem',
+            margin: '0 auto 6px auto',
+            width: '240px',
+            boxSizing: 'border-box',
+        });
+
+        const barColors = {
+            barHP: '#ff4c4c',
+            barMP: '#4c6cff',
+            barSP: '#4cff4c',
+            barXP: '#ffcd4c',
+            barTP: '#b84cff'
+        };
+
+        function updateBar(id) {
+            const bar = document.getElementById(id);
+            const txt = document.getElementById('txt'+id.slice(3));
+            if (!bar || !txt) return;
+
+            // Hide original text
+            txt.style.display = 'none';
+
+            const match = txt.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+            if(!match) return;
+
+            const current = parseInt(match[1]);
+            const max = parseInt(match[2]);
+            const pct = Math.min(100, Math.round(current / max * 100));
+
+            // Bar background (filled portion)
+            bar.style.background = barColors[id];
+            bar.style.borderRadius = '4px';
+            bar.style.height = '1.3rem';
+            bar.style.display = 'flex';
+            bar.style.alignItems = 'center';
+            bar.style.justifyContent = 'center';
+            bar.style.fontWeight = 'bold';
+            bar.style.fontSize = '0.75rem';
+            bar.style.color = '#fff';
+            bar.style.boxSizing = 'border-box';
+            bar.style.padding = '0 2px';
+
+            // Show text across the full bar width
+            let content = `${current} / ${max}`;
+            if(id==='barXP'){
+                const xpPct = txt.textContent.match(/\(([\d.]+)%\)/);
+                if(xpPct) content = `${current} / ${max} (${xpPct[1]}%)`;
+            }
+            bar.textContent = content;
+
+            // Set filled portion width
+            bar.style.width = '100%';
+            bar.style.backgroundImage = `linear-gradient(to right, ${barColors[id]} ${pct}%, #555 ${pct}%)`;
+        }
+
+        ['barHP','barMP','barSP','barXP','barTP'].forEach(updateBar);
+
+        ['txtHP','txtMP','txtSP','txtXP','txtTP'].forEach(txtId => {
+            const txtNode = document.getElementById(txtId);
+            if(!txtNode) return;
+            const observer = new MutationObserver(() => updateBar('bar'+txtId.slice(3)));
+            observer.observe(txtNode, { characterData: true, subtree: true, childList: true });
+        });
+    }
+
+    console.log('Inventory and vitals initialized with live updating bars, bottom row gold trim applied.');
 })();
