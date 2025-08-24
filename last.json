@@ -2204,6 +2204,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -2992,6 +2995,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -5451,7 +5457,7 @@
       "min_rat": 8,
       "min_rdf": 10,
       "damage_stat": 1,
-      "!necromancer_minion_cost": "10"
+      "!necromancer_minon_cost": "10"
     }
   },
   {
@@ -9339,7 +9345,7 @@
   },
   {
     "name": "Rock Smasher",
-    "desc": "Used to mine only rocks; Equip and press the attack key while facing tiles that can be mined",
+    "desc": "Equip and press the attack key while facing rocks to prospect minerals",
     "revision": 0,
     "sprite": 676,
     "sprite_color": {
@@ -9367,29 +9373,29 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 0,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
       "damage_stat": 0
     }
   },
   {
     "name": "Specialized Edge",
-    "desc": "Used to extract nuts from trees;  Equip and press the attack key while facing trees to collect nuts",
+    "desc": "Equip and press the attack key while facing trees to collect timber ",
     "revision": 0,
-    "sprite": 1506,
+    "sprite": 1499,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -9415,27 +9421,27 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
       "damage_stat": 0
     }
   },
   {
     "name": "Crappie-o-matic 2500",
-    "desc": "Used to catch crappies;  25% bait retention;  Equip and press the attack key while facing water to catch fish",
+    "desc": "Equip and press the attack key while facing water to catch fish",
     "revision": 0,
     "sprite": 998,
     "sprite_color": {
@@ -9463,6 +9469,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -9697,7 +9706,7 @@
       "two_handed": false,
       "damage_stat": 4,
       "sprite_rotation": 0,
-      "!necromancer_minion_hp": "10",
+      "!necromancer_minon_hp": "10",
       "!warlock_npcaoe_damage": "10",
       "!cleric_allheal_cooldown": "10",
       "!warlock_playeraoe_damage": "10",
@@ -11551,6 +11560,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -11701,6 +11713,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -11760,7 +11775,7 @@
   },
   {
     "name": "Miner's Pick",
-    "desc": "Equip and press the attack key while facing rocks to collect ore",
+    "desc": "Equip and press the attack key while facing rocks to prospect minerals",
     "revision": 0,
     "sprite": 674,
     "sprite_color": {
@@ -11788,24 +11803,27 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
       "min_atk": 0,
+      "max_atk": 0,
       "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
+      "max_def": 0,
       "min_rat": 0,
+      "max_rat": 0,
       "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "damage_stat": 0
     }
   },
   {
     "name": "Beginner's Pick",
-    "desc": "Equip and press the attack key while facing rocks to collect ore",
+    "desc": "Equip and press the attack key while facing rocks to prospect minerals",
     "revision": 0,
     "sprite": 37,
     "sprite_color": {
@@ -11833,18 +11851,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
       "min_atk": 0,
+      "max_atk": 0,
       "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
+      "max_def": 0,
       "min_rat": 0,
+      "max_rat": 0,
       "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "damage_stat": 0
     }
   },
@@ -11883,7 +11904,7 @@
   },
   {
     "name": "Mattock",
-    "desc": "Equip and press the attack key while facing rocks to collect ore",
+    "desc": "Equip and press the attack key while facing rocks to prospect minerals",
     "revision": 0,
     "sprite": 37,
     "sprite_color": {
@@ -11911,18 +11932,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
       "min_atk": 0,
+      "max_atk": 0,
       "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
+      "max_def": 0,
       "min_rat": 0,
+      "max_rat": 0,
       "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "damage_stat": 0
     }
   },
@@ -11956,6 +11980,9 @@
     "death_drop": false,
     "transferable": true,
     "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "max_atk": 0,
       "max_def": 0,
       "max_mat": 0,
@@ -19604,7 +19631,7 @@
   },
   {
     "name": "Specter's Blade",
-    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minion damage & HP. 5% Break chance upon repair",
+    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minon damage & HP. 5% Break chance upon repair",
     "revision": 1,
     "sprite": 1186,
     "sprite_color": {
@@ -30318,23 +30345,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!barbarian_alldamage_amount": "10",
-      "min_atk": 15,
-      "max_atk": 15,
-      "min_def": 15,
-      "max_def": 20,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 15,
-      "max_rdf": 20,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 15,
-      "max_mdf": 20,
       "max_hp": 150,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 1
+      "max_atk": 15,
+      "max_def": 20,
+      "max_mat": 0,
+      "max_mdf": 20,
+      "max_rat": 0,
+      "max_rdf": 20,
+      "min_atk": 15,
+      "min_def": 15,
+      "min_mat": 0,
+      "min_mdf": 15,
+      "min_rat": 0,
+      "min_rdf": 15,
+      "damage_stat": 1,
+      "!barbarian_alldamage_amount": "10"
     }
   },
   {
@@ -30470,23 +30497,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!barbarian_alldamage_amount": "5",
-      "min_atk": 20,
-      "max_atk": 20,
-      "min_def": 15,
-      "max_def": 15,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 10,
-      "max_rdf": 15,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 10,
-      "max_mdf": 15,
       "max_hp": 300,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 1
+      "max_atk": 20,
+      "max_def": 15,
+      "max_mat": 0,
+      "max_mdf": 15,
+      "max_rat": 0,
+      "max_rdf": 15,
+      "min_atk": 20,
+      "min_def": 15,
+      "min_mat": 0,
+      "min_mdf": 10,
+      "min_rat": 0,
+      "min_rdf": 10,
+      "damage_stat": 1,
+      "!barbarian_alldamage_amount": "5"
     }
   },
   {
@@ -33119,7 +33146,7 @@
       "min_rat": 20,
       "min_rdf": 5,
       "damage_stat": 0,
-      "!necromancer_minion_hp": "10"
+      "!necromancer_minon_hp": "10"
     }
   },
   {
@@ -34278,7 +34305,7 @@
       "!cleric_playerheal_amount": "65",
       "!samurai_riposte_cooldown": "5",
       "!warlock_selfaoe_cooldown": "5",
-      "!necromancer_minion_cooldown": "5",
+      "!necromancer_minon_cooldown": "5",
       "!warlock_playeraoe_cooldown": "5"
     }
   },
@@ -45966,9 +45993,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 772,
       "amount": 1,
       "chance": 100,
+      "item_id": 772,
       "recipe_items": [
         {
           "amount": 80,
@@ -46043,9 +46070,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 1027,
       "amount": 1,
       "chance": 100,
+      "item_id": 1027,
       "recipe_items": [
         {
           "amount": 80,
@@ -46120,9 +46147,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 774,
       "amount": 1,
       "chance": 100,
+      "item_id": 774,
       "recipe_items": [
         {
           "amount": 80,
@@ -62228,21 +62255,21 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "+500 Max HP Flask",
+    "desc": "Increases Max HP by 500 for 30 minutes",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2516,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.6,
+    "color": "#FFA500",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 6,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -62254,10 +62281,12 @@
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "hp": 0,
+      "mp": 0,
+      "sp": 0
     }
   },
   {
