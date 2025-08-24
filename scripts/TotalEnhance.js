@@ -1227,7 +1227,6 @@ if (shopSelect) {
 }
 
 //emoji start
-// Custom Emoji + GIF Module for Mirage Online Classic Chat
 (function() {
     const emojiMap = {
         ':moc:': 'https://loociez.github.io/MOC-IV/images/emoji/moc.png',
@@ -1237,41 +1236,46 @@ if (shopSelect) {
         ':verycat:': 'https://loociez.github.io/MOC-IV/images/emoji/verycat.gif',
         ':boohoo:': 'https://loociez.github.io/MOC-IV/images/emoji/boohoo.png',
         ':kek:': 'https://loociez.github.io/MOC-IV/images/emoji/kek.png',
-		':swag:': 'https://loociez.github.io/MOC-IV/images/emoji/swag.gif',
-		':cry:': 'https://loociez.github.io/MOC-IV/images/emoji/cry.gif',
-		':sasuke:': 'https://loociez.github.io/MOC-IV/images/emoji/sasuke.gif',
-		':bruh:': 'https://loociez.github.io/MOC-IV/images/emoji/bruh.gif',
-		':jam:': 'https://loociez.github.io/MOC-IV/images/emoji/jam.gif',
-		':noway:': 'https://loociez.github.io/MOC-IV/images/emoji/noway.gif',
-        // Add more emojis/GIFs here
-     };
+        ':swag:': 'https://loociez.github.io/MOC-IV/images/emoji/swag.gif',
+        ':cry:': 'https://loociez.github.io/MOC-IV/images/emoji/cry.gif',
+        ':sasuke:': 'https://loociez.github.io/MOC-IV/images/emoji/sasuke.gif',
+        ':bruh:': 'https://loociez.github.io/MOC-IV/images/emoji/bruh.gif',
+        ':jam:': 'https://loociez.github.io/MOC-IV/images/emoji/jam.gif',
+        ':noway:': 'https://loociez.github.io/MOC-IV/images/emoji/noway.gif',
+    };
 
-    // Replace emoji codes in text
     function replaceEmojis(text) {
         return text.replace(/:\w+:/g, match => {
-            if (emojiMap[match]) {
-                return `<img src="${emojiMap[match]}" alt="${match}" style="width:2em;height:2em;vertical-align:middle;">`;
+            const src = emojiMap[match];
+            if (src) {
+                return `<img src="${src}" alt="${match}" style="width:2em;height:2em;vertical-align:middle;">`;
             }
             return match;
         });
     }
 
-    // Recursively replace text nodes safely
-    function replaceTextNodes(node) {
-        node.childNodes.forEach(child => {
-            if (child.nodeType === Node.TEXT_NODE) {
-                if (child.parentNode.dataset.emojiProcessed) return;
-                const span = document.createElement('span');
-                span.innerHTML = replaceEmojis(child.textContent);
-                span.dataset.emojiProcessed = "true";
-                child.replaceWith(span);
-            } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'IMG') {
-                replaceTextNodes(child);
+    function processNode(node, chatContainer, wasAtBottom) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            node.innerHTML = replaceEmojis(node.innerHTML);
+
+            // If user was already at bottom, make sure to scroll again after images load
+            if (wasAtBottom) {
+                const imgs = node.querySelectorAll('img');
+                imgs.forEach(img => {
+                    if (!img.complete) {
+                        img.addEventListener('load', () => {
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        }, { once: true });
+                    }
+                });
             }
-        });
+        }
     }
 
-    // Initialize the observer
+    function isNearBottom(container, pad = 10) {
+        return container.scrollHeight - container.scrollTop <= container.clientHeight + pad;
+    }
+
     function initEmojiObserver() {
         const chatContainer = document.querySelector('#txtChatbox');
         if (!chatContainer) {
@@ -1279,26 +1283,29 @@ if (shopSelect) {
             return;
         }
 
-        // Replace emojis in existing messages
-        replaceTextNodes(chatContainer);
-
-        // Observe new messages
         const observer = new MutationObserver(mutations => {
+            const wasAtBottom = isNearBottom(chatContainer);
+
             mutations.forEach(mutation => {
-                mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        replaceTextNodes(node);
-                    }
-                });
+                mutation.addedNodes.forEach(node => processNode(node, chatContainer, wasAtBottom));
             });
+
+            if (wasAtBottom) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
         });
 
-        observer.observe(chatContainer, { childList: true, subtree: true });
-        console.log('Safe Custom emoji + GIF module loaded at 2x size!');
+        observer.observe(chatContainer, { childList: true });
+
+        console.log('Emoji module with smart autoscroll + image fix loaded.');
     }
 
     initEmojiObserver();
 })();
+
+
+
+
 
 // UI + Vitals
 (function() {
@@ -1374,7 +1381,7 @@ if (shopSelect) {
             fontFamily: 'Arial, sans-serif',
             fontSize: '0.8rem',
             margin: '0 auto 6px auto',
-            width: '240px',
+            width: '360px',
             boxSizing: 'border-box',
         });
 
