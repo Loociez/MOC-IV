@@ -1446,3 +1446,100 @@ if (shopSelect) {
 
     console.log('Inventory and vitals initialized with live updating bars, bottom row gold trim applied.');
 })();
+
+//Potion mate
+(function() {
+    const inv = document.getElementById("winInventory");
+    if (!inv) return;
+
+    // Create container for buttons + heading
+    const btnContainer = document.createElement("div");
+    btnContainer.style.position = "absolute";
+    btnContainer.style.display = "flex";
+    btnContainer.style.flexDirection = "column";
+    btnContainer.style.alignItems = "center"; // center heading over buttons
+    btnContainer.style.gap = "6px";
+    btnContainer.style.zIndex = "9999";
+
+    document.body.appendChild(btnContainer);
+
+    // Add heading (potion emoji)
+    const heading = document.createElement("div");
+    heading.textContent = "🧪"; // can replace with "❤🧪" if you prefer
+    heading.style.fontSize = "20px";
+    heading.style.color = "#fff";
+    btnContainer.appendChild(heading);
+
+    // Utility function: simulate click by searching button text/title
+    function clickButtonByText(text) {
+        const btn = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === text);
+        if (btn) btn.click();
+    }
+    function clickButtonByTitle(title) {
+        const btn = [...document.querySelectorAll("button")].find(b => b.title === title);
+        if (btn) btn.click();
+    }
+
+    function runSequence(mode) {
+        // 1. Open Stats
+        clickButtonByTitle("Statistics");
+
+        setTimeout(() => {
+            // 2. Customize
+            clickButtonByText("Customize");
+
+            setTimeout(() => {
+                // 3. Potion
+                clickButtonByText("Potion");
+
+                setTimeout(() => {
+                    // 4. Select mode: Off, 50%, 75%
+                    if (mode === "off") {
+                        clickButtonByText("Off");
+                    } else if (mode === "50") {
+                        clickButtonByText("50%");
+                    } else {
+                        clickButtonByText("75%");
+                    }
+
+                    setTimeout(() => {
+                        // 5. Back
+                        clickButtonByTitle("Back");
+                    }, 300);
+                }, 300);
+            }, 300);
+        }, 300);
+    }
+
+    // Create buttons
+    const buttonsData = [
+        {text: "0%", mode: "off"},
+        {text: "50%", mode: "50"},
+        {text: "75%", mode: "75"}
+    ];
+
+    buttonsData.forEach(data => {
+        const btn = document.createElement("button");
+        btn.textContent = data.text;
+        btn.style.padding = "6px 10px";
+        btn.style.background = "#222";
+        btn.style.color = "#fff";
+        btn.style.border = "1px solid #666";
+        btn.style.borderRadius = "6px";
+        btn.style.cursor = "pointer";
+        btn.onclick = () => runSequence(data.mode);
+        btnContainer.appendChild(btn);
+    });
+
+    // Function to update position dynamically
+    function updatePosition() {
+        const rect = inv.getBoundingClientRect();
+        // Position buttons container at the right edge of inventory
+        btnContainer.style.top = window.scrollY + rect.top + "px";
+        btnContainer.style.left = window.scrollX + rect.left + rect.width * 1.0 + "px";
+
+        requestAnimationFrame(updatePosition); // keep updating every frame
+    }
+
+    updatePosition();
+})();
