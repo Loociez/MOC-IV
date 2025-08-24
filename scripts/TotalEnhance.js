@@ -1447,30 +1447,72 @@ if (shopSelect) {
     console.log('Inventory and vitals initialized with live updating bars, bottom row gold trim applied.');
 })();
 
-//Potion mate
 (function() {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
 
-    // Create container for buttons + heading
-    const btnContainer = document.createElement("div");
-    btnContainer.style.position = "absolute";
-    btnContainer.style.display = "flex";
-    btnContainer.style.flexDirection = "column";
-    btnContainer.style.alignItems = "center"; // center heading over buttons
-    btnContainer.style.gap = "6px";
-    btnContainer.style.zIndex = "9999";
+    // Create container for everything
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.alignItems = "center";
+    container.style.gap = "6px"; // gap between buttons and headings
+    container.style.zIndex = "9999";
+    document.body.appendChild(container);
 
-    document.body.appendChild(btnContainer);
+    // --- Potion Section ---
+    const potionHeading = document.createElement("div");
+    potionHeading.textContent = "🧪"; // potion emoji
+    potionHeading.style.fontSize = "20px";
+    potionHeading.style.color = "#fff";
+    container.appendChild(potionHeading);
 
-    // Add heading (potion emoji)
-    const heading = document.createElement("div");
-    heading.textContent = "🧪"; // can replace with "❤🧪" if you prefer
-    heading.style.fontSize = "20px";
-    heading.style.color = "#fff";
-    btnContainer.appendChild(heading);
+    const potionButtonsData = [
+        {text: "0%", mode: "off"},
+        {text: "50%", mode: "50"},
+        {text: "75%", mode: "75"}
+    ];
 
-    // Utility function: simulate click by searching button text/title
+    const potionButtons = [];
+    potionButtonsData.forEach(data => {
+        const btn = document.createElement("button");
+        btn.textContent = data.text;
+        btn.style.padding = "6px 10px";
+        btn.style.background = "#222";
+        btn.style.color = "#fff";
+        btn.style.border = "1px solid #666";
+        btn.style.borderRadius = "6px";
+        btn.style.cursor = "pointer";
+        btn.onclick = () => runPotionSequence(data.mode);
+        container.appendChild(btn);
+        potionButtons.push(btn);
+    });
+
+    // --- Gap before Treasure Section ---
+    const sectionGap = document.createElement("div");
+    sectionGap.style.height = "10px"; // small gap
+    container.appendChild(sectionGap);
+
+    // --- Treasure Section ---
+    const treasureHeading = document.createElement("div");
+    treasureHeading.textContent = "💰"; // treasure chest emoji
+    treasureHeading.style.fontSize = "20px";
+    treasureHeading.style.color = "#fff";
+    container.appendChild(treasureHeading);
+
+    const claimBtn = document.createElement("button");
+    claimBtn.textContent = "Claim";
+    claimBtn.style.padding = "6px 10px";
+    claimBtn.style.background = "#222";
+    claimBtn.style.color = "#fff";
+    claimBtn.style.border = "1px solid #666";
+    claimBtn.style.borderRadius = "6px";
+    claimBtn.style.cursor = "pointer";
+    claimBtn.onclick = runClaimSequence;
+    container.appendChild(claimBtn);
+
+    // --- Utility Functions ---
     function clickButtonByText(text) {
         const btn = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === text);
         if (btn) btn.click();
@@ -1480,30 +1522,18 @@ if (shopSelect) {
         if (btn) btn.click();
     }
 
-    function runSequence(mode) {
-        // 1. Open Stats
+    // --- Potion Sequence ---
+    function runPotionSequence(mode) {
         clickButtonByTitle("Statistics");
-
         setTimeout(() => {
-            // 2. Customize
             clickButtonByText("Customize");
-
             setTimeout(() => {
-                // 3. Potion
                 clickButtonByText("Potion");
-
                 setTimeout(() => {
-                    // 4. Select mode: Off, 50%, 75%
-                    if (mode === "off") {
-                        clickButtonByText("Off");
-                    } else if (mode === "50") {
-                        clickButtonByText("50%");
-                    } else {
-                        clickButtonByText("75%");
-                    }
-
+                    if (mode === "off") clickButtonByText("Off");
+                    else if (mode === "50") clickButtonByText("50%");
+                    else clickButtonByText("75%");
                     setTimeout(() => {
-                        // 5. Back
                         clickButtonByTitle("Back");
                     }, 300);
                 }, 300);
@@ -1511,35 +1541,26 @@ if (shopSelect) {
         }, 300);
     }
 
-    // Create buttons
-    const buttonsData = [
-        {text: "0%", mode: "off"},
-        {text: "50%", mode: "50"},
-        {text: "75%", mode: "75"}
-    ];
+    // --- Claim Sequence ---
+    function runClaimSequence() {
+        clickButtonByTitle("Dungeons"); // Open Dungeons
+        setTimeout(() => {
+            clickButtonByText("Adventurer"); // Open Adventurer
+            setTimeout(() => {
+                clickButtonByText("Claim Daily Reward"); // Claim reward
+            }, 300);
+        }, 300);
+    }
 
-    buttonsData.forEach(data => {
-        const btn = document.createElement("button");
-        btn.textContent = data.text;
-        btn.style.padding = "6px 10px";
-        btn.style.background = "#222";
-        btn.style.color = "#fff";
-        btn.style.border = "1px solid #666";
-        btn.style.borderRadius = "6px";
-        btn.style.cursor = "pointer";
-        btn.onclick = () => runSequence(data.mode);
-        btnContainer.appendChild(btn);
-    });
-
-    // Function to update position dynamically
+    // --- Dynamic Positioning ---
     function updatePosition() {
         const rect = inv.getBoundingClientRect();
-        // Position buttons container at the right edge of inventory
-        btnContainer.style.top = window.scrollY + rect.top + "px";
-        btnContainer.style.left = window.scrollX + rect.left + rect.width * 1.0 + "px";
-
-        requestAnimationFrame(updatePosition); // keep updating every frame
+        // Buttons stacked at right edge
+        container.style.top = window.scrollY + rect.top + "px";
+        container.style.left = window.scrollX + rect.left + rect.width * 1.0 + "px";
+        requestAnimationFrame(updatePosition);
     }
 
     updatePosition();
 })();
+
