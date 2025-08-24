@@ -1060,6 +1060,15 @@
         <input type="color" name="slotColor" value="#00ff00">
       </label>
     </div>
+    <hr style="opacity:.3;margin:6px 0;">
+    <div>
+      <label><input type="checkbox" name="chkSparkles" checked> Enable Sparkle Effect</label>
+    </div>
+    <div>
+      <label>Sparkle Color:
+        <input type="color" name="sparkleColor" value="#ffd700">
+      </label>
+    </div>
   `;
   insertTarget.appendChild(qolContainer);
 
@@ -1068,7 +1077,9 @@
     highlightEnabled: true,
     highlightColor: "#07175e",
     slotColor: "#00ff00",
-    fpsPosition: "top-right"
+    fpsPosition: "top-right",
+    sparklesEnabled: true,
+    sparkleColor: "#ffd700"
   };
 
   // --- Chat Highlight ---
@@ -1108,19 +1119,42 @@
     });
   }
 
+  // --- Sparkles wiring → call InvGlow API ---
+  function applySparkleSettings() {
+    if (window.InvGlow) {
+      window.InvGlow.setEnabled(qolSettings.sparklesEnabled);
+      window.InvGlow.setColor(qolSettings.sparkleColor);
+    }
+  }
+
   // --- Listeners ---
   settingsForm.querySelector("input[name='chkHighlightToggle']")
-    .addEventListener("change", e => qolSettings.highlightEnabled = e.target.checked);
+    .addEventListener("change", e => { qolSettings.highlightEnabled = e.target.checked; });
 
   settingsForm.querySelector("input[name='highlightColor']")
-    .addEventListener("input", e => qolSettings.highlightColor = e.target.value);
+    .addEventListener("input", e => { qolSettings.highlightColor = e.target.value; });
 
   settingsForm.querySelector("input[name='slotColor']")
     .addEventListener("input", e => { qolSettings.slotColor = e.target.value; updateSlotColors(); });
 
+  settingsForm.querySelector("input[name='chkSparkles']")
+    .addEventListener("change", e => {
+      qolSettings.sparklesEnabled = e.target.checked;
+      applySparkleSettings();
+    });
+
+  settingsForm.querySelector("input[name='sparkleColor']")
+    .addEventListener("input", e => {
+      qolSettings.sparkleColor = e.target.value;
+      applySparkleSettings();
+    });
+
   // Initial apply
   updateSlotColors();
+  applySparkleSettings();
 })();
+
+
 
   observer.observe(document.body, { childList: true, subtree: true });
 })();
@@ -1499,56 +1533,98 @@ if (shopSelect) {
     updatePosition();
 })();
 // New item Sparkle
+// === InvGlow (Sparkles) — settings-aware ===
 const INV_GLOW_CONFIG = {
-  pollMs: 700,     // how often to check canvases
-  glowMs: 2000,    // how long the sparkle animation lasts
-  debug: false,    // set true for console logs
+  pollMs: 700,           // how often to check canvases
+  glowMs: 2000,          // how long the sparkle elements live
+  debug: false,          // set true for console logs
   selector: "#winInventory",
-  sparkleCount: 6, // number of sparkles per slot
+  sparkleCount: 6        // number of sparkles per event
 };
 
 (function () {
+  // ---- Internal state + public API (must exist even if inventory not found) ----
+  const state = {
+    enabled: true,
+    color: "#ffd700" // default gold
+  };
+
+  function log(...a){ if (INV_GLOW_CONFIG.debug) console.log("[InvGlow]", ...a); }
+
+  function hexToRgb(hex) {
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!m) return null;
+    return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
+  }
+
+  function makeGradient(hex) {
+    const rgb = hexToRgb(hex) || { r: 255, g: 215, b: 0 };
+    // soft center → fade to transparent
+    return `radial-gradient(circle, rgba(${rgb.r},${rgb.g},${rgb.b},1) 0%, rgba(${rgb.r},${rgb.g},${rgb.b},0.85) 50%, rgba(${rgb.r},${rgb.g},${rgb.b},0) 100%)`;
+  }
+
+  function cleanup(invEl) {
+    const root = invEl || document;
+    root.querySelectorAll(".inv-sparkle").forEach(n => n.remove());
+    root.querySelectorAll(".inv-pop").forEach(n => n.classList.remove("inv-pop"));
+  }
+
+  // Public control API
+  window.InvGlow = {
+    setEnabled(on) {
+      state.enabled = !!on;
+      if (!on) cleanup(document);
+      log("enabled:", state.enabled);
+    },
+    setColor(col) {
+      if (typeof col === "string" && col.trim()) state.color = col.trim();
+      log("color:", state.color);
+    },
+    get enabled(){ return state.enabled; },
+    get color(){ return state.color; },
+    stop() {
+      try { clearInterval(intervalId); } catch {}
+      try { mo && mo.disconnect(); } catch {}
+      cleanup(document);
+      console.log("[InvGlow] stopped");
+    }
+  };
+  // Back-compat alias if you were calling InvGlowStop()
+  window.InvGlowStop = () => window.InvGlow.stop();
+
+  // ---- Inventory hookup ----
   const inv = document.querySelector(INV_GLOW_CONFIG.selector);
   if (!inv) {
     console.warn("[InvGlow] Inventory not found:", INV_GLOW_CONFIG.selector);
-    return;
+    return; // API still available for later toggles
   }
 
-  // --- Styles for sparkles ---
+  // Styles (color comes from JS per-element)
   const style = document.createElement("style");
   style.textContent = `
     .inv-sparkle {
       position: absolute;
       width: 6px;
       height: 6px;
-      background: radial-gradient(circle, rgba(255,255,200,1) 0%, rgba(255,215,0,0.8) 50%, rgba(255,215,0,0) 100%);
       border-radius: 50%;
       pointer-events: none;
-      animation: sparkleRise 0.8s forwards;
+      animation: invSparkleRise 0.8s forwards;
       opacity: 0;
     }
-
-    @keyframes sparkleRise {
-      0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
-      50% { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 1; }
+    @keyframes invSparkleRise {
+      0%   { transform: translate(0, 0) scale(0.5); opacity: 1; }
+      50%  { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
     }
-
-    .inv-pop {
-      animation: popScale 0.3s ease-out;
-    }
-
-    @keyframes popScale {
+    .inv-pop { animation: invPopScale 0.3s ease-out; }
+    @keyframes invPopScale {
       0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
+      50% { transform: scale(1.25); }
       100% { transform: scale(1); }
     }
-
     .inv-slot-wrapper { position: relative !important; }
   `;
   document.head.appendChild(style);
-
-  const log = (...a) => INV_GLOW_CONFIG.debug && console.log("[InvGlow]", ...a);
 
   const slotState = new WeakMap();
 
@@ -1561,51 +1637,51 @@ const INV_GLOW_CONFIG = {
       const data = ctx.getImageData(0, 0, width, height).data;
       let h = 2166136261 >>> 0;
       for (let i = 0; i < data.length; i += 16) {
-        h ^= data[i];
-        h = Math.imul(h, 16777619);
+        h ^= data[i]; h = Math.imul(h, 16777619);
       }
       return h >>> 0;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   }
 
   function sparkle(wrapper) {
-    // Ensure wrapper is relative
-    wrapper.classList.add("inv-slot-wrapper");
+    if (!state.enabled) return;
+    if (!wrapper) return;
 
     const canvas = wrapper.querySelector("canvas");
     if (!canvas) return;
 
-    // Pop animation
+    wrapper.classList.add("inv-slot-wrapper");
+
+    // Pop the item briefly
     canvas.classList.add("inv-pop");
     setTimeout(() => canvas.classList.remove("inv-pop"), 300);
 
-    // Create sparkles
+    // Emit sparkles
+    const grad = makeGradient(state.color);
+    const w = canvas.offsetWidth || 39;
+    const h = canvas.offsetHeight || 39;
+
     for (let i = 0; i < INV_GLOW_CONFIG.sparkleCount; i++) {
       const sp = document.createElement("div");
       sp.className = "inv-sparkle";
+      sp.style.background = grad;
 
-      // Random direction
       const angle = Math.random() * 2 * Math.PI;
-      const distance = 15 + Math.random() * 10;
+      const distance = 12 + Math.random() * 16;
       sp.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
       sp.style.setProperty("--y", `${-Math.abs(Math.sin(angle) * distance)}px`);
 
-      // Random position over canvas
-      sp.style.left = `${Math.random() * canvas.offsetWidth}px`;
-      sp.style.top = `${Math.random() * canvas.offsetHeight}px`;
+      sp.style.left = `${Math.random() * w}px`;
+      sp.style.top  = `${Math.random() * h}px`;
 
       wrapper.appendChild(sp);
-
-      // Remove after animation
       setTimeout(() => sp.remove(), INV_GLOW_CONFIG.glowMs);
     }
   }
 
-  function scanOnce({ initialBaseline = false } = {}) {
+  function scanOnce() {
     const canvases = inv.querySelectorAll("div > canvas");
-    canvases.forEach(can => {
+    canvases.forEach((can) => {
       const wrapper = can.parentElement;
       const h = hashCanvas(can);
 
@@ -1613,7 +1689,6 @@ const INV_GLOW_CONFIG = {
         slotState.set(can, { hash: h });
         return;
       }
-
       const st = slotState.get(can);
       if (h !== null && st.hash !== h) {
         log("change detected", can, "hash", st.hash, "->", h);
@@ -1625,8 +1700,9 @@ const INV_GLOW_CONFIG = {
 
   const mo = new MutationObserver((mutations) => {
     let needScan = false;
+
     for (const m of mutations) {
-      m.addedNodes.forEach(n => {
+      m.addedNodes.forEach((n) => {
         if (!(n instanceof HTMLElement)) return;
 
         if (n.tagName === "DIV") {
@@ -1651,17 +1727,10 @@ const INV_GLOW_CONFIG = {
   });
 
   mo.observe(inv, { childList: true, subtree: true });
-
-  scanOnce({ initialBaseline: true });
+  scanOnce();
   const intervalId = setInterval(scanOnce, INV_GLOW_CONFIG.pollMs);
 
-  window.InvGlowStop = function () {
-    clearInterval(intervalId);
-    mo.disconnect();
-    inv.querySelectorAll(".inv-sparkle, .inv-pop").forEach(el => el.remove());
-    console.log("[InvGlow] stopped");
-  };
-
-  console.log("[InvGlow] running with sparkles (poll:", INV_GLOW_CONFIG.pollMs, "ms; duration:", INV_GLOW_CONFIG.glowMs, "ms)");
+  console.log("[InvGlow] running with sparkles; API: InvGlow.setEnabled(bool), InvGlow.setColor('#hex')");
 })();
+
 
