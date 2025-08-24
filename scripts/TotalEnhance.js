@@ -1016,14 +1016,10 @@
 
 (function () {
   const settingsForm = document.querySelector("#winSettings");
-  if (!settingsForm) {
-    console.warn("Settings window not found!");
-    return;
-  }
+  if (!settingsForm) return;
 
-  // === Insert QoL Settings ===
   const settingsDivs = settingsForm.querySelectorAll("div");
-  const insertTarget = settingsDivs[1]; // main settings block
+  const insertTarget = settingsDivs[1];
 
   const qolContainer = document.createElement("div");
   qolContainer.innerHTML = `
@@ -1052,144 +1048,78 @@
       </label>
     </div>
     <div>
+      <label><input type="checkbox" name="chkHighlightToggle" checked> Enable Chat Highlighting</label>
+    </div>
+    <div>
       <label>Highlight Color:
-        <input type="color" name="highlightColor" value=""#07175e">
+        <input type="color" name="highlightColor" value="#07175e">
+      </label>
+    </div>
+    <div>
+      <label>Inventory Slot Color:
+        <input type="color" name="slotColor" value="#00ff00">
       </label>
     </div>
   `;
   insertTarget.appendChild(qolContainer);
 
-  // === Chatbox & Observer ===
-  const chatBox = document.querySelector("#winGameChatbox");
-  if (!chatBox) {
-    console.warn("Chatbox not found!");
-    return;
-  }
-  const chatObserver = new MutationObserver(mutations => {
-  mutations.forEach(mutation => {
-    mutation.addedNodes.forEach(node => {
-      if (node.nodeType !== 1) return;
-
-      try {
-        let msg = node.innerText;
-        if (!msg) return;
-
-        msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
-
-        const nameInput = document.querySelector("#winStats input[name='txtName']");
-        const playerName = nameInput ? nameInput.value.trim() : "";
-        if (!playerName) return;
-
-        const highlightColor = qolSettings.highlightColor || "#07175e";
-
-        const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
-        const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
-
-        if (mentionsMe && !isOwnMessage) {
-          // Only set background safely
-          if (node.style) {
-            node.style.backgroundColor = highlightColor;
-            node.style.fontWeight = "bold";
-          }
-        }
-      } catch (e) {
-        console.warn("Safe chat highlight skipped:", e);
-      }
-    });
-  });
-});
-
-
-  chatObserver.observe(chatBox, { childList: true, subtree: true });
-
-  // Apply font style to entire chat container
-  function updateChatFont() {
-    chatBox.style.fontFamily = qolSettings.fontStyle || "";
-  }
-
-  // === FPS Counter ===
-  let fpsEnabled = false;
-  let fpsDiv = null;
-  let lastFrame = performance.now();
-  let frames = 0;
-  let fps = 0;
-
-  function createFpsCounter() {
-    fpsDiv = document.createElement("div");
-    fpsDiv.style.position = "absolute";
-    fpsDiv.style.background = "rgba(0,0,0,0.5)";
-    fpsDiv.style.color = "#0f0";
-    fpsDiv.style.font = "12px monospace";
-    fpsDiv.style.padding = "2px 5px";
-    fpsDiv.style.zIndex = "9999";
-    updateFpsPosition();
-    document.body.appendChild(fpsDiv);
-    requestAnimationFrame(updateFps);
-  }
-
-  function updateFps() {
-    const now = performance.now();
-    frames++;
-    if (now - lastFrame >= 1000) {
-      fps = frames;
-      frames = 0;
-      lastFrame = now;
-      if (fpsDiv) fpsDiv.textContent = `FPS: ${fps}`;
-    }
-    if (fpsEnabled) requestAnimationFrame(updateFps);
-  }
-
-  function removeFpsCounter() {
-    if (fpsDiv) {
-      fpsDiv.remove();
-      fpsDiv = null;
-    }
-  }
-
-  function updateFpsPosition() {
-    if (!fpsDiv) return;
-    const pos = qolSettings.fpsPosition;
-    fpsDiv.style.top = pos.includes("top") ? "5px" : "";
-    fpsDiv.style.bottom = pos.includes("bottom") ? "5px" : "";
-    fpsDiv.style.left = pos.includes("left") ? "5px" : "";
-    fpsDiv.style.right = pos.includes("right") ? "5px" : "";
-  }
-
-  // === Settings Listeners ===
   const qolSettings = {
     fontStyle: "",
+    highlightEnabled: true,
     highlightColor: "#07175e",
+    slotColor: "#00ff00",
     fpsPosition: "top-right"
   };
 
-  const chkFps = settingsForm.querySelector("input[name='chkFpsCounter']");
-  chkFps.addEventListener("change", () => {
-    fpsEnabled = chkFps.checked;
-    if (fpsEnabled) {
-      createFpsCounter();
-    } else {
-      removeFpsCounter();
-    }
-  });
+  // --- Chat Highlight ---
+  const chatBox = document.querySelector("#winGameChatbox");
+  if (chatBox) {
+    const chatObserver = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType !== 1 || !qolSettings.highlightEnabled) return;
+          let msg = node.innerText;
+          if (!msg) return;
+          msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
+          const playerName = document.querySelector("#winStats input[name='txtName']")?.value.trim();
+          if (!playerName) return;
+          const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
+          const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
+          if (mentionsMe && !isOwnMessage) {
+            node.style.backgroundColor = qolSettings.highlightColor;
+            node.style.fontWeight = "bold";
+          }
+        });
+      });
+    });
+    chatObserver.observe(chatBox, { childList: true, subtree: true });
+  }
 
-  const selFont = settingsForm.querySelector("select[name='selFontStyle']");
-  selFont.addEventListener("change", () => {
-    qolSettings.fontStyle = selFont.value === "default" ? "" : selFont.value;
-    updateChatFont();
-  });
+  // --- Inventory Slot Colors ---
+  function updateSlotColors() {
+    const inv = document.getElementById('winInventory');
+    if (!inv) return;
+    const canvases = Array.from(inv.querySelectorAll('canvas'));
+    const slotsPerRow = 5;
+    canvases.forEach((c, index) => {
+      if (index >= canvases.length - slotsPerRow) {
+        c.style.border = `2px solid ${qolSettings.slotColor}`;
+      }
+    });
+  }
 
-  const colorPicker = settingsForm.querySelector("input[name='highlightColor']");
-  colorPicker.addEventListener("input", () => {
-    qolSettings.highlightColor = colorPicker.value;
-  });
+  // --- Listeners ---
+  settingsForm.querySelector("input[name='chkHighlightToggle']")
+    .addEventListener("change", e => qolSettings.highlightEnabled = e.target.checked);
 
-  const selFpsPos = settingsForm.querySelector("select[name='selFpsPosition']");
-  selFpsPos.addEventListener("change", () => {
-    qolSettings.fpsPosition = selFpsPos.value;
-    updateFpsPosition();
-  });
+  settingsForm.querySelector("input[name='highlightColor']")
+    .addEventListener("input", e => qolSettings.highlightColor = e.target.value);
 
-  console.log("[MOC QoL] Settings injected with FPS + Font Style + Highlight Color + FPS Position");
+  settingsForm.querySelector("input[name='slotColor']")
+    .addEventListener("input", e => { qolSettings.slotColor = e.target.value; updateSlotColors(); });
+
+  // Initial apply
+  updateSlotColors();
 })();
 
   observer.observe(document.body, { childList: true, subtree: true });
