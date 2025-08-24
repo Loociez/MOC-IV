@@ -1241,7 +1241,7 @@ if (shopSelect) {
         ':sasuke:': 'https://loociez.github.io/MOC-IV/images/emoji/sasuke.gif',
         ':bruh:': 'https://loociez.github.io/MOC-IV/images/emoji/bruh.gif',
         ':jam:': 'https://loociez.github.io/MOC-IV/images/emoji/jam.gif',
-        ':ban:': 'https://loociez.github.io/MOC-IV/images/emoji/ban.gif',
+        ':ban:': 'https://loociez.github.io/MOC-IV/images/emoji/ban.png',
         ':bigbrain:': 'https://loociez.github.io/MOC-IV/images/emoji/bigbrain.gif',
         ':noob:': 'https://loociez.github.io/MOC-IV/images/emoji/noob.gif',
         ':classic:': 'https://loociez.github.io/MOC-IV/images/emoji/classic.gif',
