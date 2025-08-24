@@ -1498,4 +1498,170 @@ if (shopSelect) {
 
     updatePosition();
 })();
+// New item Sparkle
+const INV_GLOW_CONFIG = {
+  pollMs: 700,     // how often to check canvases
+  glowMs: 2000,    // how long the sparkle animation lasts
+  debug: false,    // set true for console logs
+  selector: "#winInventory",
+  sparkleCount: 6, // number of sparkles per slot
+};
+
+(function () {
+  const inv = document.querySelector(INV_GLOW_CONFIG.selector);
+  if (!inv) {
+    console.warn("[InvGlow] Inventory not found:", INV_GLOW_CONFIG.selector);
+    return;
+  }
+
+  // --- Styles for sparkles ---
+  const style = document.createElement("style");
+  style.textContent = `
+    .inv-sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, rgba(255,255,200,1) 0%, rgba(255,215,0,0.8) 50%, rgba(255,215,0,0) 100%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkleRise 0.8s forwards;
+      opacity: 0;
+    }
+
+    @keyframes sparkleRise {
+      0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+      50% { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
+    }
+
+    .inv-pop {
+      animation: popScale 0.3s ease-out;
+    }
+
+    @keyframes popScale {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .inv-slot-wrapper { position: relative !important; }
+  `;
+  document.head.appendChild(style);
+
+  const log = (...a) => INV_GLOW_CONFIG.debug && console.log("[InvGlow]", ...a);
+
+  const slotState = new WeakMap();
+
+  function hashCanvas(can) {
+    try {
+      const ctx = can.getContext("2d");
+      if (!ctx) return null;
+      const { width, height } = can;
+      if (!width || !height) return null;
+      const data = ctx.getImageData(0, 0, width, height).data;
+      let h = 2166136261 >>> 0;
+      for (let i = 0; i < data.length; i += 16) {
+        h ^= data[i];
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    } catch {
+      return null;
+    }
+  }
+
+  function sparkle(wrapper) {
+    // Ensure wrapper is relative
+    wrapper.classList.add("inv-slot-wrapper");
+
+    const canvas = wrapper.querySelector("canvas");
+    if (!canvas) return;
+
+    // Pop animation
+    canvas.classList.add("inv-pop");
+    setTimeout(() => canvas.classList.remove("inv-pop"), 300);
+
+    // Create sparkles
+    for (let i = 0; i < INV_GLOW_CONFIG.sparkleCount; i++) {
+      const sp = document.createElement("div");
+      sp.className = "inv-sparkle";
+
+      // Random direction
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = 15 + Math.random() * 10;
+      sp.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
+      sp.style.setProperty("--y", `${-Math.abs(Math.sin(angle) * distance)}px`);
+
+      // Random position over canvas
+      sp.style.left = `${Math.random() * canvas.offsetWidth}px`;
+      sp.style.top = `${Math.random() * canvas.offsetHeight}px`;
+
+      wrapper.appendChild(sp);
+
+      // Remove after animation
+      setTimeout(() => sp.remove(), INV_GLOW_CONFIG.glowMs);
+    }
+  }
+
+  function scanOnce({ initialBaseline = false } = {}) {
+    const canvases = inv.querySelectorAll("div > canvas");
+    canvases.forEach(can => {
+      const wrapper = can.parentElement;
+      const h = hashCanvas(can);
+
+      if (!slotState.has(can)) {
+        slotState.set(can, { hash: h });
+        return;
+      }
+
+      const st = slotState.get(can);
+      if (h !== null && st.hash !== h) {
+        log("change detected", can, "hash", st.hash, "->", h);
+        sparkle(wrapper);
+        st.hash = h;
+      }
+    });
+  }
+
+  const mo = new MutationObserver((mutations) => {
+    let needScan = false;
+    for (const m of mutations) {
+      m.addedNodes.forEach(n => {
+        if (!(n instanceof HTMLElement)) return;
+
+        if (n.tagName === "DIV") {
+          const can = n.querySelector("canvas");
+          if (can && !slotState.has(can)) {
+            slotState.set(can, { hash: hashCanvas(can) });
+            sparkle(n);
+          }
+        }
+
+        if (n.tagName === "CANVAS") {
+          const wrap = n.parentElement || n;
+          if (!slotState.has(n)) slotState.set(n, { hash: hashCanvas(n) });
+          sparkle(wrap);
+        }
+      });
+
+      if (m.type === "childList") needScan = true;
+    }
+
+    if (needScan) scanOnce();
+  });
+
+  mo.observe(inv, { childList: true, subtree: true });
+
+  scanOnce({ initialBaseline: true });
+  const intervalId = setInterval(scanOnce, INV_GLOW_CONFIG.pollMs);
+
+  window.InvGlowStop = function () {
+    clearInterval(intervalId);
+    mo.disconnect();
+    inv.querySelectorAll(".inv-sparkle, .inv-pop").forEach(el => el.remove());
+    console.log("[InvGlow] stopped");
+  };
+
+  console.log("[InvGlow] running with sparkles (poll:", INV_GLOW_CONFIG.pollMs, "ms; duration:", INV_GLOW_CONFIG.glowMs, "ms)");
+})();
 
