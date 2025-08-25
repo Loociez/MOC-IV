@@ -1813,6 +1813,7 @@ const INV_GLOW_CONFIG = {
   fpsDiv.style.display = fpsCheckbox?.checked ? "block" : "none";
   qolSettings.showFps = fpsCheckbox?.checked || false;
 })();
+
 //1 click shift+item dropper
 // === QoL: Shift+RightClick auto "Drop 1" ===
 (function () {
@@ -1871,4 +1872,125 @@ const INV_GLOW_CONFIG = {
     });
   });
 })();
+
+// === QoL: Revert UI + Vitals to Default (Sparkles persist) ===
+(function () {
+  const settingsForm = document.querySelector("#winSettings");
+  if (!settingsForm) return;
+
+  // Reuse global QoL settings
+  window.qolSettings = window.qolSettings || {};
+  const q = window.qolSettings;
+  if (typeof q.revertUiVitals === "undefined") q.revertUiVitals = false;
+
+  // Find the QoL container
+  const qolContainer = [...settingsForm.querySelectorAll("div")]
+    .find(d => d.querySelector("b")?.textContent === "Quality of Life");
+  if (!qolContainer) return;
+
+  // --- Add checkbox row at the very bottom ---
+  let row = settingsForm.querySelector("input[name='chkRevertUiVitals']")?.closest("div");
+  if (!row) {
+    row = document.createElement("div");
+    row.style.display = "block";
+    row.style.width = "100%";
+    row.style.marginTop = "6px";
+    row.innerHTML = `<label><input type="checkbox" name="chkRevertUiVitals"> Revert UI + Vitals to Default</label>`;
+    qolContainer.appendChild(row); // ensures last position
+  }
+
+  const chk = settingsForm.querySelector("input[name='chkRevertUiVitals']");
+  chk.checked = !!q.revertUiVitals;
+
+  // --- Helpers ---
+  function revertUIToDefault() {
+    ["winInventory", "winVitals"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.removeAttribute("style");
+      el.classList.remove("custom-ui", "te-ui-overrides", "te-vitals-overrides");
+      el.querySelectorAll("[data-te-inline]").forEach(child => {
+        child.removeAttribute("style");
+        child.removeAttribute("data-te-inline");
+      });
+    });
+  }
+
+  // These re-apply your new styled UI/Vitals (copied from your enhancer logic)
+  function applyNewUI() {
+    const inv = document.getElementById("winInventory");
+    if (!inv) return;
+    Object.assign(inv.style, {
+      display: 'grid',
+      gridTemplateColumns: `repeat(5, 42px)`,
+      gridAutoRows: `42px`,
+      columnGap: `25px`,
+      rowGap: `2.5px`,
+      padding: '1px 6px 6px 6px',
+      background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
+      border: '2px solid #444',
+      borderRadius: '8px',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+      width: 'calc((5*42px + 25px*4) * 1.15)',
+      margin: '0 auto 10px auto',
+      overflow: 'visible',
+      boxSizing: 'border-box',
+    });
+  }
+
+  function applyNewVitals() {
+    const vitals = document.getElementById("winVitals");
+    if (!vitals) return;
+    Object.assign(vitals.style, {
+      display: 'grid',
+      gridTemplateColumns: '50px 1fr',
+      gridAutoRows: '1.3rem',
+      gap: '4px 6px',
+      padding: '2px 6px',
+      background: 'linear-gradient(145deg, #1a1a1a, #2e2e2e)',
+      border: '2px solid #555',
+      borderRadius: '6px',
+      boxShadow: '0 3px 6px rgba(0,0,0,0.4)',
+      color: '#fff',
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '0.8rem',
+      margin: '0 auto 6px auto',
+      width: '360px',
+      boxSizing: 'border-box',
+    });
+  }
+
+  function applySparklesIfEnabled() {
+    if (q.sparklesEnabled && document.body) {
+      document.body.classList.add("sparkle-enabled");
+    }
+    try { window.InvGlow?.setEnabled?.(!!q.sparklesEnabled); } catch {}
+    try { window.InvGlow?.setColor?.(q.sparkleColor || "#ffd700"); } catch {}
+  }
+
+  function applyState() {
+    if (q.revertUiVitals) {
+      revertUIToDefault();
+      applySparklesIfEnabled();
+    } else {
+      applyNewUI();
+      applyNewVitals();
+      applySparklesIfEnabled();
+    }
+  }
+
+  // Wire up checkbox
+  chk.addEventListener("change", e => {
+    q.revertUiVitals = e.target.checked;
+    applyState();
+  });
+
+  // Initial apply
+  setTimeout(applyState, 0);
+
+  // Optional: allow other modules to force refresh
+  document.addEventListener("te:refresh-ui", applyState);
+})();
+
+
 
