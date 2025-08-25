@@ -1732,5 +1732,140 @@ const INV_GLOW_CONFIG = {
 
   console.log("[InvGlow] running with sparkles; API: InvGlow.setEnabled(bool), InvGlow.setColor('#hex')");
 })();
+// === FPS Counter (QoL integrated) ===
+(function () {
+  const settingsForm = document.querySelector("#winSettings");
+  if (!settingsForm) return;
 
+  // reuse the same global QoL settings object
+  window.qolSettings = window.qolSettings || {};
+  const qolSettings = window.qolSettings;
+
+  // --- FPS UI element ---
+  const fpsDiv = document.createElement("div");
+  Object.assign(fpsDiv.style, {
+    position: "fixed",
+    color: "deepskyblue",
+    fontSize: "12px",
+    fontFamily: "monospace",
+    background: "rgba(0,0,0,0.5)",
+    padding: "2px 5px",
+    borderRadius: "4px",
+    zIndex: 99999,
+    display: "none"
+  });
+  document.body.appendChild(fpsDiv);
+
+  function updateFpsPosition() {
+    const pos = qolSettings.fpsPosition || "top-right";
+    // reset first
+    fpsDiv.style.top = fpsDiv.style.left = fpsDiv.style.right = fpsDiv.style.bottom = "";
+    if (pos === "top-right")    { fpsDiv.style.top = "4px";    fpsDiv.style.right = "6px"; }
+    if (pos === "top-left")     { fpsDiv.style.top = "4px";    fpsDiv.style.left = "6px"; }
+    if (pos === "bottom-left")  { fpsDiv.style.bottom = "4px"; fpsDiv.style.left = "6px"; }
+    if (pos === "bottom-right") { fpsDiv.style.bottom = "4px"; fpsDiv.style.right = "6px"; }
+  }
+
+  // --- FPS logic ---
+  let lastTime = performance.now();
+  let frames = 0;
+
+  function loop() {
+    const now = performance.now();
+    frames++;
+    if (now - lastTime >= 1000) {
+      const fps = frames;
+      frames = 0;
+      lastTime = now;
+      if (qolSettings.showFps) {
+        fpsDiv.textContent = `FPS: ${fps}`;
+        fpsDiv.style.color = fps >= 55 ? "lime" : fps >= 30 ? "yellow" : "red";
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // --- Hook QoL checkboxes / dropdown ---
+  const fpsCheckbox = settingsForm.querySelector("input[name='chkFpsCounter']");
+  const fpsSelect   = settingsForm.querySelector("select[name='selFpsPosition']");
+
+  if (fpsCheckbox) {
+    fpsCheckbox.addEventListener("change", e => {
+      qolSettings.showFps = e.target.checked;
+      fpsDiv.style.display = e.target.checked ? "block" : "none";
+      updateFpsPosition();
+    });
+  }
+
+  if (fpsSelect) {
+    fpsSelect.addEventListener("change", e => {
+      qolSettings.fpsPosition = e.target.value;
+      updateFpsPosition();
+    });
+  }
+
+  // Initial apply
+  updateFpsPosition();
+  fpsDiv.style.display = fpsCheckbox?.checked ? "block" : "none";
+  qolSettings.showFps = fpsCheckbox?.checked || false;
+})();
+//1 click shift+item dropper
+// === QoL: Shift+RightClick auto "Drop 1" ===
+(function () {
+  const settingsForm = document.querySelector("#winSettings");
+  if (!settingsForm) return;
+
+  // Find the QoL container
+  const qolContainer = [...settingsForm.querySelectorAll("div")]
+    .find(d => d.querySelector("b")?.textContent === "Quality of Life");
+
+  if (!qolContainer) return;
+
+  // --- Add QoL setting checkbox ---
+  const optDiv = document.createElement("div");
+  optDiv.style.display = "block";  // ensures full-width
+  optDiv.style.width = "100%";
+  optDiv.style.marginTop = "4px";  // slight spacing from previous element
+  optDiv.innerHTML = `<label><input type="checkbox" name="chkQuickDrop1"> Enable Shift+RightClick Drop-1</label>`;
+
+  // Append to the bottom
+  qolContainer.appendChild(optDiv);
+
+  // Ensure qolSettings exists
+  window.qolSettings = window.qolSettings || {};
+  const qolSettings = window.qolSettings;
+  qolSettings.quickDrop1 = false;
+
+  // Hook checkbox change
+  settingsForm.querySelector("input[name='chkQuickDrop1']")
+    .addEventListener("change", e => {
+      qolSettings.quickDrop1 = e.target.checked;
+    });
+
+  // --- Hook inventory slots ---
+  const inv = document.getElementById("winInventory");
+  if (!inv) return;
+
+  inv.querySelectorAll("canvas").forEach((canvas) => {
+    canvas.addEventListener("contextmenu", e => {
+      if (!qolSettings.quickDrop1) return;
+      if (e.shiftKey) {
+        setTimeout(() => {
+          const popup = document.getElementById("winPopup");
+          if (!popup || popup.style.display === "none") return;
+
+          const input = popup.querySelector("input[name='txtPopup']");
+          const okBtn = [...popup.querySelectorAll("button")]
+            .find(b => b.textContent.trim() === "OK");
+
+          if (input && okBtn) {
+            input.value = "1";
+            okBtn.click();
+          }
+        }, 50);
+      }
+    });
+  });
+})();
 
