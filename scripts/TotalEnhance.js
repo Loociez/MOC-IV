@@ -1211,6 +1211,9 @@ if (shopSelect) {
         ':classic:': 'https://loociez.github.io/MOC-IV/images/emoji/classic.gif',
         ':angry:': 'https://loociez.github.io/MOC-IV/images/emoji/angry.gif',
         ':noway:': 'https://loociez.github.io/MOC-IV/images/emoji/noway.gif',
+        ':blush:': 'https://loociez.github.io/MOC-IV/images/emoji/blush.gif',
+        ':derp:': 'https://loociez.github.io/MOC-IV/images/emoji/derp.png',
+        ':skb:': 'https://loociez.github.io/MOC-IV/images/emoji/skb.gif',
     };
 
     function replaceEmojis(text) {
