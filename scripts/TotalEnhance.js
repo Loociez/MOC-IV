@@ -1082,29 +1082,37 @@
     sparkleColor: "#ffd700"
   };
 
-  // --- Chat Highlight ---
-  const chatBox = document.querySelector("#winGameChatbox");
-  if (chatBox) {
-    const chatObserver = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        mutation.addedNodes.forEach(node => {
-          if (node.nodeType !== 1 || !qolSettings.highlightEnabled) return;
-          let msg = node.innerText;
-          if (!msg) return;
-          msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
-          const playerName = document.querySelector("#winStats input[name='txtName']")?.value.trim();
-          if (!playerName) return;
-          const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + " ");
-          const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
-          if (mentionsMe && !isOwnMessage) {
-            node.style.backgroundColor = qolSettings.highlightColor;
-            node.style.fontWeight = "bold";
-          }
-        });
+ // --- Chat Highlight ---
+const chatBox = document.querySelector("#winGameChatbox");
+if (chatBox) {
+  const chatObserver = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType !== 1 || !qolSettings.highlightEnabled) return;
+        let msg = node.innerText;
+        if (!msg) return;
+
+        // Remove timestamp
+        msg = msg.replace(/^\(\d{2}:\d{2}\)\s*/, "");
+
+        const playerName = document.querySelector("#winStats input[name='txtName']")?.value.trim();
+        if (!playerName) return;
+
+        // Check if the message is your own
+        const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + ":");
+
+        // Check if message mentions you but is not your own
+        const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
+
+        if (mentionsMe && !isOwnMessage) {
+          node.style.backgroundColor = qolSettings.highlightColor;
+          node.style.fontWeight = "bold";
+        }
       });
     });
-    chatObserver.observe(chatBox, { childList: true, subtree: true });
-  }
+  });
+  chatObserver.observe(chatBox, { childList: true, subtree: true });
+}
 
   // --- Inventory Slot Colors ---
   function updateSlotColors() {
