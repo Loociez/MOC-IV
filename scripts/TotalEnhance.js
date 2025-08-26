@@ -1226,26 +1226,28 @@ if (shopSelect) {
         });
     }
 
+    function isNearBottom(container, pad = 10) {
+        return container.scrollHeight - container.scrollTop <= container.clientHeight + pad;
+    }
+
     function processNode(node, chatContainer, wasAtBottom) {
         if (node.nodeType === Node.ELEMENT_NODE) {
             node.innerHTML = replaceEmojis(node.innerHTML);
 
-            // If user was already at bottom, make sure to scroll again after images load
             if (wasAtBottom) {
+                // ensure images don’t push chat up
                 const imgs = node.querySelectorAll('img');
                 imgs.forEach(img => {
                     if (!img.complete) {
                         img.addEventListener('load', () => {
-                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                            requestAnimationFrame(() => {
+                                chatContainer.scrollTop = chatContainer.scrollHeight;
+                            });
                         }, { once: true });
                     }
                 });
             }
         }
-    }
-
-    function isNearBottom(container, pad = 10) {
-        return container.scrollHeight - container.scrollTop <= container.clientHeight + pad;
     }
 
     function initEmojiObserver() {
@@ -1263,13 +1265,16 @@ if (shopSelect) {
             });
 
             if (wasAtBottom) {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                // schedule one safe scroll after DOM updates
+                requestAnimationFrame(() => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
             }
         });
 
         observer.observe(chatContainer, { childList: true });
 
-        console.log('Emoji module with smart autoscroll + image fix loaded.');
+        console.log('Emoji module with safe autoscroll loaded.');
     }
 
     initEmojiObserver();
@@ -1991,6 +1996,73 @@ const INV_GLOW_CONFIG = {
   // Optional: allow other modules to force refresh
   document.addEventListener("te:refresh-ui", applyState);
 })();
+//chat scroll
+// === Chat Auto-Scroll Toggle Button for winGameChatbox ===
+(function () {
+  function initAutoScrollButton() {
+    const chatBox = document.querySelector("#winGameChatbox");
+    if (!chatBox) return false;
+
+    // Find the "Claim" button by its inner text
+    const claimBtn = [...document.querySelectorAll("button")]
+      .find(btn => btn.textContent.trim() === "Claim");
+
+    if (!claimBtn) return false;
+
+    // Prevent duplicate injection
+    if (document.querySelector("#btnAutoScroll")) return true;
+
+    // Create new button
+    const autoBtn = document.createElement("button");
+    autoBtn.id = "btnAutoScroll";
+    autoBtn.textContent = "💬"; // emoji speech bubble
+    Object.assign(autoBtn.style, {
+      width: claimBtn.offsetWidth + "px",
+      height: claimBtn.offsetHeight + "px",
+      marginTop: "4px",
+      display: "block",
+      background: "rgb(34,34,34)",
+      color: "#fff",
+      border: "1px solid #666",
+      borderRadius: "6px",
+      cursor: "pointer",
+      fontSize: "18px",
+      transition: "box-shadow 0.2s"
+    });
+
+    // Insert right after Claim button
+    claimBtn.insertAdjacentElement("afterend", autoBtn);
+
+    // Track state
+    let autoScrollEnabled = false;
+
+    // Toggle logic
+    autoBtn.addEventListener("click", () => {
+      autoScrollEnabled = !autoScrollEnabled;
+      autoBtn.style.boxShadow = autoScrollEnabled ? "0 0 8px 2px limegreen" : "none";
+    });
+
+    // Auto-scroll loop
+    function tick() {
+      if (autoScrollEnabled) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    console.log("Auto-scroll chat button loaded for winGameChatbox.");
+    return true;
+  }
+
+  // Keep checking until elements exist
+  const waitInterval = setInterval(() => {
+    if (initAutoScrollButton()) {
+      clearInterval(waitInterval);
+    }
+  }, 500);
+})();
+
 
 
 
