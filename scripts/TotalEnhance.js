@@ -1082,7 +1082,7 @@
     sparkleColor: "#ffd700"
   };
 
- // --- Chat Highlight ---
+// --- Chat Highlight ---
 const chatBox = document.querySelector("#winGameChatbox");
 if (chatBox) {
   const chatObserver = new MutationObserver(mutations => {
@@ -1098,8 +1098,9 @@ if (chatBox) {
         const playerName = document.querySelector("#winStats input[name='txtName']")?.value.trim();
         if (!playerName) return;
 
-        // Check if the message is your own
-        const isOwnMessage = msg.toLowerCase().startsWith(playerName.toLowerCase() + ":");
+        // Check if the message is your own (name at start, optionally followed by emojis/colon/space)
+        const ownRegex = new RegExp(`^${playerName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s:]*\\S*?`, "i");
+        const isOwnMessage = ownRegex.test(msg);
 
         // Check if message mentions you but is not your own
         const mentionsMe = msg.toLowerCase().includes(playerName.toLowerCase());
@@ -1113,6 +1114,7 @@ if (chatBox) {
   });
   chatObserver.observe(chatBox, { childList: true, subtree: true });
 }
+
 
   // --- Inventory Slot Colors ---
   function updateSlotColors() {
