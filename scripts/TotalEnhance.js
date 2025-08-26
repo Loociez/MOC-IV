@@ -2062,6 +2062,236 @@ const INV_GLOW_CONFIG = {
     }
   }, 500);
 })();
+//Theme QoL
+// === QoL: Themes for Inventory + Vitals ===
+(function () {
+  const settingsForm = document.querySelector("#winSettings");
+  if (!settingsForm) return;
+
+  // --- Find QoL container (the one we already appended settings to) ---
+  const qolContainer = [...settingsForm.querySelectorAll("div")]
+    .find(d => d.querySelector("b")?.textContent === "Quality of Life");
+
+  if (!qolContainer) return;
+
+  // --- Insert theme selector BELOW existing settings ---
+  const themeDiv = document.createElement("div");
+  themeDiv.style.marginTop = "6px";
+  themeDiv.innerHTML = `
+    <label>UI Theme:
+      <select name="selUiTheme">
+        <option value="default">Default</option>
+        <option value="dark">Dark Minimal</option>
+        <option value="neon">Neon Glow</option>
+        <option value="retro">Retro Pixel</option>
+      </select>
+    </label>
+  `;
+  qolContainer.appendChild(themeDiv);
+
+  // --- Ensure qolSettings global exists ---
+  window.qolSettings = window.qolSettings || {};
+  const qolSettings = window.qolSettings;
+  qolSettings.uiTheme = qolSettings.uiTheme || "default";
+
+  // --- Theme definitions ---
+  const THEMES = {
+    default: {
+      inv: {
+        background: "linear-gradient(145deg, #2e2e2e, #1c1c1c)",
+        border: "2px solid #444",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.5)"
+      },
+      vitals: {
+        background: "linear-gradient(145deg, #1a1a1a, #2e2e2e)",
+        border: "2px solid #555",
+        boxShadow: "0 3px 6px rgba(0,0,0,0.4)"
+      }
+    },
+    dark: {
+      inv: {
+        background: "#111",
+        border: "1px solid #333",
+        boxShadow: "0 0 12px rgba(0,0,0,0.8)"
+      },
+      vitals: {
+        background: "#111",
+        border: "1px solid #333",
+        boxShadow: "0 0 12px rgba(0,0,0,0.8)"
+      }
+    },
+    neon: {
+      inv: {
+        background: "black",
+        border: "2px solid deepskyblue",
+        boxShadow: "0 0 12px deepskyblue"
+      },
+      vitals: {
+        background: "black",
+        border: "2px solid lime",
+        boxShadow: "0 0 12px lime"
+      }
+    },
+    retro: {
+      inv: {
+        background: "#2b1d0e",
+        border: "2px solid #d4a373",
+        boxShadow: "none"
+      },
+      vitals: {
+        background: "#1a1a1a",
+        border: "2px solid #888",
+        boxShadow: "none",
+        fontFamily: "monospace"
+      }
+    }
+  };
+
+  // --- Apply theme function ---
+  function applyTheme(name) {
+    const theme = THEMES[name] || THEMES.default;
+    const inv = document.getElementById("winInventory");
+    const vitals = document.getElementById("winVitals");
+
+    if (inv) Object.assign(inv.style, theme.inv);
+    if (vitals) Object.assign(vitals.style, theme.vitals);
+  }
+
+  // --- Hook dropdown ---
+  const themeSelect = themeDiv.querySelector("select[name='selUiTheme']");
+  themeSelect.value = qolSettings.uiTheme;
+  themeSelect.addEventListener("change", e => {
+    qolSettings.uiTheme = e.target.value;
+    applyTheme(qolSettings.uiTheme);
+  });
+
+  // --- Initial apply ---
+  applyTheme(qolSettings.uiTheme);
+})();
+//recorder button mod
+// === Replay Recorder Button (stacked with Claim + Chat buttons) ===
+(function () {
+  const MAX_RECORDING_TIME_MS = 15 * 60 * 1000; // 15 minutes
+  const FILENAME_PREFIX = "Replay_";
+  let recorder, recordedChunks = [], recordingTimeout, requestInterval;
+
+  function init() {
+    // find our custom floating container (the one with potion/claim/chat buttons)
+    const container = [...document.querySelectorAll("div")]
+      .find(div => div.style.flexDirection === "column" && div.querySelector("button"));
+    if (!container) {
+      setTimeout(init, 500);
+      return;
+    }
+
+    // find the Auto Chat Scroll button in that container
+    const autoChatBtn = [...container.querySelectorAll("button")]
+      .find(b => b.textContent.includes("💬") || b.title?.includes("Chat"));
+    if (!autoChatBtn) {
+      setTimeout(init, 500);
+      return;
+    }
+
+    // --- Create Replay button styled like others ---
+    const btn = document.createElement("button");
+    btn.textContent = "▶️";
+    Object.assign(btn.style, {
+      padding: autoChatBtn.style.padding || "6px 10px",
+      background: autoChatBtn.style.background || "#222",
+      color: autoChatBtn.style.color || "#fff",
+      border: autoChatBtn.style.border || "1px solid #666",
+      borderRadius: autoChatBtn.style.borderRadius || "6px",
+      cursor: "pointer",
+      marginTop: "4px"
+    });
+    btn.title = "Start/Stop Replay Recording";
+
+    autoChatBtn.insertAdjacentElement("afterend", btn);
+
+    async function startRecording() {
+      recordedChunks = [];
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: { frameRate: 30, width: { max: 1280 }, height: { max: 720 } },
+          audio: true
+        });
+
+        if (!stream || !stream.getTracks().length) {
+          alert("No valid stream selected.");
+          return;
+        }
+
+        recorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp8,opus",
+          videoBitsPerSecond: 2500000
+        });
+
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          clearInterval(requestInterval);
+          if (recordedChunks.length === 0) {
+            alert("Recording failed: no data was captured.");
+            return;
+          }
+          const blob = new Blob(recordedChunks, { type: "video/webm" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+          a.href = url;
+          a.download = `${FILENAME_PREFIX}${timestamp}.webm`;
+          a.click();
+          URL.revokeObjectURL(url);
+        };
+
+        recorder.start(1000);
+        requestInterval = setInterval(() => {
+          if (recorder && recorder.state === "recording") recorder.requestData();
+        }, 5000);
+
+        btn.textContent = "⏹️";
+        btn.style.animation = "flashRed 1s infinite";
+
+        recordingTimeout = setTimeout(stopRecording, MAX_RECORDING_TIME_MS);
+        stream.getVideoTracks()[0].addEventListener("ended", stopRecording);
+      } catch (err) {
+        alert("Recording canceled or permission denied.");
+        console.error(err);
+      }
+    }
+
+    function stopRecording() {
+      if (recorder && recorder.state === "recording") {
+        recorder.stop();
+        clearTimeout(recordingTimeout);
+        clearInterval(requestInterval);
+        btn.textContent = "▶️";
+        btn.style.animation = "";
+      }
+    }
+
+    btn.onclick = () => {
+      if (recorder && recorder.state === "recording") stopRecording();
+      else startRecording();
+    };
+
+    // --- Flashing animation ---
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes flashRed {
+        0%   { background-color: #222; color: #fff; }
+        50%  { background-color: red; color: white; }
+        100% { background-color: #222; color: #fff; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  init();
+})();
+
 
 
 
