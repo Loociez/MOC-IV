@@ -8,13 +8,13 @@
   let barsContainer;
   let hpBar, spBar, mpBar, tpBar, xpBar;
   let hpTextSpan, spTextSpan, mpTextSpan, tpTextSpan, xpTextSpan;
-  let animationId;
+  let intervalId;
 
   const oldVitals = document.getElementById("winVitals");
 
   const toggleBtn = document.createElement("button");
   toggleBtn.textContent = "⎯";
-  toggleBtn.title = "Toggle Animated HP/SP/MP/TP Bars";
+  toggleBtn.title = "Toggle Optimized HP/SP/MP/TP Bars";
   Object.assign(toggleBtn.style, {
     position: "fixed",
     top: "4px",
@@ -166,20 +166,16 @@
     const ref = {};
 
     addBar("HP ❤️", "red", ref);
-    hpBar = ref.bar;
-    hpTextSpan = ref.text;
+    hpBar = ref.bar; hpTextSpan = ref.text;
 
     addBar("SP", "lime", ref);
-    spBar = ref.bar;
-    spTextSpan = ref.text;
+    spBar = ref.bar; spTextSpan = ref.text;
 
     addBar("MP", "deepskyblue", ref);
-    mpBar = ref.bar;
-    mpTextSpan = ref.text;
+    mpBar = ref.bar; mpTextSpan = ref.text;
 
     addBar("TP", "#a64ca6", ref);
-    tpBar = ref.bar;
-    tpTextSpan = ref.text;
+    tpBar = ref.bar; tpTextSpan = ref.text;
 
     addBar("XP", "goldenrod", ref, () => {
       const txt = document.getElementById("txtXP")?.textContent;
@@ -188,20 +184,20 @@
       const [_, cur, max] = match;
       return `${(+max - +cur).toLocaleString()} XP to next level`;
     });
-    xpBar = ref.bar;
-    xpTextSpan = ref.text;
+    xpBar = ref.bar; xpTextSpan = ref.text;
 
     document.body.appendChild(barsContainer);
     lockBtn.style.display = "inline-block";
     barsLocked = false;
     updateLockState();
     makeDraggable(barsContainer);
-    animateBars();
+
+    startUpdating();
   }
 
   function removeBars() {
     if (!barsContainer) return;
-    cancelAnimationFrame(animationId);
+    clearInterval(intervalId);
     barsContainer.remove();
     barsContainer = null;
     lockBtn.style.display = "none";
@@ -215,56 +211,59 @@
   }
 
   let pulse = 0;
-  function animateBars() {
+  let lastVals = {};
+
+  function updateBars() {
     if (!barsEnabled) return;
 
-    const hpText = document.getElementById("txtHP")?.textContent;
-    const spText = document.getElementById("txtSP")?.textContent;
-    const mpText = document.getElementById("txtMP")?.textContent;
-    const tpText = document.getElementById("txtTP")?.textContent;
-    const xpText = document.getElementById("txtXP")?.textContent;
+    // fresh lookups each tick so bars always see live data
+    const txtHP = document.getElementById("txtHP");
+    const txtSP = document.getElementById("txtSP");
+    const txtMP = document.getElementById("txtMP");
+    const txtTP = document.getElementById("txtTP");
+    const txtXP = document.getElementById("txtXP");
 
-    if (hpText) {
-      const [cur, max] = parseValue(hpText);
+    const updateStat = (txtNode, bar, span, color, offset, key) => {
+      if (!txtNode || !bar) return;
+      const raw = txtNode.textContent;
+      if (!raw) return;
+      if (lastVals[key] === raw) return; // skip unchanged
+      lastVals[key] = raw;
+
+      const [cur, max] = parseValue(raw);
+      if (!max) return;
       const percent = Math.min(cur / max, 1);
-      hpBar.style.width = `${percent * 100}%`;
-      hpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse))}px red`;
-      hpTextSpan.textContent = `${cur} / ${max}`;
-    }
-    if (spText) {
-      const [cur, max] = parseValue(spText);
-      const percent = Math.min(cur / max, 1);
-      spBar.style.width = `${percent * 100}%`;
-      spBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 1))}px lime`;
-      spTextSpan.textContent = `${cur} / ${max}`;
-    }
-    if (mpText) {
-      const [cur, max] = parseValue(mpText);
-      const percent = Math.min(cur / max, 1);
-      mpBar.style.width = `${percent * 100}%`;
-      mpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 2))}px deepskyblue`;
-      mpTextSpan.textContent = `${cur} / ${max}`;
-    }
-    if (tpText) {
-      const [cur, max] = parseValue(tpText);
-      const percent = Math.min(cur / max, 1);
-      tpBar.style.width = `${percent * 100}%`;
-      tpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 3))}px #a64ca6`;
-      tpTextSpan.textContent = `${cur} / ${max}`;
-    }
-    if (xpText) {
-      const match = xpText.match(/(\d+)\s*\/\s*(\d+)/);
+      bar.style.width = `${percent * 100}%`;
+      bar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + offset))}px ${color}`;
+      span.textContent = `${cur.toLocaleString()} / ${max.toLocaleString()}`;
+    };
+
+    updateStat(txtHP, hpBar, hpTextSpan, "red", 0, "hp");
+    updateStat(txtSP, spBar, spTextSpan, "lime", 1, "sp");
+    updateStat(txtMP, mpBar, mpTextSpan, "deepskyblue", 2, "mp");
+    updateStat(txtTP, tpBar, tpTextSpan, "#a64ca6", 3, "tp");
+
+    if (txtXP && xpBar) {
+      const match = txtXP.textContent.match(/(\d+)\s*\/\s*(\d+)/);
       if (match) {
         const cur = parseInt(match[1]), max = parseInt(match[2]);
-        const percent = Math.min(cur / max, 1);
-        xpBar.style.width = `${percent * 100}%`;
-        xpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 4))}px goldenrod`;
-        xpTextSpan.textContent = `${cur.toLocaleString()} / ${max.toLocaleString()}`;
+        const raw = `${cur}/${max}`;
+        if (lastVals["xp"] !== raw) {
+          lastVals["xp"] = raw;
+          const percent = Math.min(cur / max, 1);
+          xpBar.style.width = `${percent * 100}%`;
+          xpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 4))}px goldenrod`;
+          xpTextSpan.textContent = `${cur.toLocaleString()} / ${max.toLocaleString()}`;
+        }
       }
     }
 
-    pulse += 0.05;
-    animationId = requestAnimationFrame(animateBars);
+    pulse += 0.2; // slower pulse
+  }
+
+  function startUpdating() {
+    clearInterval(intervalId);
+    intervalId = setInterval(updateBars, 100); // update every 100ms
   }
 
   function updateLockState() {
@@ -307,6 +306,7 @@
     element.addEventListener("mousedown", onMouseDown);
   }
 })();
+
 
 
 (function enhanceSkillsWindow() {
