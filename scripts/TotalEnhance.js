@@ -815,6 +815,34 @@
       if (color) option.style.color = color;
     });
   }
+// --- keep bank colors on refresh (no observers) ---
+let MOC_bankColorLoopId = null;
+let MOC_bankLastSig = "";
+
+function startBankRecolorLoop() {
+  if (MOC_bankColorLoopId) return; // already running
+
+  MOC_bankColorLoopId = setInterval(() => {
+    const bankWindow = document.querySelector('#winBank');
+    if (!bankWindow || bankWindow.style.display === 'none') return;
+
+    const bankInv = document.querySelector('select[name="selBankInv"]');
+    if (!bankInv) return;
+
+    // lightweight change signature: length + first + last option text
+    const len = bankInv.options.length;
+    const first = len ? bankInv.options[0].text : "";
+    const last  = len ? bankInv.options[len - 1].text : "";
+    const sig = `${len}|${first}|${last}`;
+
+    if (sig === MOC_bankLastSig) return; // nothing changed
+
+    MOC_bankLastSig = sig;
+    // re-apply colors and tooltips after any update
+    colorizeOptions(bankInv);
+    addTooltips(bankInv);
+  }, 250); // gentle cadence; adjust if you like
+}
 
   function enhanceBankWindow() {
     const bankWindow = document.querySelector('#winBank');
@@ -830,11 +858,14 @@
       injectControls(currentInv, 'Inventory');
       colorizeOptions(currentInv);
     }
-    if (bankInv) {
-      injectControls(bankInv, 'Bank');
-      colorizeOptions(bankInv);
-    }
+		if (bankInv) {
+  injectControls(bankInv, 'Bank');
+  colorizeOptions(bankInv);   // initial color on open
+  addTooltips(bankInv);       // initial tooltips on open
+  startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
+}
   }
+	
 
   const observer = new MutationObserver(() => {
     const bankWindow = document.querySelector('#winBank');
