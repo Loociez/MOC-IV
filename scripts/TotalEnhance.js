@@ -2125,65 +2125,102 @@ const INV_GLOW_CONFIG = {
         <option value="dark">Dark Minimal</option>
         <option value="neon">Neon Glow</option>
         <option value="retro">Retro Pixel</option>
+        <option value="cyberpunk">Cyberpunk Holo</option>
+        <option value="fantasy">Fantasy Scroll</option>
+        <option value="vaporwave">Vaporwave Dream</option>
+        <option value="glass">Minimal Dark Glass</option>
+        <option value="industrial">Industrial Steel</option>
+        <option value="aurora">Aurora Veil</option>
+        <option value="inferno">Inferno Ember</option>
       </select>
     </label>
   `;
   qolContainer.appendChild(themeDiv);
 
+  // --- Insert Brightness control ---
+  const brightnessDiv = document.createElement("div");
+  brightnessDiv.style.marginTop = "6px";
+  brightnessDiv.innerHTML = `
+    <label>Game Brightness:
+      <input type="range" name="rngBrightness" min="50" max="150" step="10">
+      <span class="brightnessVal"></span>%
+    </label>
+  `;
+  qolContainer.appendChild(brightnessDiv);
+
+  const brightnessInput = brightnessDiv.querySelector("input[name='rngBrightness']");
+  const brightnessVal = brightnessDiv.querySelector(".brightnessVal");
+
   // --- Ensure qolSettings global exists ---
   window.qolSettings = window.qolSettings || {};
   const qolSettings = window.qolSettings;
   qolSettings.uiTheme = qolSettings.uiTheme || "default";
+  qolSettings.brightness = qolSettings.brightness || 100;
 
   // --- Theme definitions ---
   const THEMES = {
     default: {
-      inv: {
-        background: "linear-gradient(145deg, #2e2e2e, #1c1c1c)",
-        border: "2px solid #444",
-        boxShadow: "0 4px 10px rgba(0,0,0,0.5)"
-      },
-      vitals: {
-        background: "linear-gradient(145deg, #1a1a1a, #2e2e2e)",
-        border: "2px solid #555",
-        boxShadow: "0 3px 6px rgba(0,0,0,0.4)"
-      }
+      inv: { background: "linear-gradient(145deg, #2e2e2e, #1c1c1c)", border: "2px solid #444", boxShadow: "0 4px 10px rgba(0,0,0,0.5)" },
+      vitals: { background: "linear-gradient(145deg, #1a1a1a, #2e2e2e)", border: "2px solid #555", boxShadow: "0 3px 6px rgba(0,0,0,0.4)" }
     },
     dark: {
-      inv: {
-        background: "#111",
-        border: "1px solid #333",
-        boxShadow: "0 0 12px rgba(0,0,0,0.8)"
-      },
-      vitals: {
-        background: "#111",
-        border: "1px solid #333",
-        boxShadow: "0 0 12px rgba(0,0,0,0.8)"
-      }
+      inv: { background: "#111", border: "1px solid #333", boxShadow: "0 0 12px rgba(0,0,0,0.8)" },
+      vitals: { background: "#111", border: "1px solid #333", boxShadow: "0 0 12px rgba(0,0,0,0.8)" }
     },
     neon: {
-      inv: {
-        background: "black",
-        border: "2px solid deepskyblue",
-        boxShadow: "0 0 12px deepskyblue"
-      },
-      vitals: {
-        background: "black",
-        border: "2px solid lime",
-        boxShadow: "0 0 12px lime"
-      }
+      inv: { background: "black", border: "2px solid deepskyblue", boxShadow: "0 0 12px deepskyblue" },
+      vitals: { background: "black", border: "2px solid lime", boxShadow: "0 0 12px lime" }
     },
     retro: {
+      inv: { background: "#2b1d0e", border: "2px solid #d4a373", boxShadow: "none" },
+      vitals: { background: "#1a1a1a", border: "2px solid #888", boxShadow: "none", fontFamily: "monospace" }
+    },
+    cyberpunk: {
+      inv: { background: "linear-gradient(135deg, #0f0f0f, #1c0033)", border: "2px solid #ff00ff", boxShadow: "0 0 15px #ff00ff" },
+      vitals: { background: "rgba(0,0,0,0.85)", border: "2px solid #00ffff", boxShadow: "0 0 15px #00ffff", fontFamily: "Orbitron, sans-serif" }
+    },
+    fantasy: {
+      inv: { background: "linear-gradient(135deg, #3b2f2f, #1e1a1a)", border: "3px solid #d4af37", boxShadow: "0 0 8px rgba(255,215,0,0.6)" },
+      vitals: { background: "#2c2415", border: "2px solid #c0a060", boxShadow: "inset 0 0 10px rgba(200,160,100,0.5)", fontFamily: "serif" }
+    },
+    vaporwave: {
+      inv: { background: "linear-gradient(135deg, #ff71ce, #01cdfe, #05ffa1)", border: "2px solid #fffb96", boxShadow: "0 0 15px rgba(255,113,206,0.8)" },
+      vitals: { background: "linear-gradient(135deg, #ff71ce, #01cdfe)", border: "2px solid #fffb96", boxShadow: "0 0 10px rgba(1,205,254,0.6)", fontFamily: "monospace" }
+    },
+    glass: {
+      inv: { background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.2)", backdropFilter: "blur(6px)", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" },
+      vitals: { background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.2)", backdropFilter: "blur(8px)", boxShadow: "0 2px 12px rgba(0,0,0,0.5)" }
+    },
+    industrial: {
+      inv: { background: "linear-gradient(145deg, #3a3a3a, #1e1e1e)", border: "2px solid #888", boxShadow: "inset 0 0 8px rgba(0,0,0,0.6)" },
+      vitals: { background: "#2e2e2e", border: "2px solid #ffcc00", boxShadow: "0 0 8px rgba(255,204,0,0.6)", fontFamily: "Stencil, sans-serif" }
+    },
+    aurora: {
       inv: {
-        background: "#2b1d0e",
-        border: "2px solid #d4a373",
-        boxShadow: "none"
+        background: "linear-gradient(135deg, rgba(0,30,60,0.9), rgba(0,60,90,0.9))",
+        border: "2px solid #66ccff",
+        boxShadow: "inset 0 0 25px rgba(102,204,255,0.4), 0 0 12px rgba(102,204,255,0.7)",
+        backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 6px)"
       },
       vitals: {
-        background: "#1a1a1a",
-        border: "2px solid #888",
-        boxShadow: "none",
-        fontFamily: "monospace"
+        background: "linear-gradient(135deg, rgba(0,40,70,0.95), rgba(0,70,110,0.95))",
+        border: "2px solid #33bbff",
+        boxShadow: "inset 0 0 20px rgba(51,187,255,0.4), 0 0 10px rgba(51,187,255,0.6)",
+        fontFamily: "Trebuchet MS, sans-serif"
+      }
+    },
+    inferno: {
+      inv: {
+        background: "linear-gradient(135deg, #1a0f0f, #0d0d0d)",
+        border: "2px solid #ff4500",
+        boxShadow: "inset 0 0 20px rgba(255,69,0,0.5), 0 0 15px rgba(255,69,0,0.7)",
+        backgroundImage: "repeating-linear-gradient(45deg, rgba(255,69,0,0.1) 0, rgba(255,69,0,0.1) 2px, transparent 2px, transparent 6px)"
+      },
+      vitals: {
+        background: "linear-gradient(135deg, #260000, #100000)",
+        border: "2px solid #ff6347",
+        boxShadow: "inset 0 0 15px rgba(255,100,0,0.5), 0 0 12px rgba(255,100,0,0.7)",
+        fontFamily: "Verdana, sans-serif"
       }
     }
   };
@@ -2198,6 +2235,14 @@ const INV_GLOW_CONFIG = {
     if (vitals) Object.assign(vitals.style, theme.vitals);
   }
 
+  // --- Apply brightness function ---
+  function applyBrightness(value) {
+    const gameCanvas = document.getElementById("cvsGame") || document.getElementById("winGameCanvas");
+    if (gameCanvas) {
+      gameCanvas.style.filter = `brightness(${value}%)`;
+    }
+  }
+
   // --- Hook dropdown ---
   const themeSelect = themeDiv.querySelector("select[name='selUiTheme']");
   themeSelect.value = qolSettings.uiTheme;
@@ -2206,9 +2251,22 @@ const INV_GLOW_CONFIG = {
     applyTheme(qolSettings.uiTheme);
   });
 
+  // --- Hook brightness ---
+  brightnessInput.value = qolSettings.brightness;
+  brightnessVal.textContent = qolSettings.brightness;
+  brightnessInput.addEventListener("input", e => {
+    const val = parseInt(e.target.value, 10);
+    qolSettings.brightness = val;
+    brightnessVal.textContent = val;
+    applyBrightness(val);
+  });
+
   // --- Initial apply ---
   applyTheme(qolSettings.uiTheme);
+  applyBrightness(qolSettings.brightness);
 })();
+
+
 //recorder button mod
 // === Replay Recorder Button (stacked with Claim + Chat buttons) ===
 (function () {
@@ -2331,6 +2389,21 @@ const INV_GLOW_CONFIG = {
   }
 
   init();
+})();
+//scale zoom fixe
+// --- Auto-fix for browser zoom issues with game UI ---
+(function () {
+  let lastRatio = window.devicePixelRatio;
+  window.addEventListener("resize", () => {
+    if (window.devicePixelRatio !== lastRatio) {
+      lastRatio = window.devicePixelRatio;
+      // Mimic manual zoom reset to force reflow
+      document.body.style.zoom = "99%";
+      setTimeout(() => {
+        document.body.style.zoom = "100%";
+      }, 50);
+    }
+  });
 })();
 
 
