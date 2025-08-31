@@ -1540,24 +1540,33 @@ if (shopSelect) {
         if (btn) btn.click();
     }
 
-    // --- Potion Sequence ---
-    function runPotionSequence(mode) {
-        clickButtonByTitle("Statistics");
+   // --- Potion Sequence ---
+function runPotionSequence(mode) {
+    // Step 1: open Stats
+    clickButtonByTitle("Statistics");
+    setTimeout(() => {
+        // Step 2: Skills / Abilities (by title)
+        clickButtonByTitle("Show player skills");
         setTimeout(() => {
-            clickButtonByText("Customize");
+            // Step 3: Abilities
+            clickButtonByText("Abilities");
             setTimeout(() => {
+                // Step 4: Potion
                 clickButtonByText("Potion");
                 setTimeout(() => {
+                    // Step 5: Off / 50% / 75%
                     if (mode === "off") clickButtonByText("Off");
                     else if (mode === "50") clickButtonByText("50%");
                     else clickButtonByText("75%");
                     setTimeout(() => {
+                        // Step 6: Back out
                         clickButtonByTitle("Back");
                     }, 300);
                 }, 300);
             }, 300);
         }, 300);
-    }
+    }, 300);
+}
 
     // --- Claim Sequence ---
     function runClaimSequence() {
@@ -2404,6 +2413,172 @@ const INV_GLOW_CONFIG = {
       }, 50);
     }
   });
+})();
+//local tracker
+(function sessionTracker(){
+    if(window.sessionTrackerLoaded) return;
+    window.sessionTrackerLoaded = true;
+
+    const tracker = {
+        startTime: Date.now(),
+        spacePresses: 0,
+        itemUses: 0,
+        mouseClicks: 0
+    };
+
+    // --- Space key realistic tracking ---
+    let spaceHeld = false;
+    let lastSpaceTime = 0;
+    const SPACE_INTERVAL = 200; // ms between increments while holding
+
+    document.addEventListener('keydown', e => {
+        if(e.code === 'Space'){
+            if(!spaceHeld){
+                spaceHeld = true;
+                const now = Date.now();
+                if(now - lastSpaceTime >= SPACE_INTERVAL){
+                    tracker.spacePresses++;
+                    lastSpaceTime = now;
+                }
+            }
+        }
+        if(e.code === 'KeyK'){ // Track using item with K
+            tracker.itemUses++;
+        }
+    });
+
+    document.addEventListener('keyup', e => {
+        if(e.code === 'Space'){
+            spaceHeld = false;
+        }
+    });
+
+    // --- Track inventory double-clicks on item canvases ---
+    const invEl = document.querySelector('#winInventory');
+    if(invEl){
+        const attachCanvasListeners = () => {
+            invEl.querySelectorAll('canvas').forEach(c => {
+                if(!c._sessionTrackerAttached){
+                    c.addEventListener('dblclick', () => tracker.itemUses++);
+                    c._sessionTrackerAttached = true;
+                }
+            });
+        };
+        attachCanvasListeners();
+
+        // Watch for newly added items dynamically
+        const observer = new MutationObserver(attachCanvasListeners);
+        observer.observe(invEl, {childList: true, subtree: true});
+    }
+
+    // --- Track all mouse clicks ---
+    document.addEventListener('click', e => {
+        tracker.mouseClicks++;
+    });
+
+    // --- Create new window ---
+    const createTrackerWindow = () => {
+        if(document.querySelector('#winSessionTracker')) return;
+
+        const form = document.createElement('form');
+        form.id = 'winSessionTracker';
+        form.className = 'gameWindowEven fadeIn';
+        form.name = 'frmSessionTracker';
+        form.style.display = 'grid';
+
+        // Header
+        const headerDiv = document.createElement('div');
+        const h3 = document.createElement('h3');
+        h3.textContent = 'Session Tracker';
+        headerDiv.appendChild(h3);
+
+        // Stats grid
+        const gridDiv = document.createElement('div');
+
+        const makeRow = (label, value) => {
+            const labelDiv = document.createElement('div');
+            labelDiv.textContent = label + ':';
+            const valueDiv = document.createElement('div');
+            const input = document.createElement('input');
+            input.readOnly = true;
+            input.size = 12;
+            input.value = value;
+            valueDiv.appendChild(input);
+            gridDiv.appendChild(labelDiv);
+            gridDiv.appendChild(valueDiv);
+            return input;
+        };
+
+        const sessionLengthInput = makeRow('Session Length', '00:00:00');
+        const spaceInput = makeRow('Space Presses', tracker.spacePresses);
+        const itemInput = makeRow('Item Uses', tracker.itemUses);
+        const mouseInput = makeRow('Mouse Clicks', tracker.mouseClicks);
+        const apmInput = makeRow('Actions Per Minute', '0');
+
+        // Buttons
+        const btnDiv = document.createElement('div');
+        const ul = document.createElement('ul');
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.textContent = 'Close';
+        closeBtn.onclick = () => { form.remove(); };
+        ul.appendChild(document.createElement('li')).appendChild(closeBtn);
+
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.textContent = 'Reset';
+        resetBtn.onclick = () => {
+            tracker.startTime = Date.now();
+            tracker.spacePresses = 0;
+            tracker.itemUses = 0;
+            tracker.mouseClicks = 0;
+            updateDisplay();
+        };
+        ul.appendChild(document.createElement('li')).appendChild(resetBtn);
+
+        btnDiv.appendChild(ul);
+        form.appendChild(headerDiv);
+        form.appendChild(gridDiv);
+        form.appendChild(btnDiv);
+        document.body.appendChild(form);
+
+        // --- Update display ---
+        const updateDisplay = () => {
+            // Session length
+            const elapsed = Date.now() - tracker.startTime;
+            const hrs = Math.floor(elapsed / 3600000);
+            const mins = Math.floor((elapsed % 3600000) / 60000);
+            const secs = Math.floor((elapsed % 60000) / 1000);
+            sessionLengthInput.value =
+                `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+
+            spaceInput.value = tracker.spacePresses;
+            itemInput.value = tracker.itemUses;
+            mouseInput.value = tracker.mouseClicks;
+
+            // Actions per minute
+            const minutes = elapsed / 60000;
+            const totalActions = tracker.spacePresses + tracker.itemUses + tracker.mouseClicks;
+            apmInput.value = minutes > 0 ? (totalActions / minutes).toFixed(1) : '0';
+        };
+
+        setInterval(updateDisplay, 500);
+    };
+
+    // --- Add button to winStats ---
+    const statsWindow = document.querySelector('#winStats ul');
+    if(statsWindow){
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = 'Session Tracker';
+        btn.title = 'Open session tracker window';
+        btn.onclick = createTrackerWindow;
+        li.appendChild(btn);
+        statsWindow.appendChild(li);
+    }
+
 })();
 
 
