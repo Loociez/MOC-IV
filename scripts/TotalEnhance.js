@@ -2423,13 +2423,28 @@ const INV_GLOW_CONFIG = {
         startTime: Date.now(),
         spacePresses: 0,
         itemUses: 0,
-        mouseClicks: 0
+        mouseClicks: 0,
+        bankOpens: 0,
+        shopOpens: 0,
+        skillsOpens: 0,
+        tabSwitches: 0,      // <Tab> key target switches
+        abilityUses: 0,
+        peakAPM: 0,
+        mouseDistance: 0
     };
+function formatNumber(num) {
+    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+    return num.toFixed(0);
+}
 
     // --- Space key realistic tracking ---
     let spaceHeld = false;
     let lastSpaceTime = 0;
-    const SPACE_INTERVAL = 200; // ms between increments while holding
+    const SPACE_INTERVAL = 200;
+
+    let tabHeld = false; // prevent repeat spam
 
     document.addEventListener('keydown', e => {
         if(e.code === 'Space'){
@@ -2445,11 +2460,21 @@ const INV_GLOW_CONFIG = {
         if(e.code === 'KeyK'){ // Track using item with K
             tracker.itemUses++;
         }
+        if(e.code === 'KeyF'){ // Track ability uses
+            tracker.abilityUses++;
+        }
+        if(e.code === 'Tab' && !tabHeld){ // Track target switching with Tab (debounced)
+            tracker.tabSwitches++;
+            tabHeld = true;
+        }
     });
 
     document.addEventListener('keyup', e => {
         if(e.code === 'Space'){
             spaceHeld = false;
+        }
+        if(e.code === 'Tab'){
+            tabHeld = false;
         }
     });
 
@@ -2465,16 +2490,57 @@ const INV_GLOW_CONFIG = {
             });
         };
         attachCanvasListeners();
-
-        // Watch for newly added items dynamically
         const observer = new MutationObserver(attachCanvasListeners);
         observer.observe(invEl, {childList: true, subtree: true});
     }
 
-    // --- Track all mouse clicks ---
+    // --- Track all mouse clicks (ignore tracker UI clicks) ---
     document.addEventListener('click', e => {
-        tracker.mouseClicks++;
+        if (!e.target.closest('#winSessionTracker')) {
+            tracker.mouseClicks++;
+        }
     });
+
+    // --- Track mouse movement distance ---
+    let lastMouseX = null, lastMouseY = null;
+    document.addEventListener('mousemove', e => {
+        if(lastMouseX !== null && lastMouseY !== null){
+            const dx = e.clientX - lastMouseX;
+            const dy = e.clientY - lastMouseY;
+            tracker.mouseDistance += Math.sqrt(dx*dx + dy*dy);
+        }
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+
+    // --- Hook Bank, Shop opens via their buttons ---
+    const attachWindowOpenListeners = () => {
+        document.querySelectorAll("button[title]").forEach(btn => {
+            if(btn._sessionTrackerAttached) return;
+            const title = btn.getAttribute("title");
+            if(title?.includes("Bank")) btn.addEventListener('click', () => tracker.bankOpens++);
+            if(title?.includes("Shop")) btn.addEventListener('click', () => tracker.shopOpens++);
+            btn._sessionTrackerAttached = true;
+        });
+    };
+    attachWindowOpenListeners();
+    new MutationObserver(attachWindowOpenListeners).observe(document.body, {childList:true, subtree:true});
+
+    // --- Watch for Skills window being shown ---
+    const watchSkillsWindow = () => {
+        const skillsEl = document.querySelector("#winSkills");
+        if(skillsEl && !skillsEl._sessionTrackerObserved){
+            const observer = new MutationObserver(() => {
+                if(skillsEl.style.display !== "none" && skillsEl.style.display !== ""){
+                    tracker.skillsOpens++;
+                }
+            });
+            observer.observe(skillsEl, {attributes:true, attributeFilter:["style"]});
+            skillsEl._sessionTrackerObserved = true;
+        }
+    };
+    watchSkillsWindow();
+    new MutationObserver(watchSkillsWindow).observe(document.body, {childList:true, subtree:true});
 
     // --- Create new window ---
     const createTrackerWindow = () => {
@@ -2513,7 +2579,14 @@ const INV_GLOW_CONFIG = {
         const spaceInput = makeRow('Space Presses', tracker.spacePresses);
         const itemInput = makeRow('Item Uses', tracker.itemUses);
         const mouseInput = makeRow('Mouse Clicks', tracker.mouseClicks);
+        const abilityInput = makeRow('Abilities Used (F)', tracker.abilityUses);
+        const bankInput = makeRow('Bank Opens', tracker.bankOpens);
+        const shopInput = makeRow('Shop Opens', tracker.shopOpens);
+        const skillsInput = makeRow('Skills Opens', tracker.skillsOpens);
+        const tabInput = makeRow('Tab Switches (Targets)', tracker.tabSwitches);
+        const distanceInput = makeRow('Mouse Distance (px)', tracker.mouseDistance.toFixed(0));
         const apmInput = makeRow('Actions Per Minute', '0');
+        const peakApmInput = makeRow('Peak APM', tracker.peakAPM);
 
         // Buttons
         const btnDiv = document.createElement('div');
@@ -2533,6 +2606,13 @@ const INV_GLOW_CONFIG = {
             tracker.spacePresses = 0;
             tracker.itemUses = 0;
             tracker.mouseClicks = 0;
+            tracker.bankOpens = 0;
+            tracker.shopOpens = 0;
+            tracker.skillsOpens = 0;
+            tracker.tabSwitches = 0;
+            tracker.abilityUses = 0;
+            tracker.mouseDistance = 0;
+            tracker.peakAPM = 0;
             updateDisplay();
         };
         ul.appendChild(document.createElement('li')).appendChild(resetBtn);
@@ -2545,7 +2625,6 @@ const INV_GLOW_CONFIG = {
 
         // --- Update display ---
         const updateDisplay = () => {
-            // Session length
             const elapsed = Date.now() - tracker.startTime;
             const hrs = Math.floor(elapsed / 3600000);
             const mins = Math.floor((elapsed % 3600000) / 60000);
@@ -2556,11 +2635,22 @@ const INV_GLOW_CONFIG = {
             spaceInput.value = tracker.spacePresses;
             itemInput.value = tracker.itemUses;
             mouseInput.value = tracker.mouseClicks;
+            abilityInput.value = tracker.abilityUses;
+            bankInput.value = tracker.bankOpens;
+            shopInput.value = tracker.shopOpens;
+            skillsInput.value = tracker.skillsOpens;
+            tabInput.value = tracker.tabSwitches;
+            distanceInput.value = formatNumber(tracker.mouseDistance);
 
-            // Actions per minute
+            // Actions per minute + peak APM (exclude mouseDistance)
             const minutes = elapsed / 60000;
-            const totalActions = tracker.spacePresses + tracker.itemUses + tracker.mouseClicks;
-            apmInput.value = minutes > 0 ? (totalActions / minutes).toFixed(1) : '0';
+            const totalActions = tracker.spacePresses + tracker.itemUses + tracker.mouseClicks + tracker.abilityUses + tracker.tabSwitches;
+            const apm = minutes > 0 ? (totalActions / minutes).toFixed(1) : '0';
+            apmInput.value = apm;
+            if(parseFloat(apm) > tracker.peakAPM){
+                tracker.peakAPM = parseFloat(apm);
+            }
+            peakApmInput.value = tracker.peakAPM.toFixed(1);
         };
 
         setInterval(updateDisplay, 500);
@@ -2580,6 +2670,8 @@ const INV_GLOW_CONFIG = {
     }
 
 })();
+
+
 
 
 
