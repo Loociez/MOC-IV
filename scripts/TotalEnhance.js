@@ -2039,6 +2039,89 @@ const INV_GLOW_CONFIG = {
     q.revertUiVitals = e.target.checked;
     applyState();
   });
+  // === QoL: Background Color Selector (aligned under Sparkles) ===
+(function () {
+  const settingsForm = document.querySelector("#winSettings");
+  if (!settingsForm) return;
+
+  window.qolSettings = window.qolSettings || {};
+  const q = window.qolSettings;
+  if (typeof q.bgColor === "undefined") q.bgColor = "#1c1c1c";
+
+  // Find the QoL container
+  const qolContainer = [...settingsForm.querySelectorAll("div")]
+    .find(d => d.querySelector("b")?.textContent === "Quality of Life");
+  if (!qolContainer) return;
+
+  // Find the last existing QoL row (sparkles/brightness) to insert after
+  const lastRow = [...qolContainer.querySelectorAll("div")].pop();
+
+  // --- Create color picker row ---
+  let row = settingsForm.querySelector("input[name='bgColorPicker']")?.closest("div");
+  if (!row) {
+    row = document.createElement("div");
+    row.style.display = "block";         // full width
+    row.style.width = "100%";
+    row.style.marginTop = "6px";
+    row.innerHTML = `
+      <label style="display:flex; align-items:center; gap:6px;">
+        Background Color:
+        <input type="color" name="bgColorPicker" value="${q.bgColor}">
+      </label>`;
+    if (lastRow && lastRow.parentNode) {
+      lastRow.parentNode.insertBefore(row, lastRow.nextSibling); // insert directly after sparkles
+    } else {
+      qolContainer.appendChild(row);
+    }
+  }
+
+  const colorInput = settingsForm.querySelector("input[name='bgColorPicker']");
+  colorInput.value = q.bgColor;
+
+  // --- Apply the color only if Revert UI is OFF ---
+  function applyBgColor() {
+    if (q.revertUiVitals) return;
+    ["winInventory", "winGameChatbox"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.backgroundColor = q.bgColor;
+    });
+  }
+
+  // Wire up input change
+  colorInput.addEventListener("input", e => {
+    q.bgColor = e.target.value;
+    applyBgColor();
+    localStorage.setItem("totalenhance_bgColor", q.bgColor);
+  });
+
+  // Restore saved color
+  const savedColor = localStorage.getItem("totalenhance_bgColor");
+  if (savedColor) {
+    q.bgColor = savedColor;
+    colorInput.value = savedColor;
+  }
+
+  // Integrate with Revert UI + Vitals checkbox
+  const chkRevert = settingsForm.querySelector("input[name='chkRevertUiVitals']");
+  if (chkRevert) {
+    chkRevert.addEventListener("change", () => {
+      if (!q.revertUiVitals) {
+        applyBgColor();
+      } else {
+        ["winPlayer", "winGameChatbox"].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.removeAttribute("style");
+        });
+      }
+    });
+  }
+
+  // Initial application
+  if (!q.revertUiVitals) applyBgColor();
+})();
+
 
   // Initial apply
   setTimeout(applyState, 0);
@@ -2670,6 +2753,8 @@ function formatNumber(num) {
     }
 
 })();
+//background Color
+
 
 
 
