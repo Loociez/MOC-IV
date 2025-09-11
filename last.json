@@ -5457,7 +5457,7 @@
       "min_rat": 8,
       "min_rdf": 10,
       "damage_stat": 1,
-      "!necromancer_minon_cost": "10"
+      "!necromancer_minion_cost": "10"
     }
   },
   {
@@ -7734,7 +7734,7 @@
   {
     "name": "Ticket to the Beyond",
     "desc": "",
-    "revision": 0,
+    "revision": 1,
     "sprite": 377,
     "sprite_color": {
       "alpha": 1,
@@ -8546,25 +8546,25 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 2,
-    "sprite": 0,
+    "name": "Snack of Fair Tournament",
+    "desc": "Will be deleted after the tournament",
+    "revision": 0,
+    "sprite": 20,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.5,
+    "scale": 1,
     "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
+    "show_name": true,
+    "spawn_delay": 0,
     "type": 6,
     "uses": 1,
-    "limit": 5000,
-    "cooldown_delay": 2,
-    "cooldown_id": 457,
+    "limit": 25,
+    "cooldown_delay": 6,
+    "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
     "recycle_value": 0,
@@ -8573,11 +8573,11 @@
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": false,
-    "transferable": true,
+    "transferable": false,
     "data": {
       "hp": 0,
-      "mp": 0,
-      "sp": 0
+      "mp": 20,
+      "sp": 50
     }
   },
   {
@@ -9373,21 +9373,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
       "damage_stat": 0
     }
   },
@@ -9706,7 +9706,7 @@
       "two_handed": false,
       "damage_stat": 4,
       "sprite_rotation": 0,
-      "!necromancer_minon_hp": "10",
+      "!necromancer_minion_hp": "10",
       "!warlock_npcaoe_damage": "10",
       "!cleric_allheal_cooldown": "10",
       "!warlock_playeraoe_damage": "10",
@@ -11592,7 +11592,7 @@
     "scale": 0.7,
     "color": "#ff99ff",
     "show_name": false,
-    "spawn_delay": 15,
+    "spawn_delay": 0,
     "type": 6,
     "uses": 1,
     "limit": 25,
@@ -11803,21 +11803,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
       "damage_stat": 0
     }
   },
@@ -11851,21 +11851,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
       "damage_stat": 0
     }
   },
@@ -11932,21 +11932,21 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
       "damage_stat": 0
     }
   },
@@ -19631,7 +19631,7 @@
   },
   {
     "name": "Specter's Blade",
-    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minon damage & HP. 5% Break chance upon repair",
+    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minion damage & HP. 5% Break chance upon repair",
     "revision": 1,
     "sprite": 1186,
     "sprite_color": {
@@ -33146,7 +33146,7 @@
       "min_rat": 20,
       "min_rdf": 5,
       "damage_stat": 0,
-      "!necromancer_minon_hp": "10"
+      "!necromancer_minion_hp": "10"
     }
   },
   {
@@ -34305,7 +34305,7 @@
       "!cleric_playerheal_amount": "65",
       "!samurai_riposte_cooldown": "5",
       "!warlock_selfaoe_cooldown": "5",
-      "!necromancer_minon_cooldown": "5",
+      "!necromancer_minion_cooldown": "5",
       "!warlock_playeraoe_cooldown": "5"
     }
   },
@@ -46921,20 +46921,20 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Von's Mission Chest",
+    "desc": "Double click to open.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 1281,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 120
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
+    "scale": 0.6,
+    "color": "#C0C0C0",
+    "show_name": true,
+    "spawn_delay": 0,
     "type": 0,
     "uses": 1,
     "limit": 0,
@@ -46942,12 +46942,12 @@
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
@@ -50188,33 +50188,33 @@
     }
   },
   {
-    "name": "",
+    "name": "Von🐶",
     "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "revision": 1,
+    "sprite": 608,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.6,
+    "color": "#cc6600",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
+    "type": 12,
+    "uses": 500,
+    "limit": 5,
+    "cooldown_delay": 15,
     "cooldown_id": -1,
-    "repair_cost": 0,
+    "repair_cost": 500000,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
@@ -51871,21 +51871,21 @@
     }
   },
   {
-    "name": "",
+    "name": "Diamond Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -51895,30 +51895,74 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 6,
+          "item_id": 82
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Sapphire Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -51928,30 +51972,74 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 15,
+          "item_id": 85
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Ruby Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -51961,30 +52049,74 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 27,
+          "item_id": 84
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Emerald Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -51994,30 +52126,74 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 42,
+          "item_id": 83
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Amethyst Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -52027,30 +52203,74 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 60,
+          "item_id": 81
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Rock Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -52060,30 +52280,74 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 1500,
+          "item_id": 309
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Ore Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.5,
+    "color": "#dddddd",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -52093,27 +52357,71 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 587,
+      "recipe_items": [
+        {
+          "amount": 500,
+          "item_id": 312
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Cragstone Mission",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 931,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.5,
+    "color": "#dddddd",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
@@ -52126,7 +52434,7 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
@@ -53015,20 +53323,53 @@
     }
   },
   {
-    "name": "",
+    "name": "glacial key 1",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 1746,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.5,
+    "color": "#008b8b",
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 8,
+    "uses": 1,
+    "limit": 1,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 50,
+    "recycle_value": 0,
+    "level_req": 1,
+    "prof_req_flags": -1,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "death_drop": false,
+    "transferable": true,
+    "data": {
+
+    }
+  },
+  {
+    "name": "glacial key 2",
+    "desc": "",
+    "revision": 0,
+    "sprite": 1755,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 90,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.5,
     "color": "#008b8b",
     "show_name": false,
-    "spawn_delay": 60,
+    "spawn_delay": 0,
     "type": 0,
     "uses": 1,
     "limit": 0,
@@ -53048,10 +53389,10 @@
     }
   },
   {
-    "name": "",
+    "name": "glacial key 3",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 1759,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -53061,40 +53402,7 @@
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
+    "spawn_delay": 0,
     "type": 0,
     "uses": 1,
     "limit": 0,
@@ -62268,7 +62576,7 @@
     "scale": 0.6,
     "color": "#FFA500",
     "show_name": true,
-    "spawn_delay": 60,
+    "spawn_delay": 0,
     "type": 6,
     "uses": 1,
     "limit": 0,
@@ -62276,7 +62584,7 @@
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
