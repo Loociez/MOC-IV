@@ -1012,7 +1012,6 @@
       startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
     }
   }
-
   const observer = new MutationObserver(() => {
     const bankWindow = document.querySelector('#winBank');
     if (bankWindow && bankWindow.style.display !== 'none') {
@@ -1020,6 +1019,8 @@
     }
   });
   observer.observe(document.body, { childList: true, subtree: true });
+
+})();
 
   // -- Trade enhancement block (unchanged behavior; kept inside same file) --
   (function () {
