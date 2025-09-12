@@ -550,7 +550,6 @@
   }
 })();
 
-
 // enhancedBankUI.js
 (function () {
   const config = {
@@ -559,11 +558,12 @@
     valueCache: {},
     colorCache: {},
     statsCache: {},
+    typeCache: {} // NEW
   };
 
   const persistentSettings = {
-    currentInv: { filter: '', sort: 'name' },
-    bankInv: { filter: '', sort: 'name' }
+    currentInv: { filter: '', sort: 'name', type: '' },
+    bankInv: { filter: '', sort: 'name', type: '' }
   };
 
   const SPELL_AMP_KEYS = {
@@ -610,6 +610,20 @@
     "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
   };
 
+  // Map numeric type → readable category
+  const ITEM_TYPES = {
+    0: "Other",
+    1: "Melee Weapon",
+    2: "Ranged Weapon",
+    3: "Armor",
+    4: "Helmet",
+    5: "Shield",
+    6: "Consumable",
+    11: "Accessory",
+    12: "Pets",
+    13: "Recipe"
+  };
+
   // Load item data
   fetch("https://loociez.github.io/MOC-IV/last.json")
     .then(response => response.json())
@@ -621,6 +635,7 @@
           if (typeof item.recycle_value === 'number') config.valueCache[lower] = item.recycle_value;
           if (item.color) config.colorCache[lower] = item.color;
           if (item.data) config.statsCache[lower] = item.data;
+          if (item.type !== undefined) config.typeCache[lower] = item.type;
         }
       });
       enhanceBankWindow();
@@ -661,13 +676,6 @@
     otherOptions.forEach(opt => selectEl.appendChild(opt));
   }
 
-  function filterSelectOptions(selectEl, query) {
-    const lowerQuery = query.toLowerCase();
-    Array.from(selectEl.options).forEach(option => {
-      option.hidden = !option.text.toLowerCase().includes(lowerQuery);
-    });
-  }
-
   function updateValueDisplay(selectEl, valueBox) {
     const selected = selectEl.options[selectEl.selectedIndex];
     if (!selected) return (valueBox.textContent = '');
@@ -682,25 +690,24 @@
     }
   }
 
- function calculateTotalValue(selectEl, totalBox) {
-  let total = 0;
-  Array.from(selectEl.options).forEach(option => {
-    if (option.hidden) return;
-    const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
-    const quantity = parseInt(option.text.match(/x(\d+)/)?.[1] || '1');
+  function calculateTotalValue(selectEl, totalBox) {
+    let total = 0;
+    Array.from(selectEl.options).forEach(option => {
+      if (option.hidden) return;
+      const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+      const quantity = parseInt(option.text.match(/x(\d+)/)?.[1] || '1');
 
-    if (itemName.includes('gold coin')) {
-      total += quantity; // treat as gold itself
-    } else {
-      const value = config.valueCache[itemName];
-      if (value !== undefined) {
-        total += quantity * value;
+      if (itemName.includes('gold coin')) {
+        total += quantity; // treat as gold itself
+      } else {
+        const value = config.valueCache[itemName];
+        if (value !== undefined) {
+          total += quantity * value;
+        }
       }
-    }
-  });
-  totalBox.textContent = `Total Est. Value: ~${total.toLocaleString()}g`;
-}
-
+    });
+    totalBox.textContent = `Total Est. Value: ~${total.toLocaleString()}g`;
+  }
 
   function attachValueTracker(selectEl) {
     const box = document.createElement('div');
@@ -740,7 +747,23 @@
     wrapper.style.marginBottom = '5px';
     wrapper.innerHTML = `
       <label style="color: white; font-size: 12px;">
-        ${labelText} Filter:
+        ${labelText} Type:
+        <select class="inv-type" style="margin-left:5px;">
+          <option value="">All</option>
+          <option value="Consumable">Consumable</option>
+          <option value="Armor">Armor</option>
+          <option value="Helmet">Helmet</option>
+          <option value="Shield">Shield</option>
+          <option value="Accessory">Accessory</option>
+          <option value="Melee Weapon">Melee Weapon</option>
+          <option value="Ranged Weapon">Ranged Weapon</option>
+          <option value="Pets">Pets</option>
+          <option value="Recipe">Recipe</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <label style="color: white; font-size: 12px; margin-left: 10px;">
+        Search:
         <input type="text" class="inv-filter" placeholder="Search..." style="margin-left: 5px;">
       </label>
       <label style="color: white; font-size: 12px; margin-left: 10px;">
@@ -765,6 +788,7 @@
 
     selectEl.parentElement.prepend(wrapper);
 
+    const typeDropdown = wrapper.querySelector('.inv-type');
     const input = wrapper.querySelector('.inv-filter');
     const sortDropdown = wrapper.querySelector('.inv-sort');
 
@@ -777,11 +801,14 @@
 
     input.value = persistentSettings[id].filter;
     sortDropdown.value = persistentSettings[id].sort;
+    typeDropdown.value = persistentSettings[id].type;
 
     function applySortAndFilter() {
       const sortValue = sortDropdown.value;
+      const typeValue = typeDropdown.value;
       persistentSettings[id].sort = sortValue;
       persistentSettings[id].filter = input.value;
+      persistentSettings[id].type = typeValue;
 
       const sortMap = {
         "name": { by: "name", desc: false },
@@ -795,13 +822,25 @@
       const descending = isStat ? true : (sortMap[sortValue]?.desc ?? false);
 
       sortSelectOptions(selectEl, sortBy, descending);
-      filterSelectOptions(selectEl, input.value);
+
+      Array.from(selectEl.options).forEach(option => {
+        const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+        const matchesText = name.includes(input.value.toLowerCase());
+
+        const typeKey = config.typeCache[name];
+        const itemType = ITEM_TYPES[typeKey] || "Other";
+        const matchesType = !typeValue || itemType === typeValue;
+
+        option.hidden = !(matchesText && matchesType);
+      });
+
       colorizeOptions(selectEl);
       calculateTotalValue(selectEl, totalBox);
       addTooltips(selectEl);
     }
 
     input.addEventListener('input', applySortAndFilter);
+    typeDropdown.addEventListener('change', applySortAndFilter);
     sortDropdown.addEventListener('change', applySortAndFilter);
     expandBankView(true);
     applySortAndFilter();
@@ -815,34 +854,33 @@
       if (color) option.style.color = color;
     });
   }
-// --- keep bank colors on refresh (no observers) ---
-let MOC_bankColorLoopId = null;
-let MOC_bankLastSig = "";
 
-function startBankRecolorLoop() {
-  if (MOC_bankColorLoopId) return; // already running
+  // --- keep bank colors on refresh (no observers) ---
+  let MOC_bankColorLoopId = null;
+  let MOC_bankLastSig = "";
 
-  MOC_bankColorLoopId = setInterval(() => {
-    const bankWindow = document.querySelector('#winBank');
-    if (!bankWindow || bankWindow.style.display === 'none') return;
+  function startBankRecolorLoop() {
+    if (MOC_bankColorLoopId) return; // already running
 
-    const bankInv = document.querySelector('select[name="selBankInv"]');
-    if (!bankInv) return;
+    MOC_bankColorLoopId = setInterval(() => {
+      const bankWindow = document.querySelector('#winBank');
+      if (!bankWindow || bankWindow.style.display === 'none') return;
 
-    // lightweight change signature: length + first + last option text
-    const len = bankInv.options.length;
-    const first = len ? bankInv.options[0].text : "";
-    const last  = len ? bankInv.options[len - 1].text : "";
-    const sig = `${len}|${first}|${last}`;
+      const bankInv = document.querySelector('select[name="selBankInv"]');
+      if (!bankInv) return;
 
-    if (sig === MOC_bankLastSig) return; // nothing changed
+      const len = bankInv.options.length;
+      const first = len ? bankInv.options[0].text : "";
+      const last = len ? bankInv.options[len - 1].text : "";
+      const sig = `${len}|${first}|${last}`;
 
-    MOC_bankLastSig = sig;
-    // re-apply colors and tooltips after any update
-    colorizeOptions(bankInv);
-    addTooltips(bankInv);
-  }, 250); // gentle cadence; adjust if you like
-}
+      if (sig === MOC_bankLastSig) return;
+
+      MOC_bankLastSig = sig;
+      colorizeOptions(bankInv);
+      addTooltips(bankInv);
+    }, 250);
+  }
 
   function enhanceBankWindow() {
     const bankWindow = document.querySelector('#winBank');
@@ -858,14 +896,13 @@ function startBankRecolorLoop() {
       injectControls(currentInv, 'Inventory');
       colorizeOptions(currentInv);
     }
-		if (bankInv) {
-  injectControls(bankInv, 'Bank');
-  colorizeOptions(bankInv);   // initial color on open
-  addTooltips(bankInv);       // initial tooltips on open
-  startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
-}
+    if (bankInv) {
+      injectControls(bankInv, 'Bank');
+      colorizeOptions(bankInv);
+      addTooltips(bankInv);
+      startBankRecolorLoop();
+    }
   }
-	
 
   const observer = new MutationObserver(() => {
     const bankWindow = document.querySelector('#winBank');
@@ -873,6 +910,8 @@ function startBankRecolorLoop() {
       enhanceBankWindow();
     }
   });
+})();
+
   (function () {
   const config = {
     valueCache: {},
