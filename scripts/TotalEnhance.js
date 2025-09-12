@@ -910,8 +910,6 @@
       enhanceBankWindow();
     }
   });
-})();
-
   (function () {
   const config = {
     valueCache: {},
