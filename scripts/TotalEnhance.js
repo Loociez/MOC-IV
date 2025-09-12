@@ -2109,7 +2109,7 @@ const INV_GLOW_CONFIG = {
       if (!q.revertUiVitals) {
         applyBgColor();
       } else {
-        ["winPlayer", "winGameChatbox"].forEach(id => {
+        ["winInventory", "winGameChatbox"].forEach(id => {
           const el = document.getElementById(id);
           if (!el) return;
           el.removeAttribute("style");
