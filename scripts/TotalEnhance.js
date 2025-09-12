@@ -559,12 +559,11 @@
     valueCache: {},
     colorCache: {},
     statsCache: {},
-    typeCache: {} // <-- store item.type from last.json so we can type-filter
   };
 
   const persistentSettings = {
-    currentInv: { filter: '', sort: 'name', types: null },
-    bankInv: { filter: '', sort: 'name', types: null }
+    currentInv: { filter: '', sort: 'name' },
+    bankInv: { filter: '', sort: 'name' }
   };
 
   const SPELL_AMP_KEYS = {
@@ -611,23 +610,7 @@
     "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
   };
 
-  // type mapping (from your JSON):
-  // 0: Other, 1: Melee Weapon, 2: Ranged Weapon, 3: Armor,
-  // 4: Helm, 5: Shield, 6: Potions (Consumable), 11: Accessory, 12: Pets, 13: Recipe
-  const TYPE_DEFS = [
-    { key: 'consumable', label: 'Consumable', types: [6] },
-    { key: 'armor', label: 'Armor', types: [3] },
-    { key: 'helmet', label: 'Helmet', types: [4] },
-    { key: 'shield', label: 'Shield', types: [5] },
-    { key: 'accessory', label: 'Accessory', types: [11] },
-    { key: 'melee', label: 'Melee', types: [1] },
-    { key: 'ranged', label: 'Ranged', types: [2] },
-    { key: 'pets', label: 'Pets', types: [12] },
-    { key: 'recipe', label: 'Recipe', types: [13] },
-    { key: 'others', label: 'Others', types: [0] }
-  ];
-
-  // Load item data (also populate typeCache)
+  // Load item data
   fetch("https://loociez.github.io/MOC-IV/last.json")
     .then(response => response.json())
     .then(data => {
@@ -638,7 +621,6 @@
           if (typeof item.recycle_value === 'number') config.valueCache[lower] = item.recycle_value;
           if (item.color) config.colorCache[lower] = item.color;
           if (item.data) config.statsCache[lower] = item.data;
-          if (typeof item.type === 'number') config.typeCache[lower] = item.type;
         }
       });
       enhanceBankWindow();
@@ -679,31 +661,10 @@
     otherOptions.forEach(opt => selectEl.appendChild(opt));
   }
 
-  // extended filter: respects text query AND optional typeSet (Set of numeric types).
-  function filterSelectOptions(selectEl, query, typeSet = null) {
-    const lowerQuery = (query || '').toLowerCase();
+  function filterSelectOptions(selectEl, query) {
+    const lowerQuery = query.toLowerCase();
     Array.from(selectEl.options).forEach(option => {
-      // always show gold option
-      if (option.text.toLowerCase().includes('gold coins')) {
-        option.hidden = false;
-        return;
-      }
-
-      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
-
-      // text match
-      const matchesText = !lowerQuery || option.text.toLowerCase().includes(lowerQuery);
-
-      // type match (if typeSet provided)
-      let matchesType = true;
-      if (typeSet && typeSet.size > 0) {
-        const t = config.typeCache[name];
-        // unknown types count as 0 (others)
-        const itemType = (typeof t === 'number') ? t : 0;
-        matchesType = typeSet.has(itemType);
-      }
-
-      option.hidden = !(matchesText && matchesType);
+      option.hidden = !option.text.toLowerCase().includes(lowerQuery);
     });
   }
 
@@ -721,24 +682,25 @@
     }
   }
 
-  function calculateTotalValue(selectEl, totalBox) {
-    let total = 0;
-    Array.from(selectEl.options).forEach(option => {
-      if (option.hidden) return;
-      const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
-      const quantity = parseInt(option.text.match(/x(\d+)/)?.[1] || '1');
+ function calculateTotalValue(selectEl, totalBox) {
+  let total = 0;
+  Array.from(selectEl.options).forEach(option => {
+    if (option.hidden) return;
+    const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+    const quantity = parseInt(option.text.match(/x(\d+)/)?.[1] || '1');
 
-      if (itemName.includes('gold coin')) {
-        total += quantity; // treat as gold itself
-      } else {
-        const value = config.valueCache[itemName];
-        if (value !== undefined) {
-          total += quantity * value;
-        }
+    if (itemName.includes('gold coin')) {
+      total += quantity; // treat as gold itself
+    } else {
+      const value = config.valueCache[itemName];
+      if (value !== undefined) {
+        total += quantity * value;
       }
-    });
-    totalBox.textContent = `Total Est. Value: ~${total.toLocaleString()}g`;
-  }
+    }
+  });
+  totalBox.textContent = `Total Est. Value: ~${total.toLocaleString()}g`;
+}
+
 
   function attachValueTracker(selectEl) {
     const box = document.createElement('div');
@@ -772,54 +734,11 @@
     });
   }
 
-  function colorizeOptions(selectEl) {
-    Array.from(selectEl.options).forEach(option => {
-      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
-      const color = config.colorCache[name];
-      if (color) option.style.color = color;
-    });
-  }
-
   function injectControls(selectEl, labelText) {
     const id = selectEl.name === 'selCurrentInv' ? 'currentInv' : 'bankInv';
     const wrapper = document.createElement('div');
-    wrapper.style.marginBottom = '6px';
-
-    // Build type filter UI (checkboxes)
-    const typeRow = document.createElement('div');
-    typeRow.style.color = 'white';
-    typeRow.style.fontSize = '12px';
-    typeRow.style.marginBottom = '4px';
-    typeRow.style.display = 'flex';
-    typeRow.style.flexWrap = 'wrap';
-    typeRow.style.gap = '6px';
-    typeRow.innerHTML = `<div style="font-weight:600; margin-right:6px;">Type:</div>`;
-
-    // toggle 'All' checkbox
-    const allCheckboxId = `type_all_${id}`;
-    const allLabel = document.createElement('label');
-    allLabel.style.color = 'white';
-    allLabel.style.fontSize = '12px';
-    allLabel.style.cursor = 'pointer';
-    allLabel.style.userSelect = 'none';
-    allLabel.innerHTML = `<input id="${allCheckboxId}" type="checkbox" style="margin-right:4px;"> All`;
-    typeRow.appendChild(allLabel);
-
-    // create each checkbox
-    TYPE_DEFS.forEach(def => {
-      const cbId = `type_${def.key}_${id}`;
-      const lab = document.createElement('label');
-      lab.style.color = 'white';
-      lab.style.fontSize = '12px';
-      lab.style.cursor = 'pointer';
-      lab.style.userSelect = 'none';
-      lab.innerHTML = `<input id="${cbId}" type="checkbox" style="margin-right:4px;"> ${def.label}`;
-      typeRow.appendChild(lab);
-    });
-
-    // main filter + sort row (existing)
-    const mainRow = document.createElement('div');
-    mainRow.innerHTML = `
+    wrapper.style.marginBottom = '5px';
+    wrapper.innerHTML = `
       <label style="color: white; font-size: 12px;">
         ${labelText} Filter:
         <input type="text" class="inv-filter" placeholder="Search..." style="margin-left: 5px;">
@@ -844,9 +763,6 @@
       </label>
     `;
 
-    wrapper.appendChild(typeRow);
-    wrapper.appendChild(mainRow);
-
     selectEl.parentElement.prepend(wrapper);
 
     const input = wrapper.querySelector('.inv-filter');
@@ -856,81 +772,16 @@
     totalBox.style.color = 'gold';
     totalBox.style.fontSize = '12px';
     totalBox.style.textAlign = 'right';
-    totalBox.style.marginTop = '4px';
+    totalBox.style.marginTop = '2px';
     selectEl.parentElement.appendChild(totalBox);
 
-    // restore persisted values
-    input.value = persistentSettings[id].filter || '';
-    sortDropdown.value = persistentSettings[id].sort || 'name';
-
-    // restore persisted types (array of numbers) if present
-    let selectedTypeSet = new Set();
-    if (Array.isArray(persistentSettings[id].types) && persistentSettings[id].types.length) {
-      persistentSettings[id].types.forEach(t => selectedTypeSet.add(t));
-    } else {
-      selectedTypeSet = new Set(); // empty => show all types by default
-    }
-
-    // initialize checkboxes state
-    const allCheckbox = document.getElementById(allCheckboxId);
-    const cbElements = TYPE_DEFS.map(def => {
-      return {
-        def,
-        el: document.getElementById(`type_${def.key}_${id}`)
-      };
-    });
-
-    function syncCheckboxesToSet() {
-      if (!allCheckbox || !cbElements) return;
-      if (selectedTypeSet.size === 0) {
-        // all selected/populated (All checked)
-        allCheckbox.checked = true;
-        cbElements.forEach(({ el }) => el.checked = false);
-      } else {
-        allCheckbox.checked = false;
-        cbElements.forEach(({ def, el }) => {
-          el.checked = def.types.some(t => selectedTypeSet.has(t));
-        });
-      }
-    }
-
-    // on All toggle: clear set -> means show all
-    allCheckbox.addEventListener('change', () => {
-      if (allCheckbox.checked) {
-        selectedTypeSet.clear(); // empty means no type filter
-      }
-      syncCheckboxesToSet();
-      applySortAndFilter();
-    });
-
-    // on each type checkbox toggle
-    cbElements.forEach(({ def, el }) => {
-      el.addEventListener('change', () => {
-        // when the user toggles a specific type, make sure 'All' is unchecked
-        allCheckbox.checked = false;
-        // toggle all types declared in def.types
-        if (el.checked) {
-          def.types.forEach(t => selectedTypeSet.add(t));
-        } else {
-          def.types.forEach(t => selectedTypeSet.delete(t));
-        }
-        // if user unchecks everything, revert to All (show everything)
-        if (selectedTypeSet.size === 0) {
-          allCheckbox.checked = true;
-        }
-        applySortAndFilter();
-      });
-    });
-
-    syncCheckboxesToSet();
+    input.value = persistentSettings[id].filter;
+    sortDropdown.value = persistentSettings[id].sort;
 
     function applySortAndFilter() {
       const sortValue = sortDropdown.value;
       persistentSettings[id].sort = sortValue;
       persistentSettings[id].filter = input.value;
-
-      // persist types as array (empty = show all)
-      persistentSettings[id].types = Array.from(selectedTypeSet);
 
       const sortMap = {
         "name": { by: "name", desc: false },
@@ -944,11 +795,7 @@
       const descending = isStat ? true : (sortMap[sortValue]?.desc ?? false);
 
       sortSelectOptions(selectEl, sortBy, descending);
-
-      // create typeSet (null or Set)
-      const typeSet = selectedTypeSet.size ? new Set(selectedTypeSet) : null;
-
-      filterSelectOptions(selectEl, input.value, typeSet);
+      filterSelectOptions(selectEl, input.value);
       colorizeOptions(selectEl);
       calculateTotalValue(selectEl, totalBox);
       addTooltips(selectEl);
@@ -956,40 +803,46 @@
 
     input.addEventListener('input', applySortAndFilter);
     sortDropdown.addEventListener('change', applySortAndFilter);
-
     expandBankView(true);
     applySortAndFilter();
     attachValueTracker(selectEl);
   }
 
-  // --- keep bank colors on refresh (no observers) ---
-  let MOC_bankColorLoopId = null;
-  let MOC_bankLastSig = "";
-
-  function startBankRecolorLoop() {
-    if (MOC_bankColorLoopId) return; // already running
-
-    MOC_bankColorLoopId = setInterval(() => {
-      const bankWindow = document.querySelector('#winBank');
-      if (!bankWindow || bankWindow.style.display === 'none') return;
-
-      const bankInv = document.querySelector('select[name="selBankInv"]');
-      if (!bankInv) return;
-
-      // lightweight change signature: length + first + last option text
-      const len = bankInv.options.length;
-      const first = len ? bankInv.options[0].text : "";
-      const last  = len ? bankInv.options[len - 1].text : "";
-      const sig = `${len}|${first}|${last}`;
-
-      if (sig === MOC_bankLastSig) return; // nothing changed
-
-      MOC_bankLastSig = sig;
-      // re-apply colors and tooltips after any update
-      colorizeOptions(bankInv);
-      addTooltips(bankInv);
-    }, 250); // gentle cadence; adjust if you like
+  function colorizeOptions(selectEl) {
+    Array.from(selectEl.options).forEach(option => {
+      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+      const color = config.colorCache[name];
+      if (color) option.style.color = color;
+    });
   }
+// --- keep bank colors on refresh (no observers) ---
+let MOC_bankColorLoopId = null;
+let MOC_bankLastSig = "";
+
+function startBankRecolorLoop() {
+  if (MOC_bankColorLoopId) return; // already running
+
+  MOC_bankColorLoopId = setInterval(() => {
+    const bankWindow = document.querySelector('#winBank');
+    if (!bankWindow || bankWindow.style.display === 'none') return;
+
+    const bankInv = document.querySelector('select[name="selBankInv"]');
+    if (!bankInv) return;
+
+    // lightweight change signature: length + first + last option text
+    const len = bankInv.options.length;
+    const first = len ? bankInv.options[0].text : "";
+    const last  = len ? bankInv.options[len - 1].text : "";
+    const sig = `${len}|${first}|${last}`;
+
+    if (sig === MOC_bankLastSig) return; // nothing changed
+
+    MOC_bankLastSig = sig;
+    // re-apply colors and tooltips after any update
+    colorizeOptions(bankInv);
+    addTooltips(bankInv);
+  }, 250); // gentle cadence; adjust if you like
+}
 
   function enhanceBankWindow() {
     const bankWindow = document.querySelector('#winBank');
@@ -1005,198 +858,192 @@
       injectControls(currentInv, 'Inventory');
       colorizeOptions(currentInv);
     }
-    if (bankInv) {
-      injectControls(bankInv, 'Bank');
-      colorizeOptions(bankInv);   // initial color on open
-      addTooltips(bankInv);       // initial tooltips on open
-      startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
-    }
+		if (bankInv) {
+  injectControls(bankInv, 'Bank');
+  colorizeOptions(bankInv);   // initial color on open
+  addTooltips(bankInv);       // initial tooltips on open
+  startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
+}
   }
+	
+
   const observer = new MutationObserver(() => {
     const bankWindow = document.querySelector('#winBank');
     if (bankWindow && bankWindow.style.display !== 'none') {
       enhanceBankWindow();
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true });
-
-})();
-
-  // -- Trade enhancement block (unchanged behavior; kept inside same file) --
   (function () {
-    const config = {
-      valueCache: {},
-      colorCache: {},
-      statsCache: {}
-    };
-    const HISTORY_KEY = 'tradeHistoryLog';
+  const config = {
+    valueCache: {},
+    colorCache: {},
+    statsCache: {}
+  };
+  const HISTORY_KEY = 'tradeHistoryLog';
 
-    // Load item data from last.json
-    fetch("https://loociez.github.io/MOC-IV/last.json")
-      .then(response => response.json())
-      .then(data => {
-        data.forEach(item => {
-          if (item.name) {
-            const name = item.name.trim().toLowerCase();
-            if (typeof item.recycle_value === 'number') {
-              config.valueCache[name] = item.recycle_value;
-            }
-            if (item.color) {
-              config.colorCache[name] = item.color;
-            }
-            if (item.data) {
-              config.statsCache[name] = item.data;
-            }
+  // Load item data from last.json
+  fetch("https://loociez.github.io/MOC-IV/last.json")
+    .then(response => response.json())
+    .then(data => {
+      data.forEach(item => {
+        if (item.name) {
+          const name = item.name.trim().toLowerCase();
+          if (typeof item.recycle_value === 'number') {
+            config.valueCache[name] = item.recycle_value;
           }
-        });
-        setupTradeEnhancement();
+          if (item.color) {
+            config.colorCache[name] = item.color;
+          }
+          if (item.data) {
+            config.statsCache[name] = item.data;
+          }
+        }
       });
+      setupTradeEnhancement();
+    });
 
-    function setupTradeEnhancement() {
-      const form = document.querySelector('#winTrade');
-      if (!form) return;
+  function setupTradeEnhancement() {
+    const form = document.querySelector('#winTrade');
+    if (!form) return;
 
-      // Add UI display for offer values and fairness
-      const container = document.createElement('div');
-      container.innerHTML = `
-        <div id="yourValue" style="font-weight:bold; color:gold;">Your Offer: 0g</div>
-        <div id="theirValue" style="font-weight:bold; color:gold;">Their Offer: 0g</div>
-        <div id="tradeFairness" style="font-weight:bold; margin-top:5px;"></div>
-      `;
-      form.appendChild(container);
+    // Add UI display for offer values and fairness
+    const container = document.createElement('div');
+    container.innerHTML = `
+      <div id="yourValue" style="font-weight:bold; color:gold;">Your Offer: 0g</div>
+      <div id="theirValue" style="font-weight:bold; color:gold;">Their Offer: 0g</div>
+      <div id="tradeFairness" style="font-weight:bold; margin-top:5px;"></div>
+    `;
+    form.appendChild(container);
 
-      // Add View Trade History button (fixed with type="button")
-      const historyBtn = document.createElement('button');
-      historyBtn.textContent = "📜 View Trade History";
-      historyBtn.title = "View past accepted trades";
-      historyBtn.style = "margin-top: 10px;";
-      historyBtn.type = "button"; // Prevent form submission
-      historyBtn.onclick = showTradeHistoryPopup;
-      form.appendChild(historyBtn);
+    // Add View Trade History button (fixed with type="button")
+    const historyBtn = document.createElement('button');
+    historyBtn.textContent = "📜 View Trade History";
+    historyBtn.title = "View past accepted trades";
+    historyBtn.style = "margin-top: 10px;";
+    historyBtn.type = "button"; // Prevent form submission
+    historyBtn.onclick = showTradeHistoryPopup;
+    form.appendChild(historyBtn);
 
-      const yourSelect = form.querySelector('[name="selYourInv"]');
-      const theirSelect = form.querySelector('[name="selTheirInv"]');
-      if (!yourSelect || !theirSelect) return;
+    const yourSelect = form.querySelector('[name="selYourInv"]');
+    const theirSelect = form.querySelector('[name="selTheirInv"]');
+    if (!yourSelect || !theirSelect) return;
 
-      function getTradeValue(selectEl) {
-        let total = 0;
-        [...selectEl.options].forEach(option => {
+    function getTradeValue(selectEl) {
+      let total = 0;
+      [...selectEl.options].forEach(option => {
+        const match = option.textContent.match(/^(.*?)\s?\(x(\d+)\)?$/) || [null, option.textContent, "1"];
+        const itemName = match[1].trim().toLowerCase();
+        const quantity = parseInt(match[2]);
+        const value = config.valueCache[itemName] || 0;
+        total += value * quantity;
+      });
+      return total;
+    }
+
+    function updateTradeSummary() {
+      const yourTotal = getTradeValue(yourSelect);
+      const theirTotal = getTradeValue(theirSelect);
+
+      document.getElementById('yourValue').textContent = `Your Offer: ${yourTotal.toLocaleString()}g`;
+      document.getElementById('theirValue').textContent = `Their Offer: ${theirTotal.toLocaleString()}g`;
+
+      const fairnessText = document.getElementById('tradeFairness');
+      const delta = yourTotal - theirTotal;
+      const deltaRatio = Math.abs(delta) / Math.max(1, Math.min(yourTotal, theirTotal));
+
+      if (delta === 0) {
+        fairnessText.textContent = "⚖️ Trade is even";
+        fairnessText.style.color = 'lightgreen';
+      } else if (delta > 0) {
+        fairnessText.textContent = `⚠️ You are overpaying by ${delta.toLocaleString()}g`;
+        fairnessText.style.color = deltaRatio > 0.25 ? 'red' : 'orange';
+      } else {
+        fairnessText.textContent = `✅ You are gaining value by ${Math.abs(delta).toLocaleString()}g`;
+        fairnessText.style.color = 'lightgreen';
+      }
+    }
+
+    function getTradeSnapshot() {
+      const parseSide = selectEl => {
+        return [...selectEl.options].map(option => {
           const match = option.textContent.match(/^(.*?)\s?\(x(\d+)\)?$/) || [null, option.textContent, "1"];
-          const itemName = match[1].trim().toLowerCase();
-          const quantity = parseInt(match[2]);
-          const value = config.valueCache[itemName] || 0;
-          total += value * quantity;
+          return {
+            name: match[1].trim(),
+            quantity: parseInt(match[2])
+          };
         });
-        return total;
-      }
-
-      function updateTradeSummary() {
-        const yourTotal = getTradeValue(yourSelect);
-        const theirTotal = getTradeValue(theirSelect);
-
-        document.getElementById('yourValue').textContent = `Your Offer: ${yourTotal.toLocaleString()}g`;
-        document.getElementById('theirValue').textContent = `Their Offer: ${theirTotal.toLocaleString()}g`;
-
-        const fairnessText = document.getElementById('tradeFairness');
-        const delta = yourTotal - theirTotal;
-        const deltaRatio = Math.abs(delta) / Math.max(1, Math.min(yourTotal, theirTotal));
-
-        if (delta === 0) {
-          fairnessText.textContent = "⚖️ Trade is even";
-          fairnessText.style.color = 'lightgreen';
-        } else if (delta > 0) {
-          fairnessText.textContent = `⚠️ You are overpaying by ${delta.toLocaleString()}g`;
-          fairnessText.style.color = deltaRatio > 0.25 ? 'red' : 'orange';
-        } else {
-          fairnessText.textContent = `✅ You are gaining value by ${Math.abs(delta).toLocaleString()}g`;
-          fairnessText.style.color = 'lightgreen';
-        }
-      }
-
-      function getTradeSnapshot() {
-        const parseSide = selectEl => {
-          return [...selectEl.options].map(option => {
-            const match = option.textContent.match(/^(.*?)\s?\(x(\d+)\)?$/) || [null, option.textContent, "1"];
-            return {
-              name: match[1].trim(),
-              quantity: parseInt(match[2])
-            };
-          });
-        };
-
-        return {
-          timestamp: new Date().toISOString(),
-          yourOffer: parseSide(yourSelect),
-          theirOffer: parseSide(theirSelect),
-        };
-      }
-
-      function saveTradeToHistory(tradeData) {
-        const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-        history.push(tradeData);
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-      }
-
-      function showTradeHistoryPopup() {
-        const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]').reverse();
-
-        const container = document.createElement('div');
-        container.style = `
-          position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
-          max-height: 70%; overflow-y: auto;
-          background: #222; color: #fff;
-          padding: 12px; border: 2px solid gold; border-radius: 8px;
-          z-index: 9999; width: 600px; font-family: monospace;
-        `;
-        container.innerHTML = `<h3>📜 Trade History</h3>
-          <button style="float:right;" onclick="this.parentElement.remove()" type="button">❌ Close</button>
-          <button onclick="localStorage.removeItem('${HISTORY_KEY}'); this.parentElement.remove()" type="button">🗑️ Clear All</button>
-          <hr>
-        `;
-
-        if (history.length === 0) {
-          container.innerHTML += "<p>No trades logged yet.</p>";
-        } else {
-          history.forEach(entry => {
-            container.innerHTML += `
-              <div style="margin-bottom:12px;">
-                <strong>${new Date(entry.timestamp).toLocaleString()}</strong><br>
-                <span style="color: gold;">You Gave:</span> ${entry.yourOffer.map(i => `${i.name} x${i.quantity}`).join(', ') || 'Nothing'}<br>
-                <span style="color: lime;">You Got:</span> ${entry.theirOffer.map(i => `${i.name} x${i.quantity}`).join(', ') || 'Nothing'}
-              </div>
-            `;
-          });
-        }
-
-        document.body.appendChild(container);
-      }
-
-      // Hook into select changes
-      yourSelect.addEventListener('change', updateTradeSummary);
-      theirSelect.addEventListener('change', updateTradeSummary);
-
-      // Wrap GUI to capture Confirm Trade action
-      const originalGUI = window.GUI;
-      window.GUI = function (win, action) {
-        if (win === "winTrade" && action === "Confirm") {
-          const snapshot = getTradeSnapshot();
-          if (snapshot) saveTradeToHistory(snapshot);
-        }
-
-        originalGUI(win, action);
-
-        if (win === "winTrade") {
-          setTimeout(updateTradeSummary, 50);
-        }
       };
 
-      // Initial summary update
-      updateTradeSummary();
+      return {
+        timestamp: new Date().toISOString(),
+        yourOffer: parseSide(yourSelect),
+        theirOffer: parseSide(theirSelect),
+      };
     }
-  })();
 
+    function saveTradeToHistory(tradeData) {
+      const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      history.push(tradeData);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function showTradeHistoryPopup() {
+      const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]').reverse();
+
+      const container = document.createElement('div');
+      container.style = `
+        position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
+        max-height: 70%; overflow-y: auto;
+        background: #222; color: #fff;
+        padding: 12px; border: 2px solid gold; border-radius: 8px;
+        z-index: 9999; width: 600px; font-family: monospace;
+      `;
+      container.innerHTML = `<h3>📜 Trade History</h3>
+        <button style="float:right;" onclick="this.parentElement.remove()" type="button">❌ Close</button>
+        <button onclick="localStorage.removeItem('${HISTORY_KEY}'); this.parentElement.remove()" type="button">🗑️ Clear All</button>
+        <hr>
+      `;
+
+      if (history.length === 0) {
+        container.innerHTML += "<p>No trades logged yet.</p>";
+      } else {
+        history.forEach(entry => {
+          container.innerHTML += `
+            <div style="margin-bottom:12px;">
+              <strong>${new Date(entry.timestamp).toLocaleString()}</strong><br>
+              <span style="color: gold;">You Gave:</span> ${entry.yourOffer.map(i => `${i.name} x${i.quantity}`).join(', ') || 'Nothing'}<br>
+              <span style="color: lime;">You Got:</span> ${entry.theirOffer.map(i => `${i.name} x${i.quantity}`).join(', ') || 'Nothing'}
+            </div>
+          `;
+        });
+      }
+
+      document.body.appendChild(container);
+    }
+
+    // Hook into select changes
+    yourSelect.addEventListener('change', updateTradeSummary);
+    theirSelect.addEventListener('change', updateTradeSummary);
+
+    // Wrap GUI to capture Confirm Trade action
+    const originalGUI = window.GUI;
+    window.GUI = function (win, action) {
+      if (win === "winTrade" && action === "Confirm") {
+        const snapshot = getTradeSnapshot();
+        if (snapshot) saveTradeToHistory(snapshot);
+      }
+
+      originalGUI(win, action);
+
+      if (win === "winTrade") {
+        setTimeout(updateTradeSummary, 50);
+      }
+    };
+
+    // Initial summary update
+    updateTradeSummary();
+  }
 })();
-
 
 (function () {
   const settingsForm = document.querySelector("#winSettings");
@@ -1346,6 +1193,9 @@ if (chatBox) {
   // Initial apply
   updateSlotColors();
   applySparkleSettings();
+})();
+
+
 
   observer.observe(document.body, { childList: true, subtree: true });
 })();
