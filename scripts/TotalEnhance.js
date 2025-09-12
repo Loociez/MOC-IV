@@ -1346,9 +1346,6 @@ if (chatBox) {
   // Initial apply
   updateSlotColors();
   applySparkleSettings();
-})();
-
-
 
   observer.observe(document.body, { childList: true, subtree: true });
 })();
