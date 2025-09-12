@@ -1,4 +1,4 @@
-// UImage.js - Bookmarklet version
+// UImage.js - Bookmarklet version (robust serpdrag replacement)
 (function () {
   // Define a mapping of original images to the new images
   const imageReplacementMap = [
@@ -11,7 +11,8 @@
     { match: img => img.src.includes('settings1.png'), newSrc: 'https://loociez.github.io/MOC-IV/images/settings1.png' },
     { match: img => img.src.includes('shop1.png'), newSrc: 'https://loociez.github.io/MOC-IV/images/shop1.png' },
     { match: img => img.src.includes('trade1.png'), newSrc: 'https://loociez.github.io/MOC-IV/images/trade1.png' },
-    { match: img => img.src.includes('serpdrag.png'), newSrc: 'https://loociez.github.io/MOC-IV/images/serpdrag.png' }
+    // Robust replacement for serpdrag.png
+    { match: img => /serpdrag\.png(\?.*)?$/.test(img.src), newSrc: 'https://loociez.github.io/MOC-IV/images/serpdrag.png' }
   ];
 
   function replaceImages() {
