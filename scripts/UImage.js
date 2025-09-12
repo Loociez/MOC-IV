@@ -1,4 +1,4 @@
-// UImage.js - Bookmarklet version (robust serpdrag replacement)
+// UImage.js - Bookmarklet version (replace images and backgrounds)
 (function () {
   // Define a mapping of original images to the new images
   const imageReplacementMap = [
@@ -15,9 +15,10 @@
     { match: img => /serpdrag\.png(\?.*)?$/.test(img.src), newSrc: 'https://loociez.github.io/MOC-IV/images/serpdrag.png' }
   ];
 
+  // Function to replace normal <img> elements
   function replaceImages() {
     document.querySelectorAll('img').forEach(img => {
-      if (img.dataset.replaced) return; // skip images already replaced
+      if (img.dataset.replaced) return;
       for (const rule of imageReplacementMap) {
         if (rule.match(img)) {
           img.src = rule.newSrc;
@@ -28,10 +29,27 @@
     });
   }
 
-  // Run once when loaded
-  replaceImages();
+  // Function to replace CSS background images
+  function replaceBackgrounds() {
+    document.querySelectorAll('*').forEach(el => {
+      const bg = getComputedStyle(el).backgroundImage;
+      if (!bg || bg === 'none') return;
+      for (const rule of imageReplacementMap) {
+        if (bg.includes(rule.match.toString().match(/['"]?(.*?\.png)/)[1])) {
+          el.style.backgroundImage = `url('${rule.newSrc}')`;
+        }
+      }
+    });
+  }
 
-  // Observe DOM changes to handle dynamic UI updates
-  const observer = new MutationObserver(replaceImages);
+  // Run replacements once
+  replaceImages();
+  replaceBackgrounds();
+
+  // Observe DOM changes to handle dynamic updates
+  const observer = new MutationObserver(() => {
+    replaceImages();
+    replaceBackgrounds();
+  });
   observer.observe(document.body, { childList: true, subtree: true });
 })();
