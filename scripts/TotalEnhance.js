@@ -1569,15 +1569,15 @@ function runPotionSequence(mode) {
 }
 
     // --- Claim Sequence ---
-    function runClaimSequence() {
-        clickButtonByTitle("Dungeons"); // Open Dungeons
+function runClaimSequence() {
+    clickButtonByTitle("Dungeons"); // Open Dungeons
+    setTimeout(() => {
+        clickButtonByText("🐲 Other"); // Open Other section
         setTimeout(() => {
-            clickButtonByText("Adventurer"); // Open Adventurer
-            setTimeout(() => {
-                clickButtonByText("Claim Daily Reward"); // Claim reward
-            }, 300);
+            clickButtonByText("🎁 Claim Reward"); // Claim reward
         }, 300);
-    }
+    }, 300);
+}
 
     // --- Dynamic Positioning ---
     function updatePosition() {
