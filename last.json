@@ -29,21 +29,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 2,
-      "max_def": 2,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 5,
-      "max_rdf": 5,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 5,
-      "max_mdf": 5,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 2,
+      "max_mat": 0,
+      "max_mdf": 5,
+      "max_rat": 0,
+      "max_rdf": 5,
+      "min_atk": 0,
+      "min_def": 2,
+      "min_mat": 0,
+      "min_mdf": 5,
+      "min_rat": 0,
+      "min_rdf": 5,
       "damage_stat": 5
     }
   },
@@ -1524,34 +1524,34 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 55,
-      "max_rat": 80,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
+      "hue": 0,
+      "move": true,
+      "spin": false,
+      "alpha": 0,
+      "scale": 1,
+      "speed": 0.13,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 2,
-      "two_handed": true,
-      "tile_range": 6,
-      "sprite_rotation": 315,
       "sprite": 314,
-      "hue": 0,
-      "saturation": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 80,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 55,
+      "min_rdf": 0,
       "brightness": 0,
-      "alpha": 0,
-      "scale": 1,
-      "spin": false,
-      "speed": 0.13,
-      "move": true
+      "saturation": 0,
+      "tile_range": 6,
+      "two_handed": true,
+      "damage_stat": 2,
+      "sprite_rotation": 315
     }
   },
   {
@@ -2255,7 +2255,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.15,
       "max_hp": 0,
@@ -2274,8 +2274,8 @@
       "min_mdf": 0,
       "min_rat": 70,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -3714,7 +3714,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.175,
       "max_hp": 0,
@@ -3733,8 +3733,8 @@
       "min_mdf": 0,
       "min_rat": 90,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -4131,7 +4131,7 @@
       "hue": 130,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 350,
@@ -4150,8 +4150,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -4388,7 +4388,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.4,
       "speed": 0.13,
       "max_hp": 0,
@@ -4407,8 +4407,8 @@
       "min_mdf": 0,
       "min_rat": 60,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 2,
@@ -7217,7 +7217,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 1,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 150,
@@ -7236,8 +7236,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 4,
@@ -7336,7 +7336,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.7,
       "speed": 0.13,
       "max_hp": 225,
@@ -7355,8 +7355,8 @@
       "min_mdf": 0,
       "min_rat": 100,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -7910,7 +7910,8 @@
       "min_mdf": 1,
       "min_rat": 0,
       "min_rdf": 1,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "20"
     }
   },
   {
@@ -9520,7 +9521,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.135,
       "max_hp": 275,
@@ -9539,8 +9540,8 @@
       "min_mdf": 0,
       "min_rat": 135,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -9681,7 +9682,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.6,
       "speed": 0.15,
       "max_hp": 300,
@@ -9700,8 +9701,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 4,
@@ -14081,7 +14082,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.7,
       "speed": 0.13,
       "max_hp": 275,
@@ -14100,8 +14101,8 @@
       "min_mdf": 0,
       "min_rat": 140,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -14193,7 +14194,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.15,
       "max_hp": 275,
@@ -14212,8 +14213,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 4,
@@ -14337,7 +14338,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.15,
       "max_hp": 0,
@@ -14356,8 +14357,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 4,
@@ -14937,7 +14938,7 @@
   },
   {
     "name": "Honey Nut Cookie",
-    "desc": "+500 HP every 2 seconds for 20 total seconds while out of combat",
+    "desc": "+250 HP every 1 seconds for 20 total seconds while out of combat",
     "revision": 0,
     "sprite": 440,
     "sprite_color": {
@@ -15595,48 +15596,52 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 1,
-    "sprite": 0,
+    "name": "Bone Hammer",
+    "desc": "Poorly forged from dragon bones. This weapon cannot be repaired.",
+    "revision": 0,
+    "sprite": 2229,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 200,
+      "saturation": 22,
+      "brightness": 145
     },
-    "scale": 0.5,
-    "color": "#008b07",
+    "scale": 0.9,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 11,
-    "uses": 11250,
+    "type": 1,
+    "uses": 100,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 800,
-    "level_req": 15,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1025,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_atk": 0,
-      "max_def": 1,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 420,
+      "max_def": 0,
       "max_mat": 0,
-      "max_mdf": 1,
+      "max_mdf": 0,
       "max_rat": 0,
-      "max_rdf": 1,
-      "min_atk": 0,
-      "min_def": 1,
+      "max_rdf": 0,
+      "min_atk": 420,
+      "min_def": 0,
       "min_mat": 0,
-      "min_mdf": 1,
+      "min_mdf": 0,
       "min_rat": 0,
-      "min_rdf": 1,
-      "damage_stat": 1
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0
     }
   },
   {
@@ -16154,7 +16159,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.6,
       "speed": 0.13,
       "max_hp": 0,
@@ -16173,8 +16178,8 @@
       "min_mdf": 0,
       "min_rat": 170,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 7,
       "two_handed": false,
       "damage_stat": 2,
@@ -16256,7 +16261,7 @@
     "break_chance": 5,
     "recycle_value": 2000,
     "level_req": 20,
-    "prof_req_flags": -48,
+    "prof_req_flags": -240,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
@@ -16716,7 +16721,8 @@
       "min_mdf": 1,
       "min_rat": 0,
       "min_rdf": 1,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "15"
     }
   },
   {
@@ -17593,7 +17599,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 200,
@@ -17612,8 +17618,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 200,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -17797,7 +17803,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.6,
       "speed": 0.16,
       "max_hp": 250,
@@ -17816,8 +17822,8 @@
       "min_mdf": 0,
       "min_rat": 170,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 2,
@@ -17857,7 +17863,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.16,
       "max_hp": 300,
@@ -17876,8 +17882,8 @@
       "min_mdf": 0,
       "min_rat": 200,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 2,
@@ -18095,7 +18101,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 1,
       "scale": 0.75,
       "speed": 0.13,
       "max_hp": 0,
@@ -18114,8 +18120,8 @@
       "min_mdf": 0,
       "min_rat": 245,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -19007,7 +19013,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "17.5"
     }
   },
   {
@@ -19443,7 +19450,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.13,
       "max_hp": 400,
@@ -19462,8 +19469,8 @@
       "min_mdf": 0,
       "min_rat": 215,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -20061,7 +20068,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 2,
       "speed": 0.5,
       "max_hp": 0,
@@ -20080,8 +20087,8 @@
       "min_mdf": 20,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 16,
       "two_handed": false,
       "damage_stat": 0,
@@ -21833,6 +21840,7 @@
       "hue": 90,
       "move": true,
       "spin": true,
+      "alpha": 100,
       "scale": 0.66,
       "speed": 0.2,
       "max_hp": 0,
@@ -21851,6 +21859,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 16,
       "two_handed": false,
       "damage_stat": 4,
@@ -21935,7 +21945,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "20"
     }
   },
   {
@@ -21983,7 +21994,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!npc_gold_drop": "25"
     }
   },
   {
@@ -23997,10 +24009,15 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "hue": 0,
       "move": true,
       "spin": true,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.175,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "sprite": 1377,
       "max_atk": 0,
       "max_def": 0,
@@ -24014,6 +24031,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 4,
@@ -24050,10 +24069,10 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "hue": 0,
+      "hue": 100,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 1,
       "scale": 0.9,
       "speed": 0.15,
       "max_hp": 250,
@@ -24072,8 +24091,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -24198,7 +24217,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.25,
       "speed": 0.1,
       "max_hp": 150,
@@ -24217,8 +24236,8 @@
       "min_mdf": 0,
       "min_rat": 210,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 8,
       "two_handed": true,
       "damage_stat": 2,
@@ -24255,10 +24274,15 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "hue": 0,
       "move": true,
       "spin": false,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.175,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
       "sprite": 1373,
       "max_atk": 0,
       "max_def": 0,
@@ -24272,6 +24296,8 @@
       "min_mdf": 0,
       "min_rat": 180,
       "min_rdf": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -24371,7 +24397,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "20"
     }
   },
   {
@@ -27037,7 +27064,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.9,
       "speed": 0.15,
       "max_hp": 0,
@@ -27056,8 +27083,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 4,
@@ -27826,7 +27853,7 @@
       "hue": 200,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.6,
       "speed": 0.15,
       "max_hp": 0,
@@ -27845,8 +27872,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -27883,21 +27910,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": -30,
-      "max_def": -1,
-      "min_rat": 40,
-      "max_rat": 50,
-      "min_rdf": -30,
-      "max_rdf": -1,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": -30,
-      "max_mdf": -1,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": -1,
+      "max_mat": 0,
+      "max_mdf": -1,
+      "max_rat": 50,
+      "max_rdf": -1,
+      "min_atk": 0,
+      "min_def": -30,
+      "min_mat": 0,
+      "min_mdf": -30,
+      "min_rat": 40,
+      "min_rdf": -30,
       "damage_stat": 2
     }
   },
@@ -28093,7 +28120,7 @@
       "hue": 100,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.6,
       "speed": 0.15,
       "max_hp": 375,
@@ -28112,8 +28139,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -28362,7 +28389,7 @@
       "hue": 100,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.9,
       "speed": 0.13,
       "max_hp": 330,
@@ -28381,8 +28408,8 @@
       "min_mdf": 0,
       "min_rat": 265,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -28578,7 +28605,7 @@
       "hue": 2,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 300,
@@ -28597,8 +28624,8 @@
       "min_mdf": -25,
       "min_rat": 290,
       "min_rdf": -25,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -28687,7 +28714,7 @@
       "hue": 80,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.7,
       "speed": 0.15,
       "max_hp": 300,
@@ -28706,8 +28733,8 @@
       "min_mdf": -25,
       "min_rat": 0,
       "min_rdf": -25,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -28749,7 +28776,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.7,
       "speed": 0.13,
       "max_hp": 0,
@@ -28768,8 +28795,8 @@
       "min_mdf": 0,
       "min_rat": 225,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 2,
@@ -28954,7 +28981,7 @@
       "hue": 200,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.7,
       "speed": 0.15,
       "max_hp": 250,
@@ -28973,15 +29000,15 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 4,
       "sprite_rotation": 0,
-      "!warlock_npcaoe_cost": "5",
-      "!warlock_selfaoe_cost": "5",
-      "!warlock_playeraoe_cost": "5",
+      "!warlock_npcaoe_cost": "10",
+      "!warlock_selfaoe_cost": "10",
+      "!warlock_playeraoe_cost": "10",
       "!cleric_allheal_cooldown": "10"
     }
   },
@@ -29422,7 +29449,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.6,
       "speed": 0.15,
       "max_hp": 200,
@@ -29441,8 +29468,8 @@
       "min_mdf": 0,
       "min_rat": 275,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 2,
@@ -29777,7 +29804,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.15,
       "max_hp": 0,
@@ -29796,8 +29823,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 1,
@@ -30030,7 +30057,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.15,
       "max_hp": 0,
@@ -30049,8 +30076,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 1,
@@ -30284,7 +30311,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 1,
       "speed": 0.15,
       "max_hp": 0,
@@ -30303,8 +30330,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": false,
       "damage_stat": 1,
@@ -30356,8 +30383,7 @@
       "min_mdf": 15,
       "min_rat": 0,
       "min_rdf": 15,
-      "damage_stat": 1,
-      "!barbarian_alldamage_amount": "20"
+      "damage_stat": 1
     }
   },
   {
@@ -31357,7 +31383,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!npc_gold_drop": "25"
     }
   },
   {
@@ -31405,7 +31432,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!npc_gold_drop": "22.5"
     }
   },
   {
@@ -31453,7 +31481,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!npc_gold_drop": "37.5"
     }
   },
   {
@@ -31624,7 +31653,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 300,
@@ -31643,8 +31672,8 @@
       "min_mdf": 0,
       "min_rat": 200,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 2,
@@ -31730,6 +31759,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "max_hp": -700,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 372,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 360,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0,
       "!cleric_petheal_amount": "80",
       "!dragoon_npcaoe_damage": "3",
       "!necromancer_minion_hp": "10",
@@ -31739,32 +31785,15 @@
       "!dragoon_playeraoe_damage": "3",
       "!samurai_npcriposte_ticks": "1",
       "!warlock_playeraoe_damage": "65",
+      "!assassin_npcpoison_damage": "4",
       "!necromancer_minion_damage": "30",
       "!barbarian_alldamage_amount": "3",
       "!marksman_npcshotgun_damage": "60",
       "!assassin_playerpoison_ticks": "1",
       "!samurai_playerriposte_ticks": "1",
       "!assassin_cloak_shorteruptime": "33",
-      "!marksman_playershotgun_damage": "60",
       "!assassin_playerpoison_damage": "4",
-      "!assassin_npcpoison_damage": "4",
-      "min_atk": 360,
-      "max_atk": 372,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": -700,
-      "max_mp": 0,
-      "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": false
+      "!marksman_playershotgun_damage": "60"
     }
   },
   {
@@ -31800,7 +31829,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 300,
@@ -31819,8 +31848,8 @@
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -31956,7 +31985,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 0,
@@ -31975,8 +32004,8 @@
       "min_mdf": 0,
       "min_rat": 310,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -32076,7 +32105,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 0,
@@ -32095,8 +32124,8 @@
       "min_mdf": 0,
       "min_rat": 350,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -32408,15 +32437,15 @@
     "show_name": false,
     "spawn_delay": 60,
     "type": 1,
-    "uses": 15000,
+    "uses": 5000,
     "limit": 5,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 7,
     "recycle_value": 40000,
-    "level_req": 50,
-    "prof_req_flags": -71,
+    "level_req": 90,
+    "prof_req_flags": -1095,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
@@ -32425,19 +32454,19 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 350,
+      "max_atk": 400,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 350,
+      "min_atk": 400,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
       "min_rat": 0,
       "min_rdf": 0,
-      "two_handed": false,
+      "two_handed": true,
       "damage_stat": 0
     }
   },
@@ -32474,7 +32503,7 @@
       "hue": 250,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 450,
@@ -32493,8 +32522,8 @@
       "min_mdf": 15,
       "min_rat": 0,
       "min_rdf": 15,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 4,
       "two_handed": true,
       "damage_stat": 4,
@@ -32733,7 +32762,7 @@
       "hue": 150,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 400,
@@ -36413,7 +36442,7 @@
       "hue": 90,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 1,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 0,
@@ -36432,8 +36461,8 @@
       "min_mdf": 0,
       "min_rat": 800,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": false,
       "damage_stat": 2,
@@ -36442,7 +36471,7 @@
   },
   {
     "name": "Ziegfried's Lance",
-    "desc": "A legendary weapon found off Ziegfried. 7% Break chance upon repair. Increases spell damage.",
+    "desc": "A legendary weapon found off Ziegfried. 7% Break chance upon repair. Increases Jump [ 6% ]",
     "revision": 0,
     "sprite": 2026,
     "sprite_color": {
@@ -36470,25 +36499,25 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!dragoon_npcaoe_damage": "6",
-      "!dragoon_playeraoe_damage": "6",
-      "min_atk": 340,
-      "max_atk": 340,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": 250,
+      "max_hp": 400,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 370,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 370,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": true,
       "damage_stat": 0,
-      "two_handed": true
+      "!dragoon_npcaoe_damage": "6",
+      "!dragoon_playeraoe_damage": "6"
     }
   },
   {
@@ -37446,34 +37475,34 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 450,
-      "max_rat": 450,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
+      "hue": 0,
+      "move": true,
+      "spin": false,
+      "alpha": 1,
+      "scale": 0.8,
+      "speed": 0.15,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 2,
-      "two_handed": false,
-      "tile_range": 4,
-      "sprite_rotation": 60,
       "sprite": 2099,
-      "hue": 0,
-      "saturation": 125,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 450,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 425,
+      "min_rdf": 0,
       "brightness": 75,
-      "alpha": 1,
-      "scale": 0.8,
-      "spin": false,
-      "speed": 0.15,
-      "move": true
+      "saturation": 125,
+      "tile_range": 4,
+      "two_handed": false,
+      "damage_stat": 2,
+      "sprite_rotation": 60
     }
   },
   {
@@ -38043,7 +38072,7 @@
   },
   {
     "name": "Ziegfried's Helmet ***",
-    "desc": "A legendary helmet found off Ziegfried. 10% Break chance upon repair. Increases spell damage by 5%",
+    "desc": "A legendary helmet found off Ziegfried. 7% Break chance upon repair. Increases Jump [ 5% ]",
     "revision": 0,
     "sprite": 2041,
     "sprite_color": {
@@ -38062,7 +38091,7 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 7000,
-    "break_chance": 10,
+    "break_chance": 7,
     "recycle_value": 20000,
     "level_req": 60,
     "prof_req_flags": -1776,
@@ -38071,22 +38100,24 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 0,
-      "max_mp": 0,
+      "max_hp": 175,
+      "max_mp": 5,
       "max_sp": 0,
-      "max_atk": 0,
+      "max_atk": 15,
       "max_def": 28,
       "max_mat": 0,
       "max_mdf": 20,
       "max_rat": 0,
       "max_rdf": 20,
-      "min_atk": 0,
+      "min_atk": 10,
       "min_def": 20,
       "min_mat": 0,
       "min_mdf": 16,
       "min_rat": 0,
       "min_rdf": 16,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!dragoon_npcaoe_damage": "5",
+      "!dragoon_playeraoe_damage": "5"
     }
   },
   {
@@ -38271,8 +38302,8 @@
     }
   },
   {
-    "name": "Ziegfried's Chainmail ***",
-    "desc": "A legendary armor found off Ziegfried. 10% Break chance upon repair. Increases spell damage by 5%",
+    "name": "Ziegfried's Chainmail",
+    "desc": "A legendary armor found off Ziegfried. 7% Break chance upon repair. Increases Jump [ 4% ]",
     "revision": 0,
     "sprite": 2045,
     "sprite_color": {
@@ -38281,7 +38312,7 @@
       "saturation": 145,
       "brightness": 100
     },
-    "scale": 0.9,
+    "scale": 0.85,
     "color": "#bf80ff",
     "show_name": false,
     "spawn_delay": 60,
@@ -38291,7 +38322,7 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 7000,
-    "break_chance": 10,
+    "break_chance": 7,
     "recycle_value": 20000,
     "level_req": 60,
     "prof_req_flags": -1776,
@@ -38300,22 +38331,24 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 0,
-      "max_mp": 0,
+      "max_hp": 275,
+      "max_mp": 5,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 28,
+      "max_atk": 15,
+      "max_def": 35,
       "max_mat": 0,
       "max_mdf": 20,
       "max_rat": 0,
       "max_rdf": 20,
-      "min_atk": 0,
-      "min_def": 20,
+      "min_atk": 10,
+      "min_def": 25,
       "min_mat": 0,
       "min_mdf": 16,
       "min_rat": 0,
       "min_rdf": 16,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!dragoon_npcaoe_damage": "4",
+      "!dragoon_playeraoe_damage": "4"
     }
   },
   {
@@ -38449,7 +38482,7 @@
       "hue": 111,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 200,
@@ -38509,7 +38542,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": -200,
@@ -38528,8 +38561,8 @@
       "min_mdf": -20,
       "min_rat": 280,
       "min_rdf": -20,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -39049,7 +39082,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 0,
@@ -39068,8 +39101,8 @@
       "min_mdf": 0,
       "min_rat": 270,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -39138,7 +39171,7 @@
   },
   {
     "name": "Ziegfried's Stout**",
-    "desc": "A Legendary weapon ",
+    "desc": "A Legendary weapon found off Ziegfried. 7% Break chance on repair. Increases Jump [ 3% ]",
     "revision": 0,
     "sprite": 2042,
     "sprite_color": {
@@ -39159,17 +39192,17 @@
     "repair_cost": 2450,
     "break_chance": 7,
     "recycle_value": 6000,
-    "level_req": 70,
+    "level_req": 80,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 0,
-      "max_mp": 0,
+      "max_hp": 175,
+      "max_mp": 10,
       "max_sp": 0,
-      "max_atk": 325,
+      "max_atk": 340,
       "max_def": 10,
       "max_mat": 0,
       "max_mdf": 10,
@@ -39182,7 +39215,9 @@
       "min_rat": 0,
       "min_rdf": 10,
       "two_handed": false,
-      "damage_stat": 0
+      "damage_stat": 0,
+      "!dragoon_npcaoe_damage": "3",
+      "!dragoon_playeraoe_damage": "3"
     }
   },
   {
@@ -39881,7 +39916,7 @@
       "min_rdf": 10,
       "two_handed": false,
       "damage_stat": 0,
-      "!bard_buff_uptime": "7",
+      "!bard_buff_uptime": "3",
       "!cleric_petheal_amount": "165",
       "!dragoon_npcaoe_damage": "5",
       "!warlock_npcaoe_damage": "85",
@@ -40537,7 +40572,7 @@
       "hue": 0,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.85,
       "speed": 0.13,
       "max_hp": 500,
@@ -40556,8 +40591,8 @@
       "min_mdf": 0,
       "min_rat": 260,
       "min_rdf": 0,
-      "brightness": 0,
-      "saturation": 0,
+      "brightness": 100,
+      "saturation": 100,
       "tile_range": 6,
       "two_handed": true,
       "damage_stat": 2,
@@ -40698,7 +40733,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.65,
       "speed": 0.15,
       "max_hp": 400,
@@ -41655,7 +41690,7 @@
     "spawn_delay": 0,
     "type": 8,
     "uses": 1,
-    "limit": 1,
+    "limit": 2,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -41672,21 +41707,21 @@
     }
   },
   {
-    "name": "",
+    "name": "immature skull dragon projectile",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2095,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 278,
+      "saturation": 25,
+      "brightness": 75
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 2,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -41701,40 +41736,83 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 0,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.65,
+      "speed": 0.13,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 2095,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 650,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 650,
+      "min_rdf": 0,
+      "brightness": 55,
+      "saturation": 25,
+      "tile_range": 4,
+      "two_handed": false,
+      "damage_stat": 2,
+      "sprite_rotation": 0
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Giant Bone Blade",
+    "desc": "A vicious giant blade forged with a dragons tooth. This weapon cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2136,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 25,
+      "brightness": 125
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.9,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 1,
+    "uses": 3000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1255,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 400,
+      "max_def": 15,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 10,
+      "min_atk": 350,
+      "min_def": 15,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 5,
+      "two_handed": true,
+      "damage_stat": 1
     }
   },
   {
@@ -41934,36 +42012,51 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Dragon Slayer's Helmet",
+    "desc": "Forged with the horns of a dragon. This helmet cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2337,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 111,
+      "saturation": 15,
+      "brightness": 200
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 3000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1025,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 50,
+      "max_def": 20,
+      "max_mat": 40,
+      "max_mdf": 20,
+      "max_rat": 40,
+      "max_rdf": 20,
+      "min_atk": 42,
+      "min_def": 20,
+      "min_mat": 36,
+      "min_mdf": 20,
+      "min_rat": 36,
+      "min_rdf": 20,
+      "damage_stat": 0
     }
   },
   {
@@ -42000,36 +42093,51 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Bone Shield",
+    "desc": "A shield forged from the head of a Skull Knight. This item cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2563,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 65,
+      "brightness": 115
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 5,
+    "uses": 3000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1025,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 250,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 15,
+      "max_def": 45,
+      "max_mat": 0,
+      "max_mdf": 30,
+      "max_rat": 0,
+      "max_rdf": 45,
+      "min_atk": 5,
+      "min_def": 40,
+      "min_mat": 0,
+      "min_mdf": 20,
+      "min_rat": 0,
+      "min_rdf": 40,
+      "damage_stat": 1
     }
   },
   {
@@ -42880,36 +42988,63 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Giant Bone Boomerang",
+    "desc": "Forged from dragon bones, this weapon cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 3276,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 11,
+      "saturation": 75,
+      "brightness": 115
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.9,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 2,
+    "uses": 3000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1740,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 15,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.9,
+      "speed": 0.13,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 3276,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 340,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 335,
+      "min_rdf": 0,
+      "brightness": 115,
+      "saturation": 75,
+      "tile_range": 6,
+      "two_handed": true,
+      "damage_stat": 2,
+      "sprite_rotation": 0
     }
   },
   {
@@ -42981,36 +43116,63 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Bone Shuriken",
+    "desc": "Forged from dragon bones. This weapon cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 3298,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 11,
+      "saturation": 65,
+      "brightness": 115
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.9,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 2,
+    "uses": 3000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -2004,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 15,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.9,
+      "speed": 0.15,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 3298,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 310,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 305,
+      "min_rdf": 0,
+      "brightness": 115,
+      "saturation": 75,
+      "tile_range": 4,
+      "two_handed": false,
+      "damage_stat": 2,
+      "sprite_rotation": 0
     }
   },
   {
@@ -43113,36 +43275,63 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Bone Wand",
+    "desc": "Forged from dragon bones. This weapon cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 3008,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 25,
+      "brightness": 145
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.85,
+    "color": "#66ff66",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 2,
+    "uses": 3000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1850,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 0,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.9,
+      "speed": 0.15,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 3242,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 350,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 340,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "brightness": 135,
+      "saturation": 25,
+      "tile_range": 4,
+      "two_handed": false,
+      "damage_stat": 4,
+      "sprite_rotation": 0
     }
   },
   {
@@ -43179,10 +43368,59 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Bone Gauntlet",
+    "desc": "Forged from bits of dragon bones. This weapon cannot be repaired.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2358,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 35,
+      "saturation": 25,
+      "brightness": 115
+    },
+    "scale": 0.85,
+    "color": "#66ff66",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 1,
+    "uses": 3000,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 0,
+    "recycle_value": 10000,
+    "level_req": 60,
+    "prof_req_flags": -1024,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 125,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 115,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0
+    }
+  },
+  {
+    "name": "Dragon Bone",
+    "desc": "A rare crafting material",
+    "revision": 0,
+    "sprite": 2561,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -43199,8 +43437,8 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 800,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -43212,10 +43450,10 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Dragon Horn",
+    "desc": "A rare crafting material",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2564,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -43232,41 +43470,8 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 2500,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -46421,135 +46626,311 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Dragon Slayers Helmet",
+    "desc": "Click to combine resources into a helmet.",
+    "revision": 1,
+    "sprite": 245,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 25,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 952,
+      "recipe_items": [
+        {
+          "amount": 2,
+          "item_id": 977
+        },
+        {
+          "amount": 4,
+          "item_id": 976
+        },
+        {
+          "amount": 1,
+          "item_id": 389
+        },
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Giant Bone Blade",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 340,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 33,
+      "saturation": 45,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 947,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 569
+        },
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 14,
+          "item_id": 976
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Giant Bone Boomerang",
+    "desc": "Click to combine resources into a weapon.",
+    "revision": 1,
+    "sprite": 341,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 35,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 966,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 1,
+          "item_id": 426
+        },
+        {
+          "amount": 14,
+          "item_id": 976
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Bone Hammer",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 343,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 333,
+      "saturation": 35,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 374,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 1,
+          "item_id": 349
+        },
+        {
+          "amount": 40,
+          "item_id": 82
+        },
+        {
+          "amount": 7,
+          "item_id": 976
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
@@ -46718,135 +47099,311 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Bone Shuriken",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 340,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 222,
+      "saturation": 45,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 969,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 977
+        },
+        {
+          "amount": 3,
+          "item_id": 48
+        },
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 7,
+          "item_id": 976
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Bone Shield",
+    "desc": "Click to combine resources into a shield.",
+    "revision": 1,
+    "sprite": 340,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 333,
+      "saturation": 35,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 954,
+      "recipe_items": [
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 2,
+          "item_id": 977
+        },
+        {
+          "amount": 1,
+          "item_id": 50
+        },
+        {
+          "amount": 7,
+          "item_id": 976
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Bone Wand",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 340,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 500,
+      "saturation": 34,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 973,
+      "recipe_items": [
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 2,
+          "item_id": 977
+        },
+        {
+          "amount": 7,
+          "item_id": 976
+        },
+        {
+          "amount": 1,
+          "item_id": 119
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Recipe: Bone Gauntlet",
+    "desc": "Click to combine resources into a weapon",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 343,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 3333,
+      "saturation": 25,
+      "brightness": 125
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.75,
+    "color": "#999966",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 5000,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 10,
+    "skill_level_req": 20,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 975,
+      "recipe_items": [
+        {
+          "amount": 80,
+          "item_id": 82
+        },
+        {
+          "amount": 1,
+          "item_id": 530
+        },
+        {
+          "amount": 4,
+          "item_id": 977
+        },
+        {
+          "amount": 4,
+          "item_id": 976
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
@@ -47048,21 +47605,21 @@
     }
   },
   {
-    "name": "",
+    "name": "Champion's Sallet",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 4075,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
+    "scale": 0.75,
+    "color": "#cc6600",
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 4,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -47077,25 +47634,40 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 500,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 40,
+      "max_mat": 0,
+      "max_mdf": 40,
+      "max_rat": 0,
+      "max_rdf": 40,
+      "min_atk": 0,
+      "min_def": 35,
+      "min_mat": 0,
+      "min_mdf": 35,
+      "min_rat": 0,
+      "min_rdf": 35,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
+    "name": "Farslayer's Cap",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 4041,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
+    "scale": 0.75,
+    "color": "#cc6600",
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 4,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -47110,25 +47682,40 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 30,
+      "max_mat": 0,
+      "max_mdf": 30,
+      "max_rat": 30,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 25,
+      "min_mat": 0,
+      "min_mdf": 25,
+      "min_rat": 30,
+      "min_rdf": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
+    "name": "Spirit Hood",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 4074,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
+    "scale": 0.75,
+    "color": "#cc6600",
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 4,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -47143,25 +47730,40 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 30,
+      "max_mat": 30,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 30,
+      "min_atk": 0,
+      "min_def": 25,
+      "min_mat": 30,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 25,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
+    "name": "Axefury's Armet",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 4063,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
+    "scale": 0.75,
+    "color": "#cc6600",
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 4,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -47176,7 +47778,22 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 200,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 50,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 30,
+      "max_rat": 0,
+      "max_rdf": 30,
+      "min_atk": 50,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 25,
+      "min_rat": 0,
+      "min_rdf": 25,
+      "damage_stat": 1
     }
   },
   {
@@ -48659,7 +49276,7 @@
       "hue": 0,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.7,
       "speed": 0.15,
       "max_hp": 0,
@@ -48721,7 +49338,7 @@
       "hue": 270,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 0,
@@ -48886,7 +49503,7 @@
       "hue": 270,
       "move": true,
       "spin": false,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.13,
       "max_hp": 0,
@@ -48917,7 +49534,7 @@
   },
   {
     "name": "Melody",
-    "desc": "+10% Buff Uptime, 5% Break chance on repair",
+    "desc": "5% Break chance on repair. Increases Song uptime [ 3% ]",
     "revision": 2,
     "sprite": 990,
     "sprite_color": {
@@ -48948,7 +49565,7 @@
       "hue": 270,
       "move": true,
       "spin": true,
-      "alpha": 0,
+      "alpha": 100,
       "scale": 0.8,
       "speed": 0.15,
       "max_hp": 0,
@@ -48973,7 +49590,7 @@
       "two_handed": true,
       "damage_stat": 4,
       "sprite_rotation": 0,
-      "!bard_buff_uptime": "5"
+      "!bard_buff_uptime": "3"
     }
   },
   {
@@ -49021,7 +49638,8 @@
       "min_mdf": 5,
       "min_rat": 0,
       "min_rdf": 5,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "50"
     }
   },
   {
@@ -49069,7 +49687,8 @@
       "min_mdf": 5,
       "min_rat": 0,
       "min_rdf": 5,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "30"
     }
   },
   {
@@ -49117,7 +49736,8 @@
       "min_mdf": 5,
       "min_rat": 0,
       "min_rdf": 5,
-      "damage_stat": 1
+      "damage_stat": 1,
+      "!npc_gold_drop": "35"
     }
   },
   {
@@ -50216,33 +50836,33 @@
     }
   },
   {
-    "name": "",
+    "name": "Baby Skull Dragon 🐶",
     "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "revision": 1,
+    "sprite": 608,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
+    "scale": 0.6,
+    "color": "#cc6600",
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 12,
+    "uses": 500,
     "limit": 0,
-    "cooldown_delay": 0,
+    "cooldown_delay": 15,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "repair_cost": 500000,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
 
@@ -50252,7 +50872,7 @@
     "name": "",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 608,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -53281,34 +53901,34 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 700,
-      "max_rat": 700,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
+      "hue": 0,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.8,
+      "speed": 0.26,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 2,
-      "two_handed": false,
-      "tile_range": 6,
-      "sprite_rotation": 0,
       "sprite": 174,
-      "hue": 0,
-      "saturation": 0,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 700,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 700,
+      "min_rdf": 0,
       "brightness": 200,
-      "alpha": 1,
-      "scale": 0.8,
-      "spin": true,
-      "speed": 0.26,
-      "move": true
+      "saturation": 0,
+      "tile_range": 6,
+      "two_handed": false,
+      "damage_stat": 2,
+      "sprite_rotation": 0
     }
   },
   {
@@ -53506,21 +54126,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 30,
-      "max_def": 35,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 30,
-      "max_rdf": 45,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 30,
-      "max_mdf": 45,
       "max_hp": 250,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 35,
+      "max_mat": 0,
+      "max_mdf": 45,
+      "max_rat": 0,
+      "max_rdf": 45,
+      "min_atk": 0,
+      "min_def": 30,
+      "min_mat": 0,
+      "min_mdf": 30,
+      "min_rat": 0,
+      "min_rdf": 30,
       "damage_stat": 1
     }
   },
@@ -53554,21 +54174,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 40,
-      "max_atk": 50,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 45,
-      "max_rat": 45,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 45,
-      "max_mat": 45,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 250,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 50,
+      "max_def": 0,
+      "max_mat": 45,
+      "max_mdf": 0,
+      "max_rat": 45,
+      "max_rdf": 0,
+      "min_atk": 40,
+      "min_def": 0,
+      "min_mat": 45,
+      "min_mdf": 0,
+      "min_rat": 45,
+      "min_rdf": 0,
       "damage_stat": 0
     }
   },
@@ -53602,21 +54222,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 25,
-      "max_atk": 25,
-      "min_def": 25,
-      "max_def": 25,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 25,
-      "max_rdf": 25,
-      "min_mat": 30,
-      "max_mat": 30,
-      "min_mdf": 25,
-      "max_mdf": 25,
       "max_hp": 0,
       "max_mp": 20,
       "max_sp": 0,
+      "max_atk": 25,
+      "max_def": 25,
+      "max_mat": 30,
+      "max_mdf": 25,
+      "max_rat": 0,
+      "max_rdf": 25,
+      "min_atk": 25,
+      "min_def": 25,
+      "min_mat": 30,
+      "min_mdf": 25,
+      "min_rat": 0,
+      "min_rdf": 25,
       "damage_stat": 0
     }
   },
@@ -53683,49 +54303,49 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "item_id": 1219,
       "amount": 1,
       "chance": 100,
+      "item_id": 1219,
       "recipe_items": [
         {
-          "item_id": 1220,
-          "amount": 1
+          "amount": 1,
+          "item_id": 1220
         },
         {
-          "item_id": 1221,
-          "amount": 1
+          "amount": 1,
+          "item_id": 1221
         },
         {
-          "item_id": 1222,
-          "amount": 1
+          "amount": 1,
+          "item_id": 1222
         },
         {
-          "item_id": 1223,
-          "amount": 1
+          "amount": 1,
+          "item_id": 1223
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -53760,21 +54380,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 50,
-      "max_atk": 50,
-      "min_def": -20,
-      "max_def": -20,
-      "min_rat": 45,
-      "max_rat": 50,
-      "min_rdf": -15,
-      "max_rdf": -15,
-      "min_mat": 45,
-      "max_mat": 50,
-      "min_mdf": -15,
-      "max_mdf": -15,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
+      "max_atk": 50,
+      "max_def": -20,
+      "max_mat": 50,
+      "max_mdf": -15,
+      "max_rat": 50,
+      "max_rdf": -15,
+      "min_atk": 50,
+      "min_def": -20,
+      "min_mat": 45,
+      "min_mdf": -15,
+      "min_rat": 45,
+      "min_rdf": -15,
       "damage_stat": 1
     }
   },
@@ -53808,56 +54428,56 @@
     "death_drop": false,
     "transferable": true,
     "data": {
-      "item_id": 1229,
       "amount": 1,
       "chance": 100,
+      "item_id": 1229,
       "recipe_items": [
         {
-          "item_id": 1219,
-          "amount": 1
+          "amount": 1,
+          "item_id": 1219
         },
         {
-          "item_id": 1227,
-          "amount": 10
+          "amount": 10,
+          "item_id": 1227
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
   },
   {
     "name": "Glacial Claw",
-    "desc": "An offhand for the vampire that raises damage and increases life steal [7%]",
+    "desc": "An offhand for the vampire that raises damage and increases life steal [4%]",
     "revision": 0,
     "sprite": 2360,
     "sprite_color": {
@@ -53885,24 +54505,24 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!vampire_playerlifesteal_amount": "7",
-      "!vampire_npclifesteal_amount": "7",
-      "min_atk": 20,
-      "max_atk": 20,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 15,
-      "max_rat": 15,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 0
+      "max_atk": 20,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 10,
+      "max_rdf": 0,
+      "min_atk": 20,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 1,
+      "min_rdf": 0,
+      "damage_stat": 0,
+      "!vampire_npclifesteal_amount": "4",
+      "!vampire_playerlifesteal_amount": "4"
     }
   },
   {
@@ -63412,10 +64032,10 @@
     }
   },
   {
-    "name": "",
+    "name": "New Custom Data Item Tester",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 25,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -63426,8 +64046,8 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 100000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -63441,7 +64061,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 2,
+      "max_mat": 0,
+      "max_mdf": 5,
+      "max_rat": 0,
+      "max_rdf": 5,
+      "min_atk": 0,
+      "min_def": 2,
+      "min_mat": 0,
+      "min_mdf": 5,
+      "min_rat": 0,
+      "min_rdf": 5,
+      "damage_stat": 5,
+      "!necromancer_minion_tickamount": "50"
     }
   },
   {
