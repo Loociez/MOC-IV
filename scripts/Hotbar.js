@@ -4,6 +4,7 @@
     const HOTBAR_ID = "canvasHotbar";
     const STORAGE_KEY = "CanvasHotbarBindings";
     const LOCK_KEY = "CanvasHotbarLocked";
+    const POS_KEY = "CanvasHotbarPosition";
     const KEYS = ["C", "V", "B"];
 
     // Prevent duplicates
@@ -34,6 +35,16 @@
     bar.style.backdropFilter = "blur(4px)";
     bar.style.zIndex = "99999";
     bar.style.userSelect = "none";
+    bar.style.cursor = locked ? "default" : "grab";
+
+    // Restore position if saved
+    const savedPos = JSON.parse(localStorage.getItem(POS_KEY) || null);
+    if (savedPos) {
+        bar.style.left = savedPos.left + "px";
+        bar.style.top = savedPos.top + "px";
+        bar.style.bottom = "auto";
+        bar.style.transform = "none";
+    }
 
     // Draggable when unlocked
     let dragging = false, offX = 0, offY = 0;
@@ -44,14 +55,25 @@
         dragging = true;
         offX = e.clientX - bar.offsetLeft;
         offY = e.clientY - bar.offsetTop;
+        bar.style.cursor = "grabbing";
+        e.preventDefault();
     });
 
-    document.addEventListener("mouseup", () => dragging = false);
+    document.addEventListener("mouseup", () => {
+        if (dragging) {
+            dragging = false;
+            bar.style.cursor = "grab";
+            // Save position
+            localStorage.setItem(POS_KEY, JSON.stringify({ left: bar.offsetLeft, top: bar.offsetTop }));
+        }
+    });
+
     document.addEventListener("mousemove", (e) => {
         if (!dragging) return;
         bar.style.left = (e.clientX - offX) + "px";
         bar.style.top = (e.clientY - offY) + "px";
         bar.style.bottom = "auto";
+        bar.style.transform = "none";
     });
 
     // ===========================
@@ -111,6 +133,7 @@
         document.querySelectorAll(`#${HOTBAR_ID} .slot`).forEach(s => {
             s.style.cursor = locked ? "default" : "pointer";
         });
+        bar.style.cursor = locked ? "default" : "grab";
     };
 
     bar.appendChild(lockBtn);
@@ -171,6 +194,12 @@
     // HOTKEY LISTENER
     // ===========================
     document.addEventListener("keydown", (e) => {
+        // Prevent hotkeys if typing in input/textarea or contenteditable
+        const active = document.activeElement;
+        if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
+            return;
+        }
+
         const key = e.key.toUpperCase();
         if (!KEYS.includes(key)) return;
 
@@ -220,5 +249,5 @@
         });
     }, 500); // twice per second refresh
 
-    console.log("%cCanvas Hotbar Loaded with Icon Support!", "color:#0f0");
+    console.log("%cCanvas Hotbar Loaded with Icon Support and Dragging Fix!", "color:#0f0");
 })();
