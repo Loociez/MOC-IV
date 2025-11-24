@@ -191,12 +191,19 @@
     }
 
     // ===========================
-    // HOTKEY LISTENER
+    // HOTKEY LISTENER with chat focus check
     // ===========================
     document.addEventListener("keydown", (e) => {
-        // Prevent hotkeys if typing in input/textarea or contenteditable
         const active = document.activeElement;
-        if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
+
+        const chatbox = document.getElementById("winGameChatbox");
+        const messageField = document.getElementById("winGameMessage");
+
+        if (active && (
+            active === chatbox || chatbox?.contains(active) ||
+            active === messageField || messageField?.contains(active)
+        )) {
+            // Focused on chat input - don't trigger
             return;
         }
 
@@ -249,5 +256,5 @@
         });
     }, 500); // twice per second refresh
 
-    console.log("%cCanvas Hotbar Loaded with Icon Support and Dragging Fix!", "color:#0f0");
+    console.log("%cCanvas Hotbar Loaded with Icon Support and Chat Focus Fix!", "color:#0f0");
 })();
