@@ -191,19 +191,32 @@
     }
 
     // ===========================
-    // HOTKEY LISTENER with chat focus check
+    // UTILITY: Check element visibility
+    // ===========================
+    function isElementVisible(el) {
+        if (!el) return false;
+        const style = window.getComputedStyle(el);
+        return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0";
+    }
+
+    // ===========================
+    // HOTKEY LISTENER with chat & bank focus check
     // ===========================
     document.addEventListener("keydown", (e) => {
         const active = document.activeElement;
 
         const chatbox = document.getElementById("winGameChatbox");
         const messageField = document.getElementById("winGameMessage");
+        const bank = document.getElementById("winBank");
 
-        if (active && (
-            active === chatbox || chatbox?.contains(active) ||
-            active === messageField || messageField?.contains(active)
-        )) {
-            // Focused on chat input - don't trigger
+        // Block hotkeys if typing in chat inputs or bank is open
+        if (
+            (active && (
+                active === chatbox || chatbox?.contains(active) ||
+                active === messageField || messageField?.contains(active)
+            )) ||
+            isElementVisible(bank)
+        ) {
             return;
         }
 
@@ -256,5 +269,5 @@
         });
     }, 500); // twice per second refresh
 
-    console.log("%cCanvas Hotbar Loaded with Icon Support and Chat Focus Fix!", "color:#0f0");
+    console.log("%cCanvas Hotbar Loaded with Icon Support and Chat & Bank Focus Fix!", "color:#0f0");
 })();
