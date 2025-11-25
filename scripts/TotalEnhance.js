@@ -2906,7 +2906,7 @@ function formatNumber(num) {
     tooltip.innerHTML = html;
 
     const padding = 10;
-    const extraUpMargin = 200; // more offset upward
+    const extraUpMargin = 350; // more offset upward
     const tooltipWidth = 300; // maxWidth
     const tooltipHeight = tooltip.offsetHeight || 150;
 
