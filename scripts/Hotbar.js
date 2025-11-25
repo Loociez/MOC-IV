@@ -6,6 +6,7 @@
     const LOCK_KEY = "CanvasHotbarLocked";
     const POS_KEY = "CanvasHotbarPosition";
     const KEYS = ["C", "V", "B"];
+    const COOLDOWN_TIME = 6000; // 6 seconds in ms
 
     // Prevent duplicates
     if (document.getElementById(HOTBAR_ID)) {
@@ -16,6 +17,9 @@
     let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     let locked = localStorage.getItem(LOCK_KEY) === "true";
     let awaitingAssignmentFor = null;
+
+    // To track cooldown timestamps by key
+    const cooldowns = {}; // { key: cooldownEndTimestamp }
 
     // ===========================
     // CREATE HOTBAR ELEMENT
@@ -96,10 +100,7 @@
         div.style.cursor = locked ? "default" : "pointer";
         div.style.overflow = "hidden";
 
-        // The main key text was previously here, but we now show the letter as overlay only.
-        // So no innerText here to avoid clutter.
-
-        // Show green letter with keybind in bottom-right corner
+        // Green key label bottom-right
         const keyLabel = document.createElement("div");
         keyLabel.innerText = key;
         keyLabel.style.position = "absolute";
@@ -109,20 +110,43 @@
         keyLabel.style.fontWeight = "bold";
         keyLabel.style.fontSize = "12px";
         keyLabel.style.textShadow = "0 0 3px black";
-        keyLabel.style.pointerEvents = "none"; // avoid blocking clicks
+        keyLabel.style.pointerEvents = "none"; // don't block clicks
         div.appendChild(keyLabel);
+
+        // Cooldown overlay canvas
+        const cdCanvas = document.createElement("canvas");
+        cdCanvas.width = 42;
+        cdCanvas.height = 42;
+        cdCanvas.style.position = "absolute";
+        cdCanvas.style.left = "0";
+        cdCanvas.style.top = "0";
+        cdCanvas.style.pointerEvents = "none";
+        cdCanvas.style.zIndex = "2";
+        div.appendChild(cdCanvas);
 
         if (saved[key] !== undefined) {
             div.style.background = "rgba(0,255,140,0.25)";
         }
 
-        // Click slot → assignment mode
+        // Left-click: assign
         div.addEventListener("click", () => {
             if (locked) return;
             awaitingAssignmentFor = key;
             div.style.outline = "2px solid gold";
             setTimeout(() => (div.style.outline = ""), 600);
             console.log(`Click an inventory item to assign to hotkey ${key}...`);
+        });
+
+        // Right-click: clear assignment
+        div.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            if (locked) return;
+            if (saved[key] !== undefined) {
+                delete saved[key];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+                div.style.background = "rgba(255,255,255,0.08)";
+                console.log(`Cleared assignment for hotkey ${key}`);
+            }
         });
 
         return div;
@@ -143,11 +167,11 @@
     lockBtn.onclick = () => {
         locked = !locked;
         localStorage.setItem(LOCK_KEY, locked);
-        lockBtn.innerText = locked ? "🔒" : "🔓";
         document.querySelectorAll(`#${HOTBAR_ID} .slot`).forEach(s => {
             s.style.cursor = locked ? "default" : "pointer";
         });
         bar.style.cursor = locked ? "default" : "grab";
+        lockBtn.innerText = locked ? "🔒" : "🔓";
     };
 
     bar.appendChild(lockBtn);
@@ -214,7 +238,7 @@
     }
 
     // ===========================
-    // HOTKEY LISTENER with chat & bank focus check
+    // HOTKEY LISTENER with chat & bank focus check + cooldown start
     // ===========================
     document.addEventListener("keydown", (e) => {
         const active = document.activeElement;
@@ -240,17 +264,26 @@
         const index = saved[key];
         if (index === undefined) return;
 
+        // If on cooldown, ignore input
+        const now = Date.now();
+        if (cooldowns[key] && cooldowns[key] > now) return;
+
         const canvases = document.querySelectorAll("#winInventory canvas");
         const canvas = canvases[index];
-        if (canvas) simulateDoubleClick(canvas);
+        if (canvas) {
+            simulateDoubleClick(canvas);
+            cooldowns[key] = now + COOLDOWN_TIME;
+        }
     });
 
     // ===========================
-    // ICON + STACK CLONE SYSTEM
+    // ICON + STACK CLONE SYSTEM + cooldown drawing
     // ===========================
     setInterval(() => {
         const slots = document.querySelectorAll(`#${HOTBAR_ID} .slot`);
         const canvases = document.querySelectorAll("#winInventory canvas");
+
+        const now = Date.now();
 
         slots.forEach(slot => {
             // Find the key from the green label inside slot
@@ -276,9 +309,9 @@
                 img.style.objectFit = "contain";
                 img.style.pointerEvents = "none";
                 slot.appendChild(img);
-                // Make sure img is below the key label
+                // Make sure img is below the key label and cooldown canvas
                 img.style.zIndex = "0";
-                keyLabel.style.zIndex = "1";
+                keyLabel.style.zIndex = "3";
             }
 
             try {
@@ -286,8 +319,39 @@
             } catch (err) {
                 // fails if canvas is tainted, but Mirage canvases aren't
             }
-        });
-    }, 500); // twice per second refresh
 
-    console.log("%cCanvas Hotbar Loaded with Icon Support, Keybind Labels, and Chat & Bank Focus Fix!", "color:#0f0");
+            // Draw cooldown overlay
+            const cdCanvas = slot.querySelector("canvas");
+            if (!cdCanvas) return;
+            const ctx = cdCanvas.getContext("2d");
+            ctx.clearRect(0, 0, cdCanvas.width, cdCanvas.height);
+
+            const cdEnd = cooldowns[key] || 0;
+            if (cdEnd > now) {
+                const elapsed = COOLDOWN_TIME - (cdEnd - now);
+                const ratio = (cdEnd - now) / COOLDOWN_TIME; // 1 → 0
+
+                // Draw translucent black overlay
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                ctx.beginPath();
+                ctx.moveTo(cdCanvas.width/2, cdCanvas.height/2);
+
+                // Draw radial "pie" from top center clockwise
+                const startAngle = -Math.PI/2;
+                const endAngle = startAngle + ratio * 2 * Math.PI;
+                ctx.arc(cdCanvas.width/2, cdCanvas.height/2, cdCanvas.width/2, startAngle, endAngle, false);
+                ctx.lineTo(cdCanvas.width/2, cdCanvas.height/2);
+                ctx.fill();
+
+                // Optional: draw a border circle for cooldown area
+                ctx.strokeStyle = "rgba(0,255,0,0.7)";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(cdCanvas.width/2, cdCanvas.height/2, cdCanvas.width/2 - 1, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+        });
+    }, 50); // 20 fps for smooth cooldown animation
+
+    console.log("%cCanvas Hotbar Loaded with Icon Support, Keybind Labels, Right-Click Clear & Cooldown Overlay!", "color:#0f0");
 })();
