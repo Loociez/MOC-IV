@@ -2798,14 +2798,20 @@ function formatNumber(num) {
     el.focus();
   }
 
-  // Get hovered item name from #txtInvDesc - now grab the FIRST <p><span> text, regardless of color
+  // Get hovered item name from #txtInvDesc
   function getNameFromInvDesc() {
     if (txtInvDesc.style.visibility !== "visible") return null;
     const firstP = txtInvDesc.querySelector("p");
     if (!firstP) return null;
     const span = firstP.querySelector("span");
     if (!span) return null;
-    return span.textContent.trim();
+
+    let name = span.textContent.trim();
+
+    // Remove stack count at end e.g. "(x74)"
+    name = name.replace(/\s*\(x\d+\)$/i, "").trim();
+
+    return name;
   }
 
   // Inventory canvas handling: shift + left click inserts item name tag into chat input
@@ -2815,7 +2821,6 @@ function formatNumber(num) {
   canvases.forEach(canvas => {
     canvas.style.cursor = "pointer";
 
-    // Update hovered name continuously while moving mouse over the canvas
     canvas.addEventListener("mousemove", () => {
       currentHoveredName = getNameFromInvDesc();
     });
@@ -2825,7 +2830,7 @@ function formatNumber(num) {
     });
 
     canvas.addEventListener("click", (e) => {
-      if (!e.shiftKey || e.button !== 0) return; // Shift + Left Click only
+      if (!e.shiftKey || e.button !== 0) return; 
       if (!currentHoveredName) {
         console.warn("No hovered item name detected!");
         return;
@@ -2836,12 +2841,12 @@ function formatNumber(num) {
     });
   });
 
-  // Find item data by name (case-insensitive)
+  // Find item data by name
   function findItemByName(name) {
     return itemsData.find(item => item.name.toLowerCase() === name.toLowerCase());
   }
 
-  // Format item details nicely for tooltip (excluding specified keys, skip falsy/0 stats)
+  // Format tooltip details
   function formatItemDetails(item) {
     if (!item) return "<em>Item not found</em>";
 
@@ -2865,14 +2870,16 @@ function formatNumber(num) {
 
     if (item.data) {
       html += "<div style='font-weight:bold; margin-bottom:4px;'>Stats:</div><ul style='margin-top:0; padding-left:16px;'>";
+
       const excludedKeys = new Set(["sprite_rotation", "scale", "sprite_color", "damage_stat", "hue", "move", "spin", "sprite", "alpha"]);
+
       for (const [key, value] of Object.entries(item.data)) {
         if (excludedKeys.has(key)) continue;
-        if (!value && value !== 0) continue; // Skip null/undefined/false but allow 0 (will skip below)
-        if (value === 0) continue; // explicitly skip zeros
-        const valStr = typeof value === "boolean" ? (value ? "Yes" : "No") : value;
+        if (!value && value !== 0) continue;
+        if (value === 0) continue;
+
         const keyPretty = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-        html += `<li>${keyPretty}: ${valStr}</li>`;
+        html += `<li>${keyPretty}: ${value}</li>`;
       }
       html += "</ul>";
     }
@@ -2880,7 +2887,7 @@ function formatNumber(num) {
     return html;
   }
 
-  // Tooltip container
+  // Tooltip container (now scrollable)
   const tooltip = document.createElement("div");
   Object.assign(tooltip.style, {
     position: "fixed",
@@ -2890,6 +2897,8 @@ function formatNumber(num) {
     borderRadius: "6px",
     border: "1px solid #0f0",
     maxWidth: "300px",
+    maxHeight: "350px",       // ★ Scroll height limit
+    overflowY: "auto",         // ★ Enable vertical scrolling
     fontFamily: "Arial, sans-serif",
     fontSize: "13px",
     zIndex: "9999999",
@@ -2901,45 +2910,34 @@ function formatNumber(num) {
   });
   document.body.appendChild(tooltip);
 
-  // Show tooltip near mouse, prefer above cursor with extra margin to avoid clipping bottom
   function showTooltipAtPosition(html, x, y) {
     tooltip.innerHTML = html;
 
     const padding = 10;
-    const extraUpMargin = 350; // more offset upward
-    const tooltipWidth = 300; // maxWidth
+    const extraUpMargin = 350; 
+    const tooltipWidth = 300;
     const tooltipHeight = tooltip.offsetHeight || 150;
 
     let left = x + padding;
-
-    // Adjust horizontal position if overflowing right edge
     if (left + tooltipWidth > window.innerWidth) {
       left = x - tooltipWidth - padding;
     }
 
-    // Prefer tooltip above cursor with extra upward margin
     let top = y - tooltipHeight - padding - extraUpMargin;
-
-    // If above is off-screen, place below cursor
-    if (top < 0) {
-      top = y + padding;
-    }
+    if (top < 0) top = y + padding;
 
     tooltip.style.left = left + "px";
     tooltip.style.top = top + "px";
     tooltip.style.display = "block";
   }
 
-  // Hide tooltip
   function hideTooltip() {
     tooltip.style.display = "none";
   }
 
-  // Parse chat messages to replace [item=Name] text nodes with clickable spans
+  // Parse clickable item links
   function parseChatItems() {
     const itemRegex = /\[item=([^\]]+)\]/gi;
-
-    // Select all <li><span> inside chatBox
     const spans = [...chatBox.querySelectorAll("li > span")];
 
     spans.forEach(span => {
@@ -2948,15 +2946,13 @@ function formatNumber(num) {
       const text = span.textContent;
       let lastIndex = 0;
       const fragment = document.createDocumentFragment();
-
       let match;
+
       while ((match = itemRegex.exec(text)) !== null) {
-        // Append text before match
         if (match.index > lastIndex) {
           fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
         }
 
-        // Create clickable span for item name
         const itemName = match[1];
         const link = document.createElement("span");
         link.className = "chat-item-link";
@@ -2965,39 +2961,31 @@ function formatNumber(num) {
         link.style.cursor = "pointer";
         link.dataset.itemName = itemName;
         link.textContent = itemName;
-
         fragment.appendChild(link);
 
         lastIndex = match.index + match[0].length;
       }
 
-      // Append remaining text after last match
       if (lastIndex < text.length) {
         fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
       }
 
-      // Replace span content if matches found
       if (fragment.childNodes.length > 0) {
-        span.textContent = ""; // Clear old text
+        span.textContent = "";
         span.appendChild(fragment);
         span.dataset.processed = "true";
       }
     });
   }
 
-  // Run parsing every second for new chat messages
   setInterval(parseChatItems, 1000);
 
-  // Tooltip show/hide on chat item link clicks
   chatBox.addEventListener("click", e => {
     const target = e.target;
     if (target.classList.contains("chat-item-link")) {
       const itemName = target.dataset.itemName;
-      if (!itemName) return;
-
       const item = findItemByName(itemName);
       const html = formatItemDetails(item);
-
       showTooltipAtPosition(html, e.clientX, e.clientY);
       e.stopPropagation();
     } else {
@@ -3005,20 +2993,8 @@ function formatNumber(num) {
     }
   });
 
-  // Hide tooltip when clicking outside
   document.body.addEventListener("click", e => {
-    if (!tooltip.contains(e.target)) {
-      hideTooltip();
-    }
+    if (!tooltip.contains(e.target)) hideTooltip();
   });
 
 })();
-
-
-
-
-
-
-
-
-
