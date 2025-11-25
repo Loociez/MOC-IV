@@ -96,7 +96,21 @@
         div.style.cursor = locked ? "default" : "pointer";
         div.style.overflow = "hidden";
 
-        div.innerText = key;
+        // The main key text was previously here, but we now show the letter as overlay only.
+        // So no innerText here to avoid clutter.
+
+        // Show green letter with keybind in bottom-right corner
+        const keyLabel = document.createElement("div");
+        keyLabel.innerText = key;
+        keyLabel.style.position = "absolute";
+        keyLabel.style.bottom = "2px";
+        keyLabel.style.right = "4px";
+        keyLabel.style.color = "#0f0"; // bright green
+        keyLabel.style.fontWeight = "bold";
+        keyLabel.style.fontSize = "12px";
+        keyLabel.style.textShadow = "0 0 3px black";
+        keyLabel.style.pointerEvents = "none"; // avoid blocking clicks
+        div.appendChild(keyLabel);
 
         if (saved[key] !== undefined) {
             div.style.background = "rgba(0,255,140,0.25)";
@@ -154,7 +168,7 @@
 
             // Update visual
             const slot = [...document.querySelectorAll(`#${HOTBAR_ID} .slot`)]
-                .find(s => s.innerText === awaitingAssignmentFor);
+                .find(s => s.querySelector("div")?.innerText === awaitingAssignmentFor);
 
             if (slot) {
                 slot.style.background = "rgba(0,255,140,0.25)";
@@ -239,7 +253,10 @@
         const canvases = document.querySelectorAll("#winInventory canvas");
 
         slots.forEach(slot => {
-            const key = slot.innerText.trim();
+            // Find the key from the green label inside slot
+            const keyLabel = slot.querySelector("div");
+            if (!keyLabel) return;
+            const key = keyLabel.innerText.trim();
             const index = saved[key];
 
             if (index === undefined) return;
@@ -259,6 +276,9 @@
                 img.style.objectFit = "contain";
                 img.style.pointerEvents = "none";
                 slot.appendChild(img);
+                // Make sure img is below the key label
+                img.style.zIndex = "0";
+                keyLabel.style.zIndex = "1";
             }
 
             try {
@@ -269,5 +289,5 @@
         });
     }, 500); // twice per second refresh
 
-    console.log("%cCanvas Hotbar Loaded with Icon Support and Chat & Bank Focus Fix!", "color:#0f0");
+    console.log("%cCanvas Hotbar Loaded with Icon Support, Keybind Labels, and Chat & Bank Focus Fix!", "color:#0f0");
 })();
