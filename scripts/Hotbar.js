@@ -5,24 +5,23 @@
     const STORAGE_KEY = "CanvasHotbarBindings";
     const LOCK_KEY = "CanvasHotbarLocked";
     const POS_KEY = "CanvasHotbarPosition";
-    const KEYS = ["C", "V", "B"];
-    const COOLDOWN_TIME = 6000; // 6 seconds in ms
 
-    // Prevent duplicates
+    // Load saved bindings
+    let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    let locked = localStorage.getItem(LOCK_KEY) === "true";
+
+    // Cooldowns per key
+    const COOLDOWN_TIME = 6000;
+    const cooldowns = {};
+
+    // If hotbar exists, prevent duplicates
     if (document.getElementById(HOTBAR_ID)) {
         console.log("Hotbar already exists.");
         return;
     }
 
-    let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    let locked = localStorage.getItem(LOCK_KEY) === "true";
-    let awaitingAssignmentFor = null;
-
-    // To track cooldown timestamps by key
-    const cooldowns = {}; // { key: cooldownEndTimestamp }
-
     // ===========================
-    // CREATE HOTBAR ELEMENT
+    // CREATE HOTBAR
     // ===========================
     const bar = document.createElement("div");
     bar.id = HOTBAR_ID;
@@ -41,7 +40,7 @@
     bar.style.userSelect = "none";
     bar.style.cursor = locked ? "default" : "grab";
 
-    // Restore position if saved
+    // Restore position
     const savedPos = JSON.parse(localStorage.getItem(POS_KEY) || null);
     if (savedPos) {
         bar.style.left = savedPos.left + "px";
@@ -50,7 +49,7 @@
         bar.style.transform = "none";
     }
 
-    // Draggable when unlocked
+    // Draggable
     let dragging = false, offX = 0, offY = 0;
 
     bar.addEventListener("mousedown", (e) => {
@@ -67,8 +66,11 @@
         if (dragging) {
             dragging = false;
             bar.style.cursor = "grab";
-            // Save position
-            localStorage.setItem(POS_KEY, JSON.stringify({ left: bar.offsetLeft, top: bar.offsetTop }));
+
+            localStorage.setItem(POS_KEY, JSON.stringify({
+                left: bar.offsetLeft,
+                top: bar.offsetTop
+            }));
         }
     });
 
@@ -81,9 +83,9 @@
     });
 
     // ===========================
-    // SLOT CREATION
+    // CREATE SLOT
     // ===========================
-    function createSlot(key) {
+    function createSlot(initialKey) {
         const div = document.createElement("div");
         div.classList.add("slot");
         div.style.position = "relative";
@@ -100,20 +102,65 @@
         div.style.cursor = locked ? "default" : "pointer";
         div.style.overflow = "hidden";
 
-        // Green key label bottom-right
+        // GREEN KEY LABEL
         const keyLabel = document.createElement("div");
-        keyLabel.innerText = key;
+        keyLabel.innerText = initialKey;
+        keyLabel.classList.add("hotkeyLabel");
         keyLabel.style.position = "absolute";
         keyLabel.style.bottom = "2px";
         keyLabel.style.right = "4px";
-        keyLabel.style.color = "#0f0"; // bright green
+        keyLabel.style.color = "#0f0";
         keyLabel.style.fontWeight = "bold";
         keyLabel.style.fontSize = "12px";
         keyLabel.style.textShadow = "0 0 3px black";
-        keyLabel.style.pointerEvents = "none"; // don't block clicks
+        keyLabel.style.pointerEvents = "none";
+        keyLabel.style.zIndex = "3";
         div.appendChild(keyLabel);
 
-        // Cooldown overlay canvas
+        // SETTINGS COG BUTTON
+        const cog = document.createElement("div");
+        cog.innerText = "⚙️";
+        cog.style.position = "absolute";
+        cog.style.top = "-6px";
+        cog.style.right = "-2px";
+        cog.style.fontSize = "14px";
+        cog.style.cursor = "pointer";
+        cog.style.zIndex = "5";
+        cog.title = "Change keybind";
+        div.appendChild(cog);
+
+        // WAIT FOR KEY INPUT WHEN CLICKING COG
+        cog.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (locked) return;
+
+            div.style.outline = "2px solid yellow";
+            console.log("Press any key to set a new hotkey...");
+
+            const listener = (ev) => {
+                const newKey = ev.key.toUpperCase();
+
+                // Avoid duplicates
+                for (const k in saved)
+                    if (saved[k] === saved[keyLabel.innerText])
+                        delete saved[k];
+
+                saved[newKey] = saved[keyLabel.innerText];
+                delete saved[keyLabel.innerText];
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+
+                keyLabel.innerText = newKey;
+                div.style.outline = "";
+
+                console.log("Assigned new hotkey:", newKey);
+                document.removeEventListener("keydown", listener, true);
+            };
+
+            document.addEventListener("keydown", listener, true);
+        });
+
+        // COOLDOWN CANVAS
         const cdCanvas = document.createElement("canvas");
         cdCanvas.width = 42;
         cdCanvas.height = 42;
@@ -124,39 +171,14 @@
         cdCanvas.style.zIndex = "2";
         div.appendChild(cdCanvas);
 
-        if (saved[key] !== undefined) {
-            div.style.background = "rgba(0,255,140,0.25)";
-        }
-
-        // Left-click: assign
-        div.addEventListener("click", () => {
-            if (locked) return;
-            awaitingAssignmentFor = key;
-            div.style.outline = "2px solid gold";
-            setTimeout(() => (div.style.outline = ""), 600);
-            console.log(`Click an inventory item to assign to hotkey ${key}...`);
-        });
-
-        // Right-click: clear assignment
-        div.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-            if (locked) return;
-            if (saved[key] !== undefined) {
-                delete saved[key];
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-                div.style.background = "rgba(255,255,255,0.08)";
-                console.log(`Cleared assignment for hotkey ${key}`);
-            }
-        });
-
         return div;
     }
 
-    KEYS.forEach(k => bar.appendChild(createSlot(k)));
+    // Create slots dynamically from saved bindings OR default 3 empty slots
+    const defaultKeys = Object.keys(saved).length ? Object.keys(saved) : ["C", "V", "B"];
+    defaultKeys.forEach(k => bar.appendChild(createSlot(k)));
 
-    // ===========================
     // LOCK BUTTON
-    // ===========================
     const lockBtn = document.createElement("div");
     lockBtn.innerText = locked ? "🔒" : "🔓";
     lockBtn.style.fontSize = "13px";
@@ -178,8 +200,22 @@
     document.body.appendChild(bar);
 
     // ===========================
-    // ASSIGN INVENTORY ITEM BY CLICK
+    // ASSIGN INVENTORY ITEM
     // ===========================
+    let awaitingAssignmentFor = null;
+
+    bar.querySelectorAll(".slot").forEach(slot => {
+        slot.addEventListener("click", () => {
+            if (locked) return;
+
+            const key = slot.querySelector(".hotkeyLabel").innerText;
+            awaitingAssignmentFor = key;
+
+            slot.style.outline = "2px solid gold";
+            setTimeout(() => slot.style.outline = "", 600);
+        });
+    });
+
     document.addEventListener("mousedown", (e) => {
         if (awaitingAssignmentFor === null) return;
 
@@ -189,14 +225,6 @@
         if (index !== -1) {
             saved[awaitingAssignmentFor] = index;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-
-            // Update visual
-            const slot = [...document.querySelectorAll(`#${HOTBAR_ID} .slot`)]
-                .find(s => s.querySelector("div")?.innerText === awaitingAssignmentFor);
-
-            if (slot) {
-                slot.style.background = "rgba(0,255,140,0.25)";
-            }
 
             console.log(`Assigned ${awaitingAssignmentFor} to inventory slot ${index}`);
             awaitingAssignmentFor = null;
@@ -228,9 +256,7 @@
         }, 120);
     }
 
-    // ===========================
-    // UTILITY: Check element visibility
-    // ===========================
+    // Visibility check
     function isElementVisible(el) {
         if (!el) return false;
         const style = window.getComputedStyle(el);
@@ -238,7 +264,7 @@
     }
 
     // ===========================
-    // HOTKEY LISTENER with chat & bank focus check + cooldown start
+    // HOTKEY LISTENER
     // ===========================
     document.addEventListener("keydown", (e) => {
         const active = document.activeElement;
@@ -247,29 +273,24 @@
         const messageField = document.getElementById("winGameMessage");
         const bank = document.getElementById("winBank");
 
-        // Block hotkeys if typing in chat inputs or bank is open
         if (
             (active && (
                 active === chatbox || chatbox?.contains(active) ||
                 active === messageField || messageField?.contains(active)
             )) ||
             isElementVisible(bank)
-        ) {
-            return;
-        }
+        ) return;
 
         const key = e.key.toUpperCase();
-        if (!KEYS.includes(key)) return;
-
         const index = saved[key];
         if (index === undefined) return;
 
-        // If on cooldown, ignore input
         const now = Date.now();
         if (cooldowns[key] && cooldowns[key] > now) return;
 
         const canvases = document.querySelectorAll("#winInventory canvas");
         const canvas = canvases[index];
+
         if (canvas) {
             simulateDoubleClick(canvas);
             cooldowns[key] = now + COOLDOWN_TIME;
@@ -277,7 +298,7 @@
     });
 
     // ===========================
-    // ICON + STACK CLONE SYSTEM + cooldown drawing
+    // ICON CLONING + COOLDOWN DRAWING
     // ===========================
     setInterval(() => {
         const slots = document.querySelectorAll(`#${HOTBAR_ID} .slot`);
@@ -286,18 +307,14 @@
         const now = Date.now();
 
         slots.forEach(slot => {
-            // Find the key from the green label inside slot
-            const keyLabel = slot.querySelector("div");
-            if (!keyLabel) return;
-            const key = keyLabel.innerText.trim();
+            const key = slot.querySelector(".hotkeyLabel").innerText;
             const index = saved[key];
-
             if (index === undefined) return;
 
             const srcCanvas = canvases[index];
             if (!srcCanvas) return;
 
-            // Create img inside slot if missing
+            // Create img if missing
             let img = slot.querySelector("img");
             if (!img) {
                 img = document.createElement("img");
@@ -308,50 +325,42 @@
                 img.style.height = "100%";
                 img.style.objectFit = "contain";
                 img.style.pointerEvents = "none";
-                slot.appendChild(img);
-                // Make sure img is below the key label and cooldown canvas
                 img.style.zIndex = "0";
-                keyLabel.style.zIndex = "3";
+                slot.appendChild(img);
             }
 
             try {
                 img.src = srcCanvas.toDataURL("image/png");
-            } catch (err) {
-                // fails if canvas is tainted, but Mirage canvases aren't
-            }
+            } catch (err) {}
 
-            // Draw cooldown overlay
+            // Cooldown overlay
             const cdCanvas = slot.querySelector("canvas");
-            if (!cdCanvas) return;
             const ctx = cdCanvas.getContext("2d");
             ctx.clearRect(0, 0, cdCanvas.width, cdCanvas.height);
 
             const cdEnd = cooldowns[key] || 0;
             if (cdEnd > now) {
-                const elapsed = COOLDOWN_TIME - (cdEnd - now);
-                const ratio = (cdEnd - now) / COOLDOWN_TIME; // 1 → 0
+                const ratio = (cdEnd - now) / COOLDOWN_TIME;
 
-                // Draw translucent black overlay
                 ctx.fillStyle = "rgba(0,0,0,0.5)";
                 ctx.beginPath();
-                ctx.moveTo(cdCanvas.width/2, cdCanvas.height/2);
+                ctx.moveTo(21, 21);
 
-                // Draw radial "pie" from top center clockwise
-                const startAngle = -Math.PI/2;
+                const startAngle = -Math.PI / 2;
                 const endAngle = startAngle + ratio * 2 * Math.PI;
-                ctx.arc(cdCanvas.width/2, cdCanvas.height/2, cdCanvas.width/2, startAngle, endAngle, false);
-                ctx.lineTo(cdCanvas.width/2, cdCanvas.height/2);
+
+                ctx.arc(21, 21, 21, startAngle, endAngle, false);
+                ctx.lineTo(21, 21);
                 ctx.fill();
 
-                // Optional: draw a border circle for cooldown area
                 ctx.strokeStyle = "rgba(0,255,0,0.7)";
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.arc(cdCanvas.width/2, cdCanvas.height/2, cdCanvas.width/2 - 1, 0, 2 * Math.PI);
+                ctx.arc(21, 21, 20, 0, 2 * Math.PI);
                 ctx.stroke();
             }
         });
-    }, 50); // 20 fps for smooth cooldown animation
+    }, 50);
 
-    console.log("%cCanvas Hotbar Loaded with Icon Support, Keybind Labels, Right-Click Clear & Cooldown Overlay!", "color:#0f0");
+    console.log("%cCanvas Hotbar Loaded with Fully Custom Keybind Settings!", "color:#0f0");
 })();
