@@ -1,4 +1,4 @@
-/* Default theme - Dark (wrap your existing CSS inside this class) */
+/* --- Dark Theme (Default) --- */
 .theme-dark html, .theme-dark body {
   margin: 0;
   padding: 0;
@@ -8,9 +8,6 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-y: auto;
 }
-
-/* You will also need to scope all other rules with .theme-dark */
-/* For brevity, only the first block is shown, but you wrap all your CSS inside .theme-dark */
 
 .theme-dark #gameContainer {
   min-height: 100vh;
@@ -25,7 +22,9 @@
   margin: 0 auto;
 }
 
-.theme-dark #stats, .theme-dark #upgrades, .theme-dark #prestigeShop {
+.theme-dark #stats, 
+.theme-dark #upgrades, 
+.theme-dark #prestigeShop {
   background: #1e1e1e;
   border: 1px solid #333;
   border-radius: 8px;
@@ -35,7 +34,8 @@
   box-shadow: 0 0 10px rgba(0,0,0,0.7);
 }
 
-.theme-dark h1, .theme-dark h3 {
+.theme-dark h1, 
+.theme-dark h3 {
   text-align: center;
   margin-bottom: 15px;
   color: #f5a623;
@@ -62,9 +62,8 @@
   border-color: #f5a623;
 }
 
-/* ...and so on, scope everything in your existing CSS inside .theme-dark */
 
-/* --- New Theme 1: Light --- */
+/* --- Light Theme --- */
 .theme-light html, .theme-light body {
   background-color: #fafafa;
   color: #222222;
@@ -74,17 +73,20 @@
 
 .theme-light #gameContainer {
   background: #fff;
-  /* optional: you can add a subtle border or shadow */
+  /* Optional: add subtle border or shadow */
 }
 
-.theme-light #stats, .theme-light #upgrades, .theme-light #prestigeShop {
+.theme-light #stats, 
+.theme-light #upgrades, 
+.theme-light #prestigeShop {
   background: #f0f0f0;
   border: 1px solid #ccc;
   color: #222;
   box-shadow: none;
 }
 
-.theme-light h1, .theme-light h3 {
+.theme-light h1, 
+.theme-light h3 {
   color: #ff6600;
 }
 
@@ -100,7 +102,7 @@
   border-color: #ff6600;
 }
 
-/* --- New Theme 2: Ocean --- */
+/* --- Ocean Theme --- */
 .theme-ocean html, .theme-ocean body {
   background-color: #2a3f54;
   color: #d7e6f0;
@@ -113,14 +115,17 @@
   border-radius: 10px;
 }
 
-.theme-ocean #stats, .theme-ocean #upgrades, .theme-ocean #prestigeShop {
+.theme-ocean #stats, 
+.theme-ocean #upgrades, 
+.theme-ocean #prestigeShop {
   background: #23405a;
   border: 1px solid #4a90e2;
   color: #d7e6f0;
   box-shadow: 0 0 8px #4a90e2;
 }
 
-.theme-ocean h1, .theme-ocean h3 {
+.theme-ocean h1, 
+.theme-ocean h3 {
   color: #4a90e2;
 }
 
@@ -136,7 +141,7 @@
   border-color: #4a90e2;
 }
 
-/* --- New Theme 3: Forest --- */
+/* --- Forest Theme --- */
 .theme-forest html, .theme-forest body {
   background-color: #1c2d16;
   color: #b6d7a8;
@@ -149,14 +154,17 @@
   border-radius: 10px;
 }
 
-.theme-forest #stats, .theme-forest #upgrades, .theme-forest #prestigeShop {
+.theme-forest #stats, 
+.theme-forest #upgrades, 
+.theme-forest #prestigeShop {
   background: #3a5e29;
   border: 1px solid #a9c18e;
   color: #b6d7a8;
   box-shadow: 0 0 8px #a9c18e;
 }
 
-.theme-forest h1, .theme-forest h3 {
+.theme-forest h1, 
+.theme-forest h3 {
   color: #a9c18e;
 }
 
