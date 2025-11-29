@@ -6,7 +6,7 @@
   <title>Item Table View</title>
   <style>
 /* --- Default Theme (Purple/Gold) --- */
-.theme-default body {
+body.theme-default {
   font-family: Arial, sans-serif;
   background-color: #4b0082; /* Dark purple */
   color: gold;
@@ -14,7 +14,7 @@
   padding: 0;
 }
 
-.theme-default table {
+body.theme-default table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -22,28 +22,28 @@
   color: gold;
 }
 
-.theme-default th,
-.theme-default td {
+body.theme-default th,
+body.theme-default td {
   border: 1px solid gold;
   padding: 8px;
   text-align: left;
 }
 
-.theme-default th {
+body.theme-default th {
   background-color: #6a0dad; /* Slightly lighter purple */
 }
 
-.theme-default tr:nth-child(even) {
+body.theme-default tr:nth-child(even) {
   background-color: #5a0088;
 }
 
-.theme-default .data {
+body.theme-default .data {
   font-size: 0.9em;
   color: #eee;
   white-space: pre-line;
 }
 
-.theme-default #searchBar {
+body.theme-default #searchBar {
   margin: 20px auto;
   display: block;
   width: 90%;
@@ -55,23 +55,23 @@
   color: gold;
 }
 
-.theme-default #searchBar::placeholder {
+body.theme-default #searchBar::placeholder {
   color: gold;
 }
 
-.theme-default h1 {
+body.theme-default h1 {
   text-align: center;
   margin: 20px 0;
   color: gold;
 }
 
-.theme-default select {
+body.theme-default select {
   background-color: #4b0082;
   color: gold;
   border: 1px solid gold;
 }
 
-.theme-default .sprite {
+body.theme-default .sprite {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -81,7 +81,7 @@
 }
 
 /* --- Dark Theme --- */
-.theme-dark body {
+body.theme-dark {
   font-family: Arial, sans-serif;
   background-color: #121212; /* Dark background */
   color: #e0e0e0;
@@ -89,7 +89,7 @@
   padding: 0;
 }
 
-.theme-dark table {
+body.theme-dark table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -97,28 +97,28 @@
   color: #e0e0e0;
 }
 
-.theme-dark th,
-.theme-dark td {
+body.theme-dark th,
+body.theme-dark td {
   border: 1px solid #444;
   padding: 8px;
   text-align: left;
 }
 
-.theme-dark th {
+body.theme-dark th {
   background-color: #333;
 }
 
-.theme-dark tr:nth-child(even) {
+body.theme-dark tr:nth-child(even) {
   background-color: #2a2a2a;
 }
 
-.theme-dark .data {
+body.theme-dark .data {
   font-size: 0.9em;
   color: #ccc;
   white-space: pre-line;
 }
 
-.theme-dark #searchBar {
+body.theme-dark #searchBar {
   margin: 20px auto;
   display: block;
   width: 90%;
@@ -130,23 +130,23 @@
   color: #e0e0e0;
 }
 
-.theme-dark #searchBar::placeholder {
+body.theme-dark #searchBar::placeholder {
   color: #ccc;
 }
 
-.theme-dark h1 {
+body.theme-dark h1 {
   text-align: center;
   margin: 20px 0;
   color: #f5a623;
 }
 
-.theme-dark select {
+body.theme-dark select {
   background-color: #1e1e1e;
   color: #e0e0e0;
   border: 1px solid #444;
 }
 
-.theme-dark .sprite {
+body.theme-dark .sprite {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -156,7 +156,7 @@
 }
 
 /* --- Light Theme --- */
-.theme-light body {
+body.theme-light {
   font-family: Arial, sans-serif;
   background-color: #fafafa;
   color: #222222;
@@ -164,7 +164,7 @@
   padding: 0;
 }
 
-.theme-light table {
+body.theme-light table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -173,28 +173,28 @@
   border: 1px solid #ccc;
 }
 
-.theme-light th,
-.theme-light td {
+body.theme-light th,
+body.theme-light td {
   border: 1px solid #bbb;
   padding: 8px;
   text-align: left;
 }
 
-.theme-light th {
+body.theme-light th {
   background-color: #ffd580; /* Soft gold/orange */
 }
 
-.theme-light tr:nth-child(even) {
+body.theme-light tr:nth-child(even) {
   background-color: #fff8e1; /* Light cream */
 }
 
-.theme-light .data {
+body.theme-light .data {
   font-size: 0.9em;
   color: #555;
   white-space: pre-line;
 }
 
-.theme-light #searchBar {
+body.theme-light #searchBar {
   margin: 20px auto;
   display: block;
   width: 90%;
@@ -206,23 +206,23 @@
   color: #222;
 }
 
-.theme-light #searchBar::placeholder {
+body.theme-light #searchBar::placeholder {
   color: #aaa;
 }
 
-.theme-light h1 {
+body.theme-light h1 {
   text-align: center;
   margin: 20px 0;
   color: #ff6600;
 }
 
-.theme-light select {
+body.theme-light select {
   background-color: #fff8e1;
   color: #222;
   border: 1px solid #ccc;
 }
 
-.theme-light .sprite {
+body.theme-light .sprite {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -232,7 +232,7 @@
 }
 
 /* --- Ocean Theme --- */
-.theme-ocean body {
+body.theme-ocean {
   font-family: Arial, sans-serif;
   background-color: #2a3f54;
   color: #d7e6f0;
@@ -240,7 +240,7 @@
   padding: 0;
 }
 
-.theme-ocean table {
+body.theme-ocean table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -248,28 +248,28 @@
   color: #d7e6f0;
 }
 
-.theme-ocean th,
-.theme-ocean td {
+body.theme-ocean th,
+body.theme-ocean td {
   border: 1px solid #4a90e2;
   padding: 8px;
   text-align: left;
 }
 
-.theme-ocean th {
+body.theme-ocean th {
   background-color: #356094;
 }
 
-.theme-ocean tr:nth-child(even) {
+body.theme-ocean tr:nth-child(even) {
   background-color: #23405a;
 }
 
-.theme-ocean .data {
+body.theme-ocean .data {
   font-size: 0.9em;
   color: #cce4ff;
   white-space: pre-line;
 }
 
-.theme-ocean #searchBar {
+body.theme-ocean #searchBar {
   margin: 20px auto;
   display: block;
   width: 90%;
@@ -281,23 +281,23 @@
   color: #cce4ff;
 }
 
-.theme-ocean #searchBar::placeholder {
+body.theme-ocean #searchBar::placeholder {
   color: #a0c4ff;
 }
 
-.theme-ocean h1 {
+body.theme-ocean h1 {
   text-align: center;
   margin: 20px 0;
   color: #4a90e2;
 }
 
-.theme-ocean select {
+body.theme-ocean select {
   background-color: #23405a;
   color: #cce4ff;
   border: 1px solid #4a90e2;
 }
 
-.theme-ocean .sprite {
+body.theme-ocean .sprite {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -307,7 +307,7 @@
 }
 
 /* --- Forest Theme --- */
-.theme-forest body {
+body.theme-forest {
   font-family: Arial, sans-serif;
   background-color: #1c2d16;
   color: #b6d7a8;
@@ -315,7 +315,7 @@
   padding: 0;
 }
 
-.theme-forest table {
+body.theme-forest table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
@@ -323,28 +323,28 @@
   color: #b6d7a8;
 }
 
-.theme-forest th,
-.theme-forest td {
+body.theme-forest th,
+body.theme-forest td {
   border: 1px solid #a9c18e;
   padding: 8px;
   text-align: left;
 }
 
-.theme-forest th {
+body.theme-forest th {
   background-color: #4a752c;
 }
 
-.theme-forest tr:nth-child(even) {
+body.theme-forest tr:nth-child(even) {
   background-color: #3a5e29;
 }
 
-.theme-forest .data {
+body.theme-forest .data {
   font-size: 0.9em;
   color: #e0f2d6;
   white-space: pre-line;
 }
 
-.theme-forest #searchBar {
+body.theme-forest #searchBar {
   margin: 20px auto;
   display: block;
   width: 90%;
@@ -356,23 +356,23 @@
   color: #e0f2d6;
 }
 
-.theme-forest #searchBar::placeholder {
+body.theme-forest #searchBar::placeholder {
   color: #cde0b3;
 }
 
-.theme-forest h1 {
+body.theme-forest h1 {
   text-align: center;
   margin: 20px 0;
   color: #a9c18e;
 }
 
-.theme-forest select {
+body.theme-forest select {
   background-color: #3a5e29;
   color: #e0f2d6;
   border: 1px solid #a9c18e;
 }
 
-.theme-forest .sprite {
+body.theme-forest .sprite {
   display: inline-block;
   width: 32px;
   height: 32px;
