@@ -10,10 +10,6 @@
     let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     let locked = localStorage.getItem(LOCK_KEY) === "true";
 
-    // Cooldowns per key
-    const COOLDOWN_TIME = 6000;
-    const cooldowns = {};
-
     // If hotbar exists, prevent duplicates
     if (document.getElementById(HOTBAR_ID)) {
         console.log("Hotbar already exists.");
@@ -54,7 +50,7 @@
 
     bar.addEventListener("mousedown", (e) => {
         if (locked) return;
-        if (e.target.classList.contains("slot")) return;
+        if (e.target.classList.contains("slot") || e.target.classList.contains("hotkeyLabel") || e.target.innerText === "⚙️") return;
         dragging = true;
         offX = e.clientX - bar.offsetLeft;
         offY = e.clientY - bar.offsetTop;
@@ -83,9 +79,9 @@
     });
 
     // ===========================
-    // CREATE SLOT
+    // CREATE SLOT WITH ALL LISTENERS
     // ===========================
-    function createSlot(initialKey) {
+    function createSlot(initialKey, isPlus = false) {
         const div = document.createElement("div");
         div.classList.add("slot");
         div.style.position = "relative";
@@ -93,14 +89,53 @@
         div.style.height = "42px";
         div.style.border = "1px solid rgba(255,255,255,0.25)";
         div.style.borderRadius = "6px";
-        div.style.background = "rgba(255,255,255,0.08)";
+        div.style.background = isPlus ? "rgba(0,150,0,0.4)" : "rgba(255,255,255,0.08)";
         div.style.display = "flex";
         div.style.alignItems = "center";
         div.style.justifyContent = "center";
-        div.style.color = "white";
-        div.style.fontSize = "14px";
+        div.style.color = isPlus ? "#0f0" : "white";
+        div.style.fontSize = isPlus ? "24px" : "14px";
         div.style.cursor = locked ? "default" : "pointer";
         div.style.overflow = "hidden";
+        div.title = isPlus ? "Add new slot" : "";
+
+        if (isPlus) {
+            div.innerText = "+";
+            div.style.fontWeight = "bold";
+            div.style.userSelect = "none";
+
+            // Plus slot click: add new slot
+            div.addEventListener("click", () => {
+                if (locked) return;
+
+                // Find unused key for new slot (A-Z)
+                const usedKeys = new Set(Object.keys(saved));
+                let newKey = null;
+                for (let i = 65; i <= 90; i++) { // A-Z
+                    const char = String.fromCharCode(i);
+                    if (!usedKeys.has(char)) {
+                        newKey = char;
+                        break;
+                    }
+                }
+                if (!newKey) {
+                    alert("No more keys available for new slots!");
+                    return;
+                }
+
+                // Assign a default inventory index of -1 (empty)
+                saved[newKey] = -1;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+
+                // Create and insert new slot before the "+" button
+                const newSlot = createSlot(newKey);
+                bar.insertBefore(newSlot, div);
+
+                console.log(`Added new slot with key "${newKey}"`);
+            });
+
+            return div;
+        }
 
         // GREEN KEY LABEL
         const keyLabel = document.createElement("div");
@@ -140,11 +175,12 @@
             const listener = (ev) => {
                 const newKey = ev.key.toUpperCase();
 
-                // Avoid duplicates
+                // Avoid duplicates: remove any old binding with newKey
                 for (const k in saved)
-                    if (saved[k] === saved[keyLabel.innerText])
+                    if (k === newKey)
                         delete saved[k];
 
+                // Assign new key, delete old
                 saved[newKey] = saved[keyLabel.innerText];
                 delete saved[keyLabel.innerText];
 
@@ -160,23 +196,43 @@
             document.addEventListener("keydown", listener, true);
         });
 
-        // COOLDOWN CANVAS
-        const cdCanvas = document.createElement("canvas");
-        cdCanvas.width = 42;
-        cdCanvas.height = 42;
-        cdCanvas.style.position = "absolute";
-        cdCanvas.style.left = "0";
-        cdCanvas.style.top = "0";
-        cdCanvas.style.pointerEvents = "none";
-        cdCanvas.style.zIndex = "2";
-        div.appendChild(cdCanvas);
+        // Right click to remove slot if unlocked
+        div.addEventListener("contextmenu", (e) => {
+            if (locked) return;
+            e.preventDefault();
+
+            const key = keyLabel.innerText;
+
+            // Remove binding and slot element
+            if (saved[key] !== undefined) {
+                delete saved[key];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+                div.remove();
+                console.log(`Removed slot bound to key "${key}"`);
+            }
+        });
+
+        // CLICK to assign inventory slot
+        div.addEventListener("click", () => {
+            if (locked) return;
+
+            const key = keyLabel.innerText;
+            awaitingAssignmentFor = key;
+
+            div.style.outline = "2px solid gold";
+            setTimeout(() => div.style.outline = "", 600);
+        });
 
         return div;
     }
 
     // Create slots dynamically from saved bindings OR default 3 empty slots
-    const defaultKeys = Object.keys(saved).length ? Object.keys(saved) : ["C", "V", "B"];
-    defaultKeys.forEach(k => bar.appendChild(createSlot(k)));
+    const keys = Object.keys(saved).length ? Object.keys(saved) : ["C", "V", "B"];
+    keys.forEach(k => bar.appendChild(createSlot(k)));
+
+    // Add "+" slot to add new slots
+    const addSlotBtn = createSlot("+", true);
+    bar.appendChild(addSlotBtn);
 
     // LOCK BUTTON
     const lockBtn = document.createElement("div");
@@ -200,21 +256,9 @@
     document.body.appendChild(bar);
 
     // ===========================
-    // ASSIGN INVENTORY ITEM
+    // ASSIGN INVENTORY ITEM FROM CANVAS CLICK
     // ===========================
     let awaitingAssignmentFor = null;
-
-    bar.querySelectorAll(".slot").forEach(slot => {
-        slot.addEventListener("click", () => {
-            if (locked) return;
-
-            const key = slot.querySelector(".hotkeyLabel").innerText;
-            awaitingAssignmentFor = key;
-
-            slot.style.outline = "2px solid gold";
-            setTimeout(() => slot.style.outline = "", 600);
-        });
-    });
 
     document.addEventListener("mousedown", (e) => {
         if (awaitingAssignmentFor === null) return;
@@ -283,33 +327,29 @@
 
         const key = e.key.toUpperCase();
         const index = saved[key];
-        if (index === undefined) return;
-
-        const now = Date.now();
-        if (cooldowns[key] && cooldowns[key] > now) return;
+        if (index === undefined || index === -1) return;
 
         const canvases = document.querySelectorAll("#winInventory canvas");
         const canvas = canvases[index];
 
         if (canvas) {
             simulateDoubleClick(canvas);
-            cooldowns[key] = now + COOLDOWN_TIME;
         }
     });
 
     // ===========================
-    // ICON CLONING + COOLDOWN DRAWING
+    // ICON CLONING (NO COOLDOWN)
     // ===========================
     setInterval(() => {
         const slots = document.querySelectorAll(`#${HOTBAR_ID} .slot`);
         const canvases = document.querySelectorAll("#winInventory canvas");
 
-        const now = Date.now();
-
         slots.forEach(slot => {
+            if (slot.innerText === "+") return; // skip plus slot
+
             const key = slot.querySelector(".hotkeyLabel").innerText;
             const index = saved[key];
-            if (index === undefined) return;
+            if (index === undefined || index === -1) return;
 
             const srcCanvas = canvases[index];
             if (!srcCanvas) return;
@@ -331,36 +371,11 @@
 
             try {
                 img.src = srcCanvas.toDataURL("image/png");
-            } catch (err) {}
-
-            // Cooldown overlay
-            const cdCanvas = slot.querySelector("canvas");
-            const ctx = cdCanvas.getContext("2d");
-            ctx.clearRect(0, 0, cdCanvas.width, cdCanvas.height);
-
-            const cdEnd = cooldowns[key] || 0;
-            if (cdEnd > now) {
-                const ratio = (cdEnd - now) / COOLDOWN_TIME;
-
-                ctx.fillStyle = "rgba(0,0,0,0.5)";
-                ctx.beginPath();
-                ctx.moveTo(21, 21);
-
-                const startAngle = -Math.PI / 2;
-                const endAngle = startAngle + ratio * 2 * Math.PI;
-
-                ctx.arc(21, 21, 21, startAngle, endAngle, false);
-                ctx.lineTo(21, 21);
-                ctx.fill();
-
-                ctx.strokeStyle = "rgba(0,255,0,0.7)";
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(21, 21, 20, 0, 2 * Math.PI);
-                ctx.stroke();
+            } catch (err) {
+                // ignore toDataURL errors
             }
         });
-    }, 50);
+    }, 100);
 
-    console.log("%cCanvas Hotbar Loaded with Fully Custom Keybind Settings!", "color:#0f0");
+    console.log("%cCanvas Hotbar Loaded with dynamic slot add/remove and item assignment working!", "color:#0f0");
 })();
