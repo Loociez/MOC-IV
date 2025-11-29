@@ -94,6 +94,14 @@
   }
 </style></center>
   <h1 id="itemListHeading">Last Known 11/28/25 - Item List</h1>
+  <label for="themeSelector" style="margin-left: 10px;">Theme:</label>
+<select id="themeSelector">
+  <option value="theme-dark">Dark (Default)</option>
+  <option value="theme-light">Light</option>
+  <option value="theme-ocean">Ocean</option>
+  <option value="theme-forest">Forest</option>
+</select>
+
 
   <input
     type="text"
@@ -596,6 +604,31 @@ function copyDescription() {
   }).join('\n\n');
   navigator.clipboard.writeText(descs).then(() => alert("Descriptions copied to clipboard!"));
 }
+  // Theme switching logic
+  const themeSelector = document.getElementById('themeSelector');
+
+  function applyTheme(themeClass) {
+    // Remove any existing theme classes starting with 'theme-'
+    document.body.classList.forEach(cls => {
+      if (cls.startsWith('theme-')) {
+        document.body.classList.remove(cls);
+      }
+    });
+    // Add the selected theme class
+    if (themeClass) {
+      document.body.classList.add(themeClass);
+    }
+  }
+
+  // On page load, apply the default theme
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(themeSelector.value);
+  });
+
+  // Listen for theme selection changes
+  themeSelector.addEventListener('change', (e) => {
+    applyTheme(e.target.value);
+  });
 </script>
 
 </body>
