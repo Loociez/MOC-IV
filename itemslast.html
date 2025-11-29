@@ -11,6 +11,7 @@
       color: gold;
       margin: 0;
       padding: 0;
+      transition: background-color 0.3s, color 0.3s;
     }
     table {
       width: 100%;
@@ -18,12 +19,14 @@
       margin: 20px 0;
       background-color: #4b0082;
       color: gold;
+      transition: background-color 0.3s, color 0.3s;
     }
     th,
     td {
       border: 1px solid gold;
       padding: 8px;
       text-align: left;
+      transition: border-color 0.3s;
     }
     th {
       background-color: #6a0dad;
@@ -46,6 +49,7 @@
       border-radius: 4px;
       background-color: #4b0082;
       color: gold;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
     #searchBar::placeholder {
       color: gold;
@@ -54,21 +58,82 @@
       text-align: center;
       margin: 20px 0;
       color: gold;
+      transition: color 0.3s;
     }
     select {
       background-color: #4b0082;
       color: gold;
       border: 1px solid gold;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
-	.sprite {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  margin-top: 4px;
-}
+    .sprite {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+      margin-top: 4px;
+      transition: filter 0.3s;
+    }
+    /* Mirage link styles */
+    .mirage-link {
+      background-color: black;     /* solid background */
+      color: white;                /* text color */
+      padding: 4px 8px;            /* space around text */
+      border-radius: 6px;          /* rounded corners */
+      text-decoration: none;       /* remove underline */
+      font-weight: bold;           /* make it pop */
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .mirage-link:hover {
+      background-color: #222;      /* subtle hover effect */
+    }
 
+    /* Dark theme overrides */
+    body.dark-theme {
+      background-color: #121212;
+      color: #ddd;
+    }
+    body.dark-theme table {
+      background-color: #1e1e1e;
+      color: #ddd;
+    }
+    body.dark-theme th,
+    body.dark-theme td {
+      border-color: #888;
+    }
+    body.dark-theme th {
+      background-color: #333;
+    }
+    body.dark-theme tr:nth-child(even) {
+      background-color: #2a2a2a;
+    }
+    body.dark-theme #searchBar {
+      background-color: #1e1e1e;
+      color: #ddd;
+      border-color: #888;
+    }
+    body.dark-theme #searchBar::placeholder {
+      color: #bbb;
+    }
+    body.dark-theme h1 {
+      color: #ddd;
+    }
+    body.dark-theme select {
+      background-color: #1e1e1e;
+      color: #ddd;
+      border-color: #888;
+    }
+    body.dark-theme .mirage-link {
+      background-color: #222;
+      color: #eee;
+    }
+    body.dark-theme .mirage-link:hover {
+      background-color: #444;
+    }
+    body.dark-theme .sprite {
+      filter: brightness(0.9);
+    }
   </style>
 </head>
 <body>
@@ -80,20 +145,15 @@
   – the greatest pixel MMORPG!
 </p>
 
-<style>
-  .mirage-link {
-    background-color: black;     /* solid background */
-    color: white;                /* text color */
-    padding: 4px 8px;            /* space around text */
-    border-radius: 6px;          /* rounded corners */
-    text-decoration: none;       /* remove underline */
-    font-weight: bold;           /* make it pop */
-  }
-  .mirage-link:hover {
-    background-color: #222;      /* subtle hover effect */
-  }
-</style></center>
   <h1 id="itemListHeading">Last Known 11/28/25 - Item List</h1>
+
+  <!-- Theme selector dropdown -->
+  <label for="themeSelector" style="margin-left: 10px;">Theme:</label>
+  <select id="themeSelector" onchange="changeTheme(this.value)">
+    <option value="default">Default Purple</option>
+    <option value="dark">Dark</option>
+  </select>
+
   <select id="languageSelector" onchange="changeLanguage(this.value)">
     <option value="en">English</option>
     <option value="es">Español</option>
@@ -264,8 +324,8 @@ async function fetchAndDisplayItems() {
             selectCheckbox.type = 'checkbox';
             selectCheckbox.value = item.name;
             selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-            selectCell.appendChild(selectCheckbox);
             row.appendChild(selectCell);
+            selectCell.appendChild(selectCheckbox);
 
             const nameCell = document.createElement('td');
            let nameHTML = item.name;
@@ -288,7 +348,6 @@ if (typeof item.sprite === 'number') {
 
     nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
 }
-
 
 nameCell.innerHTML = nameHTML;
 
