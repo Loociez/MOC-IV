@@ -5,78 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Item Table View</title>
   <style>
-    /* Define CSS variables for theme colors */
-    :root {
-      --bg-color: purple;
-      --text-color: gold;
-      --table-bg-color: #4b0082;
-      --table-header-bg: #6a0dad;
-      --table-row-even-bg: #5a0088;
-      --input-bg-color: #4b0082;
-      --input-text-color: gold;
-      --link-bg-color: black;
-      --link-text-color: white;
-      --link-hover-bg: #222;
-      --modal-bg: #222;
-      --modal-text-color: white;
-      --table-border-color: gold;
-    }
-
-    /* Dark theme */
-    .theme-dark {
-      --bg-color: #121212;
-      --text-color: #e0e0e0;
-      --table-bg-color: #1e1e1e;
-      --table-header-bg: #333333;
-      --table-row-even-bg: #2a2a2a;
-      --input-bg-color: #1e1e1e;
-      --input-text-color: #e0e0e0;
-      --link-bg-color: #222;
-      --link-text-color: #ccc;
-      --link-hover-bg: #444;
-      --modal-bg: #1e1e1e;
-      --modal-text-color: #e0e0e0;
-      --table-border-color: #888;
-    }
-
-    /* Light theme */
-    .theme-light {
-      --bg-color: #fafafa;
-      --text-color: #333;
-      --table-bg-color: #ddd;
-      --table-header-bg: #bbb;
-      --table-row-even-bg: #ccc;
-      --input-bg-color: #fff;
-      --input-text-color: #333;
-      --link-bg-color: #e0e0e0;
-      --link-text-color: #222;
-      --link-hover-bg: #ccc;
-      --modal-bg: #eee;
-      --modal-text-color: #222;
-      --table-border-color: #999;
-    }
-
-    /* Green theme */
-    .theme-green {
-      --bg-color: #003300;
-      --text-color: #aaffaa;
-      --table-bg-color: #004400;
-      --table-header-bg: #006600;
-      --table-row-even-bg: #005500;
-      --input-bg-color: #004400;
-      --input-text-color: #aaffaa;
-      --link-bg-color: #002200;
-      --link-text-color: #ccffcc;
-      --link-hover-bg: #004400;
-      --modal-bg: #002200;
-      --modal-text-color: #aaffaa;
-      --table-border-color: #aaffaa;
-    }
-
     body {
       font-family: Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: purple;
+      color: gold;
       margin: 0;
       padding: 0;
     }
@@ -84,21 +16,20 @@
       width: 100%;
       border-collapse: collapse;
       margin: 20px 0;
-      background-color: var(--table-bg-color);
-      color: var(--text-color);
-      border: 1px solid var(--table-border-color);
+      background-color: #4b0082;
+      color: gold;
     }
     th,
     td {
-      border: 1px solid var(--table-border-color);
+      border: 1px solid gold;
       padding: 8px;
       text-align: left;
     }
     th {
-      background-color: var(--table-header-bg);
+      background-color: #6a0dad;
     }
     tr:nth-child(even) {
-      background-color: var(--table-row-even-bg);
+      background-color: #5a0088;
     }
     .data {
       font-size: 0.9em;
@@ -111,97 +42,58 @@
       width: 90%;
       padding: 10px;
       font-size: 1em;
-      border: 1px solid var(--table-border-color);
+      border: 1px solid gold;
       border-radius: 4px;
-      background-color: var(--input-bg-color);
-      color: var(--input-text-color);
+      background-color: #4b0082;
+      color: gold;
     }
     #searchBar::placeholder {
-      color: var(--text-color);
+      color: gold;
     }
     h1 {
       text-align: center;
       margin: 20px 0;
-      color: var(--text-color);
+      color: gold;
     }
     select {
-      background-color: var(--input-bg-color);
-      color: var(--input-text-color);
-      border: 1px solid var(--table-border-color);
-      border-radius: 3px;
-      padding: 2px 5px;
-      margin-left: 5px;
+      background-color: #4b0082;
+      color: gold;
+      border: 1px solid gold;
     }
-    .sprite {
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      background-repeat: no-repeat;
-      image-rendering: pixelated;
-      margin-top: 4px;
-    }
-    /* Link style */
-    .mirage-link {
-      background-color: var(--link-bg-color);
-      color: var(--link-text-color);
-      padding: 4px 8px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .mirage-link:hover {
-      background-color: var(--link-hover-bg);
-    }
-    /* Modal */
-    #comparisonModal {
-      position: fixed;
-      top: 10%;
-      left: 5%;
-      width: 90%;
-      height: 80%;
-      background: var(--modal-bg);
-      color: var(--modal-text-color);
-      border: 2px solid var(--table-border-color);
-      padding: 20px;
-      overflow: auto;
-      z-index: 1000;
-      display: none;
-    }
-    #comparisonModal button {
-      float: right;
-      background: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
+	.sprite {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+
   </style>
 </head>
 <body>
-  <p><center>
-    Check out 
-    <a href="https://mirageonlineclassic.com" target="_blank" class="mirage-link">
-      Mirage Online Classic
-    </a>
-    – the greatest pixel MMORPG!
-  </center></p>
+<p><center>
+  Check out 
+  <a href="https://mirageonlineclassic.com" target="_blank" class="mirage-link">
+    Mirage Online Classic
+  </a>
+  – the greatest pixel MMORPG!
+</p>
 
+<style>
+  .mirage-link {
+    background-color: black;     /* solid background */
+    color: white;                /* text color */
+    padding: 4px 8px;            /* space around text */
+    border-radius: 6px;          /* rounded corners */
+    text-decoration: none;       /* remove underline */
+    font-weight: bold;           /* make it pop */
+  }
+  .mirage-link:hover {
+    background-color: #222;      /* subtle hover effect */
+  }
+</style></center>
   <h1 id="itemListHeading">Last Known 11/28/25 - Item List</h1>
-
-  <!-- Language selector -->
-  <select id="languageSelector" onchange="changeLanguage(this.value)">
-    <option value="en">English</option>
-    <option value="es">Español</option>
-  </select>
-
-  <!-- Theme selector -->
-  <label for="themeSelector" style="margin-left: 20px;">Theme:</label>
-  <select id="themeSelector" onchange="changeTheme(this.value)">
-    <option value="default">Purple (Default)</option>
-    <option value="dark">Dark</option>
-    <option value="light">Light</option>
-    <option value="green">Green</option>
-  </select>
 
   <input
     type="text"
@@ -269,219 +161,178 @@
     </tbody>
   </table>
 
-  <!-- Comparison Modal -->
-  <div id="comparisonModal" class="modal">
-    <button onclick="closeModal()">Close</button>
-    <table id="comparisonTable" style="background-color:#333; color:white; width:100%;">
-      <thead>
-        <tr><th>Name</th><th>Stats 1</th><th>Stats 2</th><th>Repair</th><th>Uses</th><th>Value</th><th>Handedness</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+ <script>
+let selectedItems = [];
+// --- Profession bits from ItemP.html ---
+const classBits = {
+  0: "Samurai",
+  1: "Warlock",
+  2: "Cleric",
+  3: "Assassin",
+  4: "Barbarian",
+  5: "Marksman",
+  6: "Necromancer",
+  7: "Bard",
+  8: "Dragoon",
+  9: "Jester",
+  10: "Vampire"
+};
 
-<script>
-  // Theme switching logic
-  function applyTheme(theme) {
-    const body = document.body;
-    body.classList.remove('theme-dark', 'theme-light', 'theme-green');
-    if (theme === 'dark') {
-      body.classList.add('theme-dark');
-    } else if (theme === 'light') {
-      body.classList.add('theme-light');
-    } else if (theme === 'green') {
-      body.classList.add('theme-green');
+function isBitSet(flags, bit) {
+  const uflags = flags >>> 0;
+  return (uflags & (1 << bit)) !== 0;
+}
+
+function getItemClasses(prof_req_flags) {
+  const itemClasses = [];
+  for (const bit in classBits) {
+    if (isBitSet(prof_req_flags, bit)) {
+      itemClasses.push(classBits[bit]);
+    }
+  }
+  return itemClasses.length > 0 ? itemClasses.join(', ') : "All Classes";
+}
+// --- end professions logic ---
+
+
+async function fetchWithTimeout(url, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
+        fetch(url).then(response => {
+            clearTimeout(timer);
+            if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
+            else resolve(response);
+        }).catch(err => {
+            clearTimeout(timer);
+            reject(err);
+        });
+    });
+}
+
+async function fetchItemData() {
+    try {
+        const response = await fetch('last.json');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch item data:', error);
+    }
+}
+
+function isFavorite(name) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    return favorites.includes(name);
+}
+
+function toggleFavorite(item) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    if (favorites.includes(item.name)) {
+        favorites = favorites.filter(name => name !== item.name);
     } else {
-      // default purple theme: no class needed (using :root variables)
+        favorites.push(item.name);
     }
-  }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    filterTable(); // Reapply filter after favorite toggle
+}
 
-  function changeTheme(theme) {
-    applyTheme(theme);
-    localStorage.setItem('selectedTheme', theme);
-  }
+async function fetchAndDisplayItems() {
+    try {
+        let items = await fetchItemData();
 
-  // On page load, restore theme from localStorage or default
-  document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem('selectedTheme') || 'default';
-    const themeSelector = document.getElementById('themeSelector');
-    if (themeSelector) {
-      themeSelector.value = savedTheme;
-    }
-    applyTheme(savedTheme);
-  });
+        const sortKey = document.getElementById("sortStat")?.value;
+        if (sortKey && sortKey !== "none") {
+            items.sort((a, b) => {
+                const aValue = a.data?.[sortKey] ?? -Infinity;
+                const bValue = b.data?.[sortKey] ?? -Infinity;
+                return bValue - aValue;
+            });
+        }
 
-  // --- your existing JS code below (unchanged) ---
-  let selectedItems = [];
-  // --- Profession bits from ItemP.html ---
-  const classBits = {
-    0: "Samurai",
-    1: "Warlock",
-    2: "Cleric",
-    3: "Assassin",
-    4: "Barbarian",
-    5: "Marksman",
-    6: "Necromancer",
-    7: "Bard",
-    8: "Dragoon",
-    9: "Jester",
-    10: "Vampire"
-  };
+        const tableBody = document.getElementById('itemTable').querySelector('tbody');
+        tableBody.innerHTML = '';
 
-  function isBitSet(flags, bit) {
-    const uflags = flags >>> 0;
-    return (uflags & (1 << bit)) !== 0;
-  }
+        items.forEach(item => {
+            const row = document.createElement('tr');
 
-  function getItemClasses(prof_req_flags) {
-    const itemClasses = [];
-    for (const bit in classBits) {
-      if (isBitSet(prof_req_flags, bit)) {
-        itemClasses.push(classBits[bit]);
-      }
-    }
-    return itemClasses.length > 0 ? itemClasses.join(', ') : "All Classes";
-  }
-  // --- end professions logic ---
+            const selectCell = document.createElement('td');
+            const selectCheckbox = document.createElement('input');
+            selectCheckbox.type = 'checkbox';
+            selectCheckbox.value = item.name;
+            selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+            selectCell.appendChild(selectCheckbox);
+            row.appendChild(selectCell);
 
-  async function fetchWithTimeout(url, timeout = 5000) {
-      return new Promise((resolve, reject) => {
-          const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
-          fetch(url).then(response => {
-              clearTimeout(timer);
-              if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
-              else resolve(response);
-          }).catch(err => {
-              clearTimeout(timer);
-              reject(err);
-          });
-      });
-  }
+            const nameCell = document.createElement('td');
+           let nameHTML = item.name;
+if (item.level_req !== undefined) {
+    nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
+}
 
-  async function fetchItemData() {
-      try {
-          const response = await fetch('last.json');
-          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-          const data = await response.json();
-          return data;
-      } catch (error) {
-          console.error('Failed to fetch item data:', error);
-      }
-  }
+if (typeof item.sprite === 'number') {
+    const SPRITE_SIZE = 32;
+    const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
+    const spritesPerRow = 32;        // 32 sprites horizontally
 
-  function isFavorite(name) {
-      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-      return favorites.includes(name);
-  }
+    const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
+    const spriteIndex = item.sprite % SPRITES_PER_SHEET;
 
-  function toggleFavorite(item) {
-      let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-      if (favorites.includes(item.name)) {
-          favorites = favorites.filter(name => name !== item.name);
-      } else {
-          favorites.push(item.name);
-      }
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-      filterTable(); // Reapply filter after favorite toggle
-  }
+    const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+    const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
 
-  async function fetchAndDisplayItems() {
-      try {
-          let items = await fetchItemData();
+    const backgroundImage = `url('images/items${sheetIndex}.png')`;
 
-          const sortKey = document.getElementById("sortStat")?.value;
-          if (sortKey && sortKey !== "none") {
-              items.sort((a, b) => {
-                  const aValue = a.data?.[sortKey] ?? -Infinity;
-                  const bValue = b.data?.[sortKey] ?? -Infinity;
-                  return bValue - aValue;
-              });
-          }
+    nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
+}
 
-          const tableBody = document.getElementById('itemTable').querySelector('tbody');
-          tableBody.innerHTML = '';
 
-          items.forEach(item => {
-              const row = document.createElement('tr');
+nameCell.innerHTML = nameHTML;
 
-              const selectCell = document.createElement('td');
-              const selectCheckbox = document.createElement('input');
-              selectCheckbox.type = 'checkbox';
-              selectCheckbox.value = item.name;
-              selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
-              selectCell.appendChild(selectCheckbox);
-              row.appendChild(selectCell);
+            row.appendChild(nameCell);
 
-              const nameCell = document.createElement('td');
-              let nameHTML = item.name;
-              if (item.level_req !== undefined) {
-                  nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
-              }
+            const descCell = document.createElement('td');
+let descHTML = item.desc || 'No description';
+if (item.prof_req_flags !== undefined) {
+    const classesText = getItemClasses(item.prof_req_flags);
+    descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
+}
+descCell.innerHTML = descHTML;
+row.appendChild(descCell);
 
-              if (typeof item.sprite === 'number') {
-                  const SPRITE_SIZE = 32;
-                  const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
-                  const spritesPerRow = 32;        // 32 sprites horizontally
+            const dataCell = document.createElement('td');
+            let stats = item.data ? Object.entries(item.data) : [];
+            if (item.tile_range) stats.push(['tile range', item.tile_range]);
 
-                  const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
-                  const spriteIndex = item.sprite % SPRITES_PER_SHEET;
+            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
+            const groupedStats = {};
+            stats.forEach(([key, value]) => {
+                const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
+                if (excludedKeys.includes(normalizedKey) || key.startsWith('!')) return;
+                const match = key.match(/^(min|max)_(.+)$/);
+                if (match) {
+                    const [, bound, statName] = match;
+                    if (!groupedStats[statName]) groupedStats[statName] = {};
+                    groupedStats[statName][bound] = value;
+                } else {
+                    groupedStats[key] = value;
+                }
+            });
 
-                  const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
-                  const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+            let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
+                if (typeof value === 'object') {
+                    const min = value.min;
+                    const max = value.max;
+                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+                    else if (min !== undefined) return `${key} (min): ${min}`;
+                    else if (max !== undefined) return `${key} (max): ${max}`;
+                    else return `${key}: ?`;
+                }
+                return `${key.replace(/_/g, ' ')}: ${value}`;
+            });
 
-                  const backgroundImage = `url('images/items${sheetIndex}.png')`;
-
-                  nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
-              }
-
-              nameCell.innerHTML = nameHTML;
-
-              row.appendChild(nameCell);
-
-              const descCell = document.createElement('td');
-              let descHTML = item.desc || 'No description';
-              if (item.prof_req_flags !== undefined) {
-                  const classesText = getItemClasses(item.prof_req_flags);
-                  descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
-              }
-              descCell.innerHTML = descHTML;
-              row.appendChild(descCell);
-
-              const dataCell = document.createElement('td');
-              let stats = item.data ? Object.entries(item.data) : [];
-              if (item.tile_range) stats.push(['tile range', item.tile_range]);
-
-              const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
-              const groupedStats = {};
-              stats.forEach(([key, value]) => {
-                  const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
-                  if (excludedKeys.includes(normalizedKey) || key.startsWith('!')) return;
-                  const match = key.match(/^(min|max)_(.+)$/);
-                  if (match) {
-                      const [, bound, statName] = match;
-                      if (!groupedStats[statName]) groupedStats[statName] = {};
-                      groupedStats[statName][bound] = value;
-                  } else {
-                      groupedStats[key] = value;
-                  }
-              });
-
-              let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
-                  if (typeof value === 'object') {
-                      const min = value.min;
-                      const max = value.max;
-                      if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
-                      else if (min !== undefined) return `${key} (min): ${min}`;
-                      else if (max !== undefined) return `${key} (max): ${max}`;
-                      else return `${key}: ?`;
-                  }
-                  return `${key.replace(/_/g, ' ')}: ${value}`;
-              });
-
-              // Spell Amp shortened display
-              const spellAmpLabels = {
-                  "!bard_buff_uptime
-": "Bard Buff Uptime",
+            // Spell Amp shortened display
+            const spellAmpLabels = {
+                "!bard_buff_uptime": "Bard Buff Uptime",
 				"!bard_buff_cost": "Bard Buff Cost",
                 "!jester_confuse_cost": "Jester Confuse Cost",
 				"!jester_playerconfuse_uptime": "Jester player uptime",
