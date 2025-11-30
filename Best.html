@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Best Build Generator with Alternatives</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9fafb;
+    margin: 0;
+    padding: 20px;
+    color: #222;
+    line-height: 1.4;
+  }
+  h1 {
+    margin-bottom: 12px;
+    font-weight: 700;
+    color: #0f2137;
+    user-select: none;
+  }
+  h2 {
+    margin-top: 0;
+    font-weight: 600;
+    color: #0f2137;
+  }
+  label {
+    font-weight: 600;
+    color: #1e2a38;
+    user-select: none;
+  }
+  .manual-stats {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    max-width: 800px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  }
+  .manual-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px 18px;
+  }
+  .manual-stats-row {
+    display: flex;
+    flex-direction: column;
+  }
+  .manual-stats-row label {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+  }
+  .manual-stats-row input {
+    padding: 6px 8px;
+    font-size: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    transition: border-color 0.2s ease-in-out;
+  }
+  .manual-stats-row input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 3px #3b82f6aa;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 800px;
+    align-items: flex-end;
+    margin-bottom: 16px;
+  }
+  .controls > div {
+    flex: 1 1 180px;
+    display: flex;
+    flex-direction: column;
+  }
+  select, button {
+    font-size: 1rem;
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #cbd5e1;
+    transition: border-color 0.2s ease-in-out;
+    cursor: pointer;
+    background: #fff;
+  }
+  select:focus, button:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 6px #2563ebaa;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    background: #e5e7eb;
+    border-color: #d1d5db;
+    color: #9ca3af;
+  }
+  #slotsContainer {
+    max-width: 800px;
+    background: #fff;
+    padding: 14px 18px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .slot-container {
+    flex: 1 1 45%;
+    min-width: 280px;
+  }
+  .slot-container label {
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+  }
+  #buildOutput {
+    max-width: 800px;
+    background: #fff;
+    padding: 16px 22px;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.12);
+    font-size: 0.95rem;
+  }
+  #buildOutput table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+  }
+  #buildOutput th, #buildOutput td {
+    border: 1px solid #e2e8f0;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  #buildOutput th {
+    background: #f3f4f6;
+    font-weight: 600;
+    color: #374151;
+  }
+  #buildOutput ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #374151;
+  }
+  #buildOutput h3 {
+    margin: 12px 0 6px 0;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  @media (max-width: 600px) {
+    #slotsContainer {
+      flex-direction: column;
+    }
+    .slot-container {
+      flex: 1 1 100%;
+      min-width: auto;
+    }
+    .controls {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .controls > div {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Best Build Generator - Doesn't account for Enchants</h1>
+
+<div class="manual-stats" aria-label="Before weapon stats manual input">
+  <h2>Before Weapon Stats</h2>
+  <div class="manual-stats-grid">
+    <div class="manual-stats-row">
+      <label for="manual_hp">Hit Points:</label>
+      <input type="number" id="manual_hp" value="0" inputmode="numeric" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_mp">Magical Points:</label>
+      <input type="number" id="manual_mp" value="0" inputmode="numeric" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_sp">Stamina Points:</label>
+      <input type="number" id="manual_sp" value="0" inputmode="numeric" />
+    </div>
+
+    <!-- Now for these, user enters min-max like 245-482 -->
+    <div class="manual-stats-row">
+      <label for="manual_atk">Physical Attack (min-max):</label>
+      <input type="text" id="manual_atk" value="0-0" placeholder="e.g. 245-482" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_def">Physical Defense:</label>
+      <input type="number" id="manual_def" value="0" inputmode="numeric" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_rat">Ranged Attack (min-max):</label>
+      <input type="text" id="manual_rat" value="0-0" placeholder="e.g. 245-482" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_rdf">Ranged Defense:</label>
+      <input type="number" id="manual_rdf" value="0" inputmode="numeric" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_mat">Magical Attack (min-max):</label>
+      <input type="text" id="manual_mat" value="0-0" placeholder="e.g. 245-482" />
+    </div>
+    <div class="manual-stats-row">
+      <label for="manual_mdf">Magical Defense:</label>
+      <input type="number" id="manual_mdf" value="0" inputmode="numeric" />
+    </div>
+  </div>
+</div>
+
+<div class="controls" role="region" aria-label="Class and stat selection">
+  <div>
+    <label for="classSelect">Select Class:</label>
+    <select id="classSelect" disabled aria-required="true" aria-describedby="classHelp">
+      <option value="">-- Loading classes... --</option>
+    </select>
+  </div>
+  <div>
+    <label for="statSelect">Select Stat to Maximize:</label>
+    <select id="statSelect" disabled aria-required="true" aria-describedby="statHelp">
+      <option value="">-- Loading stats... --</option>
+    </select>
+  </div>
+  <div>
+    <button id="generateBtn" disabled aria-label="Generate Build Options">Generate Build Options</button>
+  </div>
+</div>
+
+<div id="slotsContainer" aria-live="polite" aria-atomic="true"></div>
+
+<h2>Build Summary</h2>
+<div id="buildOutput" aria-live="polite" aria-atomic="true" tabindex="0">Loading items, please wait...</div>
+
+<script>
+const ITEMS_JSON_URL = "https://loociez.github.io/MOC-IV/last.json";
+
+const classBits = {
+  0: "Samurai",
+  1: "Warlock",
+  2: "Cleric",
+  3: "Assassin",
+  4: "Barbarian",
+  5: "Marksman",
+  6: "Necromancer",
+  7: "Bard",
+  8: "Dragoon",
+  9: "Jester",
+  10: "Vampire"
+};
+
+const SLOT_TYPE_WEAPON_1H = 1;
+const SLOT_TYPE_WEAPON_2H = 2;
+const SLOT_TYPE_ARMOR = 3;
+const SLOT_TYPE_HELM = 4;
+const SLOT_TYPE_SHIELD = 5;
+const SLOT_TYPE_ACCESSORY = 11;
+
+const slotNames = {
+  weapon: 'Weapon (One-Handed or Two-Handed)',
+  helm: 'Helm',
+  armor: 'Armor/Clothing',
+  shield: 'Shield/Offhand',
+  accessory: 'Accessory'
+};
+
+const spellAmpLabels = {
+  "!bard_buff_uptime": "Bard Buff Uptime",
+  "!bard_buff_cost": "Bard Buff Cost",
+  "!jester_confuse_cost": "Jester Confuse Cost",
+  "!jester_playerconfuse_uptime": "Jester Player Uptime",
+  "!jester_npcconfuse_uptime": "Jester NPC Uptime",
+  "!cleric_petheal_amount": "Cleric Pet Heal",
+  "!cleric_petheal_cost": "Cleric Pet Heal Cost",
+  "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
+  "!dragoon_invisible_cost": "Dragoon Invis Cost",
+  "!warlock_npcaoe_damage": "Warlock NPC AoE",
+  "!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
+  "!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
+  "!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
+  "!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
+  "!warlock_npcaoe_cost": "Warlock NPC Cost Cast",
+  "!warlock_selfaoe_cost": "Warlock Self Cost Cast",
+  "!warlock_playeraoe_cost": "Warlock Opponent Cost Cast",
+  "!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
+  "!cleric_playerheal_amount": "Cleric Player Heal",
+  "!cleric_playerheal_cost": "Cleric Player Heal Cost",
+  "!cleric_allheal_cooldown": "Cleric Cooldown",
+  "!dragoon_playeraoe_damage": "Dragoon Player AoE",
+  "!warlock_playeraoe_damage": "Warlock Player AoE",
+  "!assassin_npcpoison_damage": "Assassin NPC Poison",
+  "!assassin_cloak_cost": "Assassin Cloak Cost",
+  "!assassins_npcpoison_ticks": "Assassin NPC Ticks",
+  "!assassins_playerpoison_ticks": "Assassin Player Ticks",
+  "!bard_buff_cooldown": "Bard Buff Cooldown",
+  "!assassin_playerpoison_damage": "Assassin Player Poison",
+  "!assassin_cloak_cooldown": "Assassin Cloak Cooldown",
+  "!samurai_playerriposte_damage": "Samurai Player Riposte",
+  "!marksman_playershotgun_damage": "Marksman Player Shotgun",
+  "!marksman_shotgun_cost": "Marksman Shotgun Cost",
+  "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
+  "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
+};
+
+const statsToIgnore = new Set([
+  'sprite_rotation', 'sprite', 'hue', 'saturation', 'brightness', 'alpha', 'scale'
+]);
+
+// stats we want ranged-min/max output for:
+const rangedStats = new Set(['atk', 'rat', 'mat']);
+
+let items = [];
+let filteredItemsByClass = [];
+let selectedClass = "";
+let selectedStat = "";
+
+/* -------------------------
+   Helpers: parse min-max and manual inputs
+   ------------------------- */
+function parseRangeString(value) {
+  // returns {min:number, max:number}
+  if (!value || typeof value !== 'string') return {min:0, max:0};
+  const parts = value.split('-').map(s => s.trim()).filter(s => s.length);
+  if (parts.length === 1) {
+    const v = Number(parts[0]);
+    return {min: isNaN(v)?0:v, max: isNaN(v)?0:v};
+  }
+  if (parts.length >= 2) {
+    let min = Number(parts[0]); let max = Number(parts[1]);
+    if (isNaN(min)) min = 0;
+    if (isNaN(max)) max = min;
+    return {min, max};
+  }
+  return {min:0, max:0};
+}
+
+function getManualStats() {
+  const atkRange = parseRangeString(document.getElementById('manual_atk').value);
+  const ratRange = parseRangeString(document.getElementById('manual_rat').value);
+  const matRange = parseRangeString(document.getElementById('manual_mat').value);
+  return {
+    hp: Number(document.getElementById('manual_hp').value) || 0,
+    mp: Number(document.getElementById('manual_mp').value) || 0,
+    sp: Number(document.getElementById('manual_sp').value) || 0,
+    atk_min: atkRange.min,
+    atk_max: atkRange.max,
+    def: Number(document.getElementById('manual_def').value) || 0,
+    rat_min: ratRange.min,
+    rat_max: ratRange.max,
+    rdf: Number(document.getElementById('manual_rdf').value) || 0,
+    mat_min: matRange.min,
+    mat_max: matRange.max,
+    mdf: Number(document.getElementById('manual_mdf').value) || 0
+  };
+}
+
+/* -------------------------
+   Class/profession helpers
+   ------------------------- */
+function isAdminItem(item) {
+  if (!item) return false;
+  if (item.admin === true) return true;
+  if (typeof item.name === "string" && item.name.toLowerCase().includes("admin")) return true;
+  return false;
+}
+
+function isBitSet(flags, bit) {
+  const uflags = flags >>> 0;
+  return (uflags & (1 << bit)) !== 0;
+}
+
+function getItemClasses(prof_req_flags) {
+  const itemClasses = [];
+  for (const bit in classBits) {
+    if (isBitSet(prof_req_flags, bit)) {
+      itemClasses.push(classBits[bit]);
+    }
+  }
+  return itemClasses.length > 0 ? itemClasses : ["All Classes"];
+}
+
+/* -------------------------
+   UI population
+   ------------------------- */
+function populateClassDropdown() {
+  const classSelect = document.getElementById('classSelect');
+  classSelect.innerHTML = '<option value="">-- Select Class --</option>';
+  Object.values(classBits).forEach(cls => {
+    const option = document.createElement('option');
+    option.value = cls;
+    option.textContent = cls;
+    classSelect.appendChild(option);
+  });
+  classSelect.disabled = false;
+}
+
+function populateStatDropdown() {
+  const stats = [
+    'hp', 'mp', 'sp', 'atk', 'def', 'mat', 'mdf', 'rat', 'rdf'
+  ];
+  const statSelect = document.getElementById('statSelect');
+  statSelect.innerHTML = '<option value="">-- Select Stat --</option>';
+  stats.forEach(stat => {
+    const option = document.createElement('option');
+    option.value = stat;
+    option.textContent = stat.toUpperCase();
+    statSelect.appendChild(option);
+  });
+  statSelect.disabled = false;
+}
+
+/* -------------------------
+   Filtering / slot helpers
+   ------------------------- */
+function filterItemsByClass(cls) {
+  return items.filter(item => {
+    const classes = getItemClasses(item.prof_req_flags);
+    return classes.includes(cls) || classes.includes("All Classes");
+  });
+}
+
+function getItemsForSlot(slotKey) {
+  switch (slotKey) {
+    case 'weapon':
+      // include both 1H and 2H
+      return filteredItemsByClass.filter(item =>
+        (item.type === SLOT_TYPE_WEAPON_1H || item.type === SLOT_TYPE_WEAPON_2H) && !isAdminItem(item));
+    case 'helm':
+      return filteredItemsByClass.filter(item => item.type === SLOT_TYPE_HELM && !isAdminItem(item));
+    case 'armor':
+      return filteredItemsByClass.filter(item => item.type === SLOT_TYPE_ARMOR && !isAdminItem(item));
+    case 'shield':
+      return filteredItemsByClass.filter(item => item.type === SLOT_TYPE_SHIELD && !isAdminItem(item));
+    case 'accessory':
+      return filteredItemsByClass.filter(item => item.type === SLOT_TYPE_ACCESSORY && !isAdminItem(item));
+    default:
+      return [];
+  }
+}
+
+/* -------------------------
+   Sorting / display helpers
+   ------------------------- */
+function getCombinedStatValue(item, stat) {
+  // used to sort lists by selected stat (average when min/max exist)
+  if (!item || !item.data) return 0;
+  const minKey = `min_${stat}`;
+  const maxKey = `max_${stat}`;
+
+  const minVal = item.data[minKey] !== undefined ? Number(item.data[minKey]) : null;
+  const maxVal = item.data[maxKey] !== undefined ? Number(item.data[maxKey]) : null;
+
+  if (minVal !== null && maxVal !== null) {
+    return (minVal + maxVal) / 2;
+  }
+
+  if (item.data[stat] !== undefined) {
+    return Number(item.data[stat]);
+  }
+
+  return 0;
+}
+
+function getCombinedStatText(item, stat) {
+  // returns human text e.g. "300-400" or "50"
+  if (!item || !item.data) return "0";
+  const minKey = `min_${stat}`;
+  const maxKey = `max_${stat}`;
+  const minVal = item.data[minKey];
+  const maxVal = item.data[maxKey];
+
+  if (minVal !== undefined && maxVal !== undefined && minVal !== maxVal) {
+    return `${minVal}-${maxVal}`;
+  } else if (minVal !== undefined) {
+    return `${minVal}`;
+  } else if (item.data[stat] !== undefined) {
+    return `${item.data[stat]}`;
+  }
+  return "0";
+}
+
+/* -------------------------
+   Core: sum all stats from selected items (min/max for ranged)
+   ------------------------- */
+function sumBuildStats(selectedItems) {
+  const manual = getManualStats();
+  const statsList = ['hp','mp','sp','atk','def','rat','rdf','mat','mdf'];
+
+  // totals[stat] = {min:0, max:0}
+  const totals = {};
+  statsList.forEach(s => totals[s] = {min:0, max:0});
+
+  // add manual (manual has atk_min/atk_max etc)
+  totals.hp.min += manual.hp; totals.hp.max += manual.hp;
+  totals.mp.min += manual.mp; totals.mp.max += manual.mp;
+  totals.sp.min += manual.sp; totals.sp.max += manual.sp;
+
+  totals.atk.min += manual.atk_min; totals.atk.max += manual.atk_max;
+  totals.def.min += manual.def; totals.def.max += manual.def;
+  totals.rat.min += manual.rat_min; totals.rat.max += manual.rat_max;
+  totals.rdf.min += manual.rdf; totals.rdf.max += manual.rdf;
+  totals.mat.min += manual.mat_min; totals.mat.max += manual.mat_max;
+  totals.mdf.min += manual.mdf; totals.mdf.max += manual.mdf;
+
+  // Sum item stats
+  selectedItems.forEach(item => {
+    if (!item || !item.data) return;
+
+    for (const key in item.data) {
+      if (!Object.prototype.hasOwnProperty.call(item.data, key)) continue;
+      if (statsToIgnore.has(key)) continue;
+
+      const valRaw = item.data[key];
+      // skip non-numeric (some amplifiers may be strings); try convert
+      const numeric = Number(valRaw);
+      // handle min_ / max_ keys explicitly
+      const minMatch = key.match(/^min_(.+)$/);
+      const maxMatch = key.match(/^max_(.+)$/);
+      if (minMatch) {
+        const stat = minMatch[1];
+        if (totals[stat]) totals[stat].min += isNaN(numeric) ? 0 : numeric;
+        continue;
+      }
+      if (maxMatch) {
+        const stat = maxMatch[1];
+        if (totals[stat]) totals[stat].max += isNaN(numeric) ? 0 : numeric;
+        continue;
+      }
+
+      // non min/max keys (like "max_hp" already covered as max_ ... but also keys like "hp" rare)
+      // If key exactly matches a tracked stat, add to both min & max (it's a flat value)
+      if (totals[key]) {
+        totals[key].min += isNaN(numeric) ? 0 : numeric;
+        totals[key].max += isNaN(numeric) ? 0 : numeric;
+      } else {
+        // try to map "max_hp" style (if present and not covered) - but earlier we matched min_/max_
+        const afterStrip = key.replace(/^min_|^max_/, '');
+        if (totals[afterStrip]) {
+          totals[afterStrip].min += isNaN(numeric) ? 0 : numeric;
+          totals[afterStrip].max += isNaN(numeric) ? 0 : numeric;
+        }
+      }
+    }
+  });
+
+  // Ensure where max is still 0 but min > 0 (e.g., only min entries) we set max = min
+  for (const s of Object.keys(totals)) {
+    if (totals[s].max === 0 && totals[s].min !== 0) totals[s].max = totals[s].min;
+  }
+
+  return totals; // object of {stat: {min, max}}
+}
+
+/* -------------------------
+   Spell/amplifier sums (keeps numeric accumulation)
+   ------------------------- */
+function sumBuildSpellAmps(selectedItems) {
+  const amps = {};
+  Object.keys(spellAmpLabels).forEach(k => amps[k] = 0);
+
+  selectedItems.forEach(item => {
+    if (!item || !item.data) return;
+    for (const key in item.data) {
+      if (!Object.prototype.hasOwnProperty.call(item.data, key)) continue;
+      if (key in amps) {
+        const v = Number(item.data[key]);
+        if (!isNaN(v)) amps[key] += v;
+      }
+    }
+  });
+
+  return amps;
+}
+
+/* -------------------------
+   UI create slot dropdowns
+   ------------------------- */
+function createSlotDropdown(slotKey) {
+  const container = document.createElement('div');
+  container.className = 'slot-container';
+
+  const label = document.createElement('label');
+  label.textContent = slotNames[slotKey] || slotKey;
+
+  const select = document.createElement('select');
+  select.id = `slot-select-${slotKey}`;
+
+  let slotItems = getItemsForSlot(slotKey);
+
+  // sort by selectedStat (descending); if no selectedStat, sort by name
+  slotItems.sort((a, b) => {
+    if (selectedStat) {
+      const aVal = getCombinedStatValue(a, selectedStat);
+      const bVal = getCombinedStatValue(b, selectedStat);
+      return bVal - aVal;
+    }
+    return (a.name || "").localeCompare(b.name || "");
+  });
+
+  // include a "None" option
+  const noneOpt = document.createElement('option');
+  noneOpt.value = '__NONE__';
+  noneOpt.textContent = '-- None --';
+  select.appendChild(noneOpt);
+
+  slotItems.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.name;
+    opt.textContent = item.name;
+    select.appendChild(opt);
+  });
+
+  // default select first real item if exists
+  if (slotItems.length) select.selectedIndex = 1; // 0 is None
+
+  select.addEventListener('change', updateBuildSummary);
+
+  container.appendChild(label);
+  container.appendChild(select);
+  return container;
+}
+
+/* -------------------------
+   Build UI & summary
+   ------------------------- */
+function updateBuildSummary() {
+  const buildOutput = document.getElementById('buildOutput');
+  const selects = Array.from(document.querySelectorAll('#slotsContainer select'));
+
+  if (selects.length === 0) {
+    buildOutput.textContent = "Please generate the build options first.";
+    return;
+  }
+
+  let html = `<table><thead><tr><th>Slot</th><th>Item Name</th><th>Stats</th></tr></thead><tbody>`;
+  const selectedItems = [];
+
+  selects.forEach(select => {
+    const slotKey = select.id.replace('slot-select-', '');
+    const selectedItemName = select.value;
+    if (!selectedItemName || selectedItemName === '__NONE__') {
+      html += `<tr><td>${slotNames[slotKey] || slotKey}</td><td>—</td><td>—</td></tr>`;
+      return;
+    }
+
+    const item = items.find(i => i.name === selectedItemName);
+
+
+    if (item) {
+      selectedItems.push(item);
+      const stats = [];
+      if (item.data) {
+        // present combined text for each tracked stat if exists
+        ['hp','mp','sp','atk','def','mat','mdf','rat','rdf'].forEach(stat => {
+          const statText = getCombinedStatText(item, stat);
+          if (statText !== "0" && statText !== "N/A") {
+            stats.push(`${stat.toUpperCase()}: ${statText}`);
+          }
+        });
+      }
+      html += `<tr><td>${slotNames[slotKey] || slotKey}</td><td>${item.name}</td><td>${stats.join(', ') || '—'}</td></tr>`;
+    } else {
+      html += `<tr><td>${slotNames[slotKey] || slotKey}</td><td>—</td><td>—</td></tr>`;
+    }
+  });
+
+  html += `</tbody></table>`;
+
+  // Compute totals including manual
+  const totals = sumBuildStats(selectedItems);
+
+  html += `<h3>Total Stats (including manual input)</h3><table><tbody>`;
+  for (const statName of ['hp','mp','sp','atk','def','rat','rdf','mat','mdf']) {
+    const t = totals[statName];
+    if (!t) continue;
+    if (rangedStats.has(statName)) {
+      // show min-max for ranged
+      html += `<tr><th style="text-transform:uppercase">${statName}</th><td>${Math.round(t.min)} - ${Math.round(t.max)}</td></tr>`;
+    } else {
+      // not ranged: min and max should be equal — show single number
+      const value = (t.min + t.max) / 2;
+      html += `<tr><th style="text-transform:uppercase">${statName}</th><td>${value.toFixed(1)}</td></tr>`;
+    }
+  }
+  html += `</tbody></table>`;
+
+  // Spell amplifications
+  const amps = sumBuildSpellAmps(selectedItems);
+  const ampKeys = Object.keys(amps).filter(k => amps[k] !== 0);
+  if (ampKeys.length > 0) {
+    html += `<h3>Spell Amplifications</h3><ul>`;
+    ampKeys.forEach(key => {
+      const label = spellAmpLabels[key] || key;
+      html += `<li><strong>${label}</strong>: ${amps[key].toFixed(2)}</li>`;
+    });
+    html += `</ul>`;
+  }
+
+  buildOutput.innerHTML = html;
+}
+
+function enableUI() {
+  document.getElementById('classSelect').disabled = false;
+  document.getElementById('statSelect').disabled = false;
+  document.getElementById('generateBtn').disabled = false;
+}
+
+function loadItems() {
+  fetch(ITEMS_JSON_URL)
+    .then(res => res.json())
+    .then(data => {
+      items = data;
+      populateClassDropdown();
+      populateStatDropdown();
+      enableUI();
+      document.getElementById('buildOutput').textContent = "Items loaded! Select class and stat, then click Generate.";
+    })
+    .catch(err => {
+      alert("Failed to load items JSON: " + err.message);
+    });
+}
+
+document.getElementById('generateBtn').addEventListener('click', () => {
+  selectedClass = document.getElementById('classSelect').value;
+  selectedStat = document.getElementById('statSelect').value;
+
+  if (!selectedClass || !selectedStat) {
+    alert("Please select both class and stat.");
+    return;
+  }
+
+  filteredItemsByClass = filterItemsByClass(selectedClass);
+  generateBuildUI();
+});
+
+function generateBuildUI() {
+  const container = document.getElementById('slotsContainer');
+  container.innerHTML = '';
+
+  const buildSlots = ['weapon', 'helm', 'armor', 'shield', 'accessory'];
+
+  buildSlots.forEach(slotKey => {
+    const dropdown = createSlotDropdown(slotKey);
+    container.appendChild(dropdown);
+  });
+
+  updateBuildSummary();
+}
+
+const manualInputs = [
+  'manual_hp','manual_mp','manual_sp','manual_atk','manual_def',
+  'manual_rat','manual_rdf','manual_mat','manual_mdf'
+];
+manualInputs.forEach(id => {
+  document.getElementById(id).addEventListener('input', updateBuildSummary);
+});
+
+// Load items on page load
+loadItems();
+</script>
+
+</body>
+</html>
