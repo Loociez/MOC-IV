@@ -542,25 +542,28 @@ function sumBuildStats(selectedItems) {
     if (!item || !item.data) return;
 
     for (const key in item.data) {
-      if (!Object.prototype.hasOwnProperty.call(item.data, key)) continue;
-      if (statsToIgnore.has(key)) continue;
-	  
-	      // Fix HP/MP/SP values (JSON uses max_hp instead of hp)
-    if (key === "max_hp") {
-      totals.hp.min += Number(item.data[key]) || 0;
-      totals.hp.max += Number(item.data[key]) || 0;
-      continue;
-    }
-    if (key === "max_mp") {
-      totals.mp.min += Number(item.data[key]) || 0;
-      totals.mp.max += Number(item.data[key]) || 0;
-      continue;
-    }
-    if (key === "max_sp") {
-      totals.sp.min += Number(item.data[key]) || 0;
-      totals.sp.max += Number(item.data[key]) || 0;
-      continue;
-    }
+     if (!Object.prototype.hasOwnProperty.call(item.data, key)) continue;
+
+// Fix HP/MP/SP FIRST so nothing can skip them
+if (key === "max_hp") {
+  totals.hp.min += Number(item.data[key]) || 0;
+  totals.hp.max += Number(item.data[key]) || 0;
+  continue; // prevents double-processing
+}
+if (key === "max_mp") {
+  totals.mp.min += Number(item.data[key]) || 0;
+  totals.mp.max += Number(item.data[key]) || 0;
+  continue;
+}
+if (key === "max_sp") {
+  totals.sp.min += Number(item.data[key]) || 0;
+  totals.sp.max += Number(item.data[key]) || 0;
+  continue;
+}
+
+// NOW ignore unwanted stats
+if (statsToIgnore.has(key)) continue;
+
 
 
       const valRaw = item.data[key];
