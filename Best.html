@@ -170,8 +170,9 @@
 <body>
 <div style="background:#fff3cd; border:1px solid #ffeeba; color:#856404; padding:10px 15px; border-radius:5px; max-width: 400px; margin-bottom: 16px; font-family: Arial, sans-serif;">
   Issues:<br>
-  * Currently HP may not be displaying correctly on item calculations.<br>
-  * Doesn't account for Enchants.
+  * Some HP or MP may not be displaying correctly on items end calculations.<br>
+  * Doesn't account for Enchants.<br>
+  * Not all god/misc items removed from pool.
 </div>
 
 <h1>Best Build Generator</h1>
@@ -219,6 +220,9 @@
     </div>
   </div>
 </div>
+<button id="ignoreToggleBtn" onclick="toggleIgnoreGodMiscItems()" aria-pressed="false">
+  Ignore God/Misc Items
+</button>
 
 <div class="controls" role="region" aria-label="Class and stat selection">
   <div>
@@ -768,6 +772,47 @@ manualInputs.forEach(id => {
 
 // Load items on page load
 loadItems();
+let ignoreGodMiscItems = false;
+
+function isIgnoredItemByName(item) {
+  if (!item || !item.name) return false;
+  const name = item.name.toLowerCase();
+  if (name === "god weapon") return true;
+  if (name === "god armor") return true;
+  if (name === "poseidon fire") return true;
+  if (name === "^ #2") return true;
+  if (name === "^ #3") return true;
+  if (name === "^ #4") return true;
+  if (name === "harls test") return true;
+  if (name === "test123") return true;
+  if (name.includes("projectile")) return true;
+  if (name.includes("trap")) return true;
+  return false;
+}
+
+// Wrap your existing filter function to apply ignore toggle
+const originalFilterItemsByClass = filterItemsByClass;
+filterItemsByClass = function(cls) {
+  let filtered = originalFilterItemsByClass(cls);
+  if (ignoreGodMiscItems) {
+    filtered = filtered.filter(item => !isIgnoredItemByName(item));
+  }
+  return filtered;
+};
+
+// Add button handler
+function toggleIgnoreGodMiscItems() {
+  ignoreGodMiscItems = !ignoreGodMiscItems;
+  document.getElementById('ignoreToggleBtn').textContent = ignoreGodMiscItems
+    ? "Including All Items"
+    : "Ignore God/Misc Items";
+  
+  if (selectedClass && selectedStat) {
+    filteredItemsByClass = filterItemsByClass(selectedClass);
+    generateBuildUI();
+  }
+}
+
 </script>
 
 </body>
