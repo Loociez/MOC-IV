@@ -266,6 +266,13 @@ const rangedStats = new Set(['atk','rat','mat']);
 const ENCHANTS = {
   none: { name: "None", bonus: {} },
   magi: { name: "Magi", bonus: { mat: 3 } },  // +3 magic attack
+  bloodseekers: { name: "Bloodseekers", bonus: { atk: 5 } },  // +5 Physical attack
+  life: { name: "Life", bonus: { hp: 100 } },  // +100 HP
+  magic: { name: "Magic", bonus: { mp: 10 } },  // +10 MP
+  stamina: { name: "Stamina", bonus: { sp: 10 } },  // +10 SP
+  hardening: { name: "Hardening", bonus: { def: 3 } },  // +3 PDEF
+  ashielding: { name: "Arcane Shielding", bonus: { mdf: 3 } },  // +3 MDEF
+  pprotection: { name: "Pierce Protection", bonus: { rdf: 3 } },  // +3 RDEF
   blessed: { 
     name: "Blessed", 
     bonus: { 
@@ -280,7 +287,7 @@ const ENCHANTS = {
       sp: 1,
     } 
   },
-  pilin: { name: "Pilin", bonus: { rat: 5 } }, // +5 ranged attack
+  pilin: { name: "Pilins", bonus: { rat: 3 } }, // +3 ranged attack
 };
 
 
