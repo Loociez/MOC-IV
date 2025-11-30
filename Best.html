@@ -544,6 +544,24 @@ function sumBuildStats(selectedItems) {
     for (const key in item.data) {
       if (!Object.prototype.hasOwnProperty.call(item.data, key)) continue;
       if (statsToIgnore.has(key)) continue;
+	  
+	      // Fix HP/MP/SP values (JSON uses max_hp instead of hp)
+    if (key === "max_hp") {
+      totals.hp.min += Number(item.data[key]) || 0;
+      totals.hp.max += Number(item.data[key]) || 0;
+      continue;
+    }
+    if (key === "max_mp") {
+      totals.mp.min += Number(item.data[key]) || 0;
+      totals.mp.max += Number(item.data[key]) || 0;
+      continue;
+    }
+    if (key === "max_sp") {
+      totals.sp.min += Number(item.data[key]) || 0;
+      totals.sp.max += Number(item.data[key]) || 0;
+      continue;
+    }
+
 
       const valRaw = item.data[key];
       // skip non-numeric (some amplifiers may be strings); try convert
