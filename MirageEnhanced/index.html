@@ -5,94 +5,91 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mirage Online Classic - Modded</title>
 <style>
+  /* Reset and base */
   body, html {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
     background: #000;
     font-family: Arial, sans-serif;
   }
-  iframe#gameIframe {
+  iframe.gameIframe {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     border: none;
     pointer-events: auto;
     z-index: 0;
-    transition: height 0.3s ease;
+    visibility: visible;
   }
 
-  /* Side bar that slides from left next to toggle button */
+  /* Top bar */
   #topBar {
     position: fixed;
-    top: 40px; /* just below toggle button */
-    left: 0;
-    width: 250px;
-    height: calc(100% - 40px);
-    background: rgba(0,0,0,0.85);
-    color: #0f0;
-    font-family: monospace;
-    font-size: 14px;
+    top: 0; left: 0; right: 0;
+    height: 36px;
+    background: rgba(0,0,0,0.6);
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
-    box-sizing: border-box;
-    z-index: 100000;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    font-size: 14px;
+    color: #0f0;
     user-select: none;
-    transform: translateX(-100%);
+    z-index: 100002;
+    transform: translateY(-100%);
     transition: transform 0.3s ease;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
   }
   #topBar.visible {
-    transform: translateX(0);
+    transform: translateY(0);
   }
-
-  /* Time at top */
-  #systemTime {
-    font-size: 20px;
-    font-weight: bold;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #0f0;
-  }
-
-  /* Buttons vertical stack */
-  #topBar button {
-    background: #111;
-    border: 1px solid #0f0;
-    border-radius: 8px;
+  #toggleBarBtn {
+    width: 28px; height: 28px;
+    background: rgba(0,0,0,0.7);
+    border: none;
     color: #0f0;
-    padding: 8px 10px;
+    font-size: 20px;
     cursor: pointer;
-    font-size: 16px;
     user-select: none;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  #topBar button:hover {
+
+  /* Tab buttons */
+  #tabButtons {
+    display: flex;
+    gap: 8px;
+  }
+  .tab-button {
+    background: transparent;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 3px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    user-select: none;
+    font-size: 14px;
+  }
+  .tab-button.active {
     background: #0f0;
     color: #000;
   }
 
-  /* Toggle button (small book emoji) */
-  #toggleBarBtn {
-    position: fixed;
-    top: 5px; left: 5px;
-    width: 36px;
-    height: 36px;
-    font-size: 26px;
-    background: rgba(0,0,0,0.7);
-    border: none;
-    border-radius: 8px;
-    color: #0f0;
-    cursor: pointer;
-    z-index: 100001;
-    user-select: none;
+  /* Wiki buttons container */
+  #wikiButtons {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s ease;
+    gap: 8px;
   }
-  #toggleBarBtn:hover {
+  #wikiButtons button {
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    color: #0f0;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+  }
+  #wikiButtons button:hover {
     background: #0f0;
     color: #000;
   }
@@ -108,7 +105,7 @@
     border: 2px solid #0f0;
     border-radius: 10px;
     box-shadow: 0 0 30px #0f0;
-    z-index: 100002;
+    z-index: 100003;
     display: none;
     flex-direction: column;
   }
@@ -134,571 +131,152 @@
     background: #0f0;
     color: #000;
   }
-
-  /* Screenshot Overlay */
-  #screenshotOverlay {
-    position: fixed;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-    height: 90%;
-    background: #111;
-    border: 2px solid #0f0;
-    border-radius: 12px;
-    box-shadow: 0 0 40px #0f0;
-    z-index: 100005;
-    display: none;
-    flex-direction: column;
-  }
-  #screenshotOverlay header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: #000;
-    border-radius: 12px 12px 0 0;
-    color: #0f0;
-    font-weight: bold;
-    user-select: none;
-  }
-  #screenshotOverlay header button {
-    background: transparent;
-    border: none;
-    color: #0f0;
-    font-size: 22px;
-    cursor: pointer;
-    padding: 0 8px;
-  }
-  #screenshotCanvasContainer {
-    flex: 1;
-    position: relative;
-    background: #222;
-    margin: 8px 12px 12px 12px;
-    border-radius: 8px;
-    overflow: hidden;
-    user-select: none;
-  }
-  #screenshotCanvas {
-    max-width: 100%;
-    max-height: 100%;
-    background: #000;
-    display: block;
-  }
-
-  /* Crop rectangle */
-  #cropRect {
-    position: absolute;
-    border: 2px dashed #0f0;
-    pointer-events: none;
-    display: none;
-  }
-
-  /* Annotation input */
-  #annotationInput {
-    position: absolute;
-    border: 1px solid #0f0;
-    background: rgba(0,0,0,0.8);
-    color: #0f0;
-    font-family: monospace;
-    font-size: 16px;
-    outline: none;
-    display: none;
-    resize: none;
-  }
-
-  /* Settings Panel */
-  #settingsOverlay {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
-    background: #111;
-    border: 2px solid #0f0;
-    border-radius: 12px;
-    box-shadow: 0 0 30px #0f0;
-    padding: 20px;
-    z-index: 100006;
-    display: none;
-    color: #0f0;
-    font-family: monospace;
-    user-select: none;
-  }
-  #settingsOverlay h2 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    text-align: center;
-  }
-  #settingsOverlay label {
-    display: block;
-    margin: 8px 0 4px;
-  }
-  #settingsOverlay select {
-    width: 100%;
-    background: #000;
-    color: #0f0;
-    border: 1px solid #0f0;
-    border-radius: 6px;
-    padding: 6px;
-    font-family: monospace;
-  }
-  #settingsOverlay button {
-    margin-top: 16px;
-    width: 100%;
-    background: #0f0;
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  #settingsOverlay button:hover {
-    background: #0a0;
-  }
-
-  /* Theme styles */
-  body.theme-dark {
-    background: #000;
-    color: #0f0;
-  }
-  body.theme-dark #topBar {
-    background: rgba(0,0,0,0.85);
-    color: #0f0;
-  }
-  body.theme-dark #topBar button {
-    background: #111;
-    border-color: #0f0;
-    color: #0f0;
-  }
-  body.theme-dark #topBar button:hover {
-    background: #0f0;
-    color: #000;
-  }
-
-  body.theme-light {
-    background: #eee;
-    color: #060;
-  }
-  body.theme-light #topBar {
-    background: rgba(240,240,240,0.95);
-    color: #060;
-  }
-  body.theme-light #topBar button {
-    background: #ddd;
-    border-color: #060;
-    color: #060;
-  }
-  body.theme-light #topBar button:hover {
-    background: #060;
-    color: #ddd;
-  }
-
-  body.theme-green {
-    background: #001100;
-    color: #7fdb7f;
-  }
-  body.theme-green #topBar {
-    background: rgba(0,50,0,0.9);
-    color: #7fdb7f;
-  }
-  body.theme-green #topBar button {
-    background: #003300;
-    border-color: #7fdb7f;
-    color: #7fdb7f;
-  }
-  body.theme-green #topBar button:hover {
-    background: #7fdb7f;
-    color: #003300;
-  }
-
 </style>
 </head>
-<body class="theme-dark">
+<body>
 
-<!-- The game iframe -->
-<iframe id="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+<!-- Game iframes -->
+<iframe id="iframeMain" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: block;"></iframe>
+<iframe id="iframeAlt" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: none;"></iframe>
 
-<!-- Toggle Bar Button -->
-<button id="toggleBarBtn" title="Toggle Bar">📚</button>
-
-<!-- Side Bar -->
-<div id="topBar" aria-hidden="true" tabindex="-1" role="complementary" aria-label="Mod tools panel">
-  <div id="systemTime" aria-live="polite" aria-atomic="true" aria-relevant="time">--:--:--</div>
-  <button id="wikiBtn" title="Wiki Lookup" aria-label="Wiki Lookup">📖 Wiki</button>
-  <button id="itemLookupBtn" title="Item Lookup" aria-label="Item Lookup">Item Lookup</button>
-  <button id="npcLookupBtn" title="NPC Lookup" aria-label="NPC Lookup">NPC Lookup</button>
-  <button id="altAccountBtn" title="Alt Account" aria-label="Toggle Alt Account">Alt</button>
-  <button id="screenshotBtn" title="Advanced Screenshot" aria-label="Advanced Screenshot">📸</button>
-  <button id="settingsBtn" title="Settings" aria-label="Settings">⚙️</button>
-</div>
-
-<!-- Wiki iframe overlay -->
-<div id="wikiOverlay" role="dialog" aria-modal="true" aria-labelledby="wikiTitle" tabindex="-1">
-  <header style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#000;color:#0f0;font-weight:bold;border-radius: 10px 10px 0 0;">
-    <div id="wikiTitle">Wiki Lookup</div>
-    <button id="wikiCloseBtn" aria-label="Close Wiki">✖</button>
-  </header>
-  <iframe src="" frameborder="0" scrolling="auto"></iframe>
-</div>
-
-<!-- Screenshot Overlay -->
-<div id="screenshotOverlay" role="dialog" aria-modal="true" tabindex="-1">
-  <header>
-    Advanced Screenshot
-    <div>
-      <button id="screenshotCloseBtn" title="Close">✖</button>
-      <button id="cropBtn" title="Crop">✂️</button>
-      <button id="annotateBtn" title="Annotate">🖊️</button>
-      <button id="downloadBtn" title="Download">💾</button>
-    </div>
-  </header>
-  <div id="screenshotCanvasContainer">
-    <canvas id="screenshotCanvas"></canvas>
-    <div id="cropRect"></div>
-    <textarea id="annotationInput" placeholder="Enter annotation text"></textarea>
+<!-- Top bar (hidden by default) -->
+<div id="topBar">
+  <button id="toggleBarBtn" title="Toggle Controls">📚</button>
+  <div id="systemTime">--:--:--</div>
+  <div id="tabButtons">
+    <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
+    <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
+  </div>
+  <div id="wikiButtons" style="margin-left: auto;">
+    <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
+    <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
   </div>
 </div>
 
-<!-- Settings Overlay -->
-<div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1">
-  <h2>Settings</h2>
-  <label for="themeSelect">Select Theme:</label>
-  <select id="themeSelect" aria-label="Select UI Theme">
-    <option value="theme-dark">Dark</option>
-    <option value="theme-light">Light</option>
-    <option value="theme-green">Green</option>
-  </select>
-  <button id="settingsSaveBtn">Save Settings</button>
+<!-- Wiki iframe overlay -->
+<div id="wikiOverlay">
+  <button id="wikiCloseBtn" title="Close Wiki">✖</button>
+  <iframe src="" frameborder="0" scrolling="auto"></iframe>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 (() => {
   "use strict";
 
-  const toggleBarBtn = document.getElementById("toggleBarBtn");
+  const iframeMain = document.getElementById("iframeMain");
+  const iframeAlt = document.getElementById("iframeAlt");
   const topBar = document.getElementById("topBar");
-  const systemTimeDiv = document.getElementById("systemTime");
-  const wikiBtn = document.getElementById("wikiBtn");
+  const toggleBarBtn = document.getElementById("toggleBarBtn");
+  const systemTime = document.getElementById("systemTime");
+  const tabButtons = document.getElementById("tabButtons");
+  const wikiButtons = document.getElementById("wikiButtons");
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
-  const itemLookupBtn = document.getElementById("itemLookupBtn");
-  const npcLookupBtn = document.getElementById("npcLookupBtn");
-  const altAccountBtn = document.getElementById("altAccountBtn");
-  const gameIframe = document.getElementById("gameIframe");
 
-  // Screenshot Elements
-  const screenshotBtn = document.getElementById("screenshotBtn");
-  const screenshotOverlay = document.getElementById("screenshotOverlay");
-  const screenshotCloseBtn = document.getElementById("screenshotCloseBtn");
-  const cropBtn = document.getElementById("cropBtn");
-  const annotateBtn = document.getElementById("annotateBtn");
-  const downloadBtn = document.getElementById("downloadBtn");
-  const screenshotCanvas = document.getElementById("screenshotCanvas");
-  const screenshotCtx = screenshotCanvas.getContext("2d");
-  const cropRect = document.getElementById("cropRect");
-  const annotationInput = document.getElementById("annotationInput");
-  const screenshotCanvasContainer = document.getElementById("screenshotCanvasContainer");
-
-  // Settings Elements
-  const settingsBtn = document.getElementById("settingsBtn");
-  const settingsOverlay = document.getElementById("settingsOverlay");
-  const themeSelect = document.getElementById("themeSelect");
-  const settingsSaveBtn = document.getElementById("settingsSaveBtn");
-
-  // State variables for screenshot tool
-  let cropping = false;
-  let annotating = false;
-  let cropStart = null;
-  let cropEnd = null;
-  let annotationPos = {x:0,y:0};
-  let isDrawingAnnotation = false;
-
-  // Store current theme
-  let currentTheme = localStorage.getItem("mocTheme") || "theme-dark";
-  document.body.className = currentTheme;
-  themeSelect.value = currentTheme;
-
-  // --------- SYSTEM TIME ---------
+  // Update system time every second
   function updateTime() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    const s = String(now.getSeconds()).padStart(2,'0');
-    systemTimeDiv.textContent = `${h}:${m}:${s}`;
+    const h = now.getHours().toString().padStart(2,'0');
+    const m = now.getMinutes().toString().padStart(2,'0');
+    const s = now.getSeconds().toString().padStart(2,'0');
+    systemTime.textContent = `${h}:${m}:${s}`;
   }
   setInterval(updateTime, 1000);
   updateTime();
 
-  // --------- TOGGLE SIDE BAR ---------
+  // Toggle top bar visibility
+  let barVisible = false;
   toggleBarBtn.addEventListener("click", () => {
-    if (topBar.classList.contains("visible")) {
-      topBar.classList.remove("visible");
-    } else {
+    barVisible = !barVisible;
+    if (barVisible) {
       topBar.classList.add("visible");
+    } else {
+      topBar.classList.remove("visible");
+      closeWiki();
     }
   });
 
-  // --------- WIKI BUTTONS ---------
-  function openWiki(url, title) {
+  // Tab switching between iframes
+  tabButtons.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab-button");
+    if (!btn) return;
+    if (btn.classList.contains("active")) return;
+
+    // Switch active tab button
+    [...tabButtons.children].forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    // Show/hide iframes
+    if (btn.dataset.iframe === "main") {
+      iframeMain.style.display = "block";
+      iframeAlt.style.display = "none";
+    } else {
+      iframeMain.style.display = "none";
+      iframeAlt.style.display = "block";
+    }
+
+    // Close wiki overlay if open
+    closeWiki();
+  });
+
+  // Open wiki page in overlay
+  function openWikiPage(url) {
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
-    wikiOverlay.querySelector("#wikiTitle").textContent = title;
-    gameIframe.style.pointerEvents = "none";
-    wikiOverlay.focus();
+
+    // Hide the active game iframe completely
+    if (iframeMain.style.display === "block") {
+      iframeMain.style.visibility = "hidden";
+    }
+    if (iframeAlt.style.display === "block") {
+      iframeAlt.style.visibility = "hidden";
+    }
+
+    // Focus wiki iframe after small delay
+    setTimeout(() => {
+      wikiIframe.focus();
+    }, 100);
   }
+
+  // Close wiki overlay and restore iframe visibility
   function closeWiki() {
     wikiOverlay.style.display = "none";
     wikiIframe.src = "";
-    gameIframe.style.pointerEvents = "auto";
-    toggleBarBtn.focus();
+
+    iframeMain.style.visibility = "visible";
+    iframeAlt.style.visibility = "visible";
+
+    // Focus back active iframe
+    const activeTab = document.querySelector("#tabButtons .tab-button.active");
+    if (activeTab) {
+      if (activeTab.dataset.iframe === "main") {
+        iframeMain.focus();
+      } else {
+        iframeAlt.focus();
+      }
+    }
   }
 
-  wikiBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/itemslast.html", "Wiki Lookup"));
-  itemLookupBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/itemslast.html", "Item Lookup"));
-  npcLookupBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/npclast.html", "NPC Lookup"));
-  wikiCloseBtn.addEventListener("click", closeWiki);
-
-  wikiOverlay.addEventListener("keydown", (e) => {
-    if(e.key === "Escape") closeWiki();
+  document.getElementById("itemLookupBtn").addEventListener("click", () => {
+    openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html");
   });
 
-  // --------- ALT ACCOUNT (two iframes tab system) ---------
-  let altIframe = null;
-  let activeIframe = gameIframe;
-
-  altAccountBtn.addEventListener("click", () => {
-    if (!altIframe) {
-      altIframe = document.createElement("iframe");
-      altIframe.id = "altGameIframe";
-      altIframe.src = "https://play.consty.com";
-      altIframe.sandbox = "allow-scripts allow-same-origin allow-forms";
-      altIframe.style.position = "absolute";
-      altIframe.style.top = "0";
-      altIframe.style.left = "0";
-      altIframe.style.width = "100%";
-      altIframe.style.height = "100%";
-      altIframe.style.border = "none";
-      altIframe.style.pointerEvents = "auto";
-      altIframe.style.zIndex = 1;
-      altIframe.style.display = "none";
-      document.body.appendChild(altIframe);
-    }
-
-    if (activeIframe === gameIframe) {
-      gameIframe.style.display = "none";
-      altIframe.style.display = "block";
-      activeIframe = altIframe;
-    } else {
-      altIframe.style.display = "none";
-      gameIframe.style.display = "block";
-      activeIframe = gameIframe;
-    }
+  document.getElementById("npcLookupBtn").addEventListener("click", () => {
+    openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
   });
 
-  // --------- SCREENSHOT TOOL ---------
-
-  screenshotBtn.addEventListener("click", async () => {
-    screenshotOverlay.style.display = "flex";
-
-    // Hide overlays temporarily to get clean screenshot
-    topBar.style.visibility = "hidden";
-    toggleBarBtn.style.visibility = "hidden";
-    wikiOverlay.style.display = "none";
-    settingsOverlay.style.display = "none";
-
-    // Give browser time to repaint before capturing
-    await new Promise(r => setTimeout(r, 100));
-
-    try {
-      const rect = activeIframe.getBoundingClientRect();
-
-      // Capture entire viewport (document.body), then crop to iframe
-      const bodyCanvas = await html2canvas(document.body, {backgroundColor: null, logging: false});
-      const croppedCanvas = document.createElement("canvas");
-      croppedCanvas.width = rect.width;
-      croppedCanvas.height = rect.height;
-      const ctx = croppedCanvas.getContext("2d");
-      ctx.drawImage(bodyCanvas, rect.left, rect.top, rect.width, rect.height, 0, 0, rect.width, rect.height);
-
-      // Show in screenshotCanvas
-      screenshotCanvas.width = rect.width;
-      screenshotCanvas.height = rect.height;
-      screenshotCtx.clearRect(0,0,rect.width,rect.height);
-      screenshotCtx.drawImage(croppedCanvas, 0, 0);
-
-      // Reset crop and annotation states
-      cropRect.style.display = "none";
-      annotationInput.style.display = "none";
-      cropping = false;
-      annotating = false;
-      cropStart = null;
-      cropEnd = null;
-      annotationInput.value = "";
-      screenshotCanvasContainer.style.cursor = "default";
-    } catch (err) {
-      alert("Screenshot error: " + err.message);
-      screenshotOverlay.style.display = "none";
-    } finally {
-      // Restore overlays
-      topBar.style.visibility = "visible";
-      toggleBarBtn.style.visibility = "visible";
-    }
+  wikiCloseBtn.addEventListener("click", () => {
+    closeWiki();
   });
 
-  screenshotCloseBtn.addEventListener("click", () => {
-    screenshotOverlay.style.display = "none";
-  });
-
-  cropBtn.addEventListener("click", () => {
-    if (cropping) {
-      cropping = false;
-      cropRect.style.display = "none";
-      cropStart = null;
-      cropEnd = null;
-      screenshotCanvasContainer.style.cursor = "default";
-    } else {
-      cropping = true;
-      annotating = false;
-      cropRect.style.display = "none";
-      annotationInput.style.display = "none";
-      screenshotCanvasContainer.style.cursor = "crosshair";
-    }
-  });
-
-  annotateBtn.addEventListener("click", () => {
-    if (annotating) {
-      annotating = false;
-      annotationInput.style.display = "none";
-      screenshotCanvasContainer.style.cursor = "default";
-    } else {
-      annotating = true;
-      cropping = false;
-      cropRect.style.display = "none";
-      annotationInput.style.display = "block";
-      annotationInput.value = "";
-      annotationInput.style.top = "20px";
-      annotationInput.style.left = "20px";
-      annotationInput.focus();
-      screenshotCanvasContainer.style.cursor = "text";
-    }
-  });
-
-  downloadBtn.addEventListener("click", () => {
-    let sx = 0, sy = 0, sw = screenshotCanvas.width, sh = screenshotCanvas.height;
-    if (cropStart && cropEnd) {
-      sx = Math.min(cropStart.x, cropEnd.x);
-      sy = Math.min(cropStart.y, cropEnd.y);
-      sw = Math.abs(cropEnd.x - cropStart.x);
-      sh = Math.abs(cropEnd.y - cropStart.y);
-      if(sw === 0 || sh === 0) {
-        alert("Invalid crop area");
-        return;
-      }
-    }
-
-    const exportCanvas = document.createElement("canvas");
-    exportCanvas.width = sw;
-    exportCanvas.height = sh;
-    const exportCtx = exportCanvas.getContext("2d");
-
-    exportCtx.drawImage(screenshotCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
-
-    const text = annotationInput.value.trim();
-    if(text) {
-      exportCtx.font = "20px monospace";
-      exportCtx.fillStyle = "lime";
-      exportCtx.strokeStyle = "black";
-      exportCtx.lineWidth = 2;
-      const x = annotationPos.x - sx || 10;
-      const y = annotationPos.y - sy || 30;
-      exportCtx.strokeText(text, x, y);
-      exportCtx.fillText(text, x, y);
-    }
-
-    const link = document.createElement("a");
-    link.download = "moc_screenshot.png";
-    link.href = exportCanvas.toDataURL("image/png");
-    link.click();
-  });
-
-  screenshotCanvasContainer.addEventListener("mousedown", (e) => {
-    if (!cropping) return;
-    const rect = screenshotCanvas.getBoundingClientRect();
-    cropStart = {x: e.clientX - rect.left, y: e.clientY - rect.top};
-    cropEnd = null;
-    cropRect.style.display = "block";
-    cropRect.style.left = cropStart.x + "px";
-    cropRect.style.top = cropStart.y + "px";
-    cropRect.style.width = "0px";
-    cropRect.style.height = "0px";
-
-    function onMouseMove(ev) {
-      cropEnd = {x: ev.clientX - rect.left, y: ev.clientY - rect.top};
-      const left = Math.min(cropStart.x, cropEnd.x);
-      const top = Math.min(cropStart.y, cropEnd.y);
-      const width = Math.abs(cropEnd.x - cropStart.x);
-      const height = Math.abs(cropEnd.y - cropStart.y);
-      cropRect.style.left = left + "px";
-      cropRect.style.top = top + "px";
-      cropRect.style.width = width + "px";
-      cropRect.style.height = height + "px";
-    }
-
-    function onMouseUp() {
-      screenshotCanvasContainer.removeEventListener("mousemove", onMouseMove);
-      screenshotCanvasContainer.removeEventListener("mouseup", onMouseUp);
-    }
-
-    screenshotCanvasContainer.addEventListener("mousemove", onMouseMove);
-    screenshotCanvasContainer.addEventListener("mouseup", onMouseUp);
-  });
-
-  screenshotCanvasContainer.addEventListener("click", (e) => {
-    if (!annotating) return;
-    const rect = screenshotCanvas.getBoundingClientRect();
-    annotationPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
-    annotationInput.style.left = annotationPos.x + "px";
-    annotationInput.style.top = annotationPos.y + "px";
-    annotationInput.focus();
-  });
-
-  // --------- SETTINGS PANEL ---------
-  settingsBtn.addEventListener("click", () => {
-    settingsOverlay.style.display = "block";
-    settingsOverlay.focus();
-  });
-
-  settingsSaveBtn.addEventListener("click", () => {
-    const selected = themeSelect.value;
-    document.body.className = selected;
-    localStorage.setItem("mocTheme", selected);
-    settingsOverlay.style.display = "none";
-  });
-
-  settingsOverlay.addEventListener("keydown", e => {
-    if(e.key === "Escape") {
-      settingsOverlay.style.display = "none";
-      toggleBarBtn.focus();
-    }
-  });
-
-  // Global ESC handler to close overlays
-  document.addEventListener("keydown", e => {
-    if(e.key === "Escape") {
-      if (wikiOverlay.style.display === "flex") {
-        closeWiki();
-      } else if (screenshotOverlay.style.display === "flex") {
-        screenshotOverlay.style.display = "none";
-      } else if (settingsOverlay.style.display === "block") {
-        settingsOverlay.style.display = "none";
-      }
-    }
+  // Prevent click fallthrough on wiki overlay (stop event bubbling)
+  wikiOverlay.addEventListener("click", (e) => {
+    e.stopPropagation();
   });
 
 })();
 </script>
+
 </body>
 </html>
