@@ -1,282 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mirage Online Mobile Controls Wrapper</title>
-  <style>
-    /* Reset and basic styles */
-    * {
-      box-sizing: border-box;
-    }
-    body, html {
-      margin: 0; padding: 0; height: 100%; overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #eee;
-      -webkit-touch-callout: none; /* Disable callout, UI selection on iOS*/
-      -webkit-user-select: none; /* Disable text selection */
-      -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mirage Online Improved Mobile Joystick Test</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; font-family: Arial, sans-serif; background: #121212; color: #eee;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  #winTouch {
+    display: grid;
+    place-items: center;
+    padding: 10px;
+    width: 280px;
+    margin: 10px auto;
+    background: #222;
+    border-radius: 15px;
+    box-sizing: border-box;
+  }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      background: #121212;
-    }
+  /* Hide original joystick canvas initially */
+  #cvsGamepad {
+    display: none;
+    background: #111;
+    border-radius: 15px;
+  }
 
-    header {
-      background: #222;
-      padding: 10px 15px;
-      text-align: center;
-      font-size: 1.3em;
-      user-select: none;
-      flex-shrink: 0;
-      border-bottom: 1px solid #444;
-    }
+  /* New joystick canvas */
+  #cvsGamepadNew {
+    touch-action: none;
+    width: 250px;
+    height: 250px;
+    background: #222;
+    border-radius: 20px;
+  }
 
-    iframe {
-      flex-grow: 1;
-      border: none;
-      width: 100%;
-      height: 100%;
-      background: black;
-    }
+  /* Example HP bar container */
+  #hpBar {
+    width: 280px;
+    height: 24px;
+    background: #550000;
+    border-radius: 12px;
+    margin: 20px auto;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  #hpBarInner {
+    height: 100%;
+    background: #dd3333;
+    width: 70%; /* Example HP percent */
+    transition: width 0.3s ease;
+  }
 
-    /* Mobile controls container */
-    #controls {
-      background: #222;
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-shrink: 0;
-      border-top: 1px solid #444;
-    }
-
-    /* Joystick area styling */
-    #joystick {
-      width: 100px;
-      height: 100px;
-      background: #333;
-      border-radius: 50%;
-      position: relative;
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
-    }
-
-    /* Joystick stick */
-    #stick {
-      width: 50px;
-      height: 50px;
-      background: #eee;
-      border-radius: 50%;
-      position: absolute;
-      left: 25px;
-      top: 25px;
-      transition: left 0.1s ease, top 0.1s ease;
-      pointer-events: none;
-      opacity: 0.9;
-    }
-
-    /* Buttons container */
-    #buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* Each button */
-    button.control-btn {
-      width: 60px;
-      height: 60px;
-      font-size: 1.2em;
-      background: #444;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      user-select: none;
-      touch-action: manipulation;
-      transition: background 0.2s ease;
-    }
-
-    button.control-btn:active {
-      background: #666;
-    }
-
-    /* Potion bar container */
-    #potions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    /* Potion buttons */
-    button.potion-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      border: none;
-      background: #a33;
-      color: white;
-      font-weight: bold;
-      font-size: 1em;
-      user-select: none;
-      touch-action: manipulation;
-      transition: background 0.2s ease;
-    }
-
-    button.potion-btn:active {
-      background: #d55;
-    }
-
-    /* Hide controls on desktop */
-    @media (min-width: 601px) {
-      #controls {
-        display: none;
-      }
-    }
-
-  </style>
+  /* Button to toggle controls */
+  #toggleTouchBtn {
+    display: block;
+    margin: 20px auto;
+    background: #444;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>Mirage Online Mobile Controls</header>
 
-    <iframe id="gameFrame" src="https://play.consty.com" allowfullscreen></iframe>
+<!-- HP bar example -->
+<div id="hpBar"><div id="hpBarInner"></div></div>
 
-    <div id="controls">
-      <div id="joystick">
-        <div id="stick"></div>
-      </div>
+<!-- Original joystick container -->
+<div id="winTouch">
+  <canvas id="cvsGamepad" width="172" height="172" style="width: 172px; height: 172px;"></canvas>
+  <!-- New joystick canvas added but hidden by default -->
+  <canvas id="cvsGamepadNew" width="250" height="250" style="display:none;"></canvas>
+</div>
 
-      <div id="buttons">
-        <button class="control-btn" id="btn-up">↑</button>
-        <button class="control-btn" id="btn-down">↓</button>
-        <button class="control-btn" id="btn-left">←</button>
-        <button class="control-btn" id="btn-right">→</button>
-      </div>
+<!-- Button to simulate touch controls toggle -->
+<button id="toggleTouchBtn">Use Improved Touch Controls</button>
 
-      <div id="potions">
-        <button class="potion-btn" id="potion-1">P1</button>
-        <button class="potion-btn" id="potion-2">P2</button>
-        <button class="potion-btn" id="potion-3">P3</button>
-      </div>
-    </div>
-  </div>
+<script>
+  const originalCanvas = document.getElementById('cvsGamepad');
+  const newCanvas = document.getElementById('cvsGamepadNew');
+  const winTouch = document.getElementById('winTouch');
+  const toggleBtn = document.getElementById('toggleTouchBtn');
 
-  <script>
-    // Joystick variables
-    const joystick = document.getElementById('joystick');
-    const stick = document.getElementById('stick');
-    const gameFrame = document.getElementById('gameFrame').contentWindow;
+  // Toggle between old and new joystick UI
+  toggleBtn.addEventListener('click', () => {
+    if (newCanvas.style.display === 'none') {
+      // Show new joystick, hide old one
+      newCanvas.style.display = 'block';
+      originalCanvas.style.display = 'none';
+      toggleBtn.textContent = 'Use Original Touch Controls';
+      // Optionally adjust HP bar or other UI here if needed
+      document.getElementById('hpBar').style.width = '180px'; // Example less stretched width
+    } else {
+      // Revert back
+      newCanvas.style.display = 'none';
+      originalCanvas.style.display = 'block';
+      toggleBtn.textContent = 'Use Improved Touch Controls';
+      document.getElementById('hpBar').style.width = '280px'; // Original width
+    }
+  });
 
-    let dragging = false;
-    let origin = { x: 50, y: 50 };
-    let currentPos = { x: 50, y: 50 };
+  // ----- New Joystick Logic -----
 
-    const maxRadius = 40; // max distance stick can move from center
+  const ctx = newCanvas.getContext('2d');
+  const maxRadius = 80;
+  let dragging = false;
+  let touchStartPos = null;
+  let currentPos = null;
 
-    // Since play.consty.com is a different origin, you cannot directly
-    // access or control the iframe's internals from this page.
-    // The game itself must implement message event listeners
-    // for this to work.
+  function drawJoystick(basePos, stickPos) {
+    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
-    // Joystick touch start
-    joystick.addEventListener('pointerdown', (e) => {
-      dragging = true;
-      joystick.setPointerCapture(e.pointerId);
-    });
+    // Draw base circle
+    ctx.beginPath();
+    ctx.arc(basePos.x, basePos.y, maxRadius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fill();
 
-    joystick.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
+    // Draw stick/thumb
+    ctx.beginPath();
+    ctx.arc(stickPos.x, stickPos.y, 30, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fill();
+  }
 
-      const rect = joystick.getBoundingClientRect();
-      let x = e.clientX - rect.left;
-      let y = e.clientY - rect.top;
+  function handleMove(pos) {
+    const dx = pos.x - touchStartPos.x;
+    const dy = pos.y - touchStartPos.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
 
-      let dx = x - origin.x;
-      let dy = y - origin.y;
-
-      // Clamp the stick position
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > maxRadius) {
-        dx = (dx / dist) * maxRadius;
-        dy = (dy / dist) * maxRadius;
-      }
-
-      // Update stick position
-      stick.style.left = `${origin.x + dx - 25}px`;
-      stick.style.top = `${origin.y + dy - 25}px`;
-
-      currentPos.x = dx;
-      currentPos.y = dy;
-
-      // Determine direction and send
-      sendDirection(dx, dy);
-    });
-
-    joystick.addEventListener('pointerup', (e) => {
-      dragging = false;
-      // Reset stick position
-      stick.style.left = `25px`;
-      stick.style.top = `25px`;
-
-      currentPos.x = 0;
-      currentPos.y = 0;
-
-      sendDirection(0, 0);
-    });
-
-    joystick.addEventListener('pointercancel', (e) => {
-      dragging = false;
-      stick.style.left = `25px`;
-      stick.style.top = `25px`;
-      currentPos.x = 0;
-      currentPos.y = 0;
-      sendDirection(0, 0);
-    });
-
-    // Buttons
-    document.getElementById('btn-up').addEventListener('click', () => sendKey('ArrowUp'));
-    document.getElementById('btn-down').addEventListener('click', () => sendKey('ArrowDown'));
-    document.getElementById('btn-left').addEventListener('click', () => sendKey('ArrowLeft'));
-    document.getElementById('btn-right').addEventListener('click', () => sendKey('ArrowRight'));
-
-    // Potion buttons
-    document.getElementById('potion-1').addEventListener('click', () => sendPotion(1));
-    document.getElementById('potion-2').addEventListener('click', () => sendPotion(2));
-    document.getElementById('potion-3').addEventListener('click', () => sendPotion(3));
-
-    // Send direction to the game iframe via postMessage
-    // NOTE: This requires the game to implement a listener for these messages
-    // and perform the corresponding actions (movement, potion use).
-    function sendDirection(dx, dy) {
-      let direction = null;
-      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-        direction = 'stop';
-      } else {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          direction = dx > 0 ? 'right' : 'left';
-        } else {
-          direction = dy > 0 ? 'down' : 'up';
-        }
-      }
-      gameFrame.postMessage({ type: 'move', direction }, '*');
+    let clampedDx = dx;
+    let clampedDy = dy;
+    if (dist > maxRadius) {
+      clampedDx = (dx / dist) * maxRadius;
+      clampedDy = (dy / dist) * maxRadius;
     }
 
-    function sendKey(key) {
-      gameFrame.postMessage({ type: 'key', key }, '*');
-    }
+    const stickPos = {
+      x: touchStartPos.x + clampedDx,
+      y: touchStartPos.y + clampedDy
+    };
 
-    function sendPotion(number) {
-      gameFrame.postMessage({ type: 'potion', number }, '*');
-    }
-  </script>
+    drawJoystick(touchStartPos, stickPos);
+
+    // TODO: Add movement command handling here,
+    // e.g. send movement direction to your game logic.
+
+    // Example:
+    // console.log('Move dx:', clampedDx.toFixed(2), 'dy:', clampedDy.toFixed(2));
+  }
+
+  newCanvas.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    const rect = newCanvas.getBoundingClientRect();
+    touchStartPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    currentPos = {...touchStartPos};
+    drawJoystick(touchStartPos, touchStartPos);
+    newCanvas.setPointerCapture(e.pointerId);
+  });
+
+  newCanvas.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const rect = newCanvas.getBoundingClientRect();
+    currentPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    handleMove(currentPos);
+  });
+
+  newCanvas.addEventListener('pointerup', (e) => {
+    dragging = false;
+    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    touchStartPos = null;
+    currentPos = null;
+
+    // TODO: Send stop movement signal here
+  });
+
+  newCanvas.addEventListener('pointercancel', (e) => {
+    dragging = false;
+    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    touchStartPos = null;
+    currentPos = null;
+
+    // TODO: Send stop movement signal here
+  });
+</script>
+
 </body>
 </html>
