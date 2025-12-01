@@ -160,22 +160,22 @@
 
   /* Settings overlay */
   #settingsOverlay {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  background: #111;
-  border: 2px solid #0f0;
-  border-radius: 12px;
-  box-shadow: 0 0 30px #0f0;
-  padding: 20px;
-  z-index: 100005;
-  display: none;
-  color: #0f0;
-  font-family: monospace;
-  pointer-events: auto; /* crucial */
-}
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    background: #111;
+    border: 2px solid #0f0;
+    border-radius: 12px;
+    box-shadow: 0 0 30px #0f0;
+    padding: 20px;
+    z-index: 100005;
+    display: none;
+    color: #0f0;
+    font-family: monospace;
+    pointer-events: auto; /* crucial */
+  }
   #settingsOverlay h2 {
     margin-top: 0;
     margin-bottom: 12px;
@@ -185,15 +185,36 @@
     display: block;
     margin: 8px 0 4px;
   }
-  #settingsOverlay select {
-    width: 100%;
-    background: #000;
-    color: #0f0;
-    border: 1px solid #0f0;
-    border-radius: 6px;
-    padding: 6px;
-    font-family: monospace;
+
+  /* New theme buttons container */
+  #themeButtons {
+    display: flex;
+    gap: 8px;
+    user-select: none;
   }
+  .theme-btn {
+    background: transparent;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: monospace;
+    font-weight: normal;
+    user-select: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .theme-btn:hover {
+    background: #0f0;
+    color: #000;
+  }
+  .theme-btn.selected {
+    background: #0f0;
+    color: #000;
+    font-weight: bold;
+    pointer-events: none;
+  }
+
   #settingsOverlay button {
     margin-top: 16px;
     width: 100%;
@@ -305,12 +326,12 @@
 <!-- Settings overlay -->
 <div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1">
   <h2>Settings</h2>
-  <label for="themeSelect">Select Theme:</label>
-  <select id="themeSelect" aria-label="Select UI Theme">
-    <option value="theme-dark">Dark</option>
-    <option value="theme-light">Light</option>
-    <option value="theme-green">Green</option>
-  </select>
+  <label>Select Theme:</label>
+  <div id="themeButtons" role="radiogroup" aria-label="Select UI Theme">
+    <button type="button" data-theme="theme-dark" aria-checked="false" role="radio" class="theme-btn">Dark</button>
+    <button type="button" data-theme="theme-light" aria-checked="false" role="radio" class="theme-btn">Light</button>
+    <button type="button" data-theme="theme-green" aria-checked="false" role="radio" class="theme-btn">Green</button>
+  </div>
   <button id="settingsSaveBtn">Save Settings</button>
 </div>
 
@@ -330,13 +351,12 @@
   const wikiIframe = wikiOverlay.querySelector("iframe");
   const settingsBtn = document.getElementById("settingsBtn");
   const settingsOverlay = document.getElementById("settingsOverlay");
-  const themeSelect = document.getElementById("themeSelect");
+  const themeButtons = document.querySelectorAll("#themeButtons .theme-btn");
   const settingsSaveBtn = document.getElementById("settingsSaveBtn");
 
   // Load theme from localStorage or default
   let currentTheme = localStorage.getItem("mocTheme") || "theme-dark";
   document.body.className = currentTheme;
-  themeSelect.value = currentTheme;
 
   // Update system time every second
   function updateTime() {
@@ -348,6 +368,24 @@
   }
   setInterval(updateTime, 1000);
   updateTime();
+
+  // Update selected theme button highlight
+  function updateSelectedThemeButton() {
+    themeButtons.forEach(btn => {
+      const isSelected = btn.dataset.theme === currentTheme;
+      btn.classList.toggle("selected", isSelected);
+      btn.setAttribute("aria-checked", isSelected ? "true" : "false");
+    });
+  }
+  updateSelectedThemeButton();
+
+  // Handle clicking a theme button
+  themeButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentTheme = btn.dataset.theme;
+      updateSelectedThemeButton();
+    });
+  });
 
   // Toggle top bar visibility
   let barVisible = false;
@@ -456,6 +494,8 @@
   function openSettings() {
     settingsOverlay.style.display = "block";
     settingsOverlay.focus();
+    // Update buttons highlight on open in case theme changed elsewhere
+    updateSelectedThemeButton();
   }
   function closeSettings() {
     settingsOverlay.style.display = "none";
@@ -467,9 +507,8 @@
   });
 
   settingsSaveBtn.addEventListener("click", () => {
-    const selected = themeSelect.value;
-    document.body.className = selected;
-    localStorage.setItem("mocTheme", selected);
+    document.body.className = currentTheme;
+    localStorage.setItem("mocTheme", currentTheme);
     closeSettings();
   });
 
