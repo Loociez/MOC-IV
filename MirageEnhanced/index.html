@@ -20,6 +20,25 @@
     visibility: visible;
   }
 
+  /* Toggle button always visible top-left */
+  #toggleBarBtn {
+    position: fixed;
+    top: 6px;
+    left: 6px;
+    width: 32px; height: 32px;
+    background: rgba(0,0,0,0.7);
+    border: none;
+    color: #0f0;
+    font-size: 22px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    z-index: 100004;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   /* Top bar */
   #topBar {
     position: fixed;
@@ -39,19 +58,6 @@
   }
   #topBar.visible {
     transform: translateY(0);
-  }
-  #toggleBarBtn {
-    width: 28px; height: 28px;
-    background: rgba(0,0,0,0.7);
-    border: none;
-    color: #0f0;
-    font-size: 20px;
-    cursor: pointer;
-    user-select: none;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   /* Tab buttons */
@@ -139,9 +145,11 @@
 <iframe id="iframeMain" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: block;"></iframe>
 <iframe id="iframeAlt" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: none;"></iframe>
 
+<!-- Toggle button always visible -->
+<button id="toggleBarBtn" title="Toggle Controls">📚</button>
+
 <!-- Top bar (hidden by default) -->
 <div id="topBar">
-  <button id="toggleBarBtn" title="Toggle Controls">📚</button>
   <div id="systemTime">--:--:--</div>
   <div id="tabButtons">
     <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
