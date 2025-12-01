@@ -202,13 +202,13 @@
 </div>
 
 <!-- Game iframes -->
-<iframe id="gameIframeMain" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" aria-label="Main Game Frame"></iframe>
-<iframe id="gameIframeAlt" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" aria-label="Alternate Account Frame"></iframe>
+<iframe id="gameIframeMain" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" aria-label="Main Game Frame" tabindex="0"></iframe>
+<iframe id="gameIframeAlt" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" aria-label="Alternate Account Frame" tabindex="0"></iframe>
 
 <!-- Wiki iframe overlay -->
-<div id="wikiOverlay" role="dialog" aria-modal="true" aria-labelledby="wikiCloseBtn">
+<div id="wikiOverlay" role="dialog" aria-modal="true" aria-labelledby="wikiCloseBtn" tabindex="-1">
   <button id="wikiCloseBtn" title="Close Wiki">✖</button>
-  <iframe src="" frameborder="0" scrolling="auto" aria-label="Wiki Content"></iframe>
+  <iframe src="" frameborder="0" scrolling="auto" aria-label="Wiki Content" tabindex="0"></iframe>
 </div>
 
 <script>
@@ -298,15 +298,36 @@
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
 
-    // Disable pointer events on game iframes to prevent interaction
+    // Disable pointer and keyboard events on game iframes to prevent stealing focus
     iframeMain.style.pointerEvents = "none";
     iframeAlt.style.pointerEvents = "none";
+    iframeMain.setAttribute("tabindex", "-1");
+    iframeAlt.setAttribute("tabindex", "-1");
+
+    // Focus the wiki iframe to enable typing
+    setTimeout(() => {
+      wikiIframe.focus();
+    }, 100);
   }
   function closeWiki() {
     wikiOverlay.style.display = "none";
     wikiIframe.src = "";
+
+    // Enable pointer and keyboard events on game iframes again
     iframeMain.style.pointerEvents = "auto";
     iframeAlt.style.pointerEvents = "auto";
+    iframeMain.setAttribute("tabindex", "0");
+    iframeAlt.setAttribute("tabindex", "0");
+
+    // Return focus to active game iframe
+    const activeTab = document.querySelector("#tabButtons .tab-button.active");
+    if(activeTab){
+      if(activeTab.dataset.iframe === "main"){
+        iframeMain.focus();
+      } else {
+        iframeAlt.focus();
+      }
+    }
   }
 
   itemLookupBtn.addEventListener("click", () => {
@@ -317,9 +338,8 @@
   });
   wikiCloseBtn.addEventListener("click", closeWiki);
 
-  // Prevent click fallthrough on wiki overlay
+  // Close overlay if clicking outside iframe or close button
   wikiOverlay.addEventListener("click", e => {
-    // Only close overlay if clicking outside iframe or close button
     if(e.target === wikiOverlay) closeWiki();
   });
 
