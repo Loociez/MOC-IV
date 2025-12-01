@@ -3,33 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mirage Online with TotalEnhance Overlay</title>
+<title>Mirage Online Classic - Modded</title>
 <style>
-  /* Basic reset */
+  /* Reset and base */
   body, html {
-    margin: 0; padding: 0; height: 100vh; background: #121212; overflow: hidden;
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: #000;
     font-family: Arial, sans-serif;
-    user-select: none;
   }
-
-  /* The game iframe fills the entire viewport */
-  #gameFrame {
-    width: 100vw;
-    height: 100vh;
+  iframe#gameIframe {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
     border: none;
-    display: block;
+    pointer-events: auto;
+    z-index: 0;
   }
 
-  /* Overlay container, covers entire viewport, pointer events pass through except for children */
-  #overlayContainer {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: 99999;
-  }
-
-  /* Hotbar styles */
+  /* HOTBAR */
   #canvasHotbar {
     position: fixed;
     bottom: 40px;
@@ -42,15 +32,13 @@
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 8px;
     backdrop-filter: blur(4px);
-    pointer-events: auto;
-    cursor: grab;
+    z-index: 99999;
     user-select: none;
+    cursor: grab;
   }
-
-  #canvasHotbar.locked {
-    cursor: default;
+  #canvasHotbar.dragging {
+    cursor: grabbing !important;
   }
-
   #canvasHotbar .slot {
     position: relative;
     width: 42px;
@@ -65,15 +53,13 @@
     color: white;
     cursor: pointer;
     overflow: hidden;
-    user-select: none;
   }
-
   #canvasHotbar .slot.plus {
     background: rgba(0,150,0,0.4);
     font-size: 24px;
     color: #0f0;
+    cursor: pointer;
   }
-
   #canvasHotbar .slot .hotkeyLabel {
     position: absolute;
     bottom: 2px;
@@ -85,8 +71,7 @@
     pointer-events: none;
     z-index: 10;
   }
-
-  #canvasHotbar .slot div[title="Change keybind"] {
+  #canvasHotbar .slot .cog {
     position: absolute;
     top: -6px;
     right: -2px;
@@ -94,220 +79,258 @@
     cursor: pointer;
     z-index: 10;
   }
+  #canvasHotbar.locked {
+    cursor: default !important;
+  }
+  #canvasHotbar.locked .slot {
+    cursor: default !important;
+  }
 
-  #canvasHotbar button.lock-btn {
-    font-size: 13px;
-    margin-left: 6px;
-    cursor: pointer;
-    background: none;
+  /* Wiki toggler button */
+  #wikiToggleBtn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    background: rgba(0,0,0,0.5);
     border: none;
+    border-radius: 6px;
     color: #0f0;
+    cursor: pointer;
+    z-index: 100000;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Wiki buttons container */
   #wikiButtons {
     position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50px;
+    left: 10px;
     display: flex;
-    gap: 10px;
-    pointer-events: auto;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px;
+    padding: 8px;
+    z-index: 100000;
+    max-width: 280px;
+    max-height: 400px;
+    overflow: auto;
+    display: none;
+  }
+  #wikiButtons button {
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    color: #0f0;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
     user-select: none;
   }
-
-  #wikiButtons button {
-    background: rgba(0, 0, 0, 0.6);
-    color: #0f0;
-    border: 1px solid #0f0;
-    padding: 6px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-  }
-
   #wikiButtons button:hover {
-    background: rgba(0, 255, 0, 0.2);
+    background: #0f0;
+    color: #000;
   }
 
-  /* Wiki overlay windows */
-  .wikiOverlay {
+  /* Wiki iframe overlay */
+  #wikiOverlay {
     position: fixed;
     top: 10%;
     left: 10%;
-    width: 80vw;
-    height: 80vh;
-    background: rgba(18, 18, 18, 0.95);
+    width: 80%;
+    height: 80%;
+    background: #111;
     border: 2px solid #0f0;
     border-radius: 10px;
-    box-shadow: 0 0 10px #0f0;
-    z-index: 100000;
+    box-shadow: 0 0 30px #0f0;
+    z-index: 100001;
     display: none;
     flex-direction: column;
   }
-
-  .wikiOverlay header {
-    background: #0f0;
-    color: #000;
-    padding: 8px 12px;
-    font-weight: bold;
-    font-size: 18px;
-    cursor: move;
-    user-select: none;
-  }
-
-  .wikiOverlay iframe {
-    flex-grow: 1;
+  #wikiOverlay iframe {
+    flex: 1;
     border: none;
     border-radius: 0 0 10px 10px;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
   }
-
-  .wikiOverlay button.closeBtn {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    background: transparent;
+  #wikiOverlay #wikiCloseBtn {
+    background: #000;
+    color: #0f0;
     border: none;
-    font-size: 22px;
-    font-weight: bold;
-    color: #000;
+    font-size: 20px;
     cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 10px 10px 0 0;
     user-select: none;
   }
-
+  #wikiOverlay #wikiCloseBtn:hover {
+    background: #0f0;
+    color: #000;
+  }
 </style>
 </head>
 <body>
 
-<!-- Game iframe -->
-<iframe id="gameFrame" src="https://play.consty.com" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+<!-- The game iframe -->
+<iframe id="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
 
-<!-- Overlay container -->
-<div id="overlayContainer">
+<!-- Hotbar container (created dynamically by script) -->
 
-  <!-- Canvas Hotbar -->
-  <div id="canvasHotbar" title="Drag to move, click slots to assign keys">
-    <!-- Slots and buttons will be added by script -->
-  </div>
+<!-- Wiki toggle button -->
+<button id="wikiToggleBtn" title="Toggle Wiki Buttons">📚</button>
 
-  <!-- Wiki buttons -->
-  <div id="wikiButtons">
-    <button id="btnItemWiki">Item Wiki</button>
-    <button id="btnNpcWiki">NPC Wiki</button>
-  </div>
+<!-- Wiki buttons container -->
+<div id="wikiButtons">
+  <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
+  <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+</div>
 
-  <!-- Wiki overlays -->
-  <div id="itemWikiOverlay" class="wikiOverlay">
-    <header>Item Wiki
-      <button class="closeBtn" title="Close">&times;</button>
-    </header>
-    <iframe src="https://loociez.github.io/MOC-IV/itemslast.html"></iframe>
-  </div>
-
-  <div id="npcWikiOverlay" class="wikiOverlay">
-    <header>NPC Wiki
-      <button class="closeBtn" title="Close">&times;</button>
-    </header>
-    <iframe src="https://loociez.github.io/MOC-IV/npclast.html"></iframe>
-  </div>
-
+<!-- Wiki iframe overlay -->
+<div id="wikiOverlay">
+  <button id="wikiCloseBtn" title="Close Wiki">✖</button>
+  <iframe src="" frameborder="0" scrolling="auto"></iframe>
 </div>
 
 <script>
 (() => {
   "use strict";
 
-  // === HOTBAR LOGIC ===
+  // HOTBAR CODE (fixed drag bug & improvements)
   const HOTBAR_ID = "canvasHotbar";
   const STORAGE_KEY = "CanvasHotbarBindings";
   const LOCK_KEY = "CanvasHotbarLocked";
   const POS_KEY = "CanvasHotbarPosition";
-
   const INITIAL_KEYS = new Set(["C", "V", "B"]);
 
-  const bar = document.getElementById(HOTBAR_ID);
-
-  // Load saved bindings
   let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
   let locked = localStorage.getItem(LOCK_KEY) === "true";
   let awaitingAssignmentFor = null;
 
-  // Restore position
+  if (document.getElementById(HOTBAR_ID)) {
+    console.log("Hotbar already exists.");
+    return;
+  }
+
+  // Create hotbar div
+  const bar = document.createElement("div");
+  bar.id = HOTBAR_ID;
+  bar.style.position = "fixed";
+  bar.style.bottom = "40px";
+  bar.style.left = "50%";
+  bar.style.transform = "translateX(-50%)";
+  bar.style.display = "flex";
+  bar.style.gap = "6px";
+  bar.style.padding = "6px 10px";
+  bar.style.background = "rgba(0,0,0,0.35)";
+  bar.style.border = "1px solid rgba(255,255,255,0.2)";
+  bar.style.borderRadius = "8px";
+  bar.style.backdropFilter = "blur(4px)";
+  bar.style.zIndex = "99999";
+  bar.style.userSelect = "none";
+  bar.style.cursor = locked ? "default" : "grab";
+
+  // Restore saved position
   const savedPos = JSON.parse(localStorage.getItem(POS_KEY) || "null");
   if (savedPos) {
     bar.style.left = savedPos.left + "px";
     bar.style.top = savedPos.top + "px";
     bar.style.bottom = "auto";
     bar.style.transform = "none";
-  } else {
-    // default position style is bottom:40px and center horizontally
-    bar.style.bottom = "40px";
-    bar.style.left = "50%";
-    bar.style.transform = "translateX(-50%)";
   }
 
-  if (locked) {
-    bar.classList.add("locked");
-  } else {
-    bar.classList.remove("locked");
-  }
+  document.body.appendChild(bar);
 
-  // Dragging variables
-  let dragging = false, offX = 0, offY = 0;
+  // Dragging vars
+  let dragging = false;
+  let offX = 0;
+  let offY = 0;
 
+  // Mousedown start drag
   bar.addEventListener("mousedown", (e) => {
     if (locked) return;
-    if (e.target.classList.contains("slot") ||
-        e.target.classList.contains("hotkeyLabel") ||
-        e.target.innerText === "⚙️" ||
-        e.target.innerText === "+") return;
+    // Avoid dragging if clicking buttons/settings icons inside the hotbar
+    if (
+      e.target.classList.contains("slot") ||
+      e.target.classList.contains("hotkeyLabel") ||
+      e.target.classList.contains("cog") ||
+      e.target.innerText === "⚙️" ||
+      e.target.innerText === "+"
+    ) return;
 
     dragging = true;
     offX = e.clientX - bar.offsetLeft;
     offY = e.clientY - bar.offsetTop;
-    bar.style.cursor = "grabbing";
+    bar.classList.add("dragging");
+    // Capture pointer to avoid stuck dragging
+    bar.setPointerCapture(e.pointerId);
     e.preventDefault();
   });
 
-  document.addEventListener("mouseup", () => {
+  // Mouseup end drag
+  bar.addEventListener("mouseup", (e) => {
     if (dragging) {
       dragging = false;
-      bar.style.cursor = "grab";
-
-      localStorage.setItem(POS_KEY, JSON.stringify({
-        left: bar.offsetLeft,
-        top: bar.offsetTop
-      }));
+      bar.classList.remove("dragging");
+      localStorage.setItem(
+        POS_KEY,
+        JSON.stringify({ left: bar.offsetLeft, top: bar.offsetTop })
+      );
+      // Release pointer capture
+      bar.releasePointerCapture(e.pointerId);
     }
   });
 
-  document.addEventListener("mousemove", (e) => {
+  // Mousemove drag
+  bar.addEventListener("mousemove", (e) => {
     if (!dragging) return;
-    bar.style.left = (e.clientX - offX) + "px";
-    bar.style.top = (e.clientY - offY) + "px";
+    let newLeft = e.clientX - offX;
+    let newTop = e.clientY - offY;
+
+    // Clamp inside viewport
+    const maxLeft = window.innerWidth - bar.offsetWidth;
+    const maxTop = window.innerHeight - bar.offsetHeight;
+    newLeft = Math.min(Math.max(0, newLeft), maxLeft);
+    newTop = Math.min(Math.max(0, newTop), maxTop);
+
+    bar.style.left = newLeft + "px";
+    bar.style.top = newTop + "px";
     bar.style.bottom = "auto";
     bar.style.transform = "none";
   });
 
-  // Save bindings helper
-  function saveBindings() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-  }
-
-  // Create slot element
+  // Create a slot
   function createSlot(initialKey, isPlus = false) {
     const div = document.createElement("div");
     div.classList.add("slot");
     if (isPlus) div.classList.add("plus");
     div.style.position = "relative";
+    div.style.width = "42px";
+    div.style.height = "42px";
+    div.style.borderRadius = "6px";
+    div.style.background = isPlus ? "rgba(0,150,0,0.4)" : "rgba(255,255,255,0.08)";
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.justifyContent = "center";
+    div.style.fontSize = isPlus ? "24px" : "14px";
+    div.style.color = isPlus ? "#0f0" : "white";
+    div.style.cursor = locked ? "default" : "pointer";
+    div.style.overflow = "hidden";
 
     if (isPlus) {
       div.innerText = "+";
       div.title = "Add new slot";
+
       div.addEventListener("click", () => {
         if (locked) return;
+
         const used = new Set(Object.keys(saved));
         let newKey = null;
         for (let i = 65; i <= 90; i++) {
@@ -321,16 +344,19 @@
           alert("No more keys available.");
           return;
         }
+
         saved[newKey] = -1;
         saveBindings();
+
         const slot = createSlot(newKey);
         bar.insertBefore(slot, div);
         console.log("Added slot:", newKey);
       });
+
       return div;
     }
 
-    // Normal slot key label
+    // Key label
     const keyLabel = document.createElement("div");
     keyLabel.innerText = initialKey;
     keyLabel.classList.add("hotkeyLabel");
@@ -339,13 +365,8 @@
     // Settings cog
     const cog = document.createElement("div");
     cog.innerText = "⚙️";
+    cog.classList.add("cog");
     cog.title = "Change keybind";
-    cog.style.position = "absolute";
-    cog.style.top = "-6px";
-    cog.style.right = "-2px";
-    cog.style.fontSize = "14px";
-    cog.style.cursor = "pointer";
-    cog.style.zIndex = "10";
     div.appendChild(cog);
 
     cog.addEventListener("click", (e) => {
@@ -389,18 +410,17 @@
       }
     });
 
-    // Click to assign slot (just visual here)
+    // Assign inventory slot on click
     div.addEventListener("click", (ev) => {
       if (locked) return;
       if (ev.target.innerText === "⚙️") return;
       const key = keyLabel.innerText;
       awaitingAssignmentFor = key;
       div.style.outline = "2px solid gold";
-      setTimeout(() => div.style.outline = "", 600);
-      alert(`Key "${key}" clicked.\n\nNOTE: Due to cross-origin iframe restrictions, this hotbar is visual only and cannot trigger game actions directly.`);
+      setTimeout(() => (div.style.outline = ""), 600);
     });
 
-    // Prevent context menu on right click except locked keys
+    // Prevent context menu on right-click for deletion
     div.addEventListener("contextmenu", (e) => {
       if (locked) return;
       const key = keyLabel.innerText;
@@ -410,108 +430,230 @@
     return div;
   }
 
-  // Build hotbar slots from saved keys or defaults
-  const keys = Object.keys(saved).length ? Object.keys(saved) : ["C", "V", "B"];
-  keys.forEach(k => bar.appendChild(createSlot(k)));
+  // Save bindings
+  function saveBindings() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  }
 
-  // Add plus slot to add new slots
+  // Animate slot use green ripple
+  function animateSlotUseForKey(key) {
+    try {
+      const slots = document.querySelectorAll(`#${HOTBAR_ID} .slot`);
+      for (const slot of slots) {
+        const lbl = slot.querySelector(".hotkeyLabel");
+        if (!lbl) continue;
+        if (lbl.innerText.trim() !== key) continue;
+
+        const ripple = document.createElement("div");
+        const size = Math.max(slot.clientWidth, slot.clientHeight) * 3;
+
+        Object.assign(ripple.style, {
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+          width: size + "px",
+          height: size + "px",
+          marginLeft: -size / 2 + "px",
+          marginTop: -size / 2 + "px",
+          borderRadius: "50%",
+          pointerEvents: "none",
+          zIndex: "1",
+          background: "rgba(0,255,80,0.35)",
+          transform: "scale(0)",
+          opacity: "1",
+          transition:
+            "transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out",
+        });
+
+        slot.appendChild(ripple);
+
+        const cog = slot.querySelector("div.cog");
+        const label = slot.querySelector(".hotkeyLabel");
+        if (cog) cog.style.zIndex = "10";
+        if (label) label.style.zIndex = "10";
+
+        // Trigger reflow
+        ripple.offsetWidth;
+
+        ripple.style.transform = "scale(1)";
+        ripple.style.opacity = "0";
+
+        setTimeout(() => ripple.remove(), 950);
+
+        break;
+      }
+    } catch (err) {
+      console.warn("animateSlotUseForKey error:", err);
+    }
+  }
+
+  // Build hotbar slots
+  const keys = Object.keys(saved).length ? Object.keys(saved) : ["C", "V", "B"];
+  keys.forEach((k) => bar.appendChild(createSlot(k)));
   const addSlotBtn = createSlot("+", true);
   bar.appendChild(addSlotBtn);
 
   // Lock button
-  const lockBtn = document.createElement("button");
-  lockBtn.classList.add("lock-btn");
+  const lockBtn = document.createElement("div");
   lockBtn.innerText = locked ? "🔒" : "🔓";
-  lockBtn.title = "Lock/unlock hotbar";
+  lockBtn.style.fontSize = "13px";
+  lockBtn.style.marginLeft = "6px";
+  lockBtn.style.cursor = "pointer";
+
   lockBtn.onclick = () => {
     locked = !locked;
     localStorage.setItem(LOCK_KEY, locked);
     lockBtn.innerText = locked ? "🔒" : "🔓";
-    if (locked) {
-      bar.classList.add("locked");
-      bar.style.cursor = "default";
-      document.querySelectorAll(`#${HOTBAR_ID} .slot`).forEach(s => s.style.cursor = "default");
-    } else {
-      bar.classList.remove("locked");
-      bar.style.cursor = "grab";
-      document.querySelectorAll(`#${HOTBAR_ID} .slot`).forEach(s => s.style.cursor = "pointer");
-    }
+
+    document.querySelectorAll(`#${HOTBAR_ID} .slot`).forEach((s) => {
+      s.style.cursor = locked ? "default" : "pointer";
+    });
+
+    bar.style.cursor = locked ? "default" : "grab";
   };
+
   bar.appendChild(lockBtn);
 
-  // Prevent right-click context menu on hotbar globally to enable right click deletion
-  bar.addEventListener("contextmenu", (e) => {
-    if (!locked) e.preventDefault();
+  // Assign canvas slot on inventory canvas click
+  document.addEventListener("mousedown", (e) => {
+    if (awaitingAssignmentFor === null) return;
+
+    const canvases = [...document.querySelectorAll("#winInventory canvas")];
+    const index = canvases.indexOf(e.target);
+
+    if (index !== -1) {
+      saved[awaitingAssignmentFor] = index;
+      saveBindings();
+      awaitingAssignmentFor = null;
+    }
   });
 
-  // === WIKI OVERLAYS LOGIC ===
-  const itemWikiBtn = document.getElementById("btnItemWiki");
-  const npcWikiBtn = document.getElementById("btnNpcWiki");
-  const itemWikiOverlay = document.getElementById("itemWikiOverlay");
-  const npcWikiOverlay = document.getElementById("npcWikiOverlay");
-
-  function makeDraggable(el, handle) {
-    let isDragging = false;
-    let startX, startY, origX, origY;
-
-    handle.style.cursor = "move";
-
-    handle.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      origX = el.offsetLeft;
-      origY = el.offsetTop;
-      document.body.style.userSelect = "none";
-    });
-
-    document.addEventListener("mouseup", () => {
-      if (isDragging) {
-        isDragging = false;
-        document.body.style.userSelect = "";
-      }
-    });
-
-    document.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      el.style.left = (origX + dx) + "px";
-      el.style.top = (origY + dy) + "px";
-    });
+  // Simulate double click on canvas
+  function simulateDoubleClick(canvas) {
+    function ev(t) {
+      return new MouseEvent(t, {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        button: 0,
+        buttons: 1,
+        clientX: canvas.getBoundingClientRect().left + 1,
+        clientY: canvas.getBoundingClientRect().top + 1,
+      });
+    }
+    canvas.dispatchEvent(ev("mousedown"));
+    canvas.dispatchEvent(ev("mouseup"));
+    setTimeout(() => {
+      canvas.dispatchEvent(ev("mousedown"));
+      canvas.dispatchEvent(ev("mouseup"));
+    }, 50);
   }
 
-  // Show / hide logic
-  itemWikiBtn.addEventListener("click", () => {
-    if (itemWikiOverlay.style.display === "flex") {
-      itemWikiOverlay.style.display = "none";
+  // Listen for hotkeys
+  document.addEventListener("keydown", (e) => {
+    if (e.repeat) return;
+    if (locked) return;
+
+    const key = e.key.toUpperCase();
+    if (!(key in saved)) return;
+
+    // Find inventory canvas for that slot
+    const index = saved[key];
+    if (typeof index !== "number" || index < 0) return;
+
+    const canvases = [...document.querySelectorAll("#winInventory canvas")];
+    if (index >= canvases.length) return;
+
+    const canvas = canvases[index];
+    if (!canvas) return;
+
+    // Animate slot use
+    animateSlotUseForKey(key);
+
+    // Simulate double click to use item
+    simulateDoubleClick(canvas);
+  });
+
+  // ======= WIKI BUTTONS & IFRAME =======
+
+  const wikiToggleBtn = document.getElementById("wikiToggleBtn");
+  const wikiButtons = document.getElementById("wikiButtons");
+  const wikiOverlay = document.getElementById("wikiOverlay");
+  const wikiCloseBtn = document.getElementById("wikiCloseBtn");
+  const wikiIframe = wikiOverlay.querySelector("iframe");
+
+  // Start hidden
+  wikiButtons.style.display = "none";
+
+  wikiToggleBtn.addEventListener("click", () => {
+    if (wikiButtons.style.display === "none") {
+      wikiButtons.style.display = "flex";
+      wikiToggleBtn.style.background = "rgba(0,255,0,0.75)";
     } else {
-      itemWikiOverlay.style.display = "flex";
+      wikiButtons.style.display = "none";
+      wikiToggleBtn.style.background = "rgba(0,0,0,0.5)";
     }
   });
 
-  npcWikiBtn.addEventListener("click", () => {
-    if (npcWikiOverlay.style.display === "flex") {
-      npcWikiOverlay.style.display = "none";
-    } else {
-      npcWikiOverlay.style.display = "flex";
+  function openWikiPage(url) {
+    wikiIframe.src = url;
+    wikiOverlay.style.display = "flex";
+
+    // Disable pointer events on game iframe so clicks don't fall through
+    document.getElementById("gameIframe").style.pointerEvents = "none";
+  }
+
+  function closeWiki() {
+    wikiOverlay.style.display = "none";
+    wikiIframe.src = "";
+    document.getElementById("gameIframe").style.pointerEvents = "auto";
+  }
+
+  document.getElementById("itemLookupBtn").addEventListener("click", () => {
+    openWikiPage("https://mirageonlineclassic.fandom.com/wiki/Item_List");
+  });
+
+  document.getElementById("npcLookupBtn").addEventListener("click", () => {
+    openWikiPage("https://mirageonlineclassic.fandom.com/wiki/NPC_List");
+  });
+
+  wikiCloseBtn.addEventListener("click", () => {
+    closeWiki();
+  });
+
+  // Prevent click fallthrough on wiki overlay (stop event bubbling)
+  wikiOverlay.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  // Prevent right-click context menu on hotbar slots for locked keys only
+  document.getElementById(HOTBAR_ID).addEventListener("contextmenu", (e) => {
+    const target = e.target;
+    if (
+      target.classList.contains("slot") &&
+      locked
+    ) {
+      e.preventDefault();
     }
   });
 
-  // Close buttons for overlays
-  document.querySelectorAll(".wikiOverlay .closeBtn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.target.closest(".wikiOverlay").style.display = "none";
-    });
+  // Block game interaction while wiki open (to prevent clicks falling through)
+  wikiOverlay.addEventListener("mousedown", (e) => {
+    e.stopPropagation();
   });
 
-  // Make overlays draggable
-  makeDraggable(itemWikiOverlay, itemWikiOverlay.querySelector("header"));
-  makeDraggable(npcWikiOverlay, npcWikiOverlay.querySelector("header"));
+  // Make sure iframe can scroll and receive pointer events
+  wikiIframe.style.pointerEvents = "auto";
 
-  console.log("%cOverlay page loaded with hotbar and wiki overlays.", "color:#0f0");
-
+  // Save window position on resize to keep hotbar visible
+  window.addEventListener("resize", () => {
+    const left = bar.offsetLeft;
+    const top = bar.offsetTop;
+    const maxLeft = window.innerWidth - bar.offsetWidth;
+    const maxTop = window.innerHeight - bar.offsetHeight;
+    bar.style.left = Math.min(left, maxLeft) + "px";
+    bar.style.top = Math.min(top, maxTop) + "px";
+  });
 })();
 </script>
 
