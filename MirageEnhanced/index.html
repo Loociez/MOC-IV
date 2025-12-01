@@ -12,36 +12,66 @@
     font-family: Arial, sans-serif;
     color: #0f0;
   }
+
+  /* Game iframes */
   iframe.gameFrame {
     position: absolute;
-    top: 40px; /* leave space for tab bar */
+    top: 40px; /* space for expanded bar */
     left: 0; width: 100%; height: calc(100% - 40px);
     border: none;
     pointer-events: auto;
     z-index: 0;
-    display: none; /* hide by default */
+    display: none; /* hidden by default */
   }
   iframe.gameFrame.active {
     display: block;
     z-index: 1;
   }
 
-  /* Tab bar for switching between accounts */
-  #tabBar {
+  /* Top bar container */
+  #topBarContainer {
     position: fixed;
     top: 0; left: 0;
     width: 100%;
-    height: 40px;
     background: rgba(0,0,0,0.8);
     border-bottom: 2px solid #0f0;
+    overflow: hidden;
+    z-index: 100002;
+    transition: height 0.3s ease;
+    height: 6px; /* minimized height */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Expanded top bar styles */
+  #topBarContainer.expanded {
+    height: 40px;
+    cursor: default;
+  }
+
+  /* The actual top bar content */
+  #topBar {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 0 10px;
+    width: 100%;
     box-sizing: border-box;
-    z-index: 100002;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.15s;
+    pointer-events: none;
+    user-select: none;
   }
-  #tabBar button {
+
+  /* When expanded show content */
+  #topBarContainer.expanded #topBar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Tab buttons */
+  #topBar button.tabBtn {
     background: transparent;
     border: 1px solid #0f0;
     color: #0f0;
@@ -49,47 +79,28 @@
     font-size: 14px;
     cursor: pointer;
     border-radius: 6px 6px 0 0;
-    user-select: none;
   }
-  #tabBar button.active {
+  #topBar button.tabBtn.active {
     background: #0f0;
     color: #000;
     font-weight: bold;
   }
 
-  /* Wiki toggler button */
-  #wikiToggleBtn {
-    width: 36px;
-    height: 36px;
-    font-size: 24px;
-    background: rgba(0,0,0,0.5);
-    border: none;
-    border-radius: 6px;
-    color: #0f0;
-    cursor: pointer;
+  /* System time */
+  #systemTimeDisplay {
+    cursor: default;
     user-select: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-width: 80px;
+    text-align: center;
+    font-family: monospace;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: #111;
   }
 
-  /* Wiki buttons container */
-  #wikiButtons {
-    margin-left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(0,0,0,0.7);
-    border-radius: 8px;
-    padding: 6px 8px;
-    max-width: 600px;
-    max-height: 40px;
-    overflow: hidden;
-    white-space: nowrap;
-    display: none;
-  }
-  #wikiButtons button,
-  #systemTimeDisplay {
+  /* Other buttons */
+  #topBar button.lookupBtn {
     background: #111;
     border: 1px solid #0f0;
     border-radius: 6px;
@@ -98,19 +109,10 @@
     cursor: pointer;
     font-size: 14px;
     user-select: none;
-    line-height: 1;
   }
-  #wikiButtons button:hover {
+  #topBar button.lookupBtn:hover {
     background: #0f0;
     color: #000;
-  }
-
-  #systemTimeDisplay {
-    cursor: default;
-    user-select: none;
-    min-width: 80px;
-    text-align: center;
-    font-family: monospace;
   }
 
   /* Wiki iframe overlay */
@@ -154,17 +156,14 @@
 </head>
 <body>
 
-<!-- Tab Bar -->
-<div id="tabBar">
-  <button id="tabMain" class="active" title="Main Account">Main</button>
-  <button id="tabAlt" title="Alternate Account">Alt</button>
-
-  <button id="wikiToggleBtn" title="Toggle Features">📚</button>
-
-  <div id="wikiButtons">
+<!-- Top bar container: click to toggle -->
+<div id="topBarContainer" title="Click to expand/collapse controls">
+  <div id="topBar" role="region" aria-label="Account and controls">
+    <button id="tabMain" class="tabBtn active" title="Main Account">Main</button>
+    <button id="tabAlt" class="tabBtn" title="Alternate Account">Alt</button>
     <div id="systemTimeDisplay" title="Your local time">--:--:--</div>
-    <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
-    <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+    <button id="itemLookupBtn" class="lookupBtn" title="Item Lookup">Item Lookup</button>
+    <button id="npcLookupBtn" class="lookupBtn" title="NPC Lookup">NPC Lookup</button>
   </div>
 </div>
 
@@ -182,13 +181,26 @@
 (() => {
   "use strict";
 
-  // Tabs elements
+  // Elements
+  const topBarContainer = document.getElementById("topBarContainer");
+  const topBar = document.getElementById("topBar");
+
   const tabMain = document.getElementById("tabMain");
   const tabAlt = document.getElementById("tabAlt");
   const iframeMain = document.getElementById("gameIframeMain");
   const iframeAlt = document.getElementById("gameIframeAlt");
 
-  // Switch tab function
+  // Toggle top bar expanded/collapsed on click of container
+  topBarContainer.addEventListener("click", () => {
+    topBarContainer.classList.toggle("expanded");
+  });
+
+  // Prevent clicks inside topBar from toggling collapse (stop bubbling)
+  topBar.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  // Tab switching
   function switchTab(tab) {
     if (tab === "main") {
       tabMain.classList.add("active");
@@ -202,44 +214,28 @@
       iframeMain.classList.remove("active");
     }
   }
-
   tabMain.addEventListener("click", () => switchTab("main"));
   tabAlt.addEventListener("click", () => switchTab("alt"));
 
-  // System Time inside feature panel
+  // System time update
   const timeDisplay = document.getElementById("systemTimeDisplay");
   function updateTime() {
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, "0");
-    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    timeDisplay.textContent = timeStr;
+    timeDisplay.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
   }
   updateTime();
   setInterval(updateTime, 1000);
 
-  // Wiki toggle & buttons
-  const wikiToggleBtn = document.getElementById("wikiToggleBtn");
-  const wikiButtons = document.getElementById("wikiButtons");
+  // Wiki overlay controls
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
 
-  wikiButtons.style.display = "none";
-
-  wikiToggleBtn.addEventListener("click", () => {
-    if (wikiButtons.style.display === "none") {
-      wikiButtons.style.display = "flex";
-      wikiToggleBtn.style.background = "rgba(0,255,0,0.75)";
-    } else {
-      wikiButtons.style.display = "none";
-      wikiToggleBtn.style.background = "rgba(0,0,0,0.5)";
-    }
-  });
-
   function openWikiPage(url) {
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
-    // Disable pointer events on active game iframe so clicks don't fall through
+    // Disable pointer events on active iframe to prevent clicks falling through
     if (iframeMain.classList.contains("active")) {
       iframeMain.style.pointerEvents = "none";
     } else {
@@ -250,7 +246,6 @@
   function closeWiki() {
     wikiOverlay.style.display = "none";
     wikiIframe.src = "";
-    // Re-enable pointer events on both iframes
     iframeMain.style.pointerEvents = "auto";
     iframeAlt.style.pointerEvents = "auto";
   }
