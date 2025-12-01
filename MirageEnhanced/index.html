@@ -11,104 +11,75 @@
     background: #000;
     font-family: Arial, sans-serif;
   }
-  iframe.gameIframe {
+  iframe#gameIframe {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     border: none;
     pointer-events: auto;
     z-index: 0;
-    visibility: visible;
+    transition: height 0.3s ease;
   }
 
-  /* Container for toggle and bar */
-  #topBarContainer {
-    position: fixed;
-    top: 6px;
-    left: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    z-index: 100004;
-  }
-
-  /* Toggle button always visible */
-  #toggleBarBtn {
-    width: 32px; height: 32px;
-    background: rgba(0,0,0,0.7);
-    border: none;
-    color: #0f0;
-    font-size: 22px;
-    cursor: pointer;
-    user-select: none;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Top bar (hidden by default) */
+  /* Top bar hidden by default */
   #topBar {
-    height: 36px;
-    background: rgba(0,0,0,0.6);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.8);
+    color: #0f0;
+    font-family: monospace;
+    font-size: 14px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 0 10px;
-    font-size: 14px;
-    color: #0f0;
+    padding: 5px 10px;
+    gap: 8px;
+    z-index: 100000;
     user-select: none;
-    border-radius: 6px;
-    transform: translateX(-120%);
+    transform: translateY(-100%);
     transition: transform 0.3s ease;
-    white-space: nowrap;
   }
   #topBar.visible {
-    transform: translateX(0);
+    transform: translateY(0);
   }
 
-  /* System time */
-  #systemTime {
-    min-width: 70px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Tab buttons */
-  #tabButtons {
-    display: flex;
-    gap: 8px;
-  }
-  .tab-button {
-    background: transparent;
-    border: 1px solid #0f0;
-    color: #0f0;
-    padding: 3px 8px;
-    cursor: pointer;
-    border-radius: 5px;
-    user-select: none;
-    font-size: 14px;
-  }
-  .tab-button.active {
-    background: #0f0;
-    color: #000;
-  }
-
-  /* Wiki buttons container */
-  #wikiButtons {
-    display: flex;
-    gap: 8px;
-  }
-  #wikiButtons button {
+  /* Buttons styling */
+  #topBar button {
     background: #111;
     border: 1px solid #0f0;
     border-radius: 6px;
     color: #0f0;
-    padding: 6px 10px;
+    padding: 4px 10px;
     cursor: pointer;
     font-size: 14px;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  #wikiButtons button:hover {
+  #topBar button:hover {
+    background: #0f0;
+    color: #000;
+  }
+
+  /* Toggle button (small book emoji) */
+  #toggleBarBtn {
+    position: fixed;
+    top: 5px; left: 5px;
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+    background: rgba(0,0,0,0.7);
+    border: none;
+    border-radius: 6px;
+    color: #0f0;
+    cursor: pointer;
+    z-index: 100001;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+  #toggleBarBtn:hover {
     background: #0f0;
     color: #000;
   }
@@ -124,7 +95,7 @@
     border: 2px solid #0f0;
     border-radius: 10px;
     box-shadow: 0 0 30px #0f0;
-    z-index: 100003;
+    z-index: 100002;
     display: none;
     flex-direction: column;
   }
@@ -150,157 +121,592 @@
     background: #0f0;
     color: #000;
   }
+
+  /* Screenshot Overlay */
+  #screenshotOverlay {
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    background: #111;
+    border: 2px solid #0f0;
+    border-radius: 12px;
+    box-shadow: 0 0 40px #0f0;
+    z-index: 100005;
+    display: none;
+    flex-direction: column;
+  }
+  #screenshotOverlay header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #000;
+    border-radius: 12px 12px 0 0;
+    color: #0f0;
+    font-weight: bold;
+    user-select: none;
+  }
+  #screenshotOverlay header button {
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0 8px;
+  }
+  #screenshotCanvasContainer {
+    flex: 1;
+    position: relative;
+    background: #222;
+    margin: 8px 12px 12px 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    user-select: none;
+  }
+  #screenshotCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    background: #000;
+    display: block;
+  }
+
+  /* Crop rectangle */
+  #cropRect {
+    position: absolute;
+    border: 2px dashed #0f0;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* Annotation input */
+  #annotationInput {
+    position: absolute;
+    border: 1px solid #0f0;
+    background: rgba(0,0,0,0.8);
+    color: #0f0;
+    font-family: monospace;
+    font-size: 16px;
+    outline: none;
+    display: none;
+    resize: none;
+  }
+
+  /* Settings Panel */
+  #settingsOverlay {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    background: #111;
+    border: 2px solid #0f0;
+    border-radius: 12px;
+    box-shadow: 0 0 30px #0f0;
+    padding: 20px;
+    z-index: 100006;
+    display: none;
+    color: #0f0;
+    font-family: monospace;
+    user-select: none;
+  }
+  #settingsOverlay h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  #settingsOverlay label {
+    display: block;
+    margin: 8px 0 4px;
+  }
+  #settingsOverlay select {
+    width: 100%;
+    background: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    padding: 6px;
+    font-family: monospace;
+  }
+  #settingsOverlay button {
+    margin-top: 16px;
+    width: 100%;
+    background: #0f0;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #settingsOverlay button:hover {
+    background: #0a0;
+  }
+
+  /* Theme styles - default dark */
+  body.theme-dark {
+    background: #000;
+    color: #0f0;
+  }
+  body.theme-dark #topBar {
+    background: rgba(0,0,0,0.8);
+    color: #0f0;
+  }
+  body.theme-dark #topBar button {
+    background: #111;
+    border-color: #0f0;
+    color: #0f0;
+  }
+  body.theme-dark #topBar button:hover {
+    background: #0f0;
+    color: #000;
+  }
+
+  /* Theme styles - light */
+  body.theme-light {
+    background: #eee;
+    color: #060;
+  }
+  body.theme-light #topBar {
+    background: rgba(240,240,240,0.9);
+    color: #060;
+  }
+  body.theme-light #topBar button {
+    background: #ddd;
+    border-color: #060;
+    color: #060;
+  }
+  body.theme-light #topBar button:hover {
+    background: #060;
+    color: #ddd;
+  }
+
+  /* Theme styles - green */
+  body.theme-green {
+    background: #001100;
+    color: #7fdb7f;
+  }
+  body.theme-green #topBar {
+    background: rgba(0,50,0,0.9);
+    color: #7fdb7f;
+  }
+  body.theme-green #topBar button {
+    background: #003300;
+    border-color: #7fdb7f;
+    color: #7fdb7f;
+  }
+  body.theme-green #topBar button:hover {
+    background: #7fdb7f;
+    color: #003300;
+  }
 </style>
 </head>
-<body>
+<body class="theme-dark">
 
-<!-- Game iframes -->
-<iframe id="iframeMain" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: block;"></iframe>
-<iframe id="iframeAlt" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: none;"></iframe>
+<!-- The game iframe -->
+<iframe id="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
 
-<!-- Container with toggle button and bar -->
-<div id="topBarContainer">
-  <!-- Toggle button always visible -->
-  <button id="toggleBarBtn" title="Toggle Controls">📚</button>
+<!-- Toggle Bar Button -->
+<button id="toggleBarBtn" title="Toggle Bar">📚</button>
 
-  <!-- Top bar (hidden by default) -->
-  <div id="topBar">
-    <div id="systemTime">--:--:--</div>
-    <div id="tabButtons">
-      <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
-      <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
-    </div>
-    <div id="wikiButtons">
-      <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
-      <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
-    </div>
-  </div>
+<!-- Top Bar -->
+<div id="topBar" aria-hidden="true" tabindex="-1">
+  <div id="systemTime">--:--:--</div>
+  <button id="wikiBtn" title="Wiki Lookup">📖</button>
+  <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
+  <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+  <button id="altAccountBtn" title="Alt Account">Alt</button>
+  <button id="screenshotBtn" title="Advanced Screenshot">📸</button>
+  <button id="settingsBtn" title="Settings">⚙️</button>
 </div>
 
 <!-- Wiki iframe overlay -->
-<div id="wikiOverlay">
-  <button id="wikiCloseBtn" title="Close Wiki">✖</button>
+<div id="wikiOverlay" role="dialog" aria-modal="true" aria-labelledby="wikiTitle" tabindex="-1">
+  <header style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#000;color:#0f0;font-weight:bold;border-radius: 10px 10px 0 0;">
+    <div id="wikiTitle">Wiki Lookup</div>
+    <button id="wikiCloseBtn" aria-label="Close Wiki">✖</button>
+  </header>
   <iframe src="" frameborder="0" scrolling="auto"></iframe>
 </div>
 
+<!-- Screenshot Overlay -->
+<div id="screenshotOverlay" role="dialog" aria-modal="true" tabindex="-1">
+  <header>
+    Advanced Screenshot
+    <div>
+      <button id="screenshotCloseBtn" title="Close">✖</button>
+      <button id="cropBtn" title="Crop">✂️</button>
+      <button id="annotateBtn" title="Annotate">🖊️</button>
+      <button id="downloadBtn" title="Download">💾</button>
+    </div>
+  </header>
+  <div id="screenshotCanvasContainer">
+    <canvas id="screenshotCanvas"></canvas>
+    <div id="cropRect"></div>
+    <textarea id="annotationInput" placeholder="Enter annotation text"></textarea>
+  </div>
+</div>
+
+<!-- Settings Overlay -->
+<div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1">
+  <h2>Settings</h2>
+  <label for="themeSelect">Select Theme:</label>
+  <select id="themeSelect" aria-label="Select UI Theme">
+    <option value="theme-dark">Dark</option>
+    <option value="theme-light">Light</option>
+    <option value="theme-green">Green</option>
+  </select>
+  <button id="settingsSaveBtn">Save Settings</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 (() => {
   "use strict";
 
-  const iframeMain = document.getElementById("iframeMain");
-  const iframeAlt = document.getElementById("iframeAlt");
-  const topBar = document.getElementById("topBar");
   const toggleBarBtn = document.getElementById("toggleBarBtn");
-  const systemTime = document.getElementById("systemTime");
-  const tabButtons = document.getElementById("tabButtons");
-  const wikiButtons = document.getElementById("wikiButtons");
+  const topBar = document.getElementById("topBar");
+  const systemTimeDiv = document.getElementById("systemTime");
+  const wikiBtn = document.getElementById("wikiBtn");
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
+  const itemLookupBtn = document.getElementById("itemLookupBtn");
+  const npcLookupBtn = document.getElementById("npcLookupBtn");
+  const altAccountBtn = document.getElementById("altAccountBtn");
+  const gameIframe = document.getElementById("gameIframe");
 
-  // Update system time every second
+  // Screenshot Elements
+  const screenshotBtn = document.getElementById("screenshotBtn");
+  const screenshotOverlay = document.getElementById("screenshotOverlay");
+  const screenshotCloseBtn = document.getElementById("screenshotCloseBtn");
+  const cropBtn = document.getElementById("cropBtn");
+  const annotateBtn = document.getElementById("annotateBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const screenshotCanvas = document.getElementById("screenshotCanvas");
+  const screenshotCtx = screenshotCanvas.getContext("2d");
+  const cropRect = document.getElementById("cropRect");
+  const annotationInput = document.getElementById("annotationInput");
+  const screenshotCanvasContainer = document.getElementById("screenshotCanvasContainer");
+
+  // Settings Elements
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsOverlay = document.getElementById("settingsOverlay");
+  const themeSelect = document.getElementById("themeSelect");
+  const settingsSaveBtn = document.getElementById("settingsSaveBtn");
+
+  // State variables for screenshot tool
+  let cropping = false;
+  let annotating = false;
+  let cropStart = null;
+  let cropEnd = null;
+  let annotationPos = {x:0,y:0};
+  let isDrawingAnnotation = false;
+
+  // Store current theme
+  let currentTheme = localStorage.getItem("mocTheme") || "theme-dark";
+  document.body.className = currentTheme;
+  themeSelect.value = currentTheme;
+
+  // --------- SYSTEM TIME ---------
   function updateTime() {
     const now = new Date();
-    const h = now.getHours().toString().padStart(2,'0');
-    const m = now.getMinutes().toString().padStart(2,'0');
-    const s = now.getSeconds().toString().padStart(2,'0');
-    systemTime.textContent = `${h}:${m}:${s}`;
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    systemTimeDiv.textContent = `${h}:${m}:${s}`;
   }
   setInterval(updateTime, 1000);
   updateTime();
 
-  // Toggle top bar visibility
-  let barVisible = false;
+  // --------- TOGGLE TOP BAR ---------
   toggleBarBtn.addEventListener("click", () => {
-    barVisible = !barVisible;
-    if (barVisible) {
-      topBar.classList.add("visible");
-    } else {
+    if (topBar.classList.contains("visible")) {
       topBar.classList.remove("visible");
+      adjustGameIframeHeight(false);
+    } else {
+      topBar.classList.add("visible");
+      adjustGameIframeHeight(true);
+    }
+  });
+
+  function adjustGameIframeHeight(barVisible) {
+    if(barVisible) {
+      // Shrink iframe height to avoid overlapping bottom UI
+      gameIframe.style.height = "calc(100% - 40px)";
+    } else {
+      gameIframe.style.height = "100%";
+    }
+  }
+
+  // --------- WIKI BUTTONS ---------
+  function openWiki(url, title) {
+    wikiIframe.src = url;
+    wikiOverlay.style.display = "flex";
+    wikiOverlay.querySelector("#wikiTitle").textContent = title;
+    // Disable game iframe pointer events to prevent click stealing
+    gameIframe.style.pointerEvents = "none";
+    wikiOverlay.focus();
+  }
+  function closeWiki() {
+    wikiOverlay.style.display = "none";
+    wikiIframe.src = "";
+    gameIframe.style.pointerEvents = "auto";
+    toggleBarBtn.focus();
+  }
+
+  wikiBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/itemslast.html", "Wiki Lookup"));
+  itemLookupBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/itemslast.html", "Item Lookup"));
+  npcLookupBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/npclast.html", "NPC Lookup"));
+  wikiCloseBtn.addEventListener("click", closeWiki);
+
+  // Trap keyboard focus inside wiki overlay while open
+  wikiOverlay.addEventListener("keydown", (e) => {
+    if(e.key === "Escape") {
       closeWiki();
     }
   });
 
-  // Tab switching between iframes
-  tabButtons.addEventListener("click", (e) => {
-    const btn = e.target.closest(".tab-button");
-    if (!btn) return;
-    if (btn.classList.contains("active")) return;
+  // --------- ALT ACCOUNT (two iframes tab system) ---------
+  // We'll create a second iframe for the alt account but keep it hidden, and allow toggling
+  let altIframe = null;
+  let activeIframe = gameIframe;
 
-    // Switch active tab button
-    [...tabButtons.children].forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    // Show/hide iframes
-    if (btn.dataset.iframe === "main") {
-      iframeMain.style.display = "block";
-      iframeAlt.style.display = "none";
-    } else {
-      iframeMain.style.display = "none";
-      iframeAlt.style.display = "block";
+  altAccountBtn.addEventListener("click", () => {
+    if (!altIframe) {
+      altIframe = document.createElement("iframe");
+      altIframe.id = "altGameIframe";
+      altIframe.src = "https://play.consty.com";
+      altIframe.sandbox = "allow-scripts allow-same-origin allow-forms";
+      altIframe.style.position = "absolute";
+      altIframe.style.top = "0";
+      altIframe.style.left = "0";
+      altIframe.style.width = "100%";
+      altIframe.style.height = gameIframe.style.height;
+      altIframe.style.border = "none";
+      altIframe.style.pointerEvents = "auto";
+      altIframe.style.zIndex = 1;
+      altIframe.style.display = "none";
+      document.body.appendChild(altIframe);
     }
 
-    // Close wiki overlay if open
-    closeWiki();
+    if (activeIframe === gameIframe) {
+      gameIframe.style.display = "none";
+      altIframe.style.display = "block";
+      activeIframe = altIframe;
+    } else {
+      altIframe.style.display = "none";
+      gameIframe.style.display = "block";
+      activeIframe = gameIframe;
+    }
   });
 
-  // Open wiki page in overlay
-  function openWikiPage(url) {
-    wikiIframe.src = url;
-    wikiOverlay.style.display = "flex";
+  // --------- SCREENSHOT TOOL ---------
 
-    // Hide the active game iframe completely
-    if (iframeMain.style.display === "block") {
-      iframeMain.style.visibility = "hidden";
+  // Utility: Capture screenshot of the iframe container (including overlay) using html2canvas
+  // Note: iframe cross-origin limitations - this works only if iframe content is accessible or same origin,
+  // but we can capture the iframe element visually (without contents) due to restrictions.
+  // We'll capture the iframe element itself visually as an image.
+
+  screenshotBtn.addEventListener("click", async () => {
+    try {
+      screenshotOverlay.style.display = "flex";
+      // Clear annotations and crop rect
+      cropRect.style.display = "none";
+      annotationInput.style.display = "none";
+      cropping = false;
+      annotating = false;
+      cropStart = null;
+      cropEnd = null;
+
+      // Reset canvas size to iframe size
+      const rect = gameIframe.getBoundingClientRect();
+      screenshotCanvas.width = rect.width;
+      screenshotCanvas.height = rect.height;
+
+      // Use html2canvas on the iframe element - this captures the iframe as a blank rectangle (due to cross-origin),
+      // so instead, we capture the *visible* iframe as an image using drawImage with iframe content not accessible.
+      // Instead, we'll try to capture the entire window visually with html2canvas, then crop to iframe position.
+
+      // Capture the whole body
+      const bodyScreenshot = await html2canvas(document.body, {backgroundColor: null});
+      // Clear canvas and draw the iframe portion
+      screenshotCtx.clearRect(0, 0, screenshotCanvas.width, screenshotCanvas.height);
+      screenshotCtx.drawImage(
+        bodyScreenshot,
+        rect.left, rect.top, rect.width, rect.height,
+        0, 0, screenshotCanvas.width, screenshotCanvas.height
+      );
+
+    } catch (err) {
+      alert("Screenshot failed: " + err.message);
+      screenshotOverlay.style.display = "none";
     }
-    if (iframeAlt.style.display === "block") {
-      iframeAlt.style.visibility = "hidden";
+  });
+
+  screenshotCloseBtn.addEventListener("click", () => {
+    screenshotOverlay.style.display = "none";
+  });
+
+  // Crop tool
+  cropBtn.addEventListener("click", () => {
+    if (cropping) {
+      // Disable cropping
+      cropping = false;
+      cropRect.style.display = "none";
+      cropStart = null;
+      cropEnd = null;
+      screenshotCanvasContainer.style.cursor = "default";
+    } else {
+      cropping = true;
+      annotating = false;
+      cropRect.style.display = "none";
+      annotationInput.style.display = "none";
+      screenshotCanvasContainer.style.cursor = "crosshair";
     }
+  });
 
-    // Focus wiki iframe after small delay
-    setTimeout(() => {
-      wikiIframe.focus();
-    }, 100);
-  }
+  // Annotate tool
+  annotateBtn.addEventListener("click", () => {
+    if (annotating) {
+      annotating = false;
+      annotationInput.style.display = "none";
+      screenshotCanvasContainer.style.cursor = "default";
+    } else {
+      annotating = true;
+      cropping = false;
+      cropRect.style.display = "none";
+      annotationInput.style.display = "block";
+      annotationInput.value = "";
+      annotationInput.style.top = "20px";
+      annotationInput.style.left = "20px";
+      annotationInput.focus();
+      screenshotCanvasContainer.style.cursor = "text";
+    }
+  });
 
-  // Close wiki overlay and restore iframe visibility
-  function closeWiki() {
-    wikiOverlay.style.display = "none";
-    wikiIframe.src = "";
+  // Download button: crops & annotations applied
+  downloadBtn.addEventListener("click", () => {
+    // Prepare a new offscreen canvas to apply crop & annotations
+    let sx = 0, sy = 0, sw = screenshotCanvas.width, sh = screenshotCanvas.height;
 
-    iframeMain.style.visibility = "visible";
-    iframeAlt.style.visibility = "visible";
-
-    // Focus back active iframe
-    const activeTab = document.querySelector("#tabButtons .tab-button.active");
-    if (activeTab) {
-      if (activeTab.dataset.iframe === "main") {
-        iframeMain.focus();
-      } else {
-        iframeAlt.focus();
+    if (cropStart && cropEnd) {
+      sx = Math.min(cropStart.x, cropEnd.x);
+      sy = Math.min(cropStart.y, cropEnd.y);
+      sw = Math.abs(cropEnd.x - cropStart.x);
+      sh = Math.abs(cropEnd.y - cropStart.y);
+      if(sw === 0 || sh === 0) {
+        alert("Invalid crop area");
+        return;
       }
     }
-  }
 
-  document.getElementById("itemLookupBtn").addEventListener("click", () => {
-    openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html");
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = sw;
+    exportCanvas.height = sh;
+    const exportCtx = exportCanvas.getContext("2d");
+
+    // Draw cropped area or full image
+    exportCtx.drawImage(screenshotCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
+
+    // Draw annotation text if any
+    const text = annotationInput.value.trim();
+    if(text) {
+      exportCtx.font = "20px monospace";
+      exportCtx.fillStyle = "lime";
+      exportCtx.strokeStyle = "black";
+      exportCtx.lineWidth = 2;
+      const x = annotationPos.x - sx || 10;
+      const y = annotationPos.y - sy || 30;
+      exportCtx.strokeText(text, x, y);
+      exportCtx.fillText(text, x, y);
+    }
+
+    // Trigger download
+    const link = document.createElement("a");
+    link.download = "moc_screenshot.png";
+    link.href = exportCanvas.toDataURL("image/png");
+    link.click();
   });
 
-  document.getElementById("npcLookupBtn").addEventListener("click", () => {
-    openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
+  // Handle crop drawing
+  screenshotCanvasContainer.addEventListener("mousedown", (e) => {
+    if (!cropping) return;
+    const rect = screenshotCanvas.getBoundingClientRect();
+    cropStart = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+    cropEnd = null;
+    cropRect.style.display = "block";
+    cropRect.style.left = cropStart.x + "px";
+    cropRect.style.top = cropStart.y + "px";
+    cropRect.style.width = "0px";
+    cropRect.style.height = "0px";
+
+    function onMouseMove(ev) {
+      cropEnd = {x: ev.clientX - rect.left, y: ev.clientY - rect.top};
+      const left = Math.min(cropStart.x, cropEnd.x);
+      const top = Math.min(cropStart.y, cropEnd.y);
+      const width = Math.abs(cropEnd.x - cropStart.x);
+      const height = Math.abs(cropEnd.y - cropStart.y);
+      cropRect.style.left = left + "px";
+      cropRect.style.top = top + "px";
+      cropRect.style.width = width + "px";
+      cropRect.style.height = height + "px";
+    }
+
+    function onMouseUp() {
+      screenshotCanvasContainer.removeEventListener("mousemove", onMouseMove);
+      screenshotCanvasContainer.removeEventListener("mouseup", onMouseUp);
+    }
+
+    screenshotCanvasContainer.addEventListener("mousemove", onMouseMove);
+    screenshotCanvasContainer.addEventListener("mouseup", onMouseUp);
   });
 
-  wikiCloseBtn.addEventListener("click", () => {
-    closeWiki();
+  // Handle annotation positioning
+  screenshotCanvasContainer.addEventListener("click", (e) => {
+    if (!annotating) return;
+    const rect = screenshotCanvas.getBoundingClientRect();
+    annotationPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+    annotationInput.style.left = annotationPos.x + "px";
+    annotationInput.style.top = annotationPos.y + "px";
+    annotationInput.focus();
   });
 
-  // Prevent click fallthrough on wiki overlay (stop event bubbling)
-  wikiOverlay.addEventListener("click", (e) => {
-    e.stopPropagation();
+  // --------- SETTINGS PANEL ---------
+  settingsBtn.addEventListener("click", () => {
+    settingsOverlay.style.display = "block";
+    settingsOverlay.focus();
   });
 
+  settingsSaveBtn.addEventListener("click", () => {
+    const selected = themeSelect.value;
+    document.body.className = selected;
+    localStorage.setItem("mocTheme", selected);
+    settingsOverlay.style.display = "none";
+  });
+
+  // Close settings on ESC
+  settingsOverlay.addEventListener("keydown", e => {
+    if(e.key === "Escape") {
+      settingsOverlay.style.display = "none";
+      toggleBarBtn.focus();
+    }
+  });
+
+  // Close overlays on Escape globally (except when focused inside input)
+  document.addEventListener("keydown", e => {
+    if(e.key === "Escape") {
+      if (wikiOverlay.style.display === "flex") {
+        closeWiki();
+      } else if (screenshotOverlay.style.display === "flex") {
+        screenshotOverlay.style.display = "none";
+      } else if (settingsOverlay.style.display === "block") {
+        settingsOverlay.style.display = "none";
+      }
+    }
+  });
 })();
 </script>
-
 </body>
 </html>
