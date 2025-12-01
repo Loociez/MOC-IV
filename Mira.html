@@ -3,24 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mirage Online with TotalEnhance</title>
-<style>
-  body, html {
-    margin: 0; padding: 0; height: 100vh; background: #121212; overflow: hidden;
-  }
-  #gameFrame {
-    width: 100vw;
-    height: 100vh;
-    border: none;
-  }
-</style>
+<title>Load Script After Play Button Click</title>
 </head>
 <body>
 
-<!-- Embed the original game -->
-<iframe id="gameFrame" src="https://play.consty.com" allowfullscreen></iframe>
+<button type="button" title="Play player" onclick="GUI('winSelectPlayer', 'Play')" id="playBtn">Play</button>
 
 <script>
+  // Dummy GUI function simulation (replace with real game GUI)
+  function GUI(win, action) {
+    console.log(`GUI called with: win='${win}', action='${action}'`);
+  }
+
+  // Function to load external script dynamically
   function loadExternalScript(url, callback) {
     if (document.querySelector(`script[src="${url}"]`)) {
       console.log('Script already loaded:', url);
@@ -39,9 +34,14 @@
     document.head.appendChild(script);
   }
 
-  // Load the external TotalEnhance.js script after the page loads
-  window.addEventListener('load', () => {
-    loadExternalScript('https://loociez.github.io/MOC-IV/scripts/TotalEnhance.js');
+  // Setup click listener on the Play button
+  const playButton = document.getElementById('playBtn');
+  playButton.addEventListener('click', () => {
+    // Let the original onclick run first (GUI call)
+    // Then wait 1 second before loading the external script
+    setTimeout(() => {
+      loadExternalScript('https://loociez.github.io/MOC-IV/scripts/TotalEnhance.js');
+    }, 1000);
   });
 </script>
 
