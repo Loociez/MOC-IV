@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mirage Online Classic - Modded</title>
 <style>
-  /* Reset and base */
   body, html {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
     background: #000;
@@ -20,36 +19,50 @@
     transition: height 0.3s ease;
   }
 
-  /* Top bar hidden by default */
+  /* Side bar that slides from left next to toggle button */
   #topBar {
     position: fixed;
-    top: 0; left: 0; right: 0;
-    background: rgba(0,0,0,0.8);
+    top: 40px; /* just below toggle button */
+    left: 0;
+    width: 250px;
+    height: calc(100% - 40px);
+    background: rgba(0,0,0,0.85);
     color: #0f0;
     font-family: monospace;
     font-size: 14px;
     display: flex;
-    align-items: center;
-    padding: 5px 10px;
-    gap: 8px;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+    box-sizing: border-box;
     z-index: 100000;
     user-select: none;
-    transform: translateY(-100%);
+    transform: translateX(-100%);
     transition: transform 0.3s ease;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
   }
   #topBar.visible {
-    transform: translateY(0);
+    transform: translateX(0);
   }
 
-  /* Buttons styling */
+  /* Time at top */
+  #systemTime {
+    font-size: 20px;
+    font-weight: bold;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #0f0;
+  }
+
+  /* Buttons vertical stack */
   #topBar button {
     background: #111;
     border: 1px solid #0f0;
-    border-radius: 6px;
+    border-radius: 8px;
     color: #0f0;
-    padding: 4px 10px;
+    padding: 8px 10px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     user-select: none;
     display: flex;
     align-items: center;
@@ -64,12 +77,12 @@
   #toggleBarBtn {
     position: fixed;
     top: 5px; left: 5px;
-    width: 32px;
-    height: 32px;
-    font-size: 24px;
+    width: 36px;
+    height: 36px;
+    font-size: 26px;
     background: rgba(0,0,0,0.7);
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     color: #0f0;
     cursor: pointer;
     z-index: 100001;
@@ -244,13 +257,13 @@
     background: #0a0;
   }
 
-  /* Theme styles - default dark */
+  /* Theme styles */
   body.theme-dark {
     background: #000;
     color: #0f0;
   }
   body.theme-dark #topBar {
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
     color: #0f0;
   }
   body.theme-dark #topBar button {
@@ -263,13 +276,12 @@
     color: #000;
   }
 
-  /* Theme styles - light */
   body.theme-light {
     background: #eee;
     color: #060;
   }
   body.theme-light #topBar {
-    background: rgba(240,240,240,0.9);
+    background: rgba(240,240,240,0.95);
     color: #060;
   }
   body.theme-light #topBar button {
@@ -282,7 +294,6 @@
     color: #ddd;
   }
 
-  /* Theme styles - green */
   body.theme-green {
     background: #001100;
     color: #7fdb7f;
@@ -300,6 +311,7 @@
     background: #7fdb7f;
     color: #003300;
   }
+
 </style>
 </head>
 <body class="theme-dark">
@@ -310,15 +322,15 @@
 <!-- Toggle Bar Button -->
 <button id="toggleBarBtn" title="Toggle Bar">📚</button>
 
-<!-- Top Bar -->
-<div id="topBar" aria-hidden="true" tabindex="-1">
-  <div id="systemTime">--:--:--</div>
-  <button id="wikiBtn" title="Wiki Lookup">📖</button>
-  <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
-  <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
-  <button id="altAccountBtn" title="Alt Account">Alt</button>
-  <button id="screenshotBtn" title="Advanced Screenshot">📸</button>
-  <button id="settingsBtn" title="Settings">⚙️</button>
+<!-- Side Bar -->
+<div id="topBar" aria-hidden="true" tabindex="-1" role="complementary" aria-label="Mod tools panel">
+  <div id="systemTime" aria-live="polite" aria-atomic="true" aria-relevant="time">--:--:--</div>
+  <button id="wikiBtn" title="Wiki Lookup" aria-label="Wiki Lookup">📖 Wiki</button>
+  <button id="itemLookupBtn" title="Item Lookup" aria-label="Item Lookup">Item Lookup</button>
+  <button id="npcLookupBtn" title="NPC Lookup" aria-label="NPC Lookup">NPC Lookup</button>
+  <button id="altAccountBtn" title="Alt Account" aria-label="Toggle Alt Account">Alt</button>
+  <button id="screenshotBtn" title="Advanced Screenshot" aria-label="Advanced Screenshot">📸</button>
+  <button id="settingsBtn" title="Settings" aria-label="Settings">⚙️</button>
 </div>
 
 <!-- Wiki iframe overlay -->
@@ -420,32 +432,20 @@
   setInterval(updateTime, 1000);
   updateTime();
 
-  // --------- TOGGLE TOP BAR ---------
+  // --------- TOGGLE SIDE BAR ---------
   toggleBarBtn.addEventListener("click", () => {
     if (topBar.classList.contains("visible")) {
       topBar.classList.remove("visible");
-      adjustGameIframeHeight(false);
     } else {
       topBar.classList.add("visible");
-      adjustGameIframeHeight(true);
     }
   });
-
-  function adjustGameIframeHeight(barVisible) {
-    if(barVisible) {
-      // Shrink iframe height to avoid overlapping bottom UI
-      gameIframe.style.height = "calc(100% - 40px)";
-    } else {
-      gameIframe.style.height = "100%";
-    }
-  }
 
   // --------- WIKI BUTTONS ---------
   function openWiki(url, title) {
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
     wikiOverlay.querySelector("#wikiTitle").textContent = title;
-    // Disable game iframe pointer events to prevent click stealing
     gameIframe.style.pointerEvents = "none";
     wikiOverlay.focus();
   }
@@ -461,15 +461,11 @@
   npcLookupBtn.addEventListener("click", () => openWiki("https://loociez.github.io/MOC-IV/npclast.html", "NPC Lookup"));
   wikiCloseBtn.addEventListener("click", closeWiki);
 
-  // Trap keyboard focus inside wiki overlay while open
   wikiOverlay.addEventListener("keydown", (e) => {
-    if(e.key === "Escape") {
-      closeWiki();
-    }
+    if(e.key === "Escape") closeWiki();
   });
 
   // --------- ALT ACCOUNT (two iframes tab system) ---------
-  // We'll create a second iframe for the alt account but keep it hidden, and allow toggling
   let altIframe = null;
   let activeIframe = gameIframe;
 
@@ -483,7 +479,7 @@
       altIframe.style.top = "0";
       altIframe.style.left = "0";
       altIframe.style.width = "100%";
-      altIframe.style.height = gameIframe.style.height;
+      altIframe.style.height = "100%";
       altIframe.style.border = "none";
       altIframe.style.pointerEvents = "auto";
       altIframe.style.zIndex = 1;
@@ -504,44 +500,51 @@
 
   // --------- SCREENSHOT TOOL ---------
 
-  // Utility: Capture screenshot of the iframe container (including overlay) using html2canvas
-  // Note: iframe cross-origin limitations - this works only if iframe content is accessible or same origin,
-  // but we can capture the iframe element visually (without contents) due to restrictions.
-  // We'll capture the iframe element itself visually as an image.
-
   screenshotBtn.addEventListener("click", async () => {
+    screenshotOverlay.style.display = "flex";
+
+    // Hide overlays temporarily to get clean screenshot
+    topBar.style.visibility = "hidden";
+    toggleBarBtn.style.visibility = "hidden";
+    wikiOverlay.style.display = "none";
+    settingsOverlay.style.display = "none";
+
+    // Give browser time to repaint before capturing
+    await new Promise(r => setTimeout(r, 100));
+
     try {
-      screenshotOverlay.style.display = "flex";
-      // Clear annotations and crop rect
+      const rect = activeIframe.getBoundingClientRect();
+
+      // Capture entire viewport (document.body), then crop to iframe
+      const bodyCanvas = await html2canvas(document.body, {backgroundColor: null, logging: false});
+      const croppedCanvas = document.createElement("canvas");
+      croppedCanvas.width = rect.width;
+      croppedCanvas.height = rect.height;
+      const ctx = croppedCanvas.getContext("2d");
+      ctx.drawImage(bodyCanvas, rect.left, rect.top, rect.width, rect.height, 0, 0, rect.width, rect.height);
+
+      // Show in screenshotCanvas
+      screenshotCanvas.width = rect.width;
+      screenshotCanvas.height = rect.height;
+      screenshotCtx.clearRect(0,0,rect.width,rect.height);
+      screenshotCtx.drawImage(croppedCanvas, 0, 0);
+
+      // Reset crop and annotation states
       cropRect.style.display = "none";
       annotationInput.style.display = "none";
       cropping = false;
       annotating = false;
       cropStart = null;
       cropEnd = null;
-
-      // Reset canvas size to iframe size
-      const rect = gameIframe.getBoundingClientRect();
-      screenshotCanvas.width = rect.width;
-      screenshotCanvas.height = rect.height;
-
-      // Use html2canvas on the iframe element - this captures the iframe as a blank rectangle (due to cross-origin),
-      // so instead, we capture the *visible* iframe as an image using drawImage with iframe content not accessible.
-      // Instead, we'll try to capture the entire window visually with html2canvas, then crop to iframe position.
-
-      // Capture the whole body
-      const bodyScreenshot = await html2canvas(document.body, {backgroundColor: null});
-      // Clear canvas and draw the iframe portion
-      screenshotCtx.clearRect(0, 0, screenshotCanvas.width, screenshotCanvas.height);
-      screenshotCtx.drawImage(
-        bodyScreenshot,
-        rect.left, rect.top, rect.width, rect.height,
-        0, 0, screenshotCanvas.width, screenshotCanvas.height
-      );
-
+      annotationInput.value = "";
+      screenshotCanvasContainer.style.cursor = "default";
     } catch (err) {
-      alert("Screenshot failed: " + err.message);
+      alert("Screenshot error: " + err.message);
       screenshotOverlay.style.display = "none";
+    } finally {
+      // Restore overlays
+      topBar.style.visibility = "visible";
+      toggleBarBtn.style.visibility = "visible";
     }
   });
 
@@ -549,10 +552,8 @@
     screenshotOverlay.style.display = "none";
   });
 
-  // Crop tool
   cropBtn.addEventListener("click", () => {
     if (cropping) {
-      // Disable cropping
       cropping = false;
       cropRect.style.display = "none";
       cropStart = null;
@@ -567,7 +568,6 @@
     }
   });
 
-  // Annotate tool
   annotateBtn.addEventListener("click", () => {
     if (annotating) {
       annotating = false;
@@ -586,11 +586,8 @@
     }
   });
 
-  // Download button: crops & annotations applied
   downloadBtn.addEventListener("click", () => {
-    // Prepare a new offscreen canvas to apply crop & annotations
     let sx = 0, sy = 0, sw = screenshotCanvas.width, sh = screenshotCanvas.height;
-
     if (cropStart && cropEnd) {
       sx = Math.min(cropStart.x, cropEnd.x);
       sy = Math.min(cropStart.y, cropEnd.y);
@@ -607,10 +604,8 @@
     exportCanvas.height = sh;
     const exportCtx = exportCanvas.getContext("2d");
 
-    // Draw cropped area or full image
     exportCtx.drawImage(screenshotCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
 
-    // Draw annotation text if any
     const text = annotationInput.value.trim();
     if(text) {
       exportCtx.font = "20px monospace";
@@ -623,14 +618,12 @@
       exportCtx.fillText(text, x, y);
     }
 
-    // Trigger download
     const link = document.createElement("a");
     link.download = "moc_screenshot.png";
     link.href = exportCanvas.toDataURL("image/png");
     link.click();
   });
 
-  // Handle crop drawing
   screenshotCanvasContainer.addEventListener("mousedown", (e) => {
     if (!cropping) return;
     const rect = screenshotCanvas.getBoundingClientRect();
@@ -663,7 +656,6 @@
     screenshotCanvasContainer.addEventListener("mouseup", onMouseUp);
   });
 
-  // Handle annotation positioning
   screenshotCanvasContainer.addEventListener("click", (e) => {
     if (!annotating) return;
     const rect = screenshotCanvas.getBoundingClientRect();
@@ -686,7 +678,6 @@
     settingsOverlay.style.display = "none";
   });
 
-  // Close settings on ESC
   settingsOverlay.addEventListener("keydown", e => {
     if(e.key === "Escape") {
       settingsOverlay.style.display = "none";
@@ -694,7 +685,7 @@
     }
   });
 
-  // Close overlays on Escape globally (except when focused inside input)
+  // Global ESC handler to close overlays
   document.addEventListener("keydown", e => {
     if(e.key === "Escape") {
       if (wikiOverlay.style.display === "flex") {
@@ -706,6 +697,7 @@
       }
     }
   });
+
 })();
 </script>
 </body>
