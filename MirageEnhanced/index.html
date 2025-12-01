@@ -3,141 +3,142 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mirage Online Classic - Modded</title>
+<title>Mirage Online Classic - Dual Account</title>
 <style>
   /* Reset and base */
   body, html {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
     background: #000;
     font-family: Arial, sans-serif;
-    color: #0f0;
   }
-
-  /* Game iframes */
-  iframe.gameFrame {
+  iframe {
     position: absolute;
-    top: 0;
-    left: 0; width: 100%; height: 100%;
-    border: none;
-    pointer-events: auto;
-    z-index: 0;
-    display: none; /* hidden by default */
-    transition: top 0.3s ease;
-  }
-  iframe.gameFrame.active {
-    display: block;
-  }
-
-  /* Small handle button (vertical green bar) */
-  #toggleHandle {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 6px;
-    height: 40px;
-    background: #0f0;
-    cursor: pointer;
-    z-index: 100003;
-    border-radius: 0 4px 4px 0;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  #toggleHandle:hover {
-    background-color: #6f6;
-  }
-
-  /* Top bar container - hidden by default, slides down */
-  #topBarContainer {
-    position: fixed;
-    top: -40px; /* hidden above viewport initially */
     left: 0;
     width: 100%;
-    background: rgba(0,0,0,0.8);
-    border-bottom: 2px solid #0f0;
-    overflow: hidden;
-    z-index: 100002;
+    height: 100%;
+    border: none;
+    pointer-events: auto;
+    transition: top 0.3s, height 0.3s;
+  }
+  #gameIframeMain {
+    top: 0;
+    z-index: 0;
+  }
+  #gameIframeAlt {
+    top: 0;
+    z-index: 0;
+    display: none;
+  }
+
+  /* Top bar container */
+  #topBarContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 40px;
+    background: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px solid #0f0;
+    color: #0f0;
     display: flex;
     align-items: center;
     padding: 0 10px;
+    gap: 12px;
+    font-size: 14px;
     box-sizing: border-box;
-    transition: top 0.3s ease;
+    z-index: 100000;
+    user-select: none;
+    transition: transform 0.3s ease;
+    transform: translateY(-100%);
   }
-
-  /* When shown, slide down to top 0 */
   #topBarContainer.visible {
-    top: 0;
+    transform: translateY(0);
   }
 
-  /* The actual top bar content */
-  #topBar {
+  /* Buttons */
+  .bar-button {
+    background: transparent;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+    color: #0f0;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 14px;
+    user-select: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .bar-button:hover {
+    background-color: #0f0;
+    color: #000;
+  }
+
+  /* Tab buttons container */
+  #tabButtons {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    user-select: none;
+    gap: 6px;
   }
-
-  /* Tab buttons */
-  #topBar button.tabBtn {
+  .tab-button {
     background: transparent;
     border: 1px solid #0f0;
+    border-radius: 5px;
     color: #0f0;
-    padding: 6px 12px;
-    font-size: 14px;
     cursor: pointer;
-    border-radius: 6px 6px 0 0;
+    padding: 4px 12px;
+    font-size: 14px;
+    user-select: none;
+    transition: background-color 0.2s, color 0.2s;
   }
-  #topBar button.tabBtn.active {
-    background: #0f0;
+  .tab-button.active {
+    background-color: #0f0;
     color: #000;
-    font-weight: bold;
+  }
+  .tab-button:hover:not(.active) {
+    background-color: rgba(0,255,0,0.3);
   }
 
-  /* System time */
-  #systemTimeDisplay {
-    cursor: default;
-    user-select: none;
-    min-width: 80px;
+  /* Toggle button for the top bar */
+  #toggleBarBtn {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid #0f0;
+    border-radius: 5px;
+    color: #0f0;
+    font-size: 20px;
+    line-height: 28px;
     text-align: center;
-    font-family: monospace;
-    border: 1px solid #0f0;
-    border-radius: 6px;
-    padding: 6px 10px;
-    background: #111;
-  }
-
-  /* Other buttons */
-  #topBar button.lookupBtn {
-    background: #111;
-    border: 1px solid #0f0;
-    border-radius: 6px;
-    color: #0f0;
-    padding: 6px 10px;
     cursor: pointer;
-    font-size: 14px;
+    user-select: none;
+    z-index: 100001;
+    transition: background-color 0.2s, color 0.2s;
   }
-  #topBar button.lookupBtn:hover {
-    background: #0f0;
+  #toggleBarBtn:hover {
+    background-color: #0f0;
     color: #000;
   }
 
-  /* Close button in top bar */
-  #closeTopBarBtn {
-    background: transparent;
-    border: none;
-    color: #0f0;
-    font-size: 24px;
-    cursor: pointer;
-    user-select: none;
-    margin-left: auto;
-    padding: 0 10px 4px 10px;
-    line-height: 1;
-    font-weight: bold;
-    transition: color 0.3s ease;
+  /* Wiki buttons container inside top bar */
+  #wikiButtons {
+    display: flex;
+    gap: 8px;
   }
-  #closeTopBarBtn:hover {
-    color: #6f6;
+  #wikiButtons button {
+    background: transparent;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+    color: #0f0;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  #wikiButtons button:hover {
+    background-color: #0f0;
+    color: #000;
   }
 
   /* Wiki iframe overlay */
@@ -151,7 +152,7 @@
     border: 2px solid #0f0;
     border-radius: 10px;
     box-shadow: 0 0 30px #0f0;
-    z-index: 100001;
+    z-index: 100002;
     display: none;
     flex-direction: column;
   }
@@ -181,110 +182,126 @@
 </head>
 <body>
 
-<!-- Small handle button -->
-<div id="toggleHandle" title="Show Controls"></div>
+<!-- Toggle button for the top bar -->
+<div id="toggleBarBtn" title="Show Controls">📚</div>
 
-<!-- Top bar container -->
-<div id="topBarContainer" role="region" aria-label="Account and controls">
-  <div id="topBar">
-    <button id="tabMain" class="tabBtn active" title="Main Account">Main</button>
-    <button id="tabAlt" class="tabBtn" title="Alternate Account">Alt</button>
-    <div id="systemTimeDisplay" title="Your local time">--:--:--</div>
-    <button id="itemLookupBtn" class="lookupBtn" title="Item Lookup">Item Lookup</button>
-    <button id="npcLookupBtn" class="lookupBtn" title="NPC Lookup">NPC Lookup</button>
-    <button id="closeTopBarBtn" title="Hide Controls">✖</button>
+<!-- Top bar container (hidden initially) -->
+<div id="topBarContainer" aria-hidden="true" aria-label="Controls">
+  <div id="systemTime"></div>
+
+  <div id="tabButtons" role="tablist" aria-label="Account Tabs">
+    <button class="tab-button active" data-iframe="main" role="tab" aria-selected="true" tabindex="0">Main</button>
+    <button class="tab-button" data-iframe="alt" role="tab" aria-selected="false" tabindex="-1">Alt</button>
+  </div>
+
+  <div id="wikiButtons">
+    <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
+    <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
   </div>
 </div>
 
-<!-- Game Iframes -->
-<iframe id="gameIframeMain" class="gameFrame active" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
-<iframe id="gameIframeAlt" class="gameFrame" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+<!-- Game iframes -->
+<iframe id="gameIframeMain" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" aria-label="Main Game Frame"></iframe>
+<iframe id="gameIframeAlt" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" aria-label="Alternate Account Frame"></iframe>
 
 <!-- Wiki iframe overlay -->
-<div id="wikiOverlay">
+<div id="wikiOverlay" role="dialog" aria-modal="true" aria-labelledby="wikiCloseBtn">
   <button id="wikiCloseBtn" title="Close Wiki">✖</button>
-  <iframe src="" frameborder="0" scrolling="auto"></iframe>
+  <iframe src="" frameborder="0" scrolling="auto" aria-label="Wiki Content"></iframe>
 </div>
 
 <script>
 (() => {
-  "use strict";
-
-  const toggleHandle = document.getElementById("toggleHandle");
+  const toggleBarBtn = document.getElementById("toggleBarBtn");
   const topBarContainer = document.getElementById("topBarContainer");
-  const closeTopBarBtn = document.getElementById("closeTopBarBtn");
-
-  const tabMain = document.getElementById("tabMain");
-  const tabAlt = document.getElementById("tabAlt");
+  const systemTimeDiv = document.getElementById("systemTime");
   const iframeMain = document.getElementById("gameIframeMain");
   const iframeAlt = document.getElementById("gameIframeAlt");
 
-  // Toggle top bar visibility
-  function showTopBar(show) {
-    if(show){
-      topBarContainer.classList.add("visible");
-      // Move iframes down so bar doesn't cover content
-      iframeMain.style.top = "40px";
-      iframeAlt.style.top = "40px";
-    } else {
-      topBarContainer.classList.remove("visible");
-      iframeMain.style.top = "0";
-      iframeAlt.style.top = "0";
-    }
-  }
+  const tabButtons = document.querySelectorAll("#tabButtons .tab-button");
 
-  toggleHandle.addEventListener("click", () => {
-    const visible = topBarContainer.classList.contains("visible");
-    showTopBar(!visible);
-  });
+  const wikiButtons = document.getElementById("wikiButtons");
+  const itemLookupBtn = document.getElementById("itemLookupBtn");
+  const npcLookupBtn = document.getElementById("npcLookupBtn");
 
-  closeTopBarBtn.addEventListener("click", () => {
-    showTopBar(false);
-  });
-
-  // Tab switching
-  function switchTab(tab) {
-    if (tab === "main") {
-      tabMain.classList.add("active");
-      tabAlt.classList.remove("active");
-      iframeMain.classList.add("active");
-      iframeAlt.classList.remove("active");
-    } else if (tab === "alt") {
-      tabAlt.classList.add("active");
-      tabMain.classList.remove("active");
-      iframeAlt.classList.add("active");
-      iframeMain.classList.remove("active");
-    }
-  }
-  tabMain.addEventListener("click", () => switchTab("main"));
-  tabAlt.addEventListener("click", () => switchTab("alt"));
-
-  // System time update
-  const timeDisplay = document.getElementById("systemTimeDisplay");
-  function updateTime() {
-    const now = new Date();
-    const pad = (n) => n.toString().padStart(2, "0");
-    timeDisplay.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-  }
-  updateTime();
-  setInterval(updateTime, 1000);
-
-  // Wiki overlay controls
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
 
-  function openWikiPage(url) {
-    wikiIframe.src = url;
-    wikiOverlay.style.display = "flex";
-    // Disable pointer events on active iframe to prevent clicks falling through
-    if (iframeMain.classList.contains("active")) {
-      iframeMain.style.pointerEvents = "none";
+  // Show/hide top bar & resize iframes accordingly
+  function showTopBar(show) {
+    if(show){
+      topBarContainer.classList.add("visible");
+      topBarContainer.setAttribute("aria-hidden", "false");
+      iframeMain.style.top = "40px";
+      iframeAlt.style.top = "40px";
+      iframeMain.style.height = "calc(100% - 40px)";
+      iframeAlt.style.height = "calc(100% - 40px)";
     } else {
-      iframeAlt.style.pointerEvents = "none";
+      topBarContainer.classList.remove("visible");
+      topBarContainer.setAttribute("aria-hidden", "true");
+      iframeMain.style.top = "0";
+      iframeAlt.style.top = "0";
+      iframeMain.style.height = "100%";
+      iframeAlt.style.height = "100%";
     }
   }
 
+  // Toggle bar button click
+  toggleBarBtn.addEventListener("click", () => {
+    const isVisible = topBarContainer.classList.contains("visible");
+    showTopBar(!isVisible);
+  });
+
+  // Update system time every second
+  function updateTime() {
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2, "0");
+    const m = now.getMinutes().toString().padStart(2, "0");
+    const s = now.getSeconds().toString().padStart(2, "0");
+    systemTimeDiv.textContent = `Time: ${h}:${m}:${s}`;
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  // Tab switching logic
+  function switchTab(name) {
+    tabButtons.forEach(btn => {
+      const isActive = btn.dataset.iframe === name;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+      btn.tabIndex = isActive ? 0 : -1;
+    });
+
+    if(name === "main"){
+      iframeMain.style.display = "block";
+      iframeAlt.style.display = "none";
+      iframeMain.focus();
+    } else if(name === "alt"){
+      iframeMain.style.display = "none";
+      iframeAlt.style.display = "block";
+      iframeAlt.focus();
+    }
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.iframe);
+    });
+  });
+
+  // Default to main tab
+  switchTab("main");
+
+  // Wiki overlay controls
+  function openWikiPage(url) {
+    wikiIframe.src = url;
+    wikiOverlay.style.display = "flex";
+
+    // Disable pointer events on game iframes to prevent interaction
+    iframeMain.style.pointerEvents = "none";
+    iframeAlt.style.pointerEvents = "none";
+  }
   function closeWiki() {
     wikiOverlay.style.display = "none";
     wikiIframe.src = "";
@@ -292,22 +309,16 @@
     iframeAlt.style.pointerEvents = "auto";
   }
 
-  document.getElementById("itemLookupBtn").addEventListener("click", () => {
+  itemLookupBtn.addEventListener("click", () => {
     openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html");
   });
-
-  document.getElementById("npcLookupBtn").addEventListener("click", () => {
+  npcLookupBtn.addEventListener("click", () => {
     openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
   });
+  wikiCloseBtn.addEventListener("click", closeWiki);
 
-  wikiCloseBtn.addEventListener("click", () => {
-    closeWiki();
-  });
-
-  // Prevent click fallthrough on wiki overlay (stop event bubbling)
-  wikiOverlay.addEventListener("click", (e) => {
-    e.stopPropagation();
-  });
+  // Prevent click fallthrough on wiki overlay
+  wikiOverlay.addEventListener("click", e => e.stopPropagation());
 })();
 </script>
 
