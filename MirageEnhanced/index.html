@@ -10,6 +10,7 @@
     margin: 0; padding: 0; height: 100%; overflow: hidden;
     background: #000;
     font-family: Arial, sans-serif;
+    color: #0f0;
   }
   iframe.gameIframe {
     position: absolute;
@@ -39,10 +40,24 @@
     justify-content: center;
   }
 
+  /* System time right of toggle button */
+  #systemTime {
+    position: fixed;
+    top: 8px;
+    left: 46px; /* 32px width + 8px gap */
+    font-family: monospace;
+    font-size: 16px;
+    z-index: 100004;
+    user-select: none;
+    color: #0f0;
+  }
+
   /* Top bar */
   #topBar {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 40px;
+    left: 6px;
+    right: 6px;
     height: 36px;
     background: rgba(0,0,0,0.6);
     display: flex;
@@ -53,8 +68,9 @@
     color: #0f0;
     user-select: none;
     z-index: 100002;
-    transform: translateY(-100%);
+    transform: translateY(-150%);
     transition: transform 0.3s ease;
+    border-radius: 6px;
   }
   #topBar.visible {
     transform: translateY(0);
@@ -80,10 +96,11 @@
     color: #000;
   }
 
-  /* Wiki buttons container */
+  /* Wiki & settings buttons container */
   #wikiButtons {
     display: flex;
     gap: 8px;
+    margin-left: auto;
   }
   #wikiButtons button {
     background: #111;
@@ -137,6 +154,118 @@
     background: #0f0;
     color: #000;
   }
+
+  /* Settings overlay */
+  #settingsOverlay {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    background: #111;
+    border: 2px solid #0f0;
+    border-radius: 12px;
+    box-shadow: 0 0 30px #0f0;
+    padding: 20px;
+    z-index: 100005;
+    display: none;
+    color: #0f0;
+    font-family: monospace;
+    user-select: none;
+  }
+  #settingsOverlay h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  #settingsOverlay label {
+    display: block;
+    margin: 8px 0 4px;
+  }
+  #settingsOverlay select {
+    width: 100%;
+    background: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    padding: 6px;
+    font-family: monospace;
+  }
+  #settingsOverlay button {
+    margin-top: 16px;
+    width: 100%;
+    background: #0f0;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #settingsOverlay button:hover {
+    background: #0a0;
+  }
+
+  /* Themes */
+  body.theme-dark {
+    background: #000;
+    color: #0f0;
+  }
+  body.theme-dark #topBar {
+    background: rgba(0,0,0,0.6);
+    color: #0f0;
+  }
+  body.theme-dark #topBar button,
+  body.theme-dark #wikiButtons button {
+    background: #111;
+    border-color: #0f0;
+    color: #0f0;
+  }
+  body.theme-dark #topBar button:hover,
+  body.theme-dark #wikiButtons button:hover {
+    background: #0f0;
+    color: #000;
+  }
+
+  body.theme-light {
+    background: #eee;
+    color: #060;
+  }
+  body.theme-light #topBar {
+    background: rgba(240,240,240,0.95);
+    color: #060;
+  }
+  body.theme-light #topBar button,
+  body.theme-light #wikiButtons button {
+    background: #ddd;
+    border-color: #060;
+    color: #060;
+  }
+  body.theme-light #topBar button:hover,
+  body.theme-light #wikiButtons button:hover {
+    background: #060;
+    color: #ddd;
+  }
+
+  body.theme-green {
+    background: #001100;
+    color: #7fdb7f;
+  }
+  body.theme-green #topBar {
+    background: rgba(0,50,0,0.9);
+    color: #7fdb7f;
+  }
+  body.theme-green #topBar button,
+  body.theme-green #wikiButtons button {
+    background: #003300;
+    border-color: #7fdb7f;
+    color: #7fdb7f;
+  }
+  body.theme-green #topBar button:hover,
+  body.theme-green #wikiButtons button:hover {
+    background: #7fdb7f;
+    color: #003300;
+  }
 </style>
 </head>
 <body>
@@ -148,9 +277,11 @@
 <!-- Toggle button always visible -->
 <button id="toggleBarBtn" title="Toggle Controls">📚</button>
 
+<!-- System time to the right of toggle -->
+<div id="systemTime">--:--:--</div>
+
 <!-- Top bar (hidden by default) -->
 <div id="topBar">
-  <div id="systemTime">--:--:--</div>
   <div id="tabButtons">
     <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
     <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
@@ -158,6 +289,7 @@
   <div id="wikiButtons" style="margin-left: auto;">
     <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
     <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+    <button id="settingsBtn" title="Settings">Settings</button>
   </div>
 </div>
 
@@ -165,6 +297,18 @@
 <div id="wikiOverlay">
   <button id="wikiCloseBtn" title="Close Wiki">✖</button>
   <iframe src="" frameborder="0" scrolling="auto"></iframe>
+</div>
+
+<!-- Settings overlay -->
+<div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1">
+  <h2>Settings</h2>
+  <label for="themeSelect">Select Theme:</label>
+  <select id="themeSelect" aria-label="Select UI Theme">
+    <option value="theme-dark">Dark</option>
+    <option value="theme-light">Light</option>
+    <option value="theme-green">Green</option>
+  </select>
+  <button id="settingsSaveBtn">Save Settings</button>
 </div>
 
 <script>
@@ -181,6 +325,15 @@
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsOverlay = document.getElementById("settingsOverlay");
+  const themeSelect = document.getElementById("themeSelect");
+  const settingsSaveBtn = document.getElementById("settingsSaveBtn");
+
+  // Load theme from localStorage or default
+  let currentTheme = localStorage.getItem("mocTheme") || "theme-dark";
+  document.body.className = currentTheme;
+  themeSelect.value = currentTheme;
 
   // Update system time every second
   function updateTime() {
@@ -202,6 +355,7 @@
     } else {
       topBar.classList.remove("visible");
       closeWiki();
+      closeSettings();
     }
   });
 
@@ -224,8 +378,9 @@
       iframeAlt.style.display = "block";
     }
 
-    // Close wiki overlay if open
+    // Close overlays
     closeWiki();
+    closeSettings();
   });
 
   // Open wiki page in overlay
@@ -241,7 +396,6 @@
       iframeAlt.style.visibility = "hidden";
     }
 
-    // Focus wiki iframe after small delay
     setTimeout(() => {
       wikiIframe.focus();
     }, 100);
@@ -276,6 +430,44 @@
 
   wikiCloseBtn.addEventListener("click", () => {
     closeWiki();
+  });
+
+  // Settings panel
+  function openSettings() {
+    settingsOverlay.style.display = "block";
+    settingsOverlay.focus();
+  }
+  function closeSettings() {
+    settingsOverlay.style.display = "none";
+  }
+
+  settingsBtn.addEventListener("click", () => {
+    openSettings();
+    closeWiki();
+  });
+
+  settingsSaveBtn.addEventListener("click", () => {
+    const selected = themeSelect.value;
+    document.body.className = selected;
+    localStorage.setItem("mocTheme", selected);
+    closeSettings();
+  });
+
+  settingsOverlay.addEventListener("keydown", e => {
+    if(e.key === "Escape") {
+      closeSettings();
+    }
+  });
+
+  // Global ESC handler to close overlays
+  document.addEventListener("keydown", e => {
+    if(e.key === "Escape") {
+      if (wikiOverlay.style.display === "flex") {
+        closeWiki();
+      } else if (settingsOverlay.style.display === "block") {
+        closeSettings();
+      }
+    }
   });
 
   // Prevent click fallthrough on wiki overlay (stop event bubbling)
