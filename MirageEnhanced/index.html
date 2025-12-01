@@ -12,33 +12,53 @@
     font-family: Arial, sans-serif;
     color: #0f0;
   }
-  iframe#gameIframe {
+  iframe.gameFrame {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 40px; /* leave space for tab bar */
+    left: 0; width: 100%; height: calc(100% - 40px);
     border: none;
     pointer-events: auto;
     z-index: 0;
+    display: none; /* hide by default */
+  }
+  iframe.gameFrame.active {
+    display: block;
+    z-index: 1;
   }
 
-  /* System Time Display */
-  #systemTime {
+  /* Tab bar for switching between accounts */
+  #tabBar {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    font-family: monospace;
+    top: 0; left: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0,0,0,0.8);
+    border-bottom: 2px solid #0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    z-index: 100002;
+  }
+  #tabBar button {
+    background: transparent;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 6px 12px;
     font-size: 14px;
-    background: rgba(0,0,0,0.5);
-    padding: 4px 8px;
-    border-radius: 6px;
-    z-index: 100000;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
     user-select: none;
+  }
+  #tabBar button.active {
+    background: #0f0;
+    color: #000;
+    font-weight: bold;
   }
 
   /* Wiki toggler button */
   #wikiToggleBtn {
-    position: fixed;
-    top: 10px;
-    left: 60px;
     width: 36px;
     height: 36px;
     font-size: 24px;
@@ -47,7 +67,6 @@
     border-radius: 6px;
     color: #0f0;
     cursor: pointer;
-    z-index: 100000;
     user-select: none;
     display: flex;
     align-items: center;
@@ -56,22 +75,21 @@
 
   /* Wiki buttons container */
   #wikiButtons {
-    position: fixed;
-    top: 50px;
-    left: 10px;
+    margin-left: 10px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 8px;
     background: rgba(0,0,0,0.7);
     border-radius: 8px;
-    padding: 8px;
-    z-index: 100000;
-    max-width: 280px;
-    max-height: 400px;
-    overflow: auto;
+    padding: 6px 8px;
+    max-width: 600px;
+    max-height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
     display: none;
   }
-  #wikiButtons button {
+  #wikiButtons button,
+  #systemTimeDisplay {
     background: #111;
     border: 1px solid #0f0;
     border-radius: 6px;
@@ -80,10 +98,19 @@
     cursor: pointer;
     font-size: 14px;
     user-select: none;
+    line-height: 1;
   }
   #wikiButtons button:hover {
     background: #0f0;
     color: #000;
+  }
+
+  #systemTimeDisplay {
+    cursor: default;
+    user-select: none;
+    min-width: 80px;
+    text-align: center;
+    font-family: monospace;
   }
 
   /* Wiki iframe overlay */
@@ -127,21 +154,23 @@
 </head>
 <body>
 
-<!-- System Time Display -->
-<div id="systemTime" title="Your local time">--:--:--</div>
+<!-- Tab Bar -->
+<div id="tabBar">
+  <button id="tabMain" class="active" title="Main Account">Main</button>
+  <button id="tabAlt" title="Alternate Account">Alt</button>
 
-<!-- The game iframe -->
-<iframe id="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+  <button id="wikiToggleBtn" title="Toggle Features">📚</button>
 
-<!-- Wiki toggle button -->
-<button id="wikiToggleBtn" title="Toggle Feature Buttons">📚</button>
-
-<!-- Wiki buttons container -->
-<div id="wikiButtons">
-  <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
-  <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
-  <button id="openSecondAccountBtn" title="Open 2nd Account">Open 2nd Account</button>
+  <div id="wikiButtons">
+    <div id="systemTimeDisplay" title="Your local time">--:--:--</div>
+    <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
+    <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+  </div>
 </div>
+
+<!-- Game Iframes -->
+<iframe id="gameIframeMain" class="gameFrame active" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+<iframe id="gameIframeAlt" class="gameFrame" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
 
 <!-- Wiki iframe overlay -->
 <div id="wikiOverlay">
@@ -153,18 +182,42 @@
 (() => {
   "use strict";
 
-  // Update System Time every second
-  const timeDiv = document.getElementById("systemTime");
+  // Tabs elements
+  const tabMain = document.getElementById("tabMain");
+  const tabAlt = document.getElementById("tabAlt");
+  const iframeMain = document.getElementById("gameIframeMain");
+  const iframeAlt = document.getElementById("gameIframeAlt");
+
+  // Switch tab function
+  function switchTab(tab) {
+    if (tab === "main") {
+      tabMain.classList.add("active");
+      tabAlt.classList.remove("active");
+      iframeMain.classList.add("active");
+      iframeAlt.classList.remove("active");
+    } else if (tab === "alt") {
+      tabAlt.classList.add("active");
+      tabMain.classList.remove("active");
+      iframeAlt.classList.add("active");
+      iframeMain.classList.remove("active");
+    }
+  }
+
+  tabMain.addEventListener("click", () => switchTab("main"));
+  tabAlt.addEventListener("click", () => switchTab("alt"));
+
+  // System Time inside feature panel
+  const timeDisplay = document.getElementById("systemTimeDisplay");
   function updateTime() {
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, "0");
     const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    timeDiv.textContent = timeStr;
+    timeDisplay.textContent = timeStr;
   }
   updateTime();
   setInterval(updateTime, 1000);
 
-  // Wiki toggle button and feature buttons
+  // Wiki toggle & buttons
   const wikiToggleBtn = document.getElementById("wikiToggleBtn");
   const wikiButtons = document.getElementById("wikiButtons");
   const wikiOverlay = document.getElementById("wikiOverlay");
@@ -186,14 +239,20 @@
   function openWikiPage(url) {
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
-    // Disable pointer events on game iframe so clicks don't fall through
-    document.getElementById("gameIframe").style.pointerEvents = "none";
+    // Disable pointer events on active game iframe so clicks don't fall through
+    if (iframeMain.classList.contains("active")) {
+      iframeMain.style.pointerEvents = "none";
+    } else {
+      iframeAlt.style.pointerEvents = "none";
+    }
   }
 
   function closeWiki() {
     wikiOverlay.style.display = "none";
     wikiIframe.src = "";
-    document.getElementById("gameIframe").style.pointerEvents = "auto";
+    // Re-enable pointer events on both iframes
+    iframeMain.style.pointerEvents = "auto";
+    iframeAlt.style.pointerEvents = "auto";
   }
 
   document.getElementById("itemLookupBtn").addEventListener("click", () => {
@@ -212,14 +271,6 @@
   wikiOverlay.addEventListener("click", (e) => {
     e.stopPropagation();
   });
-
-  // Open second account button
-  const openSecondAccountBtn = document.getElementById("openSecondAccountBtn");
-  openSecondAccountBtn.addEventListener("click", () => {
-    // Open new tab/window with same game URL to allow second account login
-    window.open("https://play.consty.com", "_blank");
-  });
-
 })();
 </script>
 
