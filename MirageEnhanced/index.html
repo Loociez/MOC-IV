@@ -3,25 +3,142 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mirage Online with Overlay Mod</title>
+<title>Mirage Online with Wiki Overlays</title>
 <style>
   html, body {
-    margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #121212;
+    margin: 0; padding: 0; height: 100%;
+    background: #121212;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: #eee;
   }
   #gameFrame {
-    width: 100vw;
-    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
     border: none;
+    z-index: 1;
+  }
+
+  /* Overlay container for buttons */
+  #overlayControls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+  }
+
+  button.wikiBtn {
+    background: #222;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 10px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    user-select: none;
+  }
+
+  button.wikiBtn:hover {
+    background: #0f0;
+    color: #000;
+  }
+
+  /* Wiki overlay styling */
+  .wikiOverlay {
+    position: fixed;
+    top: 10vh;
+    left: 10vw;
+    width: 80vw;
+    height: 80vh;
+    background: rgba(0,0,0,0.95);
+    border: 2px solid #0f0;
+    border-radius: 10px;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+  }
+
+  .wikiOverlay iframe {
+    flex: 1;
+    border: none;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .wikiHeader {
+    background: #0f0;
+    color: #000;
+    padding: 8px 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+    user-select: none;
+  }
+
+  .closeBtn {
+    background: #222;
+    border: none;
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .closeBtn:hover {
+    background: #0a0;
   }
 </style>
 </head>
 <body>
 
-<!-- Game iframe -->
-<iframe id="gameFrame" src="https://play.consty.com" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+<iframe id="gameFrame" src="https://play.consty.com" allowfullscreen></iframe>
 
-<!-- Overlay script -->
-<script src="overlay.js"></script>
+<div id="overlayControls">
+  <button class="wikiBtn" id="btnItemWiki">Item Lookup</button>
+  <button class="wikiBtn" id="btnNPCWiki">NPC Lookup</button>
+</div>
+
+<!-- Item Wiki Overlay -->
+<div class="wikiOverlay" id="itemWikiOverlay">
+  <div class="wikiHeader">
+    <span>Item Wiki</span>
+    <button class="closeBtn" onclick="document.getElementById('itemWikiOverlay').style.display='none'">X</button>
+  </div>
+  <iframe src="https://loociez.github.io/MOC-IV/itemslast.html"></iframe>
+</div>
+
+<!-- NPC Wiki Overlay -->
+<div class="wikiOverlay" id="npcWikiOverlay">
+  <div class="wikiHeader">
+    <span>NPC Wiki</span>
+    <button class="closeBtn" onclick="document.getElementById('npcWikiOverlay').style.display='none'">X</button>
+  </div>
+  <iframe src="https://loociez.github.io/MOC-IV/npclast.html"></iframe>
+</div>
+
+<script>
+  const btnItem = document.getElementById('btnItemWiki');
+  const btnNPC = document.getElementById('btnNPCWiki');
+  const itemOverlay = document.getElementById('itemWikiOverlay');
+  const npcOverlay = document.getElementById('npcWikiOverlay');
+
+  btnItem.addEventListener('click', () => {
+    itemOverlay.style.display = 'flex';
+    npcOverlay.style.display = 'none';
+  });
+
+  btnNPC.addEventListener('click', () => {
+    npcOverlay.style.display = 'flex';
+    itemOverlay.style.display = 'none';
+  });
+</script>
 
 </body>
 </html>
