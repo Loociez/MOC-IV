@@ -20,11 +20,19 @@
     visibility: visible;
   }
 
-  /* Toggle button always visible top-left */
-  #toggleBarBtn {
+  /* Container for toggle and bar */
+  #topBarContainer {
     position: fixed;
     top: 6px;
     left: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100004;
+  }
+
+  /* Toggle button always visible */
+  #toggleBarBtn {
     width: 32px; height: 32px;
     background: rgba(0,0,0,0.7);
     border: none;
@@ -33,31 +41,36 @@
     cursor: pointer;
     user-select: none;
     border-radius: 6px;
-    z-index: 100004;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  /* Top bar */
+  /* Top bar (hidden by default) */
   #topBar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
     height: 36px;
     background: rgba(0,0,0,0.6);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     padding: 0 10px;
     font-size: 14px;
     color: #0f0;
     user-select: none;
-    z-index: 100002;
-    transform: translateY(-100%);
+    border-radius: 6px;
+    transform: translateX(-120%);
     transition: transform 0.3s ease;
+    white-space: nowrap;
   }
   #topBar.visible {
-    transform: translateY(0);
+    transform: translateX(0);
+  }
+
+  /* System time */
+  #systemTime {
+    min-width: 70px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Tab buttons */
@@ -145,19 +158,22 @@
 <iframe id="iframeMain" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: block;"></iframe>
 <iframe id="iframeAlt" class="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms" style="display: none;"></iframe>
 
-<!-- Toggle button always visible -->
-<button id="toggleBarBtn" title="Toggle Controls">📚</button>
+<!-- Container with toggle button and bar -->
+<div id="topBarContainer">
+  <!-- Toggle button always visible -->
+  <button id="toggleBarBtn" title="Toggle Controls">📚</button>
 
-<!-- Top bar (hidden by default) -->
-<div id="topBar">
-  <div id="systemTime">--:--:--</div>
-  <div id="tabButtons">
-    <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
-    <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
-  </div>
-  <div id="wikiButtons" style="margin-left: auto;">
-    <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
-    <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+  <!-- Top bar (hidden by default) -->
+  <div id="topBar">
+    <div id="systemTime">--:--:--</div>
+    <div id="tabButtons">
+      <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
+      <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
+    </div>
+    <div id="wikiButtons">
+      <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
+      <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+    </div>
   </div>
 </div>
 
