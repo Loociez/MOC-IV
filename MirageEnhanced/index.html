@@ -10,6 +10,7 @@
     margin: 0; padding: 0; height: 100%; overflow: hidden;
     background: #000;
     font-family: Arial, sans-serif;
+    color: #0f0;
   }
   iframe#gameIframe {
     position: absolute;
@@ -19,78 +20,25 @@
     z-index: 0;
   }
 
-  /* HOTBAR */
-  #canvasHotbar {
+  /* System Time Display */
+  #systemTime {
     position: fixed;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 6px;
-    padding: 6px 10px;
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
-    z-index: 99999;
-    user-select: none;
-    cursor: grab;
-  }
-  #canvasHotbar.dragging {
-    cursor: grabbing !important;
-  }
-  #canvasHotbar .slot {
-    position: relative;
-    width: 42px;
-    height: 42px;
-    border: 1px solid rgba(255,255,255,0.25);
+    top: 10px;
+    left: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
     border-radius: 6px;
-    background: rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: white;
-    cursor: pointer;
-    overflow: hidden;
-  }
-  #canvasHotbar .slot.plus {
-    background: rgba(0,150,0,0.4);
-    font-size: 24px;
-    color: #0f0;
-    cursor: pointer;
-  }
-  #canvasHotbar .slot .hotkeyLabel {
-    position: absolute;
-    bottom: 2px;
-    right: 4px;
-    font-weight: bold;
-    font-size: 12px;
-    color: #0f0;
-    text-shadow: 0 0 3px black;
-    pointer-events: none;
-    z-index: 10;
-  }
-  #canvasHotbar .slot .cog {
-    position: absolute;
-    top: -6px;
-    right: -2px;
-    font-size: 14px;
-    cursor: pointer;
-    z-index: 10;
-  }
-  #canvasHotbar.locked {
-    cursor: default !important;
-  }
-  #canvasHotbar.locked .slot {
-    cursor: default !important;
+    z-index: 100000;
+    user-select: none;
   }
 
   /* Wiki toggler button */
   #wikiToggleBtn {
     position: fixed;
     top: 10px;
-    left: 10px;
+    left: 60px;
     width: 36px;
     height: 36px;
     font-size: 24px;
@@ -179,18 +127,20 @@
 </head>
 <body>
 
+<!-- System Time Display -->
+<div id="systemTime" title="Your local time">--:--:--</div>
+
 <!-- The game iframe -->
 <iframe id="gameIframe" src="https://play.consty.com" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
 
-<!-- Hotbar container (created dynamically by script) -->
-
 <!-- Wiki toggle button -->
-<button id="wikiToggleBtn" title="Toggle Wiki Buttons">📚</button>
+<button id="wikiToggleBtn" title="Toggle Feature Buttons">📚</button>
 
 <!-- Wiki buttons container -->
 <div id="wikiButtons">
   <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
   <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
+  <button id="openSecondAccountBtn" title="Open 2nd Account">Open 2nd Account</button>
 </div>
 
 <!-- Wiki iframe overlay -->
@@ -203,386 +153,24 @@
 (() => {
   "use strict";
 
-  // HOTBAR CODE (fixed drag bug & improvements)
-  const HOTBAR_ID = "canvasHotbar";
-  const STORAGE_KEY = "CanvasHotbarBindings";
-  const LOCK_KEY = "CanvasHotbarLocked";
-  const POS_KEY = "CanvasHotbarPosition";
-  const INITIAL_KEYS = new Set(["C", "V", "B"]);
-
-  let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  let locked = localStorage.getItem(LOCK_KEY) === "true";
-  let awaitingAssignmentFor = null;
-
-  if (document.getElementById(HOTBAR_ID)) {
-    console.log("Hotbar already exists.");
-    return;
+  // Update System Time every second
+  const timeDiv = document.getElementById("systemTime");
+  function updateTime() {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, "0");
+    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    timeDiv.textContent = timeStr;
   }
+  updateTime();
+  setInterval(updateTime, 1000);
 
-  // Create hotbar div
-  const bar = document.createElement("div");
-  bar.id = HOTBAR_ID;
-  bar.style.position = "fixed";
-  bar.style.bottom = "40px";
-  bar.style.left = "50%";
-  bar.style.transform = "translateX(-50%)";
-  bar.style.display = "flex";
-  bar.style.gap = "6px";
-  bar.style.padding = "6px 10px";
-  bar.style.background = "rgba(0,0,0,0.35)";
-  bar.style.border = "1px solid rgba(255,255,255,0.2)";
-  bar.style.borderRadius = "8px";
-  bar.style.backdropFilter = "blur(4px)";
-  bar.style.zIndex = "99999";
-  bar.style.userSelect = "none";
-  bar.style.cursor = locked ? "default" : "grab";
-
-  // Restore saved position
-  const savedPos = JSON.parse(localStorage.getItem(POS_KEY) || "null");
-  if (savedPos) {
-    bar.style.left = savedPos.left + "px";
-    bar.style.top = savedPos.top + "px";
-    bar.style.bottom = "auto";
-    bar.style.transform = "none";
-  }
-
-  document.body.appendChild(bar);
-
-  // Dragging vars
-  let dragging = false;
-  let offX = 0;
-  let offY = 0;
-
-  // Mousedown start drag
-  bar.addEventListener("mousedown", (e) => {
-    if (locked) return;
-    // Avoid dragging if clicking buttons/settings icons inside the hotbar
-    if (
-      e.target.classList.contains("slot") ||
-      e.target.classList.contains("hotkeyLabel") ||
-      e.target.classList.contains("cog") ||
-      e.target.innerText === "⚙️" ||
-      e.target.innerText === "+"
-    ) return;
-
-    dragging = true;
-    offX = e.clientX - bar.offsetLeft;
-    offY = e.clientY - bar.offsetTop;
-    bar.classList.add("dragging");
-    // Capture pointer to avoid stuck dragging
-    bar.setPointerCapture(e.pointerId);
-    e.preventDefault();
-  });
-
-  // Mouseup end drag
-  bar.addEventListener("mouseup", (e) => {
-    if (dragging) {
-      dragging = false;
-      bar.classList.remove("dragging");
-      localStorage.setItem(
-        POS_KEY,
-        JSON.stringify({ left: bar.offsetLeft, top: bar.offsetTop })
-      );
-      // Release pointer capture
-      bar.releasePointerCapture(e.pointerId);
-    }
-  });
-
-  // Mousemove drag
-  bar.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-    let newLeft = e.clientX - offX;
-    let newTop = e.clientY - offY;
-
-    // Clamp inside viewport
-    const maxLeft = window.innerWidth - bar.offsetWidth;
-    const maxTop = window.innerHeight - bar.offsetHeight;
-    newLeft = Math.min(Math.max(0, newLeft), maxLeft);
-    newTop = Math.min(Math.max(0, newTop), maxTop);
-
-    bar.style.left = newLeft + "px";
-    bar.style.top = newTop + "px";
-    bar.style.bottom = "auto";
-    bar.style.transform = "none";
-  });
-
-  // Create a slot
-  function createSlot(initialKey, isPlus = false) {
-    const div = document.createElement("div");
-    div.classList.add("slot");
-    if (isPlus) div.classList.add("plus");
-    div.style.position = "relative";
-    div.style.width = "42px";
-    div.style.height = "42px";
-    div.style.borderRadius = "6px";
-    div.style.background = isPlus ? "rgba(0,150,0,0.4)" : "rgba(255,255,255,0.08)";
-    div.style.display = "flex";
-    div.style.alignItems = "center";
-    div.style.justifyContent = "center";
-    div.style.fontSize = isPlus ? "24px" : "14px";
-    div.style.color = isPlus ? "#0f0" : "white";
-    div.style.cursor = locked ? "default" : "pointer";
-    div.style.overflow = "hidden";
-
-    if (isPlus) {
-      div.innerText = "+";
-      div.title = "Add new slot";
-
-      div.addEventListener("click", () => {
-        if (locked) return;
-
-        const used = new Set(Object.keys(saved));
-        let newKey = null;
-        for (let i = 65; i <= 90; i++) {
-          const ch = String.fromCharCode(i);
-          if (!used.has(ch)) {
-            newKey = ch;
-            break;
-          }
-        }
-        if (!newKey) {
-          alert("No more keys available.");
-          return;
-        }
-
-        saved[newKey] = -1;
-        saveBindings();
-
-        const slot = createSlot(newKey);
-        bar.insertBefore(slot, div);
-        console.log("Added slot:", newKey);
-      });
-
-      return div;
-    }
-
-    // Key label
-    const keyLabel = document.createElement("div");
-    keyLabel.innerText = initialKey;
-    keyLabel.classList.add("hotkeyLabel");
-    div.appendChild(keyLabel);
-
-    // Settings cog
-    const cog = document.createElement("div");
-    cog.innerText = "⚙️";
-    cog.classList.add("cog");
-    cog.title = "Change keybind";
-    div.appendChild(cog);
-
-    cog.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (locked) return;
-      div.style.outline = "2px solid yellow";
-
-      const listener = (ev) => {
-        ev.preventDefault();
-        const newKey = ("" + ev.key).toUpperCase();
-
-        // De-dupe
-        for (const k in saved) {
-          if (k === newKey) delete saved[k];
-        }
-
-        const oldKey = keyLabel.innerText;
-        saved[newKey] = saved[oldKey] ?? -1;
-        delete saved[oldKey];
-
-        saveBindings();
-        keyLabel.innerText = newKey;
-
-        document.removeEventListener("keydown", listener, true);
-        div.style.outline = "";
-      };
-
-      document.addEventListener("keydown", listener, true);
-    });
-
-    // Right-click delete for non-initial keys
-    div.addEventListener("mousedown", (e) => {
-      if (locked) return;
-      if (e.button === 2) {
-        e.preventDefault();
-        const key = keyLabel.innerText;
-        if (INITIAL_KEYS.has(key)) return;
-        delete saved[key];
-        saveBindings();
-        div.remove();
-      }
-    });
-
-    // Assign inventory slot on click
-    div.addEventListener("click", (ev) => {
-      if (locked) return;
-      if (ev.target.innerText === "⚙️") return;
-      const key = keyLabel.innerText;
-      awaitingAssignmentFor = key;
-      div.style.outline = "2px solid gold";
-      setTimeout(() => (div.style.outline = ""), 600);
-    });
-
-    // Prevent context menu on right-click for deletion
-    div.addEventListener("contextmenu", (e) => {
-      if (locked) return;
-      const key = keyLabel.innerText;
-      if (!INITIAL_KEYS.has(key)) e.preventDefault();
-    });
-
-    return div;
-  }
-
-  // Save bindings
-  function saveBindings() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-  }
-
-  // Animate slot use green ripple
-  function animateSlotUseForKey(key) {
-    try {
-      const slots = document.querySelectorAll(`#${HOTBAR_ID} .slot`);
-      for (const slot of slots) {
-        const lbl = slot.querySelector(".hotkeyLabel");
-        if (!lbl) continue;
-        if (lbl.innerText.trim() !== key) continue;
-
-        const ripple = document.createElement("div");
-        const size = Math.max(slot.clientWidth, slot.clientHeight) * 3;
-
-        Object.assign(ripple.style, {
-          position: "absolute",
-          left: "50%",
-          top: "50%",
-          width: size + "px",
-          height: size + "px",
-          marginLeft: -size / 2 + "px",
-          marginTop: -size / 2 + "px",
-          borderRadius: "50%",
-          pointerEvents: "none",
-          zIndex: "1",
-          background: "rgba(0,255,80,0.35)",
-          transform: "scale(0)",
-          opacity: "1",
-          transition:
-            "transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out",
-        });
-
-        slot.appendChild(ripple);
-
-        const cog = slot.querySelector("div.cog");
-        const label = slot.querySelector(".hotkeyLabel");
-        if (cog) cog.style.zIndex = "10";
-        if (label) label.style.zIndex = "10";
-
-        // Trigger reflow
-        ripple.offsetWidth;
-
-        ripple.style.transform = "scale(1)";
-        ripple.style.opacity = "0";
-
-        setTimeout(() => ripple.remove(), 950);
-
-        break;
-      }
-    } catch (err) {
-      console.warn("animateSlotUseForKey error:", err);
-    }
-  }
-
-  // Build hotbar slots
-  const keys = Object.keys(saved).length ? Object.keys(saved) : ["C", "V", "B"];
-  keys.forEach((k) => bar.appendChild(createSlot(k)));
-  const addSlotBtn = createSlot("+", true);
-  bar.appendChild(addSlotBtn);
-
-  // Lock button
-  const lockBtn = document.createElement("div");
-  lockBtn.innerText = locked ? "🔒" : "🔓";
-  lockBtn.style.fontSize = "13px";
-  lockBtn.style.marginLeft = "6px";
-  lockBtn.style.cursor = "pointer";
-
-  lockBtn.onclick = () => {
-    locked = !locked;
-    localStorage.setItem(LOCK_KEY, locked);
-    lockBtn.innerText = locked ? "🔒" : "🔓";
-
-    document.querySelectorAll(`#${HOTBAR_ID} .slot`).forEach((s) => {
-      s.style.cursor = locked ? "default" : "pointer";
-    });
-
-    bar.style.cursor = locked ? "default" : "grab";
-  };
-
-  bar.appendChild(lockBtn);
-
-  // Assign canvas slot on inventory canvas click
-  document.addEventListener("mousedown", (e) => {
-    if (awaitingAssignmentFor === null) return;
-
-    const canvases = [...document.querySelectorAll("#winInventory canvas")];
-    const index = canvases.indexOf(e.target);
-
-    if (index !== -1) {
-      saved[awaitingAssignmentFor] = index;
-      saveBindings();
-      awaitingAssignmentFor = null;
-    }
-  });
-
-  // Simulate double click on canvas
-  function simulateDoubleClick(canvas) {
-    function ev(t) {
-      return new MouseEvent(t, {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-        button: 0,
-        buttons: 1,
-        clientX: canvas.getBoundingClientRect().left + 1,
-        clientY: canvas.getBoundingClientRect().top + 1,
-      });
-    }
-    canvas.dispatchEvent(ev("mousedown"));
-    canvas.dispatchEvent(ev("mouseup"));
-    setTimeout(() => {
-      canvas.dispatchEvent(ev("mousedown"));
-      canvas.dispatchEvent(ev("mouseup"));
-    }, 50);
-  }
-
-  // Listen for hotkeys
-  document.addEventListener("keydown", (e) => {
-    if (e.repeat) return;
-    if (locked) return;
-
-    const key = e.key.toUpperCase();
-    if (!(key in saved)) return;
-
-    // Find inventory canvas for that slot
-    const index = saved[key];
-    if (typeof index !== "number" || index < 0) return;
-
-    const canvases = [...document.querySelectorAll("#winInventory canvas")];
-    if (index >= canvases.length) return;
-
-    const canvas = canvases[index];
-    if (!canvas) return;
-
-    // Animate slot use
-    animateSlotUseForKey(key);
-
-    // Simulate double click to use item
-    simulateDoubleClick(canvas);
-  });
-
-  // ======= WIKI BUTTONS & IFRAME =======
-
+  // Wiki toggle button and feature buttons
   const wikiToggleBtn = document.getElementById("wikiToggleBtn");
   const wikiButtons = document.getElementById("wikiButtons");
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
 
-  // Start hidden
   wikiButtons.style.display = "none";
 
   wikiToggleBtn.addEventListener("click", () => {
@@ -598,7 +186,6 @@
   function openWikiPage(url) {
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
-
     // Disable pointer events on game iframe so clicks don't fall through
     document.getElementById("gameIframe").style.pointerEvents = "none";
   }
@@ -610,11 +197,11 @@
   }
 
   document.getElementById("itemLookupBtn").addEventListener("click", () => {
-    openWikiPage("https://mirageonlineclassic.fandom.com/wiki/Item_List");
+    openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html");
   });
 
   document.getElementById("npcLookupBtn").addEventListener("click", () => {
-    openWikiPage("https://mirageonlineclassic.fandom.com/wiki/NPC_List");
+    openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
   });
 
   wikiCloseBtn.addEventListener("click", () => {
@@ -626,34 +213,13 @@
     e.stopPropagation();
   });
 
-  // Prevent right-click context menu on hotbar slots for locked keys only
-  document.getElementById(HOTBAR_ID).addEventListener("contextmenu", (e) => {
-    const target = e.target;
-    if (
-      target.classList.contains("slot") &&
-      locked
-    ) {
-      e.preventDefault();
-    }
+  // Open second account button
+  const openSecondAccountBtn = document.getElementById("openSecondAccountBtn");
+  openSecondAccountBtn.addEventListener("click", () => {
+    // Open new tab/window with same game URL to allow second account login
+    window.open("https://play.consty.com", "_blank");
   });
 
-  // Block game interaction while wiki open (to prevent clicks falling through)
-  wikiOverlay.addEventListener("mousedown", (e) => {
-    e.stopPropagation();
-  });
-
-  // Make sure iframe can scroll and receive pointer events
-  wikiIframe.style.pointerEvents = "auto";
-
-  // Save window position on resize to keep hotbar visible
-  window.addEventListener("resize", () => {
-    const left = bar.offsetLeft;
-    const top = bar.offsetTop;
-    const maxLeft = window.innerWidth - bar.offsetWidth;
-    const maxTop = window.innerHeight - bar.offsetHeight;
-    bar.style.left = Math.min(left, maxLeft) + "px";
-    bar.style.top = Math.min(top, maxTop) + "px";
-  });
 })();
 </script>
 
