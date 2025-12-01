@@ -16,38 +16,57 @@
   /* Game iframes */
   iframe.gameFrame {
     position: absolute;
-    top: 40px; /* space for expanded bar */
-    left: 0; width: 100%; height: calc(100% - 40px);
+    top: 0;
+    left: 0; width: 100%; height: 100%;
     border: none;
     pointer-events: auto;
     z-index: 0;
     display: none; /* hidden by default */
+    transition: top 0.3s ease;
   }
   iframe.gameFrame.active {
     display: block;
-    z-index: 1;
   }
 
-  /* Top bar container */
+  /* Small handle button (vertical green bar) */
+  #toggleHandle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 40px;
+    background: #0f0;
+    cursor: pointer;
+    z-index: 100003;
+    border-radius: 0 4px 4px 0;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #toggleHandle:hover {
+    background-color: #6f6;
+  }
+
+  /* Top bar container - hidden by default, slides down */
   #topBarContainer {
     position: fixed;
-    top: 0; left: 0;
+    top: -40px; /* hidden above viewport initially */
+    left: 0;
     width: 100%;
     background: rgba(0,0,0,0.8);
     border-bottom: 2px solid #0f0;
     overflow: hidden;
     z-index: 100002;
-    transition: height 0.3s ease;
-    height: 6px; /* minimized height */
-    cursor: pointer;
+    height: 40px;
     display: flex;
     align-items: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+    transition: top 0.3s ease;
   }
 
-  /* Expanded top bar styles */
-  #topBarContainer.expanded {
-    height: 40px;
-    cursor: default;
+  /* When shown, slide down to top 0 */
+  #topBarContainer.visible {
+    top: 0;
   }
 
   /* The actual top bar content */
@@ -55,19 +74,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 10px;
     width: 100%;
-    box-sizing: border-box;
-    opacity: 0;
-    transition: opacity 0.3s ease 0.15s;
-    pointer-events: none;
     user-select: none;
-  }
-
-  /* When expanded show content */
-  #topBarContainer.expanded #topBar {
-    opacity: 1;
-    pointer-events: auto;
   }
 
   /* Tab buttons */
@@ -108,11 +116,28 @@
     padding: 6px 10px;
     cursor: pointer;
     font-size: 14px;
-    user-select: none;
   }
   #topBar button.lookupBtn:hover {
     background: #0f0;
     color: #000;
+  }
+
+  /* Close button in top bar */
+  #closeTopBarBtn {
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    margin-left: auto;
+    padding: 0 10px 4px 10px;
+    line-height: 1;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  #closeTopBarBtn:hover {
+    color: #6f6;
   }
 
   /* Wiki iframe overlay */
@@ -156,14 +181,18 @@
 </head>
 <body>
 
-<!-- Top bar container: click to toggle -->
-<div id="topBarContainer" title="Click to expand/collapse controls">
-  <div id="topBar" role="region" aria-label="Account and controls">
+<!-- Small handle button -->
+<div id="toggleHandle" title="Show Controls"></div>
+
+<!-- Top bar container -->
+<div id="topBarContainer" role="region" aria-label="Account and controls">
+  <div id="topBar">
     <button id="tabMain" class="tabBtn active" title="Main Account">Main</button>
     <button id="tabAlt" class="tabBtn" title="Alternate Account">Alt</button>
     <div id="systemTimeDisplay" title="Your local time">--:--:--</div>
     <button id="itemLookupBtn" class="lookupBtn" title="Item Lookup">Item Lookup</button>
     <button id="npcLookupBtn" class="lookupBtn" title="NPC Lookup">NPC Lookup</button>
+    <button id="closeTopBarBtn" title="Hide Controls">✖</button>
   </div>
 </div>
 
@@ -181,23 +210,36 @@
 (() => {
   "use strict";
 
-  // Elements
+  const toggleHandle = document.getElementById("toggleHandle");
   const topBarContainer = document.getElementById("topBarContainer");
-  const topBar = document.getElementById("topBar");
+  const closeTopBarBtn = document.getElementById("closeTopBarBtn");
 
   const tabMain = document.getElementById("tabMain");
   const tabAlt = document.getElementById("tabAlt");
   const iframeMain = document.getElementById("gameIframeMain");
   const iframeAlt = document.getElementById("gameIframeAlt");
 
-  // Toggle top bar expanded/collapsed on click of container
-  topBarContainer.addEventListener("click", () => {
-    topBarContainer.classList.toggle("expanded");
+  // Toggle top bar visibility
+  function showTopBar(show) {
+    if(show){
+      topBarContainer.classList.add("visible");
+      // Move iframes down so bar doesn't cover content
+      iframeMain.style.top = "40px";
+      iframeAlt.style.top = "40px";
+    } else {
+      topBarContainer.classList.remove("visible");
+      iframeMain.style.top = "0";
+      iframeAlt.style.top = "0";
+    }
+  }
+
+  toggleHandle.addEventListener("click", () => {
+    const visible = topBarContainer.classList.contains("visible");
+    showTopBar(!visible);
   });
 
-  // Prevent clicks inside topBar from toggling collapse (stop bubbling)
-  topBar.addEventListener("click", (e) => {
-    e.stopPropagation();
+  closeTopBarBtn.addEventListener("click", () => {
+    showTopBar(false);
   });
 
   // Tab switching
