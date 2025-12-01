@@ -60,7 +60,7 @@
     right: 6px;
     height: 36px;
     background: rgba(0,0,0,0.6);
-    display: flex;
+    display: none;  /* HIDDEN initially */
     align-items: center;
     gap: 8px;
     padding: 0 10px;
@@ -75,6 +75,7 @@
     transition: transform 0.3s ease;
   }
   #topBar.visible {
+    display: flex; /* make visible when toggled */
     transform: translateY(0);
   }
 
@@ -350,12 +351,29 @@
 
   // Toggle top bar visibility
   let barVisible = false;
+
+  // Function to hide bar with animation and then display none
+  function hideTopBar() {
+    topBar.style.transform = "translateY(-150%)";
+    // After transition, hide display
+    const onTransitionEnd = () => {
+      topBar.style.display = "none";
+      topBar.removeEventListener("transitionend", onTransitionEnd);
+    };
+    topBar.addEventListener("transitionend", onTransitionEnd);
+  }
+
   toggleBarBtn.addEventListener("click", () => {
     barVisible = !barVisible;
     if (barVisible) {
-      topBar.classList.add("visible");
+      // Show and animate in
+      topBar.style.display = "flex";
+      // Trigger reflow so transform transition works
+      void topBar.offsetWidth;
+      topBar.style.transform = "translateY(0)";
     } else {
-      topBar.classList.remove("visible");
+      // Animate out and hide
+      hideTopBar();
       closeWiki();
       closeSettings();
     }
