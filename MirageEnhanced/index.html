@@ -56,7 +56,7 @@
   #topBar {
     position: fixed;
     top: 40px;
-    left: 6px;
+    left: 46px; /* align with system time left */
     right: 6px;
     height: 36px;
     background: rgba(0,0,0,0.6);
@@ -68,9 +68,11 @@
     color: #0f0;
     user-select: none;
     z-index: 100002;
+    border-radius: 6px;
+
+    /* Start hidden by moving off screen above */
     transform: translateY(-150%);
     transition: transform 0.3s ease;
-    border-radius: 6px;
   }
   #topBar.visible {
     transform: translateY(0);
