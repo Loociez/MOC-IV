@@ -173,6 +173,7 @@
     padding: 4px 12px;
     border-radius: 10px 10px 0 0;
     user-select: none;
+    z-index: 100003;
   }
   #wikiOverlay #wikiCloseBtn:hover {
     background: #0f0;
@@ -220,7 +221,6 @@
 
   const tabButtons = document.querySelectorAll("#tabButtons .tab-button");
 
-  const wikiButtons = document.getElementById("wikiButtons");
   const itemLookupBtn = document.getElementById("itemLookupBtn");
   const npcLookupBtn = document.getElementById("npcLookupBtn");
 
@@ -318,7 +318,15 @@
   wikiCloseBtn.addEventListener("click", closeWiki);
 
   // Prevent click fallthrough on wiki overlay
-  wikiOverlay.addEventListener("click", e => e.stopPropagation());
+  wikiOverlay.addEventListener("click", e => {
+    // Only close overlay if clicking outside iframe or close button
+    if(e.target === wikiOverlay) closeWiki();
+  });
+
+  // Prevent overlay content clicks from closing overlay
+  wikiIframe.addEventListener("click", e => e.stopPropagation());
+  wikiCloseBtn.addEventListener("click", e => e.stopPropagation());
+
 })();
 </script>
 
