@@ -9,6 +9,7 @@
     margin: 0; padding: 0; font-family: Arial, sans-serif; background: #121212; color: #eee;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
   #winTouch {
     display: grid;
@@ -30,11 +31,12 @@
 
   /* New joystick canvas */
   #cvsGamepadNew {
-    touch-action: none;
+    touch-action: none; /* important to prevent scroll on touch devices */
     width: 250px;
     height: 250px;
     background: #222;
     border-radius: 20px;
+    display: none;
   }
 
   /* Example HP bar container */
@@ -47,6 +49,7 @@
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
+    transition: width 0.3s ease;
   }
   #hpBarInner {
     height: 100%;
@@ -66,6 +69,7 @@
     padding: 10px 20px;
     border-radius: 12px;
     cursor: pointer;
+    user-select: none;
   }
 </style>
 </head>
@@ -78,7 +82,7 @@
 <div id="winTouch">
   <canvas id="cvsGamepad" width="172" height="172" style="width: 172px; height: 172px;"></canvas>
   <!-- New joystick canvas added but hidden by default -->
-  <canvas id="cvsGamepadNew" width="250" height="250" style="display:none;"></canvas>
+  <canvas id="cvsGamepadNew" width="250" height="250"></canvas>
 </div>
 
 <!-- Button to simulate touch controls toggle -->
@@ -89,6 +93,11 @@
   const newCanvas = document.getElementById('cvsGamepadNew');
   const winTouch = document.getElementById('winTouch');
   const toggleBtn = document.getElementById('toggleTouchBtn');
+  const hpBar = document.getElementById('hpBar');
+
+  // Initialize display states
+  originalCanvas.style.display = 'block';
+  newCanvas.style.display = 'none';
 
   // Toggle between old and new joystick UI
   toggleBtn.addEventListener('click', () => {
@@ -97,14 +106,13 @@
       newCanvas.style.display = 'block';
       originalCanvas.style.display = 'none';
       toggleBtn.textContent = 'Use Original Touch Controls';
-      // Optionally adjust HP bar or other UI here if needed
-      document.getElementById('hpBar').style.width = '180px'; // Example less stretched width
+      hpBar.style.width = '180px'; // Example less stretched width
     } else {
       // Revert back
       newCanvas.style.display = 'none';
       originalCanvas.style.display = 'block';
       toggleBtn.textContent = 'Use Improved Touch Controls';
-      document.getElementById('hpBar').style.width = '280px'; // Original width
+      hpBar.style.width = '280px'; // Original width
     }
   });
 
@@ -122,17 +130,19 @@
     // Draw base circle
     ctx.beginPath();
     ctx.arc(basePos.x, basePos.y, maxRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
     ctx.fill();
 
     // Draw stick/thumb
     ctx.beginPath();
     ctx.arc(stickPos.x, stickPos.y, 30, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.fill();
   }
 
   function handleMove(pos) {
+    if (!touchStartPos) return;
+
     const dx = pos.x - touchStartPos.x;
     const dy = pos.y - touchStartPos.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
@@ -153,9 +163,7 @@
 
     // TODO: Add movement command handling here,
     // e.g. send movement direction to your game logic.
-
-    // Example:
-    // console.log('Move dx:', clampedDx.toFixed(2), 'dy:', clampedDy.toFixed(2));
+    console.log('Move dx:', clampedDx.toFixed(2), 'dy:', clampedDy.toFixed(2));
   }
 
   newCanvas.addEventListener('pointerdown', (e) => {
@@ -165,6 +173,8 @@
     currentPos = {...touchStartPos};
     drawJoystick(touchStartPos, touchStartPos);
     newCanvas.setPointerCapture(e.pointerId);
+    // Prevent default so no scrolling happens
+    e.preventDefault();
   });
 
   newCanvas.addEventListener('pointermove', (e) => {
@@ -172,25 +182,21 @@
     const rect = newCanvas.getBoundingClientRect();
     currentPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     handleMove(currentPos);
+    e.preventDefault();
   });
 
-  newCanvas.addEventListener('pointerup', (e) => {
+  function endDrag(e) {
     dragging = false;
     ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
     touchStartPos = null;
     currentPos = null;
-
     // TODO: Send stop movement signal here
-  });
+    console.log('Joystick released');
+    e.preventDefault();
+  }
 
-  newCanvas.addEventListener('pointercancel', (e) => {
-    dragging = false;
-    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
-    touchStartPos = null;
-    currentPos = null;
-
-    // TODO: Send stop movement signal here
-  });
+  newCanvas.addEventListener('pointerup', endDrag);
+  newCanvas.addEventListener('pointercancel', endDrag);
 </script>
 
 </body>
