@@ -1469,24 +1469,19 @@ if (shopSelect) {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
 
-    // Make the inventory capable of anchoring absolutely positioned children
-    inv.style.position = "relative";
-
-    // Create container for buttons
+    // Create container for everything
     const container = document.createElement("div");
     container.style.position = "absolute";
-    container.style.top = "0px";
-    container.style.right = "-80px"; // move it just outside the right edge
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.alignItems = "center";
-    container.style.gap = "6px";
-    container.style.zIndex = "999999";
-    inv.appendChild(container);
+    container.style.gap = "6px"; // gap between buttons and headings
+    container.style.zIndex = "9999";
+    document.body.appendChild(container);
 
     // --- Potion Section ---
     const potionHeading = document.createElement("div");
-    potionHeading.textContent = "🧪";
+    potionHeading.textContent = "🧪"; // potion emoji
     potionHeading.style.fontSize = "20px";
     potionHeading.style.color = "#fff";
     container.appendChild(potionHeading);
@@ -1497,6 +1492,7 @@ if (shopSelect) {
         {text: "75%", mode: "75"}
     ];
 
+    const potionButtons = [];
     potionButtonsData.forEach(data => {
         const btn = document.createElement("button");
         btn.textContent = data.text;
@@ -1508,16 +1504,17 @@ if (shopSelect) {
         btn.style.cursor = "pointer";
         btn.onclick = () => runPotionSequence(data.mode);
         container.appendChild(btn);
+        potionButtons.push(btn);
     });
 
     // --- Gap before Treasure Section ---
     const sectionGap = document.createElement("div");
-    sectionGap.style.height = "10px";
+    sectionGap.style.height = "10px"; // small gap
     container.appendChild(sectionGap);
 
     // --- Treasure Section ---
     const treasureHeading = document.createElement("div");
-    treasureHeading.textContent = "💰";
+    treasureHeading.textContent = "💰"; // treasure chest emoji
     treasureHeading.style.fontSize = "20px";
     treasureHeading.style.color = "#fff";
     container.appendChild(treasureHeading);
@@ -1543,37 +1540,56 @@ if (shopSelect) {
         if (btn) btn.click();
     }
 
-    // Potion sequence
-    function runPotionSequence(mode) {
-        clickButtonByTitle("Statistics");
+   // --- Potion Sequence ---
+function runPotionSequence(mode) {
+    // Step 1: open Stats
+    clickButtonByTitle("Statistics");
+    setTimeout(() => {
+        // Step 2: Skills / Abilities (by title)
+        clickButtonByTitle("Show player skills");
         setTimeout(() => {
-            clickButtonByTitle("Show player skills");
+            // Step 3: Abilities
+            clickButtonByText("Abilities");
             setTimeout(() => {
-                clickButtonByText("Abilities");
+                // Step 4: Potion
+                clickButtonByText("Potion");
                 setTimeout(() => {
-                    clickButtonByText("Potion");
+                    // Step 5: Off / 50% / 75%
+                    if (mode === "off") clickButtonByText("Off");
+                    else if (mode === "50") clickButtonByText("50%");
+                    else clickButtonByText("75%");
                     setTimeout(() => {
-                        if (mode === "off") clickButtonByText("Off");
-                        else if (mode === "50") clickButtonByText("50%");
-                        else clickButtonByText("75%");
-                        setTimeout(() => clickButtonByTitle("Back"), 300);
+                        // Step 6: Back out
+                        clickButtonByTitle("Back");
                     }, 300);
                 }, 300);
             }, 300);
         }, 300);
-    }
+    }, 300);
+}
 
-    // Claim sequence
-    function runClaimSequence() {
-        clickButtonByTitle("Dungeons");
+    // --- Claim Sequence ---
+function runClaimSequence() {
+    clickButtonByTitle("Dungeons"); // Open Dungeons
+    setTimeout(() => {
+        clickButtonByText("🐲 Other"); // Open Other section
         setTimeout(() => {
-            clickButtonByText("🐲 Other");
-            setTimeout(() => clickButtonByText("🎁 Claim Reward"), 300);
+            clickButtonByText("🎁 Claim Reward"); // Claim reward
         }, 300);
+    }, 300);
+}
+
+    // --- Dynamic Positioning ---
+    function updatePosition() {
+        const rect = inv.getBoundingClientRect();
+        // Buttons stacked at right edge
+        container.style.top = window.scrollY + rect.top + "px";
+        container.style.left = window.scrollX + rect.left + rect.width * 1.0 + "px";
+        requestAnimationFrame(updatePosition);
     }
 
+    updatePosition();
 })();
-
 // New item Sparkle
 // === InvGlow (Sparkles) — settings-aware ===
 const INV_GLOW_CONFIG = {
@@ -3010,46 +3026,6 @@ function applyGlassStyle(element) {
 ].forEach(id => {
     applyGlassStyle(document.getElementById(id));
 });
-// === UNIVERSAL RESOLUTION SCALER ===
-// Auto-fix UI element positions for any resolution
-(function () {
-    function scaleFixedElements() {
-        const ww = window.innerWidth;
-        const wh = window.innerHeight;
-
-        document.querySelectorAll("*").forEach(el => {
-            const style = window.getComputedStyle(el);
-
-            if (style.position === "fixed") {
-                // Convert pixel left/top into % of screen
-                if (style.left.endsWith("px")) {
-                    let px = parseFloat(style.left);
-                    el.style.left = (px / ww * 100) + "%";
-                }
-                if (style.top.endsWith("px")) {
-                    let px = parseFloat(style.top);
-                    el.style.top = (px / wh * 100) + "%";
-                }
-
-                // Right/bottom support (just in case)
-                if (style.right.endsWith("px")) {
-                    let px = parseFloat(style.right);
-                    el.style.right = (px / ww * 100) + "%";
-                }
-                if (style.bottom.endsWith("px")) {
-                    let px = parseFloat(style.bottom);
-                    el.style.bottom = (px / wh * 100) + "%";
-                }
-            }
-        });
-    }
-
-    // Run once after page loads
-    setTimeout(scaleFixedElements, 500);
-
-    // Re-scale when resizing window
-    window.addEventListener("resize", scaleFixedElements);
-})();
 
 
 
