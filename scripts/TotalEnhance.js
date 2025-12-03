@@ -3016,6 +3016,7 @@ function applyGlassStyle(element) {
     'winTrade',
     'winGuildEditor',
     'winShop',
+    'winBank',
     'winCredits',
     'winSkills',
     'winSkillsContent',
