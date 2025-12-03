@@ -3026,6 +3026,46 @@ function applyGlassStyle(element) {
 ].forEach(id => {
     applyGlassStyle(document.getElementById(id));
 });
+// === UNIVERSAL RESOLUTION SCALER ===
+// Auto-fix UI element positions for any resolution
+(function () {
+    function scaleFixedElements() {
+        const ww = window.innerWidth;
+        const wh = window.innerHeight;
+
+        document.querySelectorAll("*").forEach(el => {
+            const style = window.getComputedStyle(el);
+
+            if (style.position === "fixed") {
+                // Convert pixel left/top into % of screen
+                if (style.left.endsWith("px")) {
+                    let px = parseFloat(style.left);
+                    el.style.left = (px / ww * 100) + "%";
+                }
+                if (style.top.endsWith("px")) {
+                    let px = parseFloat(style.top);
+                    el.style.top = (px / wh * 100) + "%";
+                }
+
+                // Right/bottom support (just in case)
+                if (style.right.endsWith("px")) {
+                    let px = parseFloat(style.right);
+                    el.style.right = (px / ww * 100) + "%";
+                }
+                if (style.bottom.endsWith("px")) {
+                    let px = parseFloat(style.bottom);
+                    el.style.bottom = (px / wh * 100) + "%";
+                }
+            }
+        });
+    }
+
+    // Run once after page loads
+    setTimeout(scaleFixedElements, 500);
+
+    // Re-scale when resizing window
+    window.addEventListener("resize", scaleFixedElements);
+})();
 
 
 
