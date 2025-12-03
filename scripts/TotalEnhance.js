@@ -2998,3 +2998,30 @@ function formatNumber(num) {
   });
 
 })();
+// Utility function to apply the glass style
+function applyGlassStyle(element) {
+    if (!element) return;
+    element.style.background = 'rgba(30, 30, 30, 0.7)';
+    element.style.backdropFilter = 'blur(10px)';
+    element.style.border = '1.5px solid rgba(255, 255, 255, 0.2)';
+    element.style.borderRadius = '12px';
+    element.style.color = '#eee';
+    element.style.padding = '14px';
+}
+
+// Apply the theme to all main windows
+[
+    'winStats',
+    'winLogin',
+    'winCredits',
+    'winSkills',
+    'winSkillsContent',
+    'winSelectPlayer',
+    'winSettings',
+    'winPopup'
+].forEach(id => {
+    applyGlassStyle(document.getElementById(id));
+});
+
+
+
