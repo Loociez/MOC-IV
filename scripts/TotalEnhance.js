@@ -3013,6 +3013,9 @@ function applyGlassStyle(element) {
 [
     'winStats',
     'winLogin',
+    'winTrade',
+    'winGuildEditor',
+    'winShop',
     'winCredits',
     'winSkills',
     'winSkillsContent',
