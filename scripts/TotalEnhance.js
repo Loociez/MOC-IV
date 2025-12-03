@@ -1469,21 +1469,20 @@ if (shopSelect) {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
 
-    // Anchor parent so absolute children can attach correctly
-    inv.parentElement.style.position = "relative";
+    // Make the inventory capable of anchoring absolutely positioned children
+    inv.style.position = "relative";
 
-    // Create container for everything (NOW anchored to inventory, not screen)
+    // Create container for buttons
     const container = document.createElement("div");
     container.style.position = "absolute";
     container.style.top = "0px";
-    container.style.right = "-70px"; // distance from the inventory's right edge
+    container.style.right = "-80px"; // move it just outside the right edge
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.alignItems = "center";
-    container.style.gap = "6px"; 
-    container.style.zIndex = "9999";
-
-    inv.parentElement.appendChild(container);
+    container.style.gap = "6px";
+    container.style.zIndex = "999999";
+    inv.appendChild(container);
 
     // --- Potion Section ---
     const potionHeading = document.createElement("div");
@@ -1539,13 +1538,12 @@ if (shopSelect) {
         const btn = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === text);
         if (btn) btn.click();
     }
-
     function clickButtonByTitle(title) {
         const btn = [...document.querySelectorAll("button")].find(b => b.title === title);
         if (btn) btn.click();
     }
 
-    // --- Potion Sequence ---
+    // Potion sequence
     function runPotionSequence(mode) {
         clickButtonByTitle("Statistics");
         setTimeout(() => {
@@ -1565,7 +1563,7 @@ if (shopSelect) {
         }, 300);
     }
 
-    // --- Claim Sequence ---
+    // Claim sequence
     function runClaimSequence() {
         clickButtonByTitle("Dungeons");
         setTimeout(() => {
