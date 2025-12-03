@@ -1469,19 +1469,25 @@ if (shopSelect) {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
 
-    // Create container for everything
+    // Anchor parent so absolute children can attach correctly
+    inv.parentElement.style.position = "relative";
+
+    // Create container for everything (NOW anchored to inventory, not screen)
     const container = document.createElement("div");
     container.style.position = "absolute";
+    container.style.top = "0px";
+    container.style.right = "-70px"; // distance from the inventory's right edge
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.alignItems = "center";
-    container.style.gap = "6px"; // gap between buttons and headings
+    container.style.gap = "6px"; 
     container.style.zIndex = "9999";
-    document.body.appendChild(container);
+
+    inv.parentElement.appendChild(container);
 
     // --- Potion Section ---
     const potionHeading = document.createElement("div");
-    potionHeading.textContent = "🧪"; // potion emoji
+    potionHeading.textContent = "🧪";
     potionHeading.style.fontSize = "20px";
     potionHeading.style.color = "#fff";
     container.appendChild(potionHeading);
@@ -1492,7 +1498,6 @@ if (shopSelect) {
         {text: "75%", mode: "75"}
     ];
 
-    const potionButtons = [];
     potionButtonsData.forEach(data => {
         const btn = document.createElement("button");
         btn.textContent = data.text;
@@ -1504,17 +1509,16 @@ if (shopSelect) {
         btn.style.cursor = "pointer";
         btn.onclick = () => runPotionSequence(data.mode);
         container.appendChild(btn);
-        potionButtons.push(btn);
     });
 
     // --- Gap before Treasure Section ---
     const sectionGap = document.createElement("div");
-    sectionGap.style.height = "10px"; // small gap
+    sectionGap.style.height = "10px";
     container.appendChild(sectionGap);
 
     // --- Treasure Section ---
     const treasureHeading = document.createElement("div");
-    treasureHeading.textContent = "💰"; // treasure chest emoji
+    treasureHeading.textContent = "💰";
     treasureHeading.style.fontSize = "20px";
     treasureHeading.style.color = "#fff";
     container.appendChild(treasureHeading);
@@ -1535,61 +1539,43 @@ if (shopSelect) {
         const btn = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === text);
         if (btn) btn.click();
     }
+
     function clickButtonByTitle(title) {
         const btn = [...document.querySelectorAll("button")].find(b => b.title === title);
         if (btn) btn.click();
     }
 
-   // --- Potion Sequence ---
-function runPotionSequence(mode) {
-    // Step 1: open Stats
-    clickButtonByTitle("Statistics");
-    setTimeout(() => {
-        // Step 2: Skills / Abilities (by title)
-        clickButtonByTitle("Show player skills");
+    // --- Potion Sequence ---
+    function runPotionSequence(mode) {
+        clickButtonByTitle("Statistics");
         setTimeout(() => {
-            // Step 3: Abilities
-            clickButtonByText("Abilities");
+            clickButtonByTitle("Show player skills");
             setTimeout(() => {
-                // Step 4: Potion
-                clickButtonByText("Potion");
+                clickButtonByText("Abilities");
                 setTimeout(() => {
-                    // Step 5: Off / 50% / 75%
-                    if (mode === "off") clickButtonByText("Off");
-                    else if (mode === "50") clickButtonByText("50%");
-                    else clickButtonByText("75%");
+                    clickButtonByText("Potion");
                     setTimeout(() => {
-                        // Step 6: Back out
-                        clickButtonByTitle("Back");
+                        if (mode === "off") clickButtonByText("Off");
+                        else if (mode === "50") clickButtonByText("50%");
+                        else clickButtonByText("75%");
+                        setTimeout(() => clickButtonByTitle("Back"), 300);
                     }, 300);
                 }, 300);
             }, 300);
         }, 300);
-    }, 300);
-}
-
-    // --- Claim Sequence ---
-function runClaimSequence() {
-    clickButtonByTitle("Dungeons"); // Open Dungeons
-    setTimeout(() => {
-        clickButtonByText("🐲 Other"); // Open Other section
-        setTimeout(() => {
-            clickButtonByText("🎁 Claim Reward"); // Claim reward
-        }, 300);
-    }, 300);
-}
-
-    // --- Dynamic Positioning ---
-    function updatePosition() {
-        const rect = inv.getBoundingClientRect();
-        // Buttons stacked at right edge
-        container.style.top = window.scrollY + rect.top + "px";
-        container.style.left = window.scrollX + rect.left + rect.width * 1.0 + "px";
-        requestAnimationFrame(updatePosition);
     }
 
-    updatePosition();
+    // --- Claim Sequence ---
+    function runClaimSequence() {
+        clickButtonByTitle("Dungeons");
+        setTimeout(() => {
+            clickButtonByText("🐲 Other");
+            setTimeout(() => clickButtonByText("🎁 Claim Reward"), 300);
+        }, 300);
+    }
+
 })();
+
 // New item Sparkle
 // === InvGlow (Sparkles) — settings-aware ===
 const INV_GLOW_CONFIG = {
