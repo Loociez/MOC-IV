@@ -262,12 +262,20 @@
                 e.preventDefault();
                 const key = keyLabel.innerText;
                 if (INITIAL_KEYS.has(key)) {
-                    // Prevent deleting initial keys
                     return;
                 }
                 delete saved[key];
                 saveBindings();
                 div.remove();
+            }
+        });
+
+        // Prevent context menu on right-click
+        div.addEventListener("contextmenu", (e) => {
+            if (locked) return;
+            const key = keyLabel.innerText;
+            if (!INITIAL_KEYS.has(key)) {
+                e.preventDefault();
             }
         });
 
@@ -279,15 +287,6 @@
             awaitingAssignmentFor = key;
             div.style.outline = "2px solid gold";
             setTimeout(() => div.style.outline = "", 600);
-        });
-
-        // Prevent context menu on right-click so right-click deletion works smoothly
-        div.addEventListener("contextmenu", (e) => {
-            if (locked) return;
-            const key = keyLabel.innerText;
-            if (!INITIAL_KEYS.has(key)) {
-                e.preventDefault();
-            }
         });
 
         return div;
@@ -374,15 +373,42 @@
     // HOTKEY USE
     // ===========================
     document.addEventListener("keydown", (e) => {
+
+        // detect active chat/message input
         const active = document.activeElement;
         const chat = document.getElementById("winGameChatbox");
         const msg = document.getElementById("winGameMessage");
-        const bank = document.getElementById("winBank");
 
-        if ((active && (active === chat || chat?.contains(active) ||
-            active === msg || msg?.contains(active)))
-            || isElementVisible(bank)) return;
+        // NEW: list of windows that block hotbar usage
+        const blockWindows = [
+            "winBank",
+            "winStats",
+            "winSkills",
+            "winSkillsContent",
+            "winSettings",
+            "winGuildEditor",
+            "winShop"
+        ];
 
+        function anyBlockWindowVisible() {
+            return blockWindows.some(id => {
+                const el = document.getElementById(id);
+                return isElementVisible(el);
+            });
+        }
+
+        // block hotbar if typing or if any window is open
+        if (
+            (active && (
+                active === chat || chat?.contains(active) ||
+                active === msg || msg?.contains(active)
+            )) ||
+            anyBlockWindowVisible()
+        ) {
+            return;
+        }
+
+        // hotkey action
         const key = ("" + e.key).toUpperCase();
         const index = saved[key];
         if (index === undefined || index === -1) return;
@@ -468,5 +494,4 @@
     })();
 
     console.log("%cCanvas Hotbar Loaded (slow, visible green ripple)!", "color:#0f0");
-
 })();
