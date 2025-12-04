@@ -485,6 +485,10 @@
   document.getElementById("npcLookupBtn").addEventListener("click", () => {
     openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
   });
+  
+  document.getElementById("npcLookupBtn").addEventListener("click", () => {
+    openWikiPage("https://loociez.github.io/MOC-IV/Best.html");
+  });
 
   wikiCloseBtn.addEventListener("click", () => {
     closeWiki();
@@ -535,6 +539,61 @@
   });
 
 })();
+// ===================== Skilling SYSTEM =========================
+
+let autoAttack = false;
+let autoAttackInterval = null;
+
+// Change this to the ID of your main game iframe:
+const mainWin = document.getElementById("iframeMain").contentWindow;
+
+// This sends a spacebar attack event directly to the main iframe,
+// even if the player has switched focus to the alt iframe.
+function performSpaceAttack() {
+    if (!autoAttack) return;
+
+    try {
+        mainWin.dispatchEvent(
+            new KeyboardEvent("keydown", {
+                key: " ",
+                code: "Space",
+                keyCode: 32,
+                which: 32,
+                bubbles: true
+            })
+        );
+    } catch (err) {
+        console.error("Attack dispatch failed:", err);
+    }
+}
+
+// Start auto attack
+function startAutoAttack() {
+    if (autoAttack) return;
+    autoAttack = true;
+
+    autoAttackInterval = setInterval(performSpaceAttack, 90); 
+    // 90ms = fast but safe. Change if needed.
+    console.log("AUTO SPACE ATTACK ENABLED");
+}
+
+// Stop auto attack
+function stopAutoAttack() {
+    autoAttack = false;
+    clearInterval(autoAttackInterval);
+    console.log("AUTO SPACE ATTACK DISABLED");
+}
+
+// F8 = Start | F9 = Stop
+document.addEventListener("keydown", (e) => {
+    if (e.key === "F8") {
+        startAutoAttack();
+    }
+    if (e.key === "F9") {
+        stopAutoAttack();
+    }
+});
+
 </script>
 
 </body>
