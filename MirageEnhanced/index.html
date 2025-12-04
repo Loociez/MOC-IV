@@ -540,59 +540,72 @@
   });
 
 })();
-// ===================== Skilling SYSTEM =========================
+// ===================== AUTO SPACE ATTACK SYSTEM =========================
 
-let autoAttack = false;
-let autoAttackInterval = null;
+document.addEventListener("DOMContentLoaded", () => {
+    let autoAttack = false;
+    let attackInterval = null;
 
-// Change this to the ID of your main game iframe:
-const mainWin = document.getElementById("iframeMain").contentWindow;
+    // Reference to your main game iframe
+    const mainIframe = document.getElementById("iframeMain");
 
-// This sends a spacebar attack event directly to the main iframe,
-// even if the player has switched focus to the alt iframe.
-function performSpaceAttack() {
-    if (!autoAttack) return;
+    if (!mainIframe) {
+        console.error("iframeMain not found!");
+        return;
+    }
 
-    try {
-        mainWin.dispatchEvent(
-            new KeyboardEvent("keydown", {
-                key: ".",
+    // Dispatch a SPACE keydown to the iframe
+    function startHoldingSpace() {
+        if (!mainIframe.contentWindow) return;
+        const win = mainIframe.contentWindow;
+
+        autoAttack = true;
+        attackInterval = setInterval(() => {
+            win.focus();
+            win.dispatchEvent(new KeyboardEvent("keydown", {
+                key: " ",
                 code: "Space",
                 keyCode: 32,
                 which: 32,
-                bubbles: true
-            })
-        );
-    } catch (err) {
-        console.error("Attack dispatch failed:", err);
+                bubbles: true,
+                cancelable: true
+            }));
+        }, 90); // roughly hold interval
+        console.log("AUTO ATTACK ENABLED");
     }
-}
 
-// Start auto attack
-function startAutoAttack() {
-    if (autoAttack) return;
-    autoAttack = true;
+    // Stop holding SPACE
+    function stopHoldingSpace() {
+        if (!mainIframe.contentWindow) return;
+        const win = mainIframe.contentWindow;
 
-    autoAttackInterval = setInterval(performSpaceAttack, 90);
-    console.log("AUTO SPACE ATTACK ENABLED");
-}
+        clearInterval(attackInterval);
+        autoAttack = false;
 
-// Stop auto attack
-function stopAutoAttack() {
-    autoAttack = false;
-    clearInterval(autoAttackInterval);
-    console.log("AUTO SPACE ATTACK DISABLED");
-}
+        // Send keyup to ensure attack stops
+        win.focus();
+        win.dispatchEvent(new KeyboardEvent("keyup", {
+            key: " ",
+            code: "Space",
+            keyCode: 32,
+            which: 32,
+            bubbles: true,
+            cancelable: true
+        }));
+        console.log("AUTO ATTACK DISABLED");
+    }
 
-// . key = toggle auto attack on/off
-document.addEventListener("keydown", (e) => {
-    if (e.key === ".") {
-        if (autoAttack) {
-            stopAutoAttack();
-        } else {
-            startAutoAttack();
+    // Toggle with . key
+    document.addEventListener("keydown", (e) => {
+        // Use e.code to reliably detect the period key regardless of layout
+        if (e.code === "Period" && !e.repeat) {
+            if (autoAttack) {
+                stopHoldingSpace();
+            } else {
+                startHoldingSpace();
+            }
         }
-    }
+    });
 });
 
 </script>

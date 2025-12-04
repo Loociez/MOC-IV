@@ -262,20 +262,12 @@
                 e.preventDefault();
                 const key = keyLabel.innerText;
                 if (INITIAL_KEYS.has(key)) {
+                    // Prevent deleting initial keys
                     return;
                 }
                 delete saved[key];
                 saveBindings();
                 div.remove();
-            }
-        });
-
-        // Prevent context menu on right-click
-        div.addEventListener("contextmenu", (e) => {
-            if (locked) return;
-            const key = keyLabel.innerText;
-            if (!INITIAL_KEYS.has(key)) {
-                e.preventDefault();
             }
         });
 
@@ -287,6 +279,15 @@
             awaitingAssignmentFor = key;
             div.style.outline = "2px solid gold";
             setTimeout(() => div.style.outline = "", 600);
+        });
+
+        // Prevent context menu on right-click so right-click deletion works smoothly
+        div.addEventListener("contextmenu", (e) => {
+            if (locked) return;
+            const key = keyLabel.innerText;
+            if (!INITIAL_KEYS.has(key)) {
+                e.preventDefault();
+            }
         });
 
         return div;
@@ -363,52 +364,31 @@
         }, 120);
     }
 
-    function isElementVisible(el) {
+    function isWindowVisible(el) {
         if (!el) return false;
-        const s = getComputedStyle(el);
-        return s.display !== "none" && s.visibility !== "hidden" && s.opacity !== "0";
+        const style = window.getComputedStyle(el);
+        if (style.display === 'none' || style.visibility === 'hidden') return false;
+        if (parseFloat(style.opacity) === 0) return false;
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return false;
+        return true;
     }
 
     // ===========================
     // HOTKEY USE
     // ===========================
     document.addEventListener("keydown", (e) => {
-
-        // detect active chat/message input
         const active = document.activeElement;
         const chat = document.getElementById("winGameChatbox");
         const msg = document.getElementById("winGameMessage");
 
-        // NEW: list of windows that block hotbar usage
-        const blockWindows = [
-            "winBank",
-            "winStats",
-            "winSkills",
-            "winSkillsContent",
-            "winSettings",
-            "winGuildEditor",
-            "winShop"
-        ];
+        // BLOCK if typing in chat
+        if (active && (active === chat || chat?.contains(active) || active === msg || msg?.contains(active))) return;
 
-        function anyBlockWindowVisible() {
-            return blockWindows.some(id => {
-                const el = document.getElementById(id);
-                return isElementVisible(el);
-            });
-        }
+        // BLOCK if any forbidden window is open
+        const blockedWindows = ["winBank","winStats","winSkills","winTrade","winSkillsContent","winSettings","winGuildEditor","winShop"];
+        if (blockedWindows.some(id => isWindowVisible(document.getElementById(id)))) return;
 
-        // block hotbar if typing or if any window is open
-        if (
-            (active && (
-                active === chat || chat?.contains(active) ||
-                active === msg || msg?.contains(active)
-            )) ||
-            anyBlockWindowVisible()
-        ) {
-            return;
-        }
-
-        // hotkey action
         const key = ("" + e.key).toUpperCase();
         const index = saved[key];
         if (index === undefined || index === -1) return;
@@ -494,4 +474,5 @@
     })();
 
     console.log("%cCanvas Hotbar Loaded (slow, visible green ripple)!", "color:#0f0");
+
 })();
