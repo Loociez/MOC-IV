@@ -573,8 +573,7 @@ function startAutoAttack() {
     if (autoAttack) return;
     autoAttack = true;
 
-    autoAttackInterval = setInterval(performSpaceAttack, 90); 
-    // 90ms = fast but safe. Change if needed.
+    autoAttackInterval = setInterval(performSpaceAttack, 90);
     console.log("AUTO SPACE ATTACK ENABLED");
 }
 
@@ -585,13 +584,14 @@ function stopAutoAttack() {
     console.log("AUTO SPACE ATTACK DISABLED");
 }
 
-// F8 = Start | F9 = Stop
+// . key = toggle auto attack on/off
 document.addEventListener("keydown", (e) => {
-    if (e.key === "F8") {
-        startAutoAttack();
-    }
-    if (e.key === "F9") {
-        stopAutoAttack();
+    if (e.key === ".") {
+        if (autoAttack) {
+            stopAutoAttack();
+        } else {
+            startAutoAttack();
+        }
     }
 });
 
