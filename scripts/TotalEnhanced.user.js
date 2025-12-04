@@ -1,4 +1,18 @@
-// Combined Enhancer Script
+// ==UserScript==
+// @name         TotalEnhanced for Mirage Online Classic
+// @namespace    http://tampermonkey.net/
+// @version      2025-12-04
+// @description  Enhanced modification tool for MoC!
+// @author       Loocie
+// @match        https://play.consty.com/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=consty.com
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+  // Combined Enhancer Script
 
 // Includes: Vitals, Skill Enhancer, Guild Enhancer, Bank Enhancer and QoL settings
 
@@ -865,7 +879,7 @@ function startBankRecolorLoop() {
   startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
 }
   }
-	
+
 
   const observer = new MutationObserver(() => {
     const bankWindow = document.querySelector('#winBank');
@@ -1314,8 +1328,6 @@ if (shopSelect) {
     initEmojiObserver();
 
 })();
-
-
 
 
 // UI + Vitals
@@ -2823,7 +2835,7 @@ function formatNumber(num) {
     });
 
     canvas.addEventListener("click", (e) => {
-      if (!e.shiftKey || e.button !== 0) return; 
+      if (!e.shiftKey || e.button !== 0) return;
       if (!currentHoveredName) {
         console.warn("No hovered item name detected!");
         return;
@@ -2907,7 +2919,7 @@ function formatNumber(num) {
     tooltip.innerHTML = html;
 
     const padding = 10;
-    const extraUpMargin = 350; 
+    const extraUpMargin = 350;
     const tooltipWidth = 300;
     const tooltipHeight = tooltip.offsetHeight || 150;
 
@@ -3020,5 +3032,4 @@ function applyGlassStyle(element) {
     applyGlassStyle(document.getElementById(id));
 });
 
-
-
+})();
