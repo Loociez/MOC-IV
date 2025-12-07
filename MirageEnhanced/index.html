@@ -4,6 +4,8 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Mirage Online Classic - Modded (With Tools)</title>
+<!-- Content identical to uploaded, no focus hide UI (already removed) -->
+
 <style>
   /* ---- Base from your original file (kept look) ---- */
   body, html {
@@ -104,9 +106,6 @@
     position: fixed; bottom: 8px; left: 8px; z-index:100006; background: rgba(0,0,0,0.6); border:1px solid #0f0; border-radius:8px; padding:8px; display:none;
     min-width: 220px; font-family: monospace;
   }
-
-  /* Focus mode overlay (invisible, only used to toggle UI hiding) */
-  body.focus-mode .no-hide-when-focus { display: none !important; } /* hide those elements when focus mode on */
 
   /* small helper styles */
   input[type=range] { width: 100%; }
@@ -244,15 +243,7 @@
       </div>
     </div>
 
-    <div class="settings-col">
-      <label>Focus Mode</label>
-      <div>
-        <label><input type="checkbox" id="enableFocusMode"> Enable Focus Mode (hides UI)</label><br/>
-        <small>Focus mode hides on-screen controls marked as 'no-hide-when-focus' — game stays visible.</small>
-      </div>
     </div>
-  </div>
-
   <!-- Row: Screenshot -->
   <div class="settings-row">
     <div class="settings-col">
@@ -389,8 +380,6 @@
   const musicMeta = document.getElementById("musicMeta");
   const audioPlayer = document.getElementById("audioPlayer");
 
-  const enableFocusMode = document.getElementById("enableFocusMode");
-
   const screenshotBtn = document.getElementById("screenshotBtn");
   const screenshotAutoCrop = document.getElementById("screenshotAutoCrop");
 
@@ -446,9 +435,6 @@
     musicWidget.style.display = settings.musicVisible ? "block" : "none";
     playlistCount.textContent = settings.playlist.length || 0;
 
-    enableFocusMode.checked = !!settings.focusMode;
-    if(settings.focusMode) document.body.classList.add("focus-mode"); else document.body.classList.remove("focus-mode");
-
     enableGamepad.checked = !!settings.gamepad;
   }
   initUIFromSettings();
@@ -471,7 +457,6 @@
     settings.filters.gray = parseFloat(filterGray.value);
     settings.filters.hue = parseFloat(filterHue.value);
     settings.musicVisible = musicWidget.style.display === "block";
-    settings.focusMode = enableFocusMode.checked;
     settings.gamepad = enableGamepad.checked;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     // also store theme for older usage
@@ -767,16 +752,7 @@
   playlist = settings.playlist || [];
   updatePlaylistUI();
 
-  /* -------------------------
-     Focus Mode toggle
-     ------------------------- */
-  enableFocusMode.addEventListener("change", ()=>{
-    if(enableFocusMode.checked) document.body.classList.add("focus-mode");
-    else document.body.classList.remove("focus-mode");
-    settings.focusMode = enableFocusMode.checked;
-    saveSettings();
-  });
-
+  
   /* -------------------------
      Screenshot using getDisplayMedia
      ------------------------- */
