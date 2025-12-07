@@ -1,278 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mirage Online Classic - Modded</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mirage Online Classic - Modded (With Tools)</title>
 <style>
-  /* Reset and base */
+  /* ---- Base from your original file (kept look) ---- */
   body, html {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
-    background: #000;
-    font-family: Arial, sans-serif;
-    color: #0f0;
+    background: #000; font-family: Arial, sans-serif; color: #0f0;
+  }
+  /* wrapper so scaling is easier */
+  #iframeWrapper {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    overflow: hidden;
+    transform-origin: center center;
+    transition: transform 0.12s linear;
+    z-index: 0;
   }
   iframe.gameIframe {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    border: none;
-    pointer-events: auto;
+    border: none; pointer-events: auto; visibility: visible;
+    transform-origin: center center;
+    will-change: transform, filter;
     z-index: 0;
-    visibility: visible;
   }
 
   /* Toggle button always visible top-left */
   #toggleBarBtn {
-    position: fixed;
-    top: 6px;
-    left: 6px;
+    position: fixed; top: 6px; left: 6px;
     width: 32px; height: 32px;
-    background: rgba(0,0,0,0.7);
-    border: none;
-    color: #0f0;
-    font-size: 22px;
-    cursor: pointer;
-    user-select: none;
-    border-radius: 6px;
-    z-index: 100004;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: rgba(0,0,0,0.7); border: none; color: #0f0;
+    font-size: 22px; cursor: pointer; user-select: none;
+    border-radius: 6px; z-index: 100004;
+    display: flex; align-items: center; justify-content: center;
   }
 
   /* System time right of toggle button */
   #systemTime {
-    position: fixed;
-    top: 8px;
-    left: 46px;
-    font-family: monospace;
-    font-size: 16px;
-    z-index: 100004;
-    user-select: none;
-    color: #0f0;
+    position: fixed; top: 8px; left: 46px;
+    font-family: monospace; font-size: 16px;
+    z-index: 100004; user-select: none; color: #0f0;
   }
 
   /* Top bar */
   #topBar {
-    position: fixed;
-    top: 40px;
-    left: 46px;
-    right: 6px;
-    height: 36px;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    align-items: center;
-    gap: 8px;
-    padding: 0 10px;
-    font-size: 14px;
-    color: #0f0;
-    user-select: none;
-    z-index: 100002;
+    position: fixed; top: 40px; left: 46px; right: 6px; height: 36px;
+    background: rgba(0,0,0,0.6); display: none;
+    align-items: center; gap: 8px; padding: 0 10px;
+    font-size: 14px; color: #0f0; user-select: none; z-index: 100002;
     border-radius: 6px;
-    transform: translateY(-150%);
-    transition: transform 0.3s ease;
+    transform: translateY(-150%); transition: transform 0.3s ease;
   }
-  #topBar.visible {
-    display: flex;
-    transform: translateY(0);
-  }
+  #topBar.visible { display:flex; transform: translateY(0); }
 
   /* Tab buttons */
-  #tabButtons {
-    display: flex;
-    gap: 8px;
-  }
-  .tab-button {
-    background: transparent;
-    border: 1px solid #0f0;
-    color: #0f0;
-    padding: 3px 8px;
-    cursor: pointer;
-    border-radius: 5px;
-    user-select: none;
-    font-size: 14px;
-  }
-  .tab-button.active {
-    background: #0f0;
-    color: #000;
-  }
+  #tabButtons { display:flex; gap:8px; }
+  .tab-button { background: transparent; border:1px solid #0f0; color:#0f0; padding:3px 8px; cursor:pointer; border-radius:5px; user-select:none; font-size:14px; }
+  .tab-button.active { background:#0f0; color:#000; }
 
   /* Wiki & settings buttons container */
-  #wikiButtons {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-  }
-  #wikiButtons button {
-    background: #111;
-    border: 1px solid #0f0;
-    border-radius: 6px;
-    color: #0f0;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 14px;
-    user-select: none;
-  }
-  #wikiButtons button:hover {
-    background: #0f0;
-    color: #000;
-  }
+  #wikiButtons { display:flex; gap:8px; margin-left:auto; }
+  #wikiButtons button { background:#111; border:1px solid #0f0; border-radius:6px; color:#0f0; padding:6px 10px; cursor:pointer; font-size:14px; user-select:none; }
+  #wikiButtons button:hover { background:#0f0; color:#000; }
 
-  /* Wiki iframe overlay */
-  #wikiOverlay {
-    position: fixed;
-    top: 10%;
-    left: 10%;
-    width: 80%;
-    height: 80%;
-    background: #111;
-    border: 2px solid #0f0;
-    border-radius: 10px;
-    box-shadow: 0 0 30px #0f0;
-    z-index: 100003;
-    display: none;
-    flex-direction: column;
-  }
-  #wikiOverlay iframe {
-    flex: 1;
-    border: none;
-    border-radius: 0 0 10px 10px;
-    width: 100%;
-    height: 100%;
-    pointer-events: auto;
-  }
-  #wikiOverlay #wikiCloseBtn {
-    background: #000;
-    color: #0f0;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px 12px;
-    border-radius: 10px 10px 0 0;
-    user-select: none;
-  }
-  #wikiOverlay #wikiCloseBtn:hover {
-    background: #0f0;
-    color: #000;
-  }
+  /* Wiki overlay */
+  #wikiOverlay { position: fixed; top:10%; left:10%; width:80%; height:80%; background:#111; border:2px solid #0f0; border-radius:10px; box-shadow:0 0 30px #0f0; z-index:100003; display:none; flex-direction:column; }
+  #wikiOverlay iframe { flex:1; border:none; width:100%; height:100%; pointer-events:auto; border-radius:0 0 10px 10px; }
+  #wikiOverlay #wikiCloseBtn { background:#000; color:#0f0; border:none; font-size:20px; cursor:pointer; padding:4px 12px; border-radius:10px 10px 0 0; user-select:none; }
+  #wikiOverlay #wikiCloseBtn:hover { background:#0f0; color:#000; }
 
-  /* Settings overlay */
+  /* Settings overlay (centralized) */
   #settingsOverlay {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
-    background: #111;
-    border: 2px solid #0f0;
-    border-radius: 12px;
-    box-shadow: 0 0 30px #0f0;
-    padding: 20px;
-    z-index: 100005;
-    display: none;
-    color: #0f0;
-    font-family: monospace;
-    pointer-events: auto;
+    position: fixed; top: 8%; left: 50%; transform: translateX(-50%); width: 720px;
+    max-width: calc(100% - 40px); max-height: 84%; overflow:auto;
+    background: #111; border: 2px solid #0f0; border-radius: 12px; box-shadow: 0 0 30px #0f0; padding: 18px; z-index: 100005;
+    display: none; color: #0f0; font-family: monospace; pointer-events: auto;
   }
-  #settingsOverlay h2 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    text-align: center;
+  #settingsOverlay h2 { margin: 0 0 12px 0; text-align:center; }
+  .settings-row { display:flex; gap:12px; align-items:center; margin:8px 0; flex-wrap:wrap; }
+  .settings-col { flex:1; min-width:220px; }
+  label { display:block; font-size:13px; margin-bottom:6px; }
+
+  /* small widgets that appear only when enabled */
+  .widget {
+    position: fixed; z-index: 100006; background: rgba(0,0,0,0.5); color: #0f0; border:1px solid #0f0; border-radius:6px; padding:6px 8px; font-family: monospace; font-size:13px; user-select:none;
+    display:none; pointer-events: auto;
   }
-  #settingsOverlay label {
-    display: block;
-    margin: 8px 0 4px;
+  #fpsWidget { top: 8px; right: 8px; width:110px; text-align:center; }
+  #zoomWidget { bottom: 8px; right: 8px; width:170px; text-align:center; }
+  #filtersWidget { top: 54px; right: 8px; width:170px; text-align:center; }
+
+  /* canvas for fps graph (shown when toggled) */
+  #fpsCanvas {
+    position: fixed; right: 8px; top: 56px; width: 220px; height: 80px; z-index:100006; border:1px solid rgba(15,255,15,0.25); background: rgba(0,0,0,0.5);
+    display:none; border-radius:6px; pointer-events:none;
   }
 
-  #themeButtons {
-    display: flex;
-    gap: 8px;
-    user-select: none;
-  }
-  .theme-btn {
-    background: transparent;
-    border: 1px solid #0f0;
-    color: #0f0;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: monospace;
-    transition: background 0.2s, color 0.2s;
-  }
-  .theme-btn:hover {
-    background: #0f0;
-    color: #000;
-  }
-  .theme-btn.selected {
-    background: #0f0;
-    color: #000;
-    font-weight: bold;
-    pointer-events: none;
+  /* Music player mini overlay (hidden until enabled) */
+  #musicWidget {
+    position: fixed; bottom: 8px; left: 8px; z-index:100006; background: rgba(0,0,0,0.6); border:1px solid #0f0; border-radius:8px; padding:8px; display:none;
+    min-width: 220px; font-family: monospace;
   }
 
-  #settingsOverlay button {
-    margin-top: 16px;
-    width: 100%;
-    background: #0f0;
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  #settingsOverlay button:hover {
-    background: #0a0;
-  }
+  /* Focus mode overlay (invisible, only used to toggle UI hiding) */
+  body.focus-mode .no-hide-when-focus { display: none !important; } /* hide those elements when focus mode on */
 
-  /* Themes */
-  body.theme-dark {
-    background: #000;
-    color: #0f0;
-  }
-  body.theme-dark #topBar {
-    background: rgba(0,0,0,0.6);
-    color: #0f0;
-  }
+  /* small helper styles */
+  input[type=range] { width: 100%; }
+  button.small { padding:6px 8px; font-size:13px; border-radius:6px; background:#111; border:1px solid #0f0; color:#0f0; cursor:pointer; }
+  button.small:hover { background:#0f0; color:#000; }
 
-  body.theme-light {
-    background: #eee;
-    color: #060;
-  }
-  body.theme-light #topBar {
-    background: rgba(240,240,240,0.95);
-    color: #060;
-  }
-
-  body.theme-green {
-    background: #001100;
-    color: #7fdb7f;
-  }
-  body.theme-green #topBar {
-    background: rgba(0,50,0,0.9);
-    color: #7fdb7f;
+  /* Responsive tweak for small windows */
+  @media (max-width:760px) {
+    #settingsOverlay { width: 94%; left: 3%; transform:none; max-height:86%; }
+    #fpsCanvas { right: 6px; top: 120px; width: 44vw; height: 80px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Game iframes -->
-<iframe id="iframeMain" class="gameIframe" src="https://play.freebrowsermmorpg.com/" sandbox="allow-scripts allow-same-origin allow-forms" style="display: block;"></iframe>
-<iframe id="iframeAlt" class="gameIframe" src="https://play.freebrowsermmorpg.com/" sandbox="allow-scripts allow-same-origin allow-forms" style="display: none;"></iframe>
+<!-- Wrapper around iframes so we can scale & filter safely -->
+<div id="iframeWrapper">
+  <iframe id="iframeMain" class="gameIframe" src="https://play.freebrowsermmorpg.com/" sandbox="allow-scripts allow-same-origin allow-forms" style="display:block;"></iframe>
+  <iframe id="iframeAlt" class="gameIframe" src="https://play.freebrowsermmorpg.com/" sandbox="allow-scripts allow-same-origin allow-forms" style="display:none;"></iframe>
+</div>
 
-<!-- Toggle button always visible -->
-<button id="toggleBarBtn" title="Toggle Controls">📚</button>
-
-<!-- System time -->
-<div id="systemTime">--:--:--</div>
+<!-- Toggle button -->
+<button id="toggleBarBtn" title="Toggle Controls" class="no-hide-when-focus">📚</button>
+<div id="systemTime" class="no-hide-when-focus">--:--:--</div>
 
 <!-- Top bar -->
-<div id="topBar">
+<div id="topBar" class="no-hide-when-focus">
   <div id="tabButtons">
     <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
     <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
   </div>
-  <div id="wikiButtons" style="margin-left: auto;">
+  <div id="wikiButtons" style="margin-left:auto;">
     <button id="itemLookupBtn">Item Lookup</button>
     <button id="npcLookupBtn">NPC Lookup</button>
     <button id="buildLookupBtn">Build Lookup</button>
@@ -281,165 +147,811 @@
 </div>
 
 <!-- Wiki overlay -->
-<div id="wikiOverlay">
+<div id="wikiOverlay" class="no-hide-when-focus">
   <button id="wikiCloseBtn">✖</button>
   <iframe src="" frameborder="0" scrolling="auto"></iframe>
 </div>
 
-<!-- Settings overlay -->
-<div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1">
-  <h2>Settings</h2>
-  <label>Select Theme:</label>
-  <div id="themeButtons" role="radiogroup">
-    <button type="button" data-theme="theme-dark" role="radio" class="theme-btn">Dark</button>
-    <button type="button" data-theme="theme-light" role="radio" class="theme-btn">Light</button>
-    <button type="button" data-theme="theme-green" role="radio" class="theme-btn">Green</button>
+<!-- Settings overlay (centralized) -->
+<div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1" aria-label="Mod Settings">
+  <h2>Mod Tools — Settings</h2>
+
+  <!-- Row: Themes + Basic -->
+  <div class="settings-row">
+    <div class="settings-col">
+      <label>UI Theme</label>
+      <div id="themeButtons" role="radiogroup" aria-label="Select UI Theme">
+        <button type="button" data-theme="theme-dark" aria-checked="false" role="radio" class="theme-btn small">Dark</button>
+        <button type="button" data-theme="theme-light" aria-checked="false" role="radio" class="theme-btn small">Light</button>
+        <button type="button" data-theme="theme-green" aria-checked="false" role="radio" class="theme-btn small">Green</button>
+      </div>
+    </div>
+
+    <div class="settings-col">
+      <label>Show Widgets Only When Enabled</label>
+      <div>
+        <small>All tools live here — enable to show their widget.</small>
+      </div>
+    </div>
   </div>
-  <button id="settingsSaveBtn">Save Settings</button>
+
+  <!-- Row: FPS -->
+  <div class="settings-row">
+    <div class="settings-col">
+      <label>FPS Counter</label>
+      <div>
+        <label><input type="checkbox" id="enableFPS"> Enable FPS counter (mini-widget)</label><br/>
+        <label><input type="checkbox" id="enableFPSGraph"> Show FPS graph</label><br/>
+        <label>Graph sample size: <input id="fpsSample" type="range" min="30" max="240" value="120"></label>
+      </div>
+    </div>
+
+    <div class="settings-col">
+      <label>Performance Profiler</label>
+      <div>
+        <label><input type="checkbox" id="enableFrameTime"> Show frame time (ms)</label><br/>
+        <label><input type="checkbox" id="enableHeap"> Show JS heap size approximation (may be unsupported)</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Zoom & Filters -->
+  <div class="settings-row">
+    <div class="settings-col">
+      <label>Game Zoom</label>
+      <div>
+        <input id="zoomRange" type="range" min="0.6" max="1.6" step="0.01" value="1">
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          <button class="small" id="zoomReset">Reset Zoom</button>
+          <span id="zoomVal" style="padding-left:6px">100%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-col">
+      <label>Color Filters</label>
+      <div>
+        <label><input type="checkbox" id="filterEnabled"> Enable Filters</label><br/>
+        <label>Brightness <input id="filterBrightness" type="range" min="0.2" max="2" step="0.01" value="1"></label>
+        <label>Contrast <input id="filterContrast" type="range" min="0.2" max="2" step="0.01" value="1"></label>
+        <label>Saturation <input id="filterSaturate" type="range" min="0" max="2" step="0.01" value="1"></label>
+        <label>Grayscale <input id="filterGray" type="range" min="0" max="1" step="0.01" value="0"></label>
+        <label>Tint (hue-deg) <input id="filterHue" type="range" min="0" max="360" step="1" value="0"></label>
+        <div style="margin-top:6px;">
+          <button class="small" id="applyCRT">CRT Retro</button>
+          <button class="small" id="applyGreen">Green Mono</button>
+          <button class="small" id="clearFilters">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Music Player -->
+  <div class="settings-row">
+    <div class="settings-col">
+      <label>Music Player</label>
+      <div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="small" id="musicToggle">Open Player</button>
+          <button class="small" id="musicPlay">Play</button>
+          <button class="small" id="musicPause">Pause</button>
+          <button class="small" id="musicNext">Next</button>
+        </div>
+        <div style="margin-top:8px;">
+          <input id="musicUpload" type="file" accept="audio/*" multiple />
+          <div id="playlistLabel" style="margin-top:6px;font-size:13px">Playlist: <span id="playlistCount">0</span> tracks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-col">
+      <label>Focus Mode</label>
+      <div>
+        <label><input type="checkbox" id="enableFocusMode"> Enable Focus Mode (hides UI)</label><br/>
+        <small>Focus mode hides on-screen controls marked as 'no-hide-when-focus' — game stays visible.</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Screenshot -->
+  <div class="settings-row">
+    <div class="settings-col">
+      <label>Screenshot Tool</label>
+      <div>
+        <button class="small" id="screenshotBtn">Take Screenshot (share screen)</button>
+        <label><input type="checkbox" id="screenshotAutoCrop" checked> Attempt to crop to game iframe automatically</label>
+        <div style="margin-top:8px;"><small>After capturing, a new tab will open with the image. Choose the window that contains the game for best results.</small></div>
+      </div>
+    </div>
+
+    <div class="settings-col">
+      <label>Gamepad Support</label>
+      <div>
+        <label><input type="checkbox" id="enableGamepad"> Enable Gamepad</label><br/>
+        <small>Default mapping: A=Space, B=KeyK, D-Pad => arrows. You can customize later.</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Controls Save -->
+  <div class="settings-row" style="margin-top:12px;">
+    <div style="margin-left:auto;">
+      <button class="small" id="settingsSaveBtn">Save Settings</button>
+      <button class="small" id="settingsCloseBtn">Close</button>
+    </div>
+  </div>
+
+  <hr style="border-color: rgba(15,255,15,0.07); margin-top:12px;">
+
+  <!-- Advanced / debug -->
+  <div style="font-size:12px; opacity:0.9; margin-top:8px;">
+    <strong>Advanced notes</strong>: Gamepad & synthetic keyboard events may be blocked by some browsers or cross-origin restrictions. If a mapping does not work, try focusing the game window or enabling the small 'focus' button (click the game frame once).
+  </div>
 </div>
 
+<!-- Small widgets (appear only when toggled) -->
+<div id="fpsWidget" class="widget no-hide-when-focus">FPS: <span id="fpsVal">--</span><br/>MS: <span id="msVal">--</span></div>
+<canvas id="fpsCanvas" width="440" height="160"></canvas>
+
+<div id="zoomWidget" class="widget no-hide-when-focus">
+  Zoom: <span id="zoomWidgetVal">100%</span><br/>
+  <input id="zoomWidgetRange" type="range" min="0.6" max="1.6" step="0.01" value="1">
+</div>
+
+<div id="filtersWidget" class="widget no-hide-when-focus">
+  Filters <br/>
+  <button class="small" id="toggleFilterPanel">Open Filters</button>
+</div>
+
+<div id="musicWidget" class="no-hide-when-focus">
+  <div id="musicMeta">No track</div>
+  <div style="display:flex; gap:8px; margin-top:8px;">
+    <button class="small" id="musicPrevSmall">Prev</button>
+    <button class="small" id="musicPlaySmall">Play</button>
+    <button class="small" id="musicPauseSmall">Pause</button>
+    <button class="small" id="musicNextSmall">Next</button>
+  </div>
+</div>
+
+<!-- Hidden audio element & playlist -->
+<audio id="audioPlayer" preload="metadata"></audio>
+
 <script>
+/* ============================
+   Tools Integration Script
+   ============================ */
+
 (() => {
   "use strict";
 
+  /* -------------------------
+     Basic DOM references
+     ------------------------- */
   const iframeMain = document.getElementById("iframeMain");
-  const iframeAlt = document.getElementById("iframeAlt");
-  const topBar = document.getElementById("topBar");
+  const iframeAlt  = document.getElementById("iframeAlt");
+  const iframeWrapper = document.getElementById("iframeWrapper");
+
   const toggleBarBtn = document.getElementById("toggleBarBtn");
+  const topBar = document.getElementById("topBar");
   const systemTime = document.getElementById("systemTime");
   const tabButtons = document.getElementById("tabButtons");
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
+  const itemLookupBtn = document.getElementById("itemLookupBtn");
+  const npcLookupBtn = document.getElementById("npcLookupBtn");
+  const buildLookupBtn = document.getElementById("buildLookupBtn");
   const settingsBtn = document.getElementById("settingsBtn");
   const settingsOverlay = document.getElementById("settingsOverlay");
-  const themeButtons = document.querySelectorAll("#themeButtons .theme-btn");
+  const settingsCloseBtn = document.getElementById("settingsCloseBtn");
   const settingsSaveBtn = document.getElementById("settingsSaveBtn");
 
-  let currentTheme = localStorage.getItem("mocTheme") || "theme-dark";
-  document.body.className = currentTheme;
+  const fpsWidget = document.getElementById("fpsWidget");
+  const fpsVal = document.getElementById("fpsVal");
+  const msVal = document.getElementById("msVal");
+  const fpsCanvas = document.getElementById("fpsCanvas");
+  const enableFPS = document.getElementById("enableFPS");
+  const enableFPSGraph = document.getElementById("enableFPSGraph");
+  const fpsSample = document.getElementById("fpsSample");
+  const enableFrameTime = document.getElementById("enableFrameTime");
+  const enableHeap = document.getElementById("enableHeap");
 
-  function updateTime() {
-    const now = new Date();
-    systemTime.textContent =
-      now.toTimeString().substring(0, 8);
+  const zoomRange = document.getElementById("zoomRange");
+  const zoomVal = document.getElementById("zoomVal");
+  const zoomReset = document.getElementById("zoomReset");
+  const zoomWidget = document.getElementById("zoomWidget");
+  const zoomWidgetRange = document.getElementById("zoomWidgetRange");
+  const zoomWidgetVal = document.getElementById("zoomWidgetVal");
+
+  const filterEnabled = document.getElementById("filterEnabled");
+  const filterBrightness = document.getElementById("filterBrightness");
+  const filterContrast = document.getElementById("filterContrast");
+  const filterSaturate = document.getElementById("filterSaturate");
+  const filterGray = document.getElementById("filterGray");
+  const filterHue = document.getElementById("filterHue");
+  const applyCRT = document.getElementById("applyCRT");
+  const applyGreen = document.getElementById("applyGreen");
+  const clearFilters = document.getElementById("clearFilters");
+  const filtersWidget = document.getElementById("filtersWidget");
+  const toggleFilterPanel = document.getElementById("toggleFilterPanel");
+
+  const musicToggle = document.getElementById("musicToggle");
+  const musicPlay = document.getElementById("musicPlay");
+  const musicPause = document.getElementById("musicPause");
+  const musicNext = document.getElementById("musicNext");
+  const musicUpload = document.getElementById("musicUpload");
+  const playlistCount = document.getElementById("playlistCount");
+  const musicWidget = document.getElementById("musicWidget");
+  const musicPlaySmall = document.getElementById("musicPlaySmall");
+  const musicPauseSmall = document.getElementById("musicPauseSmall");
+  const musicPrevSmall = document.getElementById("musicPrevSmall");
+  const musicNextSmall = document.getElementById("musicNextSmall");
+  const musicMeta = document.getElementById("musicMeta");
+  const audioPlayer = document.getElementById("audioPlayer");
+
+  const enableFocusMode = document.getElementById("enableFocusMode");
+
+  const screenshotBtn = document.getElementById("screenshotBtn");
+  const screenshotAutoCrop = document.getElementById("screenshotAutoCrop");
+
+  const enableGamepad = document.getElementById("enableGamepad");
+
+  /* -------------------------
+     Persistence (localStorage)
+     ------------------------- */
+  const STORAGE_KEY = "moc_mod_tools_v1";
+  const defaultSettings = {
+    theme: localStorage.getItem("mocTheme") || "theme-dark",
+    fpsEnabled: false,
+    fpsGraph: false,
+    fpsSampleSize: 120,
+    frameTime: false,
+    heap: false,
+    zoom: 1,
+    filters: {
+      enabled: false, brightness:1, contrast:1, saturate:1, gray:0, hue:0
+    },
+    musicVisible: false,
+    playlist: [], // array of {name,url}
+    focusMode: false,
+    gamepad: false
+  };
+  let settings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
+  // ensure nested defaults
+  settings.filters = Object.assign({}, defaultSettings.filters, (settings.filters||{}));
+
+  /* -------------------------
+     Initialize UI state from saved settings
+     ------------------------- */
+  function initUIFromSettings(){
+    document.body.className = settings.theme || "theme-dark";
+    enableFPS.checked = !!settings.fpsEnabled;
+    enableFPSGraph.checked = !!settings.fpsGraph;
+    fpsSample.value = settings.fpsSampleSize || 120;
+    enableFrameTime.checked = !!settings.frameTime;
+    enableHeap.checked = !!settings.heap;
+
+    zoomRange.value = settings.zoom || 1;
+    zoomWidgetRange.value = zoomRange.value;
+    zoomVal.textContent = Math.round(zoomRange.value*100) + "%";
+    zoomWidgetVal.textContent = zoomVal.textContent;
+
+    filterEnabled.checked = !!settings.filters.enabled;
+    filterBrightness.value = settings.filters.brightness;
+    filterContrast.value = settings.filters.contrast;
+    filterSaturate.value = settings.filters.saturate;
+    filterGray.value = settings.filters.gray;
+    filterHue.value = settings.filters.hue;
+
+    musicWidget.style.display = settings.musicVisible ? "block" : "none";
+    playlistCount.textContent = settings.playlist.length || 0;
+
+    enableFocusMode.checked = !!settings.focusMode;
+    if(settings.focusMode) document.body.classList.add("focus-mode"); else document.body.classList.remove("focus-mode");
+
+    enableGamepad.checked = !!settings.gamepad;
   }
-  setInterval(updateTime, 1000);
-  updateTime();
+  initUIFromSettings();
 
-  function updateSelectedThemeButton() {
-    themeButtons.forEach(btn => {
-      const sel = btn.dataset.theme === currentTheme;
-      btn.classList.toggle("selected", sel);
-      btn.setAttribute("aria-checked", sel ? "true" : "false");
-    });
+  /* -------------------------
+     Save settings
+     ------------------------- */
+  function saveSettings(){
+    settings.theme = document.body.className || "theme-dark";
+    settings.fpsEnabled = enableFPS.checked;
+    settings.fpsGraph = enableFPSGraph.checked;
+    settings.fpsSampleSize = Number(fpsSample.value) || 120;
+    settings.frameTime = enableFrameTime.checked;
+    settings.heap = enableHeap.checked;
+    settings.zoom = parseFloat(zoomRange.value);
+    settings.filters.enabled = filterEnabled.checked;
+    settings.filters.brightness = parseFloat(filterBrightness.value);
+    settings.filters.contrast = parseFloat(filterContrast.value);
+    settings.filters.saturate = parseFloat(filterSaturate.value);
+    settings.filters.gray = parseFloat(filterGray.value);
+    settings.filters.hue = parseFloat(filterHue.value);
+    settings.musicVisible = musicWidget.style.display === "block";
+    settings.focusMode = enableFocusMode.checked;
+    settings.gamepad = enableGamepad.checked;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    // also store theme for older usage
+    localStorage.setItem("mocTheme", settings.theme);
   }
-  updateSelectedThemeButton();
 
-  themeButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      currentTheme = btn.dataset.theme;
-      updateSelectedThemeButton();
-    });
-  });
-
+  /* -------------------------
+     Basic UI behaviour
+     ------------------------- */
+  // toggle topbar
   let barVisible = false;
-
-  function hideTopBar() {
+  function showTopBar(){
+    barVisible = true;
+    topBar.style.display = "flex";
+    void topBar.offsetWidth;
+    topBar.style.transform = "translateY(0)";
+  }
+  function hideTopBar(){
+    barVisible = false;
     topBar.style.transform = "translateY(-150%)";
-    const onTransitionEnd = () => {
-      topBar.style.display = "none";
-      topBar.removeEventListener("transitionend", onTransitionEnd);
-    };
+    const onTransitionEnd = () => { topBar.style.display = "none"; topBar.removeEventListener("transitionend", onTransitionEnd); };
     topBar.addEventListener("transitionend", onTransitionEnd);
   }
-
   toggleBarBtn.addEventListener("click", () => {
-    barVisible = !barVisible;
-    if (barVisible) {
-      topBar.style.display = "flex";
-      void topBar.offsetWidth;
-      topBar.style.transform = "translateY(0)";
-    } else {
-      hideTopBar();
-      closeWiki();
-      closeSettings();
-    }
+    if(barVisible) { hideTopBar(); closeSettings(); closeWiki(); }
+    else showTopBar();
   });
 
-  tabButtons.addEventListener("click", (e) => {
+  // system time
+  function updateTime(){
+    const now = new Date();
+    const hh = now.getHours().toString().padStart(2,"0"), mm = now.getMinutes().toString().padStart(2,"0"), ss = now.getSeconds().toString().padStart(2,"0");
+    systemTime.textContent = `${hh}:${mm}:${ss}`;
+  }
+  setInterval(updateTime,1000); updateTime();
+
+  // tab switching
+  tabButtons.addEventListener("click", (e)=>{
     const btn = e.target.closest(".tab-button");
-    if (!btn || btn.classList.contains("active")) return;
-
-    [...tabButtons.children].forEach(b => b.classList.remove("active"));
+    if(!btn) return;
+    if(btn.classList.contains("active")) return;
+    [...tabButtons.children].forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-
     iframeMain.style.display = btn.dataset.iframe === "main" ? "block" : "none";
-    iframeAlt.style.display  = btn.dataset.iframe === "alt"  ? "block" : "none";
-
-    closeWiki();
-    closeSettings();
+    iframeAlt.style.display  = btn.dataset.iframe === "alt" ? "block" : "none";
+    closeWiki(); closeSettings();
   });
 
-  function openWikiPage(url) {
+  // wiki openers
+  itemLookupBtn.addEventListener("click", ()=> openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html"));
+  npcLookupBtn.addEventListener("click", ()=> openWikiPage("https://loociez.github.io/MOC-IV/npclast.html"));
+  buildLookupBtn.addEventListener("click", ()=> openWikiPage("https://loociez.github.io/MOC-IV/Best.html"));
+
+  function openWikiPage(url){
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
-    iframeMain.style.visibility = "hidden";
-    iframeAlt.style.visibility = "hidden";
-
-    setTimeout(() => wikiIframe.focus(), 100);
+    // hide underlying iframe to prevent visual artifacts while wiki on top
+    iframeMain.style.visibility = "hidden"; iframeAlt.style.visibility = "hidden";
+    setTimeout(()=> wikiIframe.focus(), 120);
   }
-
-  function closeWiki() {
-    wikiOverlay.style.display = "none";
-    wikiIframe.src = "";
-    iframeMain.style.visibility = "visible";
-    iframeAlt.style.visibility = "visible";
-  }
-
-  document.getElementById("itemLookupBtn").onclick = () =>
-    openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html");
-
-  document.getElementById("npcLookupBtn").onclick = () =>
-    openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
-
-  document.getElementById("buildLookupBtn").onclick = () =>
-    openWikiPage("https://loociez.github.io/MOC-IV/Best.html");
-
+  function closeWiki(){ wikiOverlay.style.display = "none"; wikiIframe.src = ""; iframeMain.style.visibility = "visible"; iframeAlt.style.visibility = "visible"; }
   wikiCloseBtn.addEventListener("click", closeWiki);
 
-  function openSettings() {
+  // settings open/close
+  settingsBtn.addEventListener("click", ()=> {
     settingsOverlay.style.display = "block";
     settingsOverlay.focus();
-    updateSelectedThemeButton();
-  }
-  function closeSettings() {
+    initUIFromSettings();
+  });
+  settingsCloseBtn.addEventListener("click", ()=> {
     settingsOverlay.style.display = "none";
-  }
-
-  settingsBtn.addEventListener("click", () => {
-    openSettings();
-    closeWiki();
+    saveSettings();
   });
-
-  settingsSaveBtn.addEventListener("click", () => {
-    document.body.className = currentTheme;
-    localStorage.setItem("mocTheme", currentTheme);
-    closeSettings();
-  });
-
-  settingsOverlay.addEventListener("keydown", e => {
-    if (e.key === "Escape") closeSettings();
+  settingsSaveBtn.addEventListener("click", ()=>{
+    saveSettings();
+    settingsOverlay.style.display = "none";
   });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") {
-      if (wikiOverlay.style.display === "flex") closeWiki();
-      else if (settingsOverlay.style.display === "block") closeSettings();
+    if(e.key === "Escape"){
+      if(wikiOverlay.style.display === "flex") closeWiki();
+      else if(settingsOverlay.style.display === "block") { settingsOverlay.style.display = "none"; saveSettings(); }
     }
   });
 
-})();
+  /* -------------------------
+     Theme buttons
+     ------------------------- */
+  document.querySelectorAll("#themeButtons .theme-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = btn.dataset.theme;
+      document.body.className = t;
+      settings.theme = t;
+      document.querySelectorAll("#themeButtons .theme-btn").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+    });
+  });
+
+  /* -------------------------
+     Zoom controls
+     ------------------------- */
+  function applyZoom(v){
+    iframeWrapper.style.transform = `scale(${v})`;
+    zoomVal.textContent = Math.round(v*100) + "%";
+    zoomWidgetVal.textContent = zoomVal.textContent;
+    zoomWidgetRange.value = v;
+    zoomRange.value = v;
+  }
+  zoomRange.addEventListener("input", (e)=> applyZoom(parseFloat(e.target.value)));
+  zoomWidgetRange.addEventListener("input", (e)=> applyZoom(parseFloat(e.target.value)));
+  zoomReset.addEventListener("click", ()=> applyZoom(1));
+  // init
+  applyZoom(parseFloat(settings.zoom || 1));
+
+  /* -------------------------
+     Filters (apply as CSS filter to iframeWrapper)
+     ------------------------- */
+  function updateFilterStyle(){
+    if(!filterEnabled.checked){
+      iframeWrapper.style.filter = "";
+      return;
+    }
+    const b = parseFloat(filterBrightness.value);
+    const c = parseFloat(filterContrast.value);
+    const s = parseFloat(filterSaturate.value);
+    const g = parseFloat(filterGray.value);
+    const hue = parseFloat(filterHue.value);
+    const filterStr = `brightness(${b}) contrast(${c}) saturate(${s}) grayscale(${g}) hue-rotate(${hue}deg)`;
+    iframeWrapper.style.filter = filterStr;
+  }
+  [filterEnabled, filterBrightness, filterContrast, filterSaturate, filterGray, filterHue].forEach(el => el.addEventListener("input", updateFilterStyle));
+  applyCRT.addEventListener("click", ()=>{
+    filterEnabled.checked = true;
+    filterBrightness.value = 1.05; filterContrast.value = 1.25; filterSaturate.value = 1.1; filterGray.value = 0; filterHue.value = 0;
+    // slight RGB split via drop-shadow on wrapper - purely visual
+    iframeWrapper.style.boxShadow = "0 0 12px rgba(0,255,0,0.04) inset";
+    updateFilterStyle();
+  });
+  applyGreen.addEventListener("click", ()=>{
+    filterEnabled.checked = true;
+    filterBrightness.value = 1; filterContrast.value = 1.2; filterSaturate.value = 0.7; filterGray.value = 0; filterHue.value = 90;
+    updateFilterStyle();
+  });
+  clearFilters.addEventListener("click", ()=>{
+    filterEnabled.checked = false;
+    filterBrightness.value = 1; filterContrast.value = 1; filterSaturate.value = 1; filterGray.value = 0; filterHue.value = 0;
+    updateFilterStyle();
+  });
+  // toggle open small filter widget
+  toggleFilterPanel.addEventListener("click", ()=> {
+    // open settings overlay to the filters area (quick UX)
+    settingsOverlay.style.display = "block";
+    window.scrollTo({top: settingsOverlay.offsetTop + 200, behavior: 'smooth'});
+  });
+  // apply saved filter state initially
+  updateFilterStyle();
+
+  /* -------------------------
+     FPS counter & graph
+     ------------------------- */
+  const ctx = fpsCanvas.getContext("2d");
+  let lastFrameTime = performance.now();
+  let frames = 0;
+  let fps = 0;
+  let fpsHistory = new Array(240).fill(0);
+  let msHistory = new Array(240).fill(0);
+
+  function tickLoop(now){
+    // compute fps
+    const dt = now - lastFrameTime;
+    lastFrameTime = now;
+    const ms = dt;
+    frames++;
+    // update every 500ms for display but still record history each frame
+    fpsHistory.shift();
+    msHistory.shift();
+    fpsHistory.push(1000/dt);
+    msHistory.push(dt);
+
+    if(now % 500 < 16){ // roughly every 500ms update display
+      // compute rolling fps average of last 8 frames
+      const recent = fpsHistory.slice(-8).filter(Boolean);
+      fps = recent.length ? Math.round(recent.reduce((a,b)=>a+b,0)/recent.length) : Math.round(1000/dt);
+      fpsVal.textContent = fps;
+      msVal.textContent = Math.round(ms);
+    }
+
+    // draw graph if enabled
+    if(enableFPSGraph.checked && enableFPS.checked){
+      const w = fpsCanvas.width, h = fpsCanvas.height;
+      ctx.clearRect(0,0,w,h);
+      // background gradient
+      const grd = ctx.createLinearGradient(0,0,0,h);
+      grd.addColorStop(0, "rgba(0,255,0,0.06)");
+      grd.addColorStop(1, "rgba(0,0,0,0.04)");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0,0,w,h);
+
+      // draw fps line
+      ctx.beginPath();
+      const sample = Math.min(fpsHistory.length, Number(fpsSample.value) || 120);
+      for(let i=0;i<sample;i++){
+        const val = fpsHistory[fpsHistory.length - sample + i] || 0;
+        const x = (i / (sample-1||1)) * w;
+        const y = h - Math.min(val / 120, 1) * h;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = "rgba(15,255,15,0.9)"; ctx.lineWidth = 1.6; ctx.stroke();
+
+      // draw ms line (thin)
+      ctx.beginPath();
+      for(let i=0;i<sample;i++){
+        const val = msHistory[msHistory.length - sample + i] || 0;
+        const x = (i / (sample-1||1)) * w;
+        const y = Math.min(h-2, (val/40) * h); // invert scale
+        if(i===0) ctx.moveTo(x,h - y); else ctx.lineTo(x,h - y);
+      }
+      ctx.strokeStyle = "rgba(255,200,40,0.9)"; ctx.lineWidth = 1; ctx.stroke();
+
+      // labels
+      ctx.fillStyle = "rgba(15,255,15,0.9)";
+      ctx.font = "12px monospace";
+      ctx.fillText(fps + " FPS", 6, 14);
+    }
+
+    // request next frame
+    requestAnimationFrame(tickLoop);
+  }
+  // start animation loop
+  requestAnimationFrame((t) => { lastFrameTime = t; tickLoop(t); });
+
+  // show/hide widgets based on toggles
+  function updateFPSWidgets(){
+    if(enableFPS.checked){
+      fpsWidget.style.display = "block";
+      if(enableFPSGraph.checked) { fpsCanvas.style.display = "block"; } else { fpsCanvas.style.display = "none"; }
+    } else { fpsWidget.style.display = "none"; fpsCanvas.style.display = "none"; }
+  }
+  enableFPS.addEventListener("change", updateFPSWidgets);
+  enableFPSGraph.addEventListener("change", updateFPSWidgets);
+  fpsSample.addEventListener("input", ()=>{/* nothing extra needed, read value live */});
+  updateFPSWidgets();
+
+  /* -------------------------
+     Music player
+     ------------------------- */
+  let playlist = settings.playlist || [];
+  let playlistIndex = 0;
+  function updatePlaylistUI(){
+    playlistCount.textContent = playlist.length;
+    if(playlist.length && playlistIndex >= playlist.length) playlistIndex = 0;
+    const meta = playlist[playlistIndex];
+    musicMeta.textContent = meta ? meta.name : "No track";
+  }
+  function playIndex(idx){
+    if(!playlist.length) return;
+    playlistIndex = idx % playlist.length;
+    const track = playlist[playlistIndex];
+    audioPlayer.src = track.url;
+    audioPlayer.play().catch(()=>{ /* ignore autoplay block */ });
+    updatePlaylistUI();
+  }
+  audioPlayer.addEventListener("ended", ()=> {
+    playIndex((playlistIndex+1)%playlist.length);
+  });
+
+  musicToggle.addEventListener("click", ()=> {
+    musicWidget.style.display = musicWidget.style.display === "block" ? "none" : "block";
+    settings.musicVisible = musicWidget.style.display === "block";
+    saveSettings();
+  });
+  musicPlay.addEventListener("click", ()=> audioPlayer.play());
+  musicPause.addEventListener("click", ()=> audioPlayer.pause());
+  musicNext.addEventListener("click", ()=> playIndex((playlistIndex+1)%playlist.length));
+  musicPrevSmall.addEventListener("click", ()=> playIndex((playlistIndex-1+playlist.length)%playlist.length));
+  musicPlaySmall.addEventListener("click", ()=> audioPlayer.play());
+  musicPauseSmall.addEventListener("click", ()=> audioPlayer.pause());
+  musicNextSmall.addEventListener("click", ()=> playIndex((playlistIndex+1)%playlist.length));
+
+  // upload audio files to playlist (local blob URLs)
+  musicUpload.addEventListener("change", (e)=>{
+    const files = Array.from(e.target.files || []);
+    files.forEach(f=>{
+      const url = URL.createObjectURL(f);
+      playlist.push({name: f.name, url});
+    });
+    settings.playlist = playlist;
+    updatePlaylistUI();
+    saveSettings();
+  });
+
+  // load initial playlist from settings
+  playlist = settings.playlist || [];
+  updatePlaylistUI();
+
+  /* -------------------------
+     Focus Mode toggle
+     ------------------------- */
+  enableFocusMode.addEventListener("change", ()=>{
+    if(enableFocusMode.checked) document.body.classList.add("focus-mode");
+    else document.body.classList.remove("focus-mode");
+    settings.focusMode = enableFocusMode.checked;
+    saveSettings();
+  });
+
+  /* -------------------------
+     Screenshot using getDisplayMedia
+     ------------------------- */
+  screenshotBtn.addEventListener("click", async ()=>{
+    try{
+      const stream = await navigator.mediaDevices.getDisplayMedia({video:true});
+      const track = stream.getVideoTracks()[0];
+      const imageCapture = new ImageCapture(track);
+      const bitmap = await imageCapture.grabFrame();
+
+      // draw to canvas
+      const cv = document.createElement("canvas");
+      cv.width = bitmap.width; cv.height = bitmap.height;
+      const cctx = cv.getContext("2d");
+      cctx.drawImage(bitmap, 0, 0, cv.width, cv.height);
+
+      // attempt to crop to iframe rect if requested
+      if(screenshotAutoCrop.checked){
+        const rect = iframeWrapper.getBoundingClientRect();
+        const scaleX = bitmap.width / window.innerWidth;
+        const scaleY = bitmap.height / window.innerHeight;
+        const sx = Math.round(rect.left * scaleX);
+        const sy = Math.round(rect.top * scaleY);
+        const sw = Math.round(rect.width * scaleX);
+        const sh = Math.round(rect.height * scaleY);
+        // ensure bounds
+        const tmp = document.createElement("canvas");
+        tmp.width = Math.max(1, sw); tmp.height = Math.max(1, sh);
+        const tctx = tmp.getContext("2d");
+        tctx.drawImage(cv, sx, sy, sw, sh, 0, 0, tmp.width, tmp.height);
+        // open result
+        const url = tmp.toDataURL("image/png");
+        window.open(url, "_blank");
+      } else {
+        const url = cv.toDataURL("image/png");
+        window.open(url, "_blank");
+      }
+
+      // stop stream tracks
+      track.stop();
+      stream.getTracks().forEach(t=>t.stop());
+    }catch(err){
+      alert("Screenshot cancelled or failed: " + (err && err.message ? err.message : err));
+    }
+  });
+
+  /* -------------------------
+     Gamepad support (best-effort)
+     ------------------------- */
+  let gamepadActive = enableGamepad.checked;
+  let lastGamepadTimestamps = {};
+  const GAMEPAD_POLL_MS = 60;
+  const BUTTON_MAP = { 0:"Space", 1:"KeyK", 2:"KeyJ", 3:"KeyL" }; // default sample
+  const DPAD_MAP = { 12:"ArrowUp", 13:"ArrowDown", 14:"ArrowLeft", 15:"ArrowRight" };
+
+  enableGamepad.addEventListener("change", ()=> {
+    gamepadActive = enableGamepad.checked;
+    settings.gamepad = gamepadActive;
+    saveSettings();
+  });
+
+  function sendKeyToIframe(code, type="keydown"){
+    // best-effort: focus iframe and dispatch keyboard event to contentWindow
+    try {
+      iframeMain.focus();
+      const ev = new KeyboardEvent(type, {key: code === "Space" ? " " : "", code: code, keyCode: code === "Space" ? 32 : undefined, bubbles:true, cancelable:true});
+      // dispatch to the iframe window
+      if(iframeMain && iframeMain.contentWindow) {
+        iframeMain.contentWindow.dispatchEvent(ev);
+      } else {
+        window.dispatchEvent(ev);
+      }
+    } catch(e){
+      // swallow errors; some cross-origin restrictions may block behavior
+      console.warn("Could not dispatch synthetic key event to iframe:", e);
+    }
+  }
+
+  function pollGamepads(){
+    if(!gamepadActive){ setTimeout(pollGamepads, GAMEPAD_POLL_MS); return; }
+    const gps = navigator.getGamepads ? navigator.getGamepads() : [];
+    for(const gp of gps){
+      if(!gp) continue;
+      // buttons
+      gp.buttons.forEach((btn, idx) => {
+        if(btn.pressed){
+          // debounce based on timestamp
+          const key = BUTTON_MAP[idx] || null;
+          if(key){
+            const stamp = gp.timestamp || Date.now();
+            const last = lastGamepadTimestamps[`b${idx}`] || 0;
+            if(stamp !== last){
+              sendKeyToIframe(key, "keydown");
+              // schedule keyup shortly after to simulate press
+              setTimeout(()=> sendKeyToIframe(key, "keyup"), 80);
+              lastGamepadTimestamps[`b${idx}`] = stamp;
+            }
+          }
+        }
+      });
+      // dpad
+      [12,13,14,15].forEach(pin => {
+        const idx = pin;
+        const btn = gp.buttons[idx];
+        if(btn && btn.pressed){
+          const key = DPAD_MAP[idx];
+          const stamp = gp.timestamp || Date.now();
+          const last = lastGamepadTimestamps[`d${idx}`] || 0;
+          if(stamp !== last){
+            sendKeyToIframe(key, "keydown");
+            setTimeout(()=> sendKeyToIframe(key, "keyup"), 60);
+            lastGamepadTimestamps[`d${idx}`] = stamp;
+          }
+        }
+      });
+    }
+    setTimeout(pollGamepads, GAMEPAD_POLL_MS);
+  }
+  // start polling loop
+  pollGamepads();
+
+  /* -------------------------
+     Misc small controls and widgets behaviour
+     ------------------------- */
+  // show/hide widgets according to settings toggles
+  function refreshWidgetsFromSettings(){
+    // fps
+    if(enableFPS.checked) fpsWidget.style.display = "block"; else fpsWidget.style.display = "none";
+    if(enableFPSGraph.checked && enableFPS.checked) fpsCanvas.style.display = "block"; else fpsCanvas.style.display = "none";
+    // zoom
+    if(Number(zoomRange.value) !== 1) zoomWidget.style.display = "block"; else zoomWidget.style.display = "none";
+    // filters small widget
+    filtersWidget.style.display = filterEnabled.checked ? "block" : "none";
+    // music
+    musicWidget.style.display = settings.musicVisible ? "block" : "none";
+  }
+  // run periodically to keep widgets consistent
+  setInterval(refreshWidgetsFromSettings, 700);
+
+  /* -------------------------
+     Save before unload
+     ------------------------- */
+  window.addEventListener("beforeunload", ()=> {
+    saveSettings();
+    // revoke blob urls created? we keep them alive for session; revoking breaks playback
+  });
+
+  /* -------------------------
+     Initialize UI from settings on load
+     ------------------------- */
+  initUIFromSettings();
+  updateFilterStyle();
+  applyZoom(settings.zoom || 1);
+
+  /* -------------------------
+     Small helpful UX: click iframe to focus
+     ------------------------- */
+  iframeWrapper.addEventListener("click", ()=> {
+    try { iframeMain.focus(); } catch(e) {}
+  });
+
+  /* -------------------------
+     Expose a small API for debug (on window)
+     ------------------------- */
+  window.mocTools = {
+    settings,
+    saveSettings,
+    playIndex,
+    playlist,
+    applyZoom,
+    updateFilterStyle
+  };
+
+})(); // end main IIFE
+
 </script>
 
 </body>
