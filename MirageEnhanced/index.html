@@ -44,7 +44,7 @@
   #systemTime {
     position: fixed;
     top: 8px;
-    left: 46px; /* 32px width + 8px gap */
+    left: 46px;
     font-family: monospace;
     font-size: 16px;
     z-index: 100004;
@@ -56,11 +56,11 @@
   #topBar {
     position: fixed;
     top: 40px;
-    left: 46px; /* align with system time left */
+    left: 46px;
     right: 6px;
     height: 36px;
     background: rgba(0,0,0,0.6);
-    display: none;  /* HIDDEN initially */
+    display: none;
     align-items: center;
     gap: 8px;
     padding: 0 10px;
@@ -69,13 +69,11 @@
     user-select: none;
     z-index: 100002;
     border-radius: 6px;
-
-    /* Start hidden by moving off screen above */
     transform: translateY(-150%);
     transition: transform 0.3s ease;
   }
   #topBar.visible {
-    display: flex; /* make visible when toggled */
+    display: flex;
     transform: translateY(0);
   }
 
@@ -174,7 +172,7 @@
     display: none;
     color: #0f0;
     font-family: monospace;
-    pointer-events: auto; /* crucial */
+    pointer-events: auto;
   }
   #settingsOverlay h2 {
     margin-top: 0;
@@ -186,7 +184,6 @@
     margin: 8px 0 4px;
   }
 
-  /* New theme buttons container */
   #themeButtons {
     display: flex;
     gap: 8px;
@@ -200,8 +197,6 @@
     border-radius: 6px;
     cursor: pointer;
     font-family: monospace;
-    font-weight: normal;
-    user-select: none;
     transition: background 0.2s, color 0.2s;
   }
   .theme-btn:hover {
@@ -239,17 +234,6 @@
     background: rgba(0,0,0,0.6);
     color: #0f0;
   }
-  body.theme-dark #topBar button,
-  body.theme-dark #wikiButtons button {
-    background: #111;
-    border-color: #0f0;
-    color: #0f0;
-  }
-  body.theme-dark #topBar button:hover,
-  body.theme-dark #wikiButtons button:hover {
-    background: #0f0;
-    color: #000;
-  }
 
   body.theme-light {
     background: #eee;
@@ -259,17 +243,6 @@
     background: rgba(240,240,240,0.95);
     color: #060;
   }
-  body.theme-light #topBar button,
-  body.theme-light #wikiButtons button {
-    background: #ddd;
-    border-color: #060;
-    color: #060;
-  }
-  body.theme-light #topBar button:hover,
-  body.theme-light #wikiButtons button:hover {
-    background: #060;
-    color: #ddd;
-  }
 
   body.theme-green {
     background: #001100;
@@ -278,17 +251,6 @@
   body.theme-green #topBar {
     background: rgba(0,50,0,0.9);
     color: #7fdb7f;
-  }
-  body.theme-green #topBar button,
-  body.theme-green #wikiButtons button {
-    background: #003300;
-    border-color: #7fdb7f;
-    color: #7fdb7f;
-  }
-  body.theme-green #topBar button:hover,
-  body.theme-green #wikiButtons button:hover {
-    background: #7fdb7f;
-    color: #003300;
   }
 </style>
 </head>
@@ -301,26 +263,26 @@
 <!-- Toggle button always visible -->
 <button id="toggleBarBtn" title="Toggle Controls">📚</button>
 
-<!-- System time to the right of toggle -->
+<!-- System time -->
 <div id="systemTime">--:--:--</div>
 
-<!-- Top bar (hidden by default) -->
+<!-- Top bar -->
 <div id="topBar">
   <div id="tabButtons">
     <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
     <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
   </div>
   <div id="wikiButtons" style="margin-left: auto;">
-    <button id="itemLookupBtn" title="Item Lookup">Item Lookup</button>
-    <button id="npcLookupBtn" title="NPC Lookup">NPC Lookup</button>
-    <button id="buildLookupBtn" title="Build Lookup">Build Lookup</button>
-    <button id="settingsBtn" title="Settings">Settings</button>
+    <button id="itemLookupBtn">Item Lookup</button>
+    <button id="npcLookupBtn">NPC Lookup</button>
+    <button id="buildLookupBtn">Build Lookup</button>
+    <button id="settingsBtn">Settings</button>
   </div>
 </div>
 
-<!-- Wiki iframe overlay -->
+<!-- Wiki overlay -->
 <div id="wikiOverlay">
-  <button id="wikiCloseBtn" title="Close Wiki">✖</button>
+  <button id="wikiCloseBtn">✖</button>
   <iframe src="" frameborder="0" scrolling="auto"></iframe>
 </div>
 
@@ -328,10 +290,10 @@
 <div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1">
   <h2>Settings</h2>
   <label>Select Theme:</label>
-  <div id="themeButtons" role="radiogroup" aria-label="Select UI Theme">
-    <button type="button" data-theme="theme-dark" aria-checked="false" role="radio" class="theme-btn">Dark</button>
-    <button type="button" data-theme="theme-light" aria-checked="false" role="radio" class="theme-btn">Light</button>
-    <button type="button" data-theme="theme-green" aria-checked="false" role="radio" class="theme-btn">Green</button>
+  <div id="themeButtons" role="radiogroup">
+    <button type="button" data-theme="theme-dark" role="radio" class="theme-btn">Dark</button>
+    <button type="button" data-theme="theme-light" role="radio" class="theme-btn">Light</button>
+    <button type="button" data-theme="theme-green" role="radio" class="theme-btn">Green</button>
   </div>
   <button id="settingsSaveBtn">Save Settings</button>
 </div>
@@ -346,7 +308,6 @@
   const toggleBarBtn = document.getElementById("toggleBarBtn");
   const systemTime = document.getElementById("systemTime");
   const tabButtons = document.getElementById("tabButtons");
-  const wikiButtons = document.getElementById("wikiButtons");
   const wikiOverlay = document.getElementById("wikiOverlay");
   const wikiCloseBtn = document.getElementById("wikiCloseBtn");
   const wikiIframe = wikiOverlay.querySelector("iframe");
@@ -355,32 +316,26 @@
   const themeButtons = document.querySelectorAll("#themeButtons .theme-btn");
   const settingsSaveBtn = document.getElementById("settingsSaveBtn");
 
-  // Load theme from localStorage or default
   let currentTheme = localStorage.getItem("mocTheme") || "theme-dark";
   document.body.className = currentTheme;
 
-  // Update system time every second
   function updateTime() {
     const now = new Date();
-    const h = now.getHours().toString().padStart(2,'0');
-    const m = now.getMinutes().toString().padStart(2,'0');
-    const s = now.getSeconds().toString().padStart(2,'0');
-    systemTime.textContent = `${h}:${m}:${s}`;
+    systemTime.textContent =
+      now.toTimeString().substring(0, 8);
   }
   setInterval(updateTime, 1000);
   updateTime();
 
-  // Update selected theme button highlight
   function updateSelectedThemeButton() {
     themeButtons.forEach(btn => {
-      const isSelected = btn.dataset.theme === currentTheme;
-      btn.classList.toggle("selected", isSelected);
-      btn.setAttribute("aria-checked", isSelected ? "true" : "false");
+      const sel = btn.dataset.theme === currentTheme;
+      btn.classList.toggle("selected", sel);
+      btn.setAttribute("aria-checked", sel ? "true" : "false");
     });
   }
   updateSelectedThemeButton();
 
-  // Handle clicking a theme button
   themeButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       currentTheme = btn.dataset.theme;
@@ -388,13 +343,10 @@
     });
   });
 
-  // Toggle top bar visibility
   let barVisible = false;
 
-  // Function to hide bar with animation and then display none
   function hideTopBar() {
     topBar.style.transform = "translateY(-150%)";
-    // After transition, hide display
     const onTransitionEnd = () => {
       topBar.style.display = "none";
       topBar.removeEventListener("transitionend", onTransitionEnd);
@@ -405,101 +357,60 @@
   toggleBarBtn.addEventListener("click", () => {
     barVisible = !barVisible;
     if (barVisible) {
-      // Show and animate in
       topBar.style.display = "flex";
-      // Trigger reflow so transform transition works
       void topBar.offsetWidth;
       topBar.style.transform = "translateY(0)";
     } else {
-      // Animate out and hide
       hideTopBar();
       closeWiki();
       closeSettings();
     }
   });
 
-  // Tab switching between iframes
   tabButtons.addEventListener("click", (e) => {
     const btn = e.target.closest(".tab-button");
-    if (!btn) return;
-    if (btn.classList.contains("active")) return;
+    if (!btn || btn.classList.contains("active")) return;
 
-    // Switch active tab button
     [...tabButtons.children].forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    // Show/hide iframes
-    if (btn.dataset.iframe === "main") {
-      iframeMain.style.display = "block";
-      iframeAlt.style.display = "none";
-    } else {
-      iframeMain.style.display = "none";
-      iframeAlt.style.display = "block";
-    }
+    iframeMain.style.display = btn.dataset.iframe === "main" ? "block" : "none";
+    iframeAlt.style.display  = btn.dataset.iframe === "alt"  ? "block" : "none";
 
-    // Close overlays
     closeWiki();
     closeSettings();
   });
 
-  // Open wiki page in overlay
   function openWikiPage(url) {
     wikiIframe.src = url;
     wikiOverlay.style.display = "flex";
+    iframeMain.style.visibility = "hidden";
+    iframeAlt.style.visibility = "hidden";
 
-    // Hide the active game iframe completely
-    if (iframeMain.style.display === "block") {
-      iframeMain.style.visibility = "hidden";
-    }
-    if (iframeAlt.style.display === "block") {
-      iframeAlt.style.visibility = "hidden";
-    }
-
-    setTimeout(() => {
-      wikiIframe.focus();
-    }, 100);
+    setTimeout(() => wikiIframe.focus(), 100);
   }
 
-  // Close wiki overlay and restore iframe visibility
   function closeWiki() {
     wikiOverlay.style.display = "none";
     wikiIframe.src = "";
-
     iframeMain.style.visibility = "visible";
     iframeAlt.style.visibility = "visible";
-
-    // Focus back active iframe
-    const activeTab = document.querySelector("#tabButtons .tab-button.active");
-    if (activeTab) {
-      if (activeTab.dataset.iframe === "main") {
-        iframeMain.focus();
-      } else {
-        iframeAlt.focus();
-      }
-    }
   }
 
-  document.getElementById("itemLookupBtn").addEventListener("click", () => {
+  document.getElementById("itemLookupBtn").onclick = () =>
     openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html");
-  });
 
-  document.getElementById("npcLookupBtn").addEventListener("click", () => {
+  document.getElementById("npcLookupBtn").onclick = () =>
     openWikiPage("https://loociez.github.io/MOC-IV/npclast.html");
-  });
-  
-  document.getElementById("buildLookupBtn").addEventListener("click", () => {
+
+  document.getElementById("buildLookupBtn").onclick = () =>
     openWikiPage("https://loociez.github.io/MOC-IV/Best.html");
-  });
 
-  wikiCloseBtn.addEventListener("click", () => {
-    closeWiki();
-  });
+  wikiCloseBtn.addEventListener("click", closeWiki);
 
-  // Settings panel
   function openSettings() {
     settingsOverlay.style.display = "block";
     settingsOverlay.focus();
-    // Update buttons highlight on open in case theme changed elsewhere
     updateSelectedThemeButton();
   }
   function closeSettings() {
@@ -518,96 +429,17 @@
   });
 
   settingsOverlay.addEventListener("keydown", e => {
-    if(e.key === "Escape") {
-      closeSettings();
-    }
+    if (e.key === "Escape") closeSettings();
   });
 
-  // Global ESC handler to close overlays
   document.addEventListener("keydown", e => {
-    if(e.key === "Escape") {
-      if (wikiOverlay.style.display === "flex") {
-        closeWiki();
-      } else if (settingsOverlay.style.display === "block") {
-        closeSettings();
-      }
+    if (e.key === "Escape") {
+      if (wikiOverlay.style.display === "flex") closeWiki();
+      else if (settingsOverlay.style.display === "block") closeSettings();
     }
-  });
-
-  // Prevent click fallthrough on wiki overlay (stop event bubbling)
-  wikiOverlay.addEventListener("click", (e) => {
-    e.stopPropagation();
   });
 
 })();
-// ===================== AUTO SPACE ATTACK SYSTEM =========================
-
-document.addEventListener("DOMContentLoaded", () => {
-    let autoAttack = false;
-    let attackInterval = null;
-
-    // Reference to your main game iframe
-    const mainIframe = document.getElementById("iframeMain");
-
-    if (!mainIframe) {
-        console.error("iframeMain not found!");
-        return;
-    }
-
-    // Dispatch a SPACE keydown to the iframe
-    function startHoldingSpace() {
-        if (!mainIframe.contentWindow) return;
-        const win = mainIframe.contentWindow;
-
-        autoAttack = true;
-        attackInterval = setInterval(() => {
-            win.focus();
-            win.dispatchEvent(new KeyboardEvent("keydown", {
-                key: " ",
-                code: "Space",
-                keyCode: 32,
-                which: 32,
-                bubbles: true,
-                cancelable: true
-            }));
-        }, 90); // roughly hold interval
-        console.log("AUTO ATTACK ENABLED");
-    }
-
-    // Stop holding SPACE
-    function stopHoldingSpace() {
-        if (!mainIframe.contentWindow) return;
-        const win = mainIframe.contentWindow;
-
-        clearInterval(attackInterval);
-        autoAttack = false;
-
-        // Send keyup to ensure attack stops
-        win.focus();
-        win.dispatchEvent(new KeyboardEvent("keyup", {
-            key: " ",
-            code: "Space",
-            keyCode: 32,
-            which: 32,
-            bubbles: true,
-            cancelable: true
-        }));
-        console.log("AUTO ATTACK DISABLED");
-    }
-
-    // Toggle with . key
-    document.addEventListener("keydown", (e) => {
-        // Use e.code to reliably detect the period key regardless of layout
-        if (e.code === "Period" && !e.repeat) {
-            if (autoAttack) {
-                stopHoldingSpace();
-            } else {
-                startHoldingSpace();
-            }
-        }
-    });
-});
-
 </script>
 
 </body>
