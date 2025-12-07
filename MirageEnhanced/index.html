@@ -949,7 +949,48 @@
     applyZoom,
     updateFilterStyle
   };
+<script>
+// ------------------------------------------
+// Focus Mode: Screen-Edge Restore (Option 3)
+// ------------------------------------------
+(function() {
+    let focusMode = false;   
+    let edgeTimer = null;    
 
+    // Call this function when your Focus Mode is toggled ON
+    window.enableFocusMode = function() {
+        focusMode = true;
+        document.getElementById("topBar").style.display = "none";
+        document.getElementById("toggleBarBtn").style.display = "none";
+    };
+
+    // Call this function to restore the UI
+    window.disableFocusMode = function() {
+        focusMode = false;
+        document.getElementById("topBar").style.display = "flex";
+        document.getElementById("toggleBarBtn").style.display = "flex";
+    };
+
+    // Detect when mouse is at very top of screen for 1 second
+    document.addEventListener("mousemove", (e) => {
+        if (!focusMode) return;
+
+        // mouse must be at top 3px of window
+        if (e.clientY <= 3) {
+            if (!edgeTimer) {
+                edgeTimer = setTimeout(() => {
+                    disableFocusMode();
+                    edgeTimer = null;
+                }, 1000); // hold 1 second
+            }
+        } else {
+            if (edgeTimer) {
+                clearTimeout(edgeTimer);
+                edgeTimer = null;
+            }
+        }
+    });
+})();
 })(); // end main IIFE
 
 </script>
