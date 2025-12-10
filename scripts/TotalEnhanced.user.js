@@ -5,6 +5,8 @@
 // @description  Enhanced modification tool for MoC!
 // @author       Loocie
 // @match        https://play.consty.com/
+// @match        https://play.mirageonlineclassic.com
+// @match        https://play.freebrowsermmorpg.com/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=consty.com
 // @grant        none
 // ==/UserScript==
@@ -1245,20 +1247,9 @@ if (shopSelect) {
     observer.observe(shopSelect, { childList: true, subtree: true });
 }
 
-//emoji start
-(function() {
-
+// === Emoji Processor (Safe Version – Preserves Item Links) ===
+(function () {
     const emojiMap = {
-        ':moc:': 'https://loociez.github.io/MOC-IV/images/emoji/moc.png',
-        ':vibe:': 'https://loociez.github.io/MOC-IV/images/emoji/vibe.gif',
-        ':rick:': 'https://loociez.github.io/MOC-IV/images/emoji/rick.gif',
-        ':pain:': 'https://loociez.github.io/MOC-IV/images/emoji/pain.gif',
-        ':verycat:': 'https://loociez.github.io/MOC-IV/images/emoji/verycat.gif',
-        ':boohoo:': 'https://loociez.github.io/MOC-IV/images/emoji/boohoo.png',
-        ':kek:': 'https://loociez.github.io/MOC-IV/images/emoji/kek.png',
-        ':swag:': 'https://loociez.github.io/MOC-IV/images/emoji/swag.gif',
-        ':cry:': 'https://loociez.github.io/MOC-IV/images/emoji/cry.gif',
-        ':sasuke:': 'https://loociez.github.io/MOC-IV/images/emoji/sasuke.gif',
         ':bruh:': 'https://loociez.github.io/MOC-IV/images/emoji/bruh.gif',
         ':jam:': 'https://loociez.github.io/MOC-IV/images/emoji/jam.gif',
         ':ban:': 'https://loociez.github.io/MOC-IV/images/emoji/ban.png',
@@ -1272,28 +1263,30 @@ if (shopSelect) {
         ':skb:': 'https://loociez.github.io/MOC-IV/images/emoji/skb.gif'
     };
 
-    // Convert :emoji: text → <img>
-    function replaceEmojis(text) {
-        return text.replace(/:\w+:/g, token => {
+    function replaceEmojis(html) {
+        return html.replace(/:\w+:/g, token => {
             const src = emojiMap[token];
             if (!src) return token;
             return `<img src="${src}" alt="${token}" class="emojiImg" style="width:2em;height:2em;vertical-align:middle;">`;
         });
     }
 
-    // Process a chat node whether it's new OR rewritten by the game
+    // Safe processor: preserves existing HTML (including item links)
     function processNode(node) {
         if (!(node instanceof HTMLElement)) return;
 
-        // Mirage rewrites with innerText → we must read from that
-        const raw = node.innerText;
-        if (!raw) return;
+        // Do NOT use innerText ― innerText erases spans
+        const rawHTML = node.innerHTML;
 
-        const newHTML = replaceEmojis(raw);
+        // Replace emojis inside existing HTML
+        const newHTML = replaceEmojis(rawHTML);
 
-        if (node.innerHTML !== newHTML) {
+        if (newHTML !== rawHTML) {
             node.innerHTML = newHTML;
         }
+
+        // Let your item-link parser run AFTER emoji replacement
+        document.dispatchEvent(new Event("chatline-updated"));
     }
 
     function initEmojiObserver() {
@@ -1305,11 +1298,8 @@ if (shopSelect) {
 
         const observer = new MutationObserver(mutations => {
             mutations.forEach(m => {
-
-                // New chat lines
                 m.addedNodes.forEach(n => processNode(n));
 
-                // Existing chat lines rewritten by the game
                 if (m.type === "characterData" && m.target.parentElement) {
                     processNode(m.target.parentElement);
                 }
@@ -1322,12 +1312,12 @@ if (shopSelect) {
             characterData: true
         });
 
-        console.log("Emoji module (persistent) loaded.");
+        console.log("Emoji module (SAFE) loaded.");
     }
 
     initEmojiObserver();
-
 })();
+
 
 
 // UI + Vitals
@@ -1344,21 +1334,23 @@ if (shopSelect) {
         const finalWidth = baseWidth * 1.15;
 
         Object.assign(inv.style, {
-            display: 'grid',
-            gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
-            gridAutoRows: `${slotSize}px`,
-            columnGap: `${horizontalGap}px`,
-            rowGap: `${verticalGap}px`,
-            padding: '1px 6px 6px 6px',
-            background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
-            border: '2px solid #444',
-            borderRadius: '8px',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-            width: `${finalWidth}px`,
-            margin: '0 auto 10px auto',
-            overflow: 'visible',
-            boxSizing: 'border-box',
-        });
+    display: 'grid',
+    gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
+    gridAutoRows: `${slotSize}px`,
+    columnGap: `${horizontalGap}px`,
+    rowGap: `${verticalGap}px`,
+    padding: '1px 0 6px 0',
+    background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
+    border: '2px solid #444',
+    borderRadius: '8px',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+    width: `${finalWidth}px`,
+    margin: '0 auto 10px 0',
+    overflow: 'visible',
+    justifyContent: 'start',
+    boxSizing: 'border-box',
+});
+
 
         const canvases = Array.from(inv.querySelectorAll('canvas'));
         canvases.forEach((c, index) => {
@@ -1980,22 +1972,23 @@ const INV_GLOW_CONFIG = {
   function applyNewUI() {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
-    Object.assign(inv.style, {
-      display: 'grid',
-      gridTemplateColumns: `repeat(5, 42px)`,
-      gridAutoRows: `42px`,
-      columnGap: `25px`,
-      rowGap: `2.5px`,
-      padding: '1px 6px 6px 6px',
-      background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
-      border: '2px solid #444',
-      borderRadius: '8px',
-      boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-      width: 'calc((5*42px + 25px*4) * 1.15)',
-      margin: '0 auto 10px auto',
-      overflow: 'visible',
-      boxSizing: 'border-box',
-    });
+  Object.assign(inv.style, {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
+    gridAutoRows: `${slotSize}px`,
+    columnGap: `${horizontalGap}px`,
+    rowGap: `${verticalGap}px`,
+    padding: '1px 0 6px 0',
+    background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
+    border: '2px solid #444',
+    borderRadius: '8px',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+    width: `${finalWidth}px`,
+    margin: '0 auto 10px 0',
+    overflow: 'visible',
+    justifyContent: 'start',
+    boxSizing: 'border-box',
+});
   }
 
   function applyNewVitals() {
@@ -2983,7 +2976,8 @@ function formatNumber(num) {
     });
   }
 
-  setInterval(parseChatItems, 1000);
+  document.addEventListener("chatline-updated", parseChatItems);
+
 
   chatBox.addEventListener("click", e => {
     const target = e.target;
@@ -3031,5 +3025,15 @@ function applyGlassStyle(element) {
 ].forEach(id => {
     applyGlassStyle(document.getElementById(id));
 });
+const css = `
+.emojiImg {
+    filter: none !important;
+    -webkit-filter: none !important;
+    image-rendering: pixelated;
+}
+`;
+const style = document.createElement("style");
+style.textContent = css;
+document.head.appendChild(style);
 
 })();
