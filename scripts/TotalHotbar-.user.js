@@ -5,6 +5,8 @@
 // @description  TotalHotbar for Mirage Online Classic!
 // @author       Loocie
 // @match        https://play.consty.com
+// @match        https://play.mirageonlineclassic.com
+// @match        https://play.freebrowsermmorpg.com/
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // ==/UserScript==
