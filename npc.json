@@ -82110,7 +82110,109 @@
     ]
   },
   {
-    "name": "",
+    "name": "Kair Norax",
+    "desc": "",
+    "tag": "☠",
+    "pursue_run": false,
+    "equip_drops": false,
+    "spawn_day": true,
+    "spawn_night": true,
+    "spawn_weather": 0,
+    "show_name": false,
+    "attack_say": "",
+    "death_say": "",
+    "kill_verb": "killed",
+    "attack_sound_id": 1,
+    "death_sound_id": 2,
+    "mapswitch_radius": 0,
+    "sprite": 367,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 270,
+      "saturation": 0,
+      "brightness": 100
+    },
+    "scale": 3,
+    "color": "#008b8b",
+    "spawn_delay": 1,
+    "move_chance": 0,
+    "move_delay": 100,
+    "move_amount": 1,
+    "attack_delay": 100,
+    "flee_threshold": 100,
+    "behavior": 0,
+    "targeting": 0,
+    "sight_range": 1,
+    "hostility_flags": -1,
+    "shop_id": -1,
+    "vitals": {
+      "hp": 100000,
+      "mp": 0,
+      "sp": 0
+    },
+    "stats": {
+      "atk": 0,
+      "def": 0,
+      "rat": 0,
+      "rdf": 0,
+      "mat": 0,
+      "mdf": 0
+    },
+    "drop_items": [
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      }
+    ]
+  },
+  {
+    "name": "Left Hand of God",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -82125,17 +82227,119 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 367,
     "sprite_color": {
-      "alpha": 1,
+      "alpha": 0.5,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 1.25,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 0,
+    "move_delay": 100,
+    "move_amount": 1,
+    "attack_delay": 100,
+    "flee_threshold": 0,
+    "behavior": 0,
+    "targeting": 0,
+    "sight_range": 1,
+    "hostility_flags": -1,
+    "shop_id": -1,
+    "vitals": {
+      "hp": 1000,
+      "mp": 0,
+      "sp": 0
+    },
+    "stats": {
+      "atk": 0,
+      "def": 0,
+      "rat": 0,
+      "rdf": 0,
+      "mat": 0,
+      "mdf": 0
+    },
+    "drop_items": [
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      }
+    ]
+  },
+  {
+    "name": "Right Hand of God",
+    "desc": "",
+    "tag": "",
+    "pursue_run": false,
+    "equip_drops": false,
+    "spawn_day": true,
+    "spawn_night": true,
+    "spawn_weather": 0,
+    "show_name": false,
+    "attack_say": "",
+    "death_say": "",
+    "kill_verb": "killed",
+    "attack_sound_id": 1,
+    "death_sound_id": 2,
+    "mapswitch_radius": 0,
+    "sprite": 367,
+    "sprite_color": {
+      "alpha": 0.5,
+      "hue": 270,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 1.25,
+    "color": "#008b8b",
+    "spawn_delay": 1,
+    "move_chance": 0,
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
@@ -82212,7 +82416,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "God's Minion",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -82234,211 +82438,7 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
-    "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
-    "hostility_flags": -1,
-    "shop_id": -1,
-    "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
-    },
-    "stats": {
-      "atk": 0,
-      "def": 0,
-      "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
-    },
-    "drop_items": [
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      }
-    ]
-  },
-  {
-    "name": "",
-    "desc": "",
-    "tag": "",
-    "pursue_run": false,
-    "equip_drops": false,
-    "spawn_day": true,
-    "spawn_night": true,
-    "spawn_weather": 0,
-    "show_name": false,
-    "attack_say": "",
-    "death_say": "",
-    "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
-    "mapswitch_radius": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
-    "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
-    "hostility_flags": -1,
-    "shop_id": -1,
-    "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
-    },
-    "stats": {
-      "atk": 0,
-      "def": 0,
-      "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
-    },
-    "drop_items": [
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      }
-    ]
-  },
-  {
-    "name": "",
-    "desc": "",
-    "tag": "",
-    "pursue_run": false,
-    "equip_drops": false,
-    "spawn_day": true,
-    "spawn_night": true,
-    "spawn_weather": 0,
-    "show_name": false,
-    "attack_say": "",
-    "death_say": "",
-    "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
-    "mapswitch_radius": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
