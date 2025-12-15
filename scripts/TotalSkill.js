@@ -78,6 +78,7 @@
             if (!b.querySelector('input')) {
                 const skillName = b.innerText.split(' ')[0];
                 const inputCheckbox = pHTML.input({ type: 'checkbox', checked: enabledSkilTrackers[skillName] || false });
+                inputCheckbox.name = "skillSelector";
                 inputCheckbox.addEventListener('click', chkBoxClick(skillName));
                 b.appendChild(inputCheckbox);
             }
@@ -113,27 +114,28 @@
 
             for (let b of Array.from(container.querySelectorAll('div'))) {
                 if (b.classList.contains('barSkill')) {
-                    const skillName = b.innerText.split(' ')[0];                    
+                    const skillName = b.innerText.split(' ')[0];
                     if (!b.querySelector('input')) {
                         const inputCheckbox = document.createElement("input");
                         inputCheckbox.type = 'checkbox';
+                        inputCheckbox.name = 'skillSelector';
                         inputCheckbox.checked = enabledSkilTrackers[skillName] || false;
                         inputCheckbox.addEventListener('input', chkBoxClick(skillName));
                         b.appendChild(inputCheckbox);
                     }
 
                     if (skillsToDisplay.includes(skillName)) {
-                        let skillNameContainer = pHTML.div({ innerHTML: b.innerHTML, style: {  width: '190px', display: "inline-block", textAlign: 'right' } });                        
+                        let skillNameContainer = pHTML.div({ innerHTML: b.innerHTML, style: { width: '190px', display: "inline-block", textAlign: 'right' } });
                         const bar = b.nextSibling.cloneNode(true);
                         bar.style = b.nextElementSibling.style;
                         recAssign(bar.style, { width: '400px', position: 'relative', top: "-18px", left: "24px", display: 'inline-block' });
-                        const skillInfo = pHTML.div({ className: b.className, style: { ...b.style, position: "relative", width: '600px' } }, skillNameContainer, bar);                        
+                        const skillInfo = pHTML.div({ className: b.className, style: { ...b.style, position: "relative", width: '600px' } }, skillNameContainer, bar);
                         const cb = skillNameContainer.querySelector("input");
                         cb.checked = true;
                         cb.addEventListener('input', chkBoxClick(skillName));
 
                         floatingSkillsDiv.appendChild(skillInfo);
-                        
+
                     }
                 }
             }
