@@ -1,7 +1,4 @@
-(function() {
-    'use strict';
-
-  // Combined Enhancer Script
+ // Combined Enhancer Script
 
 // Includes: Vitals, Skill Enhancer, Guild Enhancer, Bank Enhancer and QoL settings
 
