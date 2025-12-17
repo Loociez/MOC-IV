@@ -1,4 +1,4 @@
- // Combined Enhancer Script
+// Combined Enhancer Script
 
 // Includes: Vitals, Skill Enhancer, Guild Enhancer, Bank Enhancer and QoL settings
 
@@ -11,6 +11,41 @@
   let intervalId;
 
   const oldVitals = document.getElementById("winVitals");
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.textContent = "⎯";
+  toggleBtn.title = "Toggle Optimized HP/SP/MP/TP Bars";
+  Object.assign(toggleBtn.style, {
+    position: "fixed",
+    top: "4px",
+    left: "4px",
+    zIndex: 99999,
+    fontSize: "10px",
+    padding: "2px 4px",
+    borderRadius: "4px",
+    border: "1px solid #888",
+    background: "#111",
+    color: "deepskyblue",
+    cursor: "pointer",
+    lineHeight: "1",
+    width: "auto",
+    height: "auto",
+    display: "inline-block",
+    userSelect: "none",
+  });
+  toggleBtn.onclick = () => {
+    barsEnabled = !barsEnabled;
+    toggleBtn.style.opacity = barsEnabled ? "1" : "0.5";
+    if (barsEnabled) {
+      if (oldVitals) oldVitals.style.display = "none";
+      initBars();
+    } else {
+      if (oldVitals) oldVitals.style.display = "";
+      removeBars();
+    }
+  };
+  toggleBtn.style.opacity = "0.5";
+  document.body.appendChild(toggleBtn);
 
   const lockBtn = document.createElement("button");
   lockBtn.textContent = "🔓";
@@ -94,6 +129,78 @@
     barBg.appendChild(barFill);
     barBg.appendChild(textSpan);
     return { barBg, barFill, textSpan };
+  }
+
+  function initBars() {
+    if (barsContainer) return;
+
+    barsContainer = document.createElement("div");
+    Object.assign(barsContainer.style, {
+      position: "fixed",
+      top: "40px",
+      left: "4px",
+      zIndex: 99999,
+      fontFamily: "Arial, sans-serif",
+      fontSize: "11px",
+      color: "white",
+      userSelect: "none",
+      width: "160px",
+      background: "rgba(0,0,0,0.4)",
+      padding: "8px",
+      borderRadius: "8px",
+      boxShadow: "0 0 10px rgba(0,0,0,0.7)",
+      cursor: "move",
+    });
+
+    function addBar(label, color, assignVars, tooltipCb) {
+      const labelEl = document.createElement("div");
+      labelEl.textContent = label;
+      labelEl.style.marginBottom = "3px";
+      barsContainer.appendChild(labelEl);
+      const { barBg, barFill, textSpan } = createBar(color, tooltipCb);
+      assignVars.bar = barFill;
+      assignVars.text = textSpan;
+      barsContainer.appendChild(barBg);
+    }
+
+    const ref = {};
+
+    addBar("HP ❤️", "red", ref);
+    hpBar = ref.bar; hpTextSpan = ref.text;
+
+    addBar("SP", "lime", ref);
+    spBar = ref.bar; spTextSpan = ref.text;
+
+    addBar("MP", "deepskyblue", ref);
+    mpBar = ref.bar; mpTextSpan = ref.text;
+
+    addBar("TP", "#a64ca6", ref);
+    tpBar = ref.bar; tpTextSpan = ref.text;
+
+    addBar("XP", "goldenrod", ref, () => {
+      const txt = document.getElementById("txtXP")?.textContent;
+      const match = txt?.match(/(\d+)\s*\/\s*(\d+)/);
+      if (!match) return "";
+      const [_, cur, max] = match;
+      return `${(+max - +cur).toLocaleString()} XP to next level`;
+    });
+    xpBar = ref.bar; xpTextSpan = ref.text;
+
+    document.body.appendChild(barsContainer);
+    lockBtn.style.display = "inline-block";
+    barsLocked = false;
+    updateLockState();
+    makeDraggable(barsContainer);
+
+    startUpdating();
+  }
+
+  function removeBars() {
+    if (!barsContainer) return;
+    clearInterval(intervalId);
+    barsContainer.remove();
+    barsContainer = null;
+    lockBtn.style.display = "none";
   }
 
   function parseValue(text) {
@@ -758,7 +865,7 @@ function startBankRecolorLoop() {
   startBankRecolorLoop();     // keep colors when deposit/withdraw updates occur
 }
   }
-
+	
 
   const observer = new MutationObserver(() => {
     const bankWindow = document.querySelector('#winBank');
@@ -1124,9 +1231,20 @@ if (shopSelect) {
     observer.observe(shopSelect, { childList: true, subtree: true });
 }
 
-// === Emoji Processor (Safe Version – Preserves Item Links) ===
-(function () {
+//emoji start
+(function() {
+
     const emojiMap = {
+        ':moc:': 'https://loociez.github.io/MOC-IV/images/emoji/moc.png',
+        ':vibe:': 'https://loociez.github.io/MOC-IV/images/emoji/vibe.gif',
+        ':rick:': 'https://loociez.github.io/MOC-IV/images/emoji/rick.gif',
+        ':pain:': 'https://loociez.github.io/MOC-IV/images/emoji/pain.gif',
+        ':verycat:': 'https://loociez.github.io/MOC-IV/images/emoji/verycat.gif',
+        ':boohoo:': 'https://loociez.github.io/MOC-IV/images/emoji/boohoo.png',
+        ':kek:': 'https://loociez.github.io/MOC-IV/images/emoji/kek.png',
+        ':swag:': 'https://loociez.github.io/MOC-IV/images/emoji/swag.gif',
+        ':cry:': 'https://loociez.github.io/MOC-IV/images/emoji/cry.gif',
+        ':sasuke:': 'https://loociez.github.io/MOC-IV/images/emoji/sasuke.gif',
         ':bruh:': 'https://loociez.github.io/MOC-IV/images/emoji/bruh.gif',
         ':jam:': 'https://loociez.github.io/MOC-IV/images/emoji/jam.gif',
         ':ban:': 'https://loociez.github.io/MOC-IV/images/emoji/ban.png',
@@ -1140,30 +1258,28 @@ if (shopSelect) {
         ':skb:': 'https://loociez.github.io/MOC-IV/images/emoji/skb.gif'
     };
 
-    function replaceEmojis(html) {
-        return html.replace(/:\w+:/g, token => {
+    // Convert :emoji: text → <img>
+    function replaceEmojis(text) {
+        return text.replace(/:\w+:/g, token => {
             const src = emojiMap[token];
             if (!src) return token;
             return `<img src="${src}" alt="${token}" class="emojiImg" style="width:2em;height:2em;vertical-align:middle;">`;
         });
     }
 
-    // Safe processor: preserves existing HTML (including item links)
+    // Process a chat node whether it's new OR rewritten by the game
     function processNode(node) {
         if (!(node instanceof HTMLElement)) return;
 
-        // Do NOT use innerText ― innerText erases spans
-        const rawHTML = node.innerHTML;
+        // Mirage rewrites with innerText → we must read from that
+        const raw = node.innerText;
+        if (!raw) return;
 
-        // Replace emojis inside existing HTML
-        const newHTML = replaceEmojis(rawHTML);
+        const newHTML = replaceEmojis(raw);
 
-        if (newHTML !== rawHTML) {
+        if (node.innerHTML !== newHTML) {
             node.innerHTML = newHTML;
         }
-
-        // Let your item-link parser run AFTER emoji replacement
-        document.dispatchEvent(new Event("chatline-updated"));
     }
 
     function initEmojiObserver() {
@@ -1175,8 +1291,11 @@ if (shopSelect) {
 
         const observer = new MutationObserver(mutations => {
             mutations.forEach(m => {
+
+                // New chat lines
                 m.addedNodes.forEach(n => processNode(n));
 
+                // Existing chat lines rewritten by the game
                 if (m.type === "characterData" && m.target.parentElement) {
                     processNode(m.target.parentElement);
                 }
@@ -1189,11 +1308,13 @@ if (shopSelect) {
             characterData: true
         });
 
-        console.log("Emoji module (SAFE) loaded.");
+        console.log("Emoji module (persistent) loaded.");
     }
 
     initEmojiObserver();
+
 })();
+
 
 
 
@@ -1211,23 +1332,21 @@ if (shopSelect) {
         const finalWidth = baseWidth * 1.15;
 
         Object.assign(inv.style, {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
-    gridAutoRows: `${slotSize}px`,
-    columnGap: `${horizontalGap}px`,
-    rowGap: `${verticalGap}px`,
-    padding: '1px 0 6px 0',
-    background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
-    border: '2px solid #444',
-    borderRadius: '8px',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-    width: `${finalWidth}px`,
-    margin: '0 auto 10px 0',
-    overflow: 'visible',
-    justifyContent: 'start',
-    boxSizing: 'border-box',
-});
-
+            display: 'grid',
+            gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
+            gridAutoRows: `${slotSize}px`,
+            columnGap: `${horizontalGap}px`,
+            rowGap: `${verticalGap}px`,
+            padding: '1px 6px 6px 6px',
+            background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
+            border: '2px solid #444',
+            borderRadius: '8px',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+            width: `${finalWidth}px`,
+            margin: '0 auto 10px auto',
+            overflow: 'visible',
+            boxSizing: 'border-box',
+        });
 
         const canvases = Array.from(inv.querySelectorAll('canvas'));
         canvases.forEach((c, index) => {
@@ -1464,86 +1583,6 @@ function runClaimSequence() {
 
     updatePosition();
 })();
-// === Quick-Skills Button (Matches small UI button style) ===
-(function () {
-
-    // Reusable helpers
-    function clickButtonByText(text) {
-        const btn = [...document.querySelectorAll("button")]
-            .find(b => b.textContent.trim() === text);
-        if (btn) btn.click();
-    }
-    function clickButtonByTitle(title) {
-        const btn = [...document.querySelectorAll("button")]
-            .find(b => b.title === title);
-        if (btn) btn.click();
-    }
-
-    // Create button
-    const skillBtn = document.createElement("button");
-    skillBtn.textContent = "🛡️";
-    skillBtn.title = "Open Skills Window";
-    Object.assign(skillBtn.style, {
-        position: "fixed",
-        left: "4px",
-        zIndex: 99999,
-        width: "28px",
-        height: "28px",
-        fontSize: "15px",
-        background: "#111",
-        color: "#fff",
-        border: "1px solid #666",
-        borderRadius: "6px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0",
-        userSelect: "none"
-    });
-
-    // Automatically place button directly under the existing left quick-buttons
-    function positionSkillButton() {
-        // Find all fixed buttons located at the left area
-        const leftButtons = [...document.querySelectorAll("button")]
-            .filter(b => b.style.position === "fixed" && b.style.left === "4px");
-
-        if (leftButtons.length === 0) {
-            skillBtn.style.top = "150px"; // fallback
-            return;
-        }
-
-        // Find lowest button
-        let lowest = 0;
-        leftButtons.forEach(b => {
-            const rect = b.getBoundingClientRect();
-            if (rect.bottom > lowest) lowest = rect.bottom;
-        });
-
-        // Place new button directly below it
-        skillBtn.style.top = (window.scrollY + lowest + 6) + "px";
-    }
-
-    // Click logic
-    skillBtn.onclick = () => {
-        clickButtonByTitle("Statistics");
-        setTimeout(() => {
-            clickButtonByTitle("Show player skills");
-            setTimeout(() => {
-                clickButtonByText("Skills");
-            }, 250);
-        }, 250);
-    };
-
-    // Insert & position
-    document.body.appendChild(skillBtn);
-    positionSkillButton();
-
-    // Maintain position when screen resizes
-    window.addEventListener("resize", positionSkillButton);
-
-})();
-
 // New item Sparkle
 // === InvGlow (Sparkles) — settings-aware ===
 const INV_GLOW_CONFIG = {
@@ -1929,23 +1968,22 @@ const INV_GLOW_CONFIG = {
   function applyNewUI() {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
-  Object.assign(inv.style, {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
-    gridAutoRows: `${slotSize}px`,
-    columnGap: `${horizontalGap}px`,
-    rowGap: `${verticalGap}px`,
-    padding: '1px 0 6px 0',
-    background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
-    border: '2px solid #444',
-    borderRadius: '8px',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-    width: `${finalWidth}px`,
-    margin: '0 auto 10px 0',
-    overflow: 'visible',
-    justifyContent: 'start',
-    boxSizing: 'border-box',
-});
+    Object.assign(inv.style, {
+      display: 'grid',
+      gridTemplateColumns: `repeat(5, 42px)`,
+      gridAutoRows: `42px`,
+      columnGap: `25px`,
+      rowGap: `2.5px`,
+      padding: '1px 6px 6px 6px',
+      background: 'linear-gradient(145deg, #2e2e2e, #1c1c1c)',
+      border: '2px solid #444',
+      borderRadius: '8px',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+      width: 'calc((5*42px + 25px*4) * 1.15)',
+      margin: '0 auto 10px auto',
+      overflow: 'visible',
+      boxSizing: 'border-box',
+    });
   }
 
   function applyNewVitals() {
@@ -2785,7 +2823,7 @@ function formatNumber(num) {
     });
 
     canvas.addEventListener("click", (e) => {
-      if (!e.shiftKey || e.button !== 0) return;
+      if (!e.shiftKey || e.button !== 0) return; 
       if (!currentHoveredName) {
         console.warn("No hovered item name detected!");
         return;
@@ -2869,7 +2907,7 @@ function formatNumber(num) {
     tooltip.innerHTML = html;
 
     const padding = 10;
-    const extraUpMargin = 350;
+    const extraUpMargin = 350; 
     const tooltipWidth = 300;
     const tooltipHeight = tooltip.offsetHeight || 150;
 
@@ -2933,8 +2971,7 @@ function formatNumber(num) {
     });
   }
 
-  document.addEventListener("chatline-updated", parseChatItems);
-
+  setInterval(parseChatItems, 1000);
 
   chatBox.addEventListener("click", e => {
     const target = e.target;
@@ -2964,40 +3001,6 @@ function applyGlassStyle(element) {
     element.style.color = '#eee';
     element.style.padding = '14px';
 }
-javascript:(() => {
-  const CHAT = document.querySelector('#txtChatbox');
-  if (!CHAT) return alert('Chat not found');
-
-  // Prevent double install
-  if (window.__WHO_BOOKMARKLET__) return;
-  window.__WHO_BOOKMARKLET__ = true;
-
-  const observer = new MutationObserver(mutations => {
-    for (const m of mutations) {
-      for (const node of m.addedNodes) {
-        if (!(node instanceof HTMLElement)) continue;
-
-        // Must already be styled by the game
-        const spans = node.querySelectorAll('span');
-        if (spans.length < 3) continue;
-
-        // ---- SAFE DECORATION ONLY ----
-        node.style.background = 'rgba(0,0,0,0.25)';
-        node.style.borderRadius = '4px';
-        node.style.padding = '2px 4px';
-
-        spans.forEach(span => {
-          span.style.fontWeight = 'bold';
-        });
-      }
-    }
-  });
-
-  observer.observe(CHAT, { childList: true, subtree: true });
-
-  console.log('✔ /who enhancer active (bookmarklet)');
-})();
-
 
 // Apply the theme to all main windows
 [
@@ -3016,15 +3019,34 @@ javascript:(() => {
 ].forEach(id => {
     applyGlassStyle(document.getElementById(id));
 });
-const css = `
-.emojiImg {
-    filter: none !important;
-    -webkit-filter: none !important;
-    image-rendering: pixelated;
-}
-`;
-const style = document.createElement("style");
-style.textContent = css;
-document.head.appendChild(style);
+(() => {
+  const CHAT = document.querySelector('#txtChatbox');
+  if (!CHAT) return;
 
+  if (window.__WHO_BOOKMARKLET__) return;
+  window.__WHO_BOOKMARKLET__ = true;
+
+  const observer = new MutationObserver(mutations => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (!(node instanceof HTMLElement)) continue;
+
+        const spans = node.querySelectorAll('span');
+        if (spans.length < 3) continue;
+
+        node.style.background = 'rgba(0,0,0,0.25)';
+        node.style.borderRadius = '4px';
+        node.style.padding = '2px 4px';
+
+        spans.forEach(span => {
+          span.style.fontWeight = 'bold';
+        });
+      }
+    }
+  });
+
+  observer.observe(CHAT, { childList: true, subtree: true });
 })();
+
+
+
