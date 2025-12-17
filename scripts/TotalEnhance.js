@@ -2964,6 +2964,40 @@ function applyGlassStyle(element) {
     element.style.color = '#eee';
     element.style.padding = '14px';
 }
+javascript:(() => {
+  const CHAT = document.querySelector('#txtChatbox');
+  if (!CHAT) return alert('Chat not found');
+
+  // Prevent double install
+  if (window.__WHO_BOOKMARKLET__) return;
+  window.__WHO_BOOKMARKLET__ = true;
+
+  const observer = new MutationObserver(mutations => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (!(node instanceof HTMLElement)) continue;
+
+        // Must already be styled by the game
+        const spans = node.querySelectorAll('span');
+        if (spans.length < 3) continue;
+
+        // ---- SAFE DECORATION ONLY ----
+        node.style.background = 'rgba(0,0,0,0.25)';
+        node.style.borderRadius = '4px';
+        node.style.padding = '2px 4px';
+
+        spans.forEach(span => {
+          span.style.fontWeight = 'bold';
+        });
+      }
+    }
+  });
+
+  observer.observe(CHAT, { childList: true, subtree: true });
+
+  console.log('✔ /who enhancer active (bookmarklet)');
+})();
+
 
 // Apply the theme to all main windows
 [
