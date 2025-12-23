@@ -221,36 +221,44 @@
     const lastWidths = {};
 
     window.totalEnhancerSkillTrackingTimer = setInterval(() => {
-        const skillsToDisplay = ['Non-Existing-Skill'];
-        for (let [k, v] of Object.entries(enabledSkilTrackers)) {
-            if (v) skillsToDisplay.push(k);
+    const skillsToDisplay = ['Non-Existing-Skill'];
+    for (let [k, v] of Object.entries(enabledSkilTrackers)) {
+        if (v) skillsToDisplay.push(k);
+    }
+
+    let floatingSkillsDiv =
+        document.getElementById('floatingWinSkillsContent') ||
+        document.createElement("div");
+
+    floatingSkillsDiv.id = 'floatingWinSkillsContent';
+
+    // Load saved position or default — but only load saved once, then remember moved
+    const savedPos = JSON.parse(window.localStorage.getItem('floatingSkillPos') || '{}');
+    const posUsedFlag = window.localStorage.getItem('floatingSkillPosUsed');
+
+    if (!posUsedFlag && savedPos.left && savedPos.top) {
+        floatingSkillsDiv.style.left = savedPos.left;
+        floatingSkillsDiv.style.top = savedPos.top;
+        // Mark that we've used saved position so next times won't reload it
+        window.localStorage.setItem('floatingSkillPosUsed', 'true');
+    } else {
+        // Default position
+        floatingSkillsDiv.style.left = '100px';
+        floatingSkillsDiv.style.top = '20px';
+    }
+
+    floatingSkillsDiv.style.position = 'absolute';
+    floatingSkillsDiv.style.display = 'block';
+
+    floatingSkillsDiv.innerHTML = "";
+
+    if (skillsToDisplay.length) {
+        if (document.getElementById('winSkills').style.display === 'none') {
+            GUI('winSkills', 'Show');
         }
 
-        let floatingSkillsDiv =
-            document.getElementById('floatingWinSkillsContent') ||
-            document.createElement("div");
-
-        floatingSkillsDiv.id = 'floatingWinSkillsContent';
-
-        // Load saved position or default
-        const savedPos = JSON.parse(window.localStorage.getItem('floatingSkillPos') || '{}');
-        if (savedPos.left) floatingSkillsDiv.style.left = savedPos.left;
-        else floatingSkillsDiv.style.left = '100px';
-        if (savedPos.top) floatingSkillsDiv.style.top = savedPos.top;
-        else floatingSkillsDiv.style.top = '20px';
-
-        floatingSkillsDiv.style.position = 'absolute';
-        floatingSkillsDiv.style.display = 'block';
-
-        floatingSkillsDiv.innerHTML = "";
-
-        if (skillsToDisplay.length) {
-            if (document.getElementById('winSkills').style.display === 'none') {
-                GUI('winSkills', 'Show');
-            }
-
-            const container = document.getElementById("winSkillsContent");
-            document.getElementById('winGame').appendChild(floatingSkillsDiv);
+        const container = document.getElementById("winSkillsContent");
+        document.getElementById('winGame').appendChild(floatingSkillsDiv);
 
             // Controls container (flash toggle + cog)
             const controls = pHTML.div({ className: 'overlay-controls' });
