@@ -48,52 +48,42 @@
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-
-  // === Ember effect controller for #winClient but active only while #winLogin is visible ===
-  const emberController = (() => {
+  // === Snowflake effect controller for #winClient active only when #winLogin visible ===
+  const snowController = (() => {
     let canvas = null;
     let ctx = null;
     let animationId = null;
-    let embers = [];
+    let snowflakes = [];
     let winClient = null;
     let resizeObserver = null;
 
-    class Ember {
+    class Snowflake {
       constructor() {
         this.reset();
       }
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 20;
-        this.size = 1 + Math.random() * 2;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = 0.5 + Math.random() * 1.5;
-        this.life = 0;
-        this.maxLife = 200 + Math.random() * 200;
-        this.alpha = 0;
-        this.twinkleSpeed = 0.05 + Math.random() * 0.05;
-        this.twinklePhase = Math.random() * Math.PI * 2;
-        this.isGold = Math.random() > 0.5;
+        this.y = Math.random() * -canvas.height;
+        this.size = 1 + Math.random() * 3;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = 1 + Math.random() * 1.5;
+        this.opacity = 0.3 + Math.random() * 0.7;
+        this.angle = Math.random() * 2 * Math.PI;
+        this.angleSpeed = (Math.random() - 0.5) * 0.02;
       }
       update() {
-        this.x += this.speedX;
-        this.y -= this.speedY;
-        this.life++;
-        if (this.life > this.maxLife || this.y < -10) {
-          this.reset();
-        }
-        this.alpha = 0.5 + 0.5 * Math.sin(this.twinklePhase + this.life * this.twinkleSpeed);
-        if(this.alpha < 0) this.alpha = 0;
+        this.x += this.speedX + Math.sin(this.angle) * 0.5;
+        this.y += this.speedY;
+        this.angle += this.angleSpeed;
+        if (this.y > canvas.height) this.reset();
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
       }
       draw(ctx) {
-        const color = this.isGold
-          ? `rgba(230, 193, 90, ${this.alpha.toFixed(2)})`
-          : `rgba(177, 52, 52, ${this.alpha.toFixed(2)})`;
-
         ctx.beginPath();
-        ctx.fillStyle = color;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 10;
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity.toFixed(2)})`;
+        ctx.shadowColor = 'rgba(255,255,255,0.8)';
+        ctx.shadowBlur = 3;
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -113,9 +103,9 @@
       if (!canvas || !ctx) return;
       resizeCanvas();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      embers.forEach(ember => {
-        ember.update();
-        ember.draw(ctx);
+      snowflakes.forEach(snowflake => {
+        snowflake.update();
+        snowflake.draw(ctx);
       });
       animationId = requestAnimationFrame(animate);
     }
@@ -124,16 +114,14 @@
       if (canvas) return; // already running
       winClient = document.getElementById('winClient');
       if (!winClient) {
-        console.warn('[Embers] #winClient not found to start');
+        console.warn('[Snowflakes] #winClient not found to start');
         return;
       }
-
       if (getComputedStyle(winClient).position === 'static') {
         winClient.style.position = 'relative';
       }
-
       canvas = document.createElement('canvas');
-      canvas.id = 'emberCanvas';
+      canvas.id = 'snowCanvas';
       Object.assign(canvas.style, {
         position: 'absolute',
         top: '0',
@@ -146,25 +134,21 @@
         borderRadius: '12px',
         backgroundColor: 'transparent'
       });
-
       winClient.appendChild(canvas);
       ctx = canvas.getContext('2d');
-
-      const emberCount = 40;
-      embers = [];
-      for (let i = 0; i < emberCount; i++) {
-        embers.push(new Ember());
+      const snowflakeCount = 60;
+      snowflakes = [];
+      for (let i = 0; i < snowflakeCount; i++) {
+        snowflakes.push(new Snowflake());
       }
-
       if (typeof ResizeObserver !== 'undefined') {
         resizeObserver = new ResizeObserver(() => {
           resizeCanvas();
         });
         resizeObserver.observe(winClient);
       }
-
       animate();
-      console.log('[Embers] started');
+      console.log('[Snowflakes] started');
     }
 
     function stop() {
@@ -181,47 +165,188 @@
       }
       canvas = null;
       ctx = null;
-      embers = [];
+      snowflakes = [];
       winClient = null;
-      console.log('[Embers] stopped');
+      console.log('[Snowflakes] stopped');
     }
 
     return { start, stop };
   })();
 
-  // Helper: is #winLogin visible and in DOM
-  function isWinLoginVisible() {
-    const el = document.getElementById('winLogin');
-    if (!el) return false;
-    const style = getComputedStyle(el);
-    if (style.display === 'none' || style.visibility === 'hidden') return false;
-    if (!document.body.contains(el)) return false;
-    return true;
+  // Xmas Lights controller for both #winLogin and #winSelectPlayer
+  const lightsController = (() => {
+    let lightsContainers = new Map(); // map of windowId => container
+    let animationId = null;
+    const colors = ['#FF0000', '#00FF00', '#FFFF00', '#FF69B4', '#00FFFF'];
+    const lightCount = 20;
+    let lightsMap = new Map(); // windowId => lights[]
+
+    function createLights(winId) {
+      if (lightsContainers.has(winId)) return;
+      const winEl = document.getElementById(winId);
+      if (!winEl) return;
+
+      // Create container div outside of the window, as sibling overlay
+      const lightsContainer = document.createElement('div');
+      lightsContainer.id = `xmasLightsContainer_${winId}`;
+
+      // Position it absolutely exactly over the target window
+      const rect = winEl.getBoundingClientRect();
+      Object.assign(lightsContainer.style, {
+        position: 'absolute',
+        top: `${rect.top + window.scrollY - 10}px`,
+        left: `${rect.left + window.scrollX - 10}px`,
+        width: `${rect.width + 20}px`,
+        height: `${rect.height + 20}px`,
+        pointerEvents: 'none',
+        zIndex: '10000',
+        borderRadius: '14px',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        alignContent: 'space-between',
+        padding: '5px',
+        gap: '4px',
+      });
+
+      document.body.appendChild(lightsContainer);
+
+      const lights = [];
+      for (let i = 0; i < lightCount; i++) {
+        const light = document.createElement('div');
+        light.classList.add('xmas-light');
+        light.style.width = '10px';
+        light.style.height = '10px';
+        light.style.borderRadius = '50%';
+        light.style.backgroundColor = colors[i % colors.length];
+        light.style.boxShadow = `0 0 5px ${colors[i % colors.length]}`;
+        lightsContainer.appendChild(light);
+        lights.push(light);
+      }
+
+      lightsContainers.set(winId, lightsContainer);
+      lightsMap.set(winId, lights);
+    }
+
+    function animateLights() {
+      lightsMap.forEach((lights) => {
+        lights.forEach((light, i) => {
+          const flicker = 0.5 + Math.sin(Date.now() / 300 + i) * 0.5;
+          light.style.opacity = flicker.toFixed(2);
+        });
+      });
+      animationId = requestAnimationFrame(animateLights);
+    }
+
+    function updatePosition(winId) {
+      const lightsContainer = lightsContainers.get(winId);
+      const winEl = document.getElementById(winId);
+      if (!lightsContainer || !winEl) return;
+      const rect = winEl.getBoundingClientRect();
+      lightsContainer.style.top = `${rect.top + window.scrollY - 10}px`;
+      lightsContainer.style.left = `${rect.left + window.scrollX - 10}px`;
+      lightsContainer.style.width = `${rect.width + 20}px`;
+      lightsContainer.style.height = `${rect.height + 20}px`;
+    }
+
+    function updateAllPositions() {
+      lightsContainers.forEach((_, winId) => updatePosition(winId));
+    }
+
+    function start() {
+      // Start lights on both windows if visible
+      ['winLogin', 'winSelectPlayer'].forEach(winId => {
+        if (document.getElementById(winId)) {
+          createLights(winId);
+        }
+      });
+      animateLights();
+      window.addEventListener('resize', updateAllPositions);
+      window.addEventListener('scroll', updateAllPositions);
+      console.log('[Xmas Lights] started');
+    }
+
+    function stop() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      window.removeEventListener('resize', updateAllPositions);
+      window.removeEventListener('scroll', updateAllPositions);
+
+      lightsContainers.forEach((container) => {
+        if (container.parentNode) container.parentNode.removeChild(container);
+      });
+      lightsContainers.clear();
+      lightsMap.clear();
+      console.log('[Xmas Lights] stopped');
+    }
+
+    return { start, stop };
+  })();
+
+  // Helper: is either #winLogin or #winSelectPlayer visible and in DOM
+  function isAnyWinVisible() {
+    const ids = ['winLogin', 'winSelectPlayer'];
+    return ids.some(id => {
+      const el = document.getElementById(id);
+      if (!el) return false;
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') return false;
+      if (!document.body.contains(el)) return false;
+      return true;
+    });
   }
 
-  // Monitor #winLogin visibility, start/stop embers accordingly
-  function monitorWinLogin() {
+  // Helper: add or remove warm glow on both windows
+  function addWarmGlow() {
+    ['winLogin', 'winSelectPlayer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.transition = 'background-color 1s ease-in-out';
+      el.style.backgroundColor = 'rgba(255, 215, 0, 0.15)'; // subtle golden warm glow
+      el.style.boxShadow = '0 0 15px 3px rgba(255, 215, 0, 0.6)';
+    });
+  }
+  function removeWarmGlow() {
+    ['winLogin', 'winSelectPlayer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.backgroundColor = 'rgba(30, 30, 30, 0.7)'; // revert original bg
+      el.style.boxShadow = '';
+    });
+  }
+
+  // Monitor visibility and toggle effects accordingly
+  function monitorWindows() {
     let lastVisible = false;
 
-    // MutationObserver to catch DOM changes
     const mo = new MutationObserver(() => {
-      const visible = isWinLoginVisible();
+      const visible = isAnyWinVisible();
       if (visible && !lastVisible) {
-        emberController.start();
+        snowController.start();
+        lightsController.start();
+        addWarmGlow();
       } else if (!visible && lastVisible) {
-        emberController.stop();
+        snowController.stop();
+        lightsController.stop();
+        removeWarmGlow();
       }
       lastVisible = visible;
     });
 
-    // Poll every second just in case mutations miss something
     let pollInterval = setInterval(() => {
-      const visible = isWinLoginVisible();
+      const visible = isAnyWinVisible();
       if (visible && !lastVisible) {
-        emberController.start();
+        snowController.start();
+        lightsController.start();
+        addWarmGlow();
         lastVisible = true;
       } else if (!visible && lastVisible) {
-        emberController.stop();
+        snowController.stop();
+        lightsController.stop();
+        removeWarmGlow();
         lastVisible = false;
       }
     }, 1000);
@@ -231,10 +356,12 @@
     window.addEventListener('beforeunload', () => {
       mo.disconnect();
       clearInterval(pollInterval);
-      emberController.stop();
+      snowController.stop();
+      lightsController.stop();
+      removeWarmGlow();
     });
   }
 
-  monitorWinLogin();
+  monitorWindows();
 
 })();
