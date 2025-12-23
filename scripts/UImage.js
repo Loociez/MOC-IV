@@ -267,17 +267,21 @@
     }
 
     /* ---------- BASE ---------- */
-    body {
-      color: var(--text-main);
-      /* Put image last so gradients are behind image */
-      background:
-        url('https://loociez.github.io/MOC-IV/images/serpdrag.png'),
-        radial-gradient(circle at top, #2a0f0f 0%, #080202 60%),
-        linear-gradient(to bottom, #140707, #000);
-      background-repeat: repeat;
-      background-size: auto, cover, cover;
-      background-color: #080202;
-    }
+body {
+  color: var(--text-main);
+  background:
+    url('https://loociez.github.io/MOC-IV/images/serpdrag.png'),
+    radial-gradient(circle at top, #2a0f0f 0%, #080202 60%),
+    linear-gradient(to bottom, #140707, #000);
+  
+  /* First value = image, others = gradients */
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: center center, center center, center center;
+  background-size: contain, cover, cover;
+
+  background-color: #080202;
+}
+
 
     a,
     a:visited {
