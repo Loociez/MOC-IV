@@ -3010,3 +3010,58 @@ style.textContent = css;
 document.head.appendChild(style);
 
 })();
+(() => {
+  // Prevent duplicates
+  if (document.getElementById("moc-quick-quit")) return;
+
+  // Create button
+  const btn = document.createElement("div");
+  btn.id = "moc-quick-quit";
+  btn.title = "Quit Game";
+
+  btn.innerText = "✖";
+
+  // Styling
+  Object.assign(btn.style, {
+    position: "fixed",
+    bottom: "12px",
+    left: "12px",
+    width: "32px",
+    height: "32px",
+    background: "#8b0000",
+    border: "2px solid #ff4d4d",
+    borderRadius: "6px",
+    color: "#ffd6d6",
+    fontSize: "18px",
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    zIndex: 999999,
+    boxShadow: "0 0 6px rgba(255,0,0,0.6)",
+    userSelect: "none"
+  });
+
+  // Hover effect
+  btn.onmouseenter = () => {
+    btn.style.background = "#b00000";
+    btn.style.boxShadow = "0 0 10px rgba(255,50,50,0.9)";
+  };
+  btn.onmouseleave = () => {
+    btn.style.background = "#8b0000";
+    btn.style.boxShadow = "0 0 6px rgba(255,0,0,0.6)";
+  };
+
+  // Click action
+  btn.onclick = () => {
+    if (typeof GUI === "function") {
+      GUI("winGame", "Quit");
+    } else {
+      console.warn("GUI function not available.");
+    }
+  };
+
+  document.body.appendChild(btn);
+})();
+
