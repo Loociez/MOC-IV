@@ -3010,6 +3010,101 @@ style.textContent = css;
 document.head.appendChild(style);
 
 })();
+(function () {
+    let modPaused = false;
+
+    // Cache mod-related UI elements and buttons that should be hidden/disabled
+    // Adjust selectors to match all your mod buttons/UI elements
+    const modUISelectors = [
+        ".mod-ui",
+        ".inv-sparkle",
+        ".inv-pop",
+        "#quickButton1", // example buttons - add your real ones here
+        "#quickButton2",
+        ".custom-mod-button",
+        // Add more selectors as needed for your mod UI/buttons
+    ];
+
+    // Store references to elements to hide and their original display style
+    const elementsToHide = [];
+
+    // Store event listeners or flags to disable mod functionality here
+    // Example: your mod might have interval timers or event handlers that you can enable/disable
+
+    // Helper: Hide mod UI elements and stop mod functionality
+    function pauseMod() {
+        if (modPaused) return;
+        modPaused = true;
+        console.log("[TotalEnhanced] Mod paused (Map Editor Open).");
+
+        // Hide elements and save original display styles so we can restore later
+        elementsToHide.length = 0;
+        modUISelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                elementsToHide.push({ el, originalDisplay: el.style.display });
+                el.style.display = "none";
+            });
+        });
+
+        // Stop sparkle scanner if present
+        if (window.InvGlow && InvGlow.stop) InvGlow.stop();
+
+        // Stop other intervals/event listeners your mod uses (add your own here)
+        if (window.TotalEnhanced && window.TotalEnhanced.disable) window.TotalEnhanced.disable();
+
+        // Optionally: disable mod event handlers or block input on mod UI (example below)
+        // document.body.style.pointerEvents = "none"; // <-- be careful, might block everything
+    }
+
+    // Helper: Restore mod UI elements and resume mod functionality
+    function resumeMod() {
+        if (!modPaused) return;
+        modPaused = false;
+        console.log("[TotalEnhanced] Mod resumed.");
+
+        // Restore display styles for all hidden elements
+        elementsToHide.forEach(({ el, originalDisplay }) => {
+            el.style.display = originalDisplay || "";
+        });
+        elementsToHide.length = 0;
+
+        // Restart sparkle system if enabled
+        if (window.InvGlow && InvGlow.setEnabled) {
+            InvGlow.setEnabled(true);
+        }
+
+        // Restart other mod intervals/event listeners (add your own here)
+        if (window.TotalEnhanced && window.TotalEnhanced.enable) window.TotalEnhanced.enable();
+
+        // Restore pointer events if you disabled them
+        // document.body.style.pointerEvents = "";
+    }
+
+    // Observe all changes on the Map Editor window: style and class attribute changes
+    const editor = document.getElementById("winMapEditor");
+    if (!editor) {
+        console.warn("[TotalEnhanced] Map Editor window (#winMapEditor) not found!");
+        return;
+    }
+
+    const observer = new MutationObserver(() => {
+        // Check visibility by computed style (works even if visibility toggled by classes)
+        const isVisible = window.getComputedStyle(editor).display !== "none";
+
+        if (isVisible) {
+            pauseMod();
+        } else {
+            resumeMod();
+        }
+    });
+
+    observer.observe(editor, { attributes: true, attributeFilter: ["style", "class"] });
+
+    // Also check initial state on load
+    if (window.getComputedStyle(editor).display !== "none") {
+        pauseMod();
+    }
+})();
 (() => {
   // Prevent duplicates
   if (document.getElementById("moc-quick-quit")) return;
@@ -3064,4 +3159,3 @@ document.head.appendChild(style);
 
   document.body.appendChild(btn);
 })();
-
