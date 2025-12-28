@@ -1533,33 +1533,74 @@ if (shopSelect) {
         if (btn) btn.click();
     }
 
-   // --- Potion Sequence ---
-function runPotionSequence(mode) {
-    // Step 1: open Stats
-    clickButtonByTitle("Statistics");
-    setTimeout(() => {
-        // Step 2: Skills / Abilities (by title)
-        clickButtonByTitle("Show player skills");
-        setTimeout(() => {
-            // Step 3: Abilities
-            clickButtonByText("Abilities");
-            setTimeout(() => {
-                // Step 4: Potion
-                clickButtonByText("Potion");
-                setTimeout(() => {
-                    // Step 5: Off / 50% / 75%
-                    if (mode === "off") clickButtonByText("Off");
-                    else if (mode === "50") clickButtonByText("50%");
-                    else clickButtonByText("75%");
-                    setTimeout(() => {
-                        // Step 6: Back out
-                        clickButtonByTitle("Back");
-                    }, 300);
-                }, 300);
-            }, 300);
-        }, 300);
-    }, 300);
+   function runPotionSequence(mode) {
+
+    // ---------- helpers ----------
+    const waitFor = (fn, timeout = 3000) =>
+        new Promise((resolve, reject) => {
+            const start = Date.now();
+            const t = setInterval(() => {
+                if (fn()) {
+                    clearInterval(t);
+                    resolve();
+                } else if (Date.now() - start > timeout) {
+                    clearInterval(t);
+                    reject("Timeout waiting for condition");
+                }
+            }, 50);
+        });
+
+    const clickSpanByText = (text) => {
+        const spans = [...document.querySelectorAll("span.buttonlink")];
+        const el = spans.find(s => s.textContent.trim() === text);
+        if (el) el.click();
+        else throw `Span "${text}" not found`;
+    };
+
+    const clickButtonByText = (text) => {
+        const btns = [...document.querySelectorAll("#winPopup button")];
+        const el = btns.find(b => b.textContent.trim() === text);
+        if (el) el.click();
+        else throw `Button "${text}" not found`;
+    };
+
+    // ---------- sequence ----------
+    (async () => {
+        try {
+            // Step 1: open Statistics window
+            GUI("winGame", "Stats");
+
+            // Step 2: wait for Character Customization popup
+            await waitFor(() =>
+                document.querySelector("#winPopup #txtPopupTitle")?.textContent
+                    .includes("Character")
+            );
+
+            // Step 3: click Potion (span.buttonlink)
+            clickSpanByText("Potion");
+
+            // Step 4: wait for Potion Auto Usage popup
+            await waitFor(() =>
+                document.querySelector("#txtPopupTitle")?.textContent
+                    .includes("Potion")
+            );
+
+            // Step 5: select percentage
+            switch (mode) {
+                case "off": clickButtonByText("Off"); break;
+                case "75":  clickButtonByText("75%"); break;
+                case "50":  clickButtonByText("50%"); break;
+                case "25":  clickButtonByText("25%"); break;
+                default:
+                    console.warn("Unknown potion mode:", mode);
+            }
+
+        } catch (e) {
+            console.warn("Potion sequence failed:", e);
+        }
+    })();
 }
+
 
     // --- Claim Sequence ---
 function runClaimSequence() {
