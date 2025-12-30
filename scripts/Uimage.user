@@ -13,8 +13,6 @@
 (function() {
   'use strict';
 
-  (() => {
-  'use strict';
 
   // === Image replacement logic ===
   const imageReplacementMap = [
