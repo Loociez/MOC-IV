@@ -201,6 +201,25 @@ async function loadNPCs() {
   displayNPCs(allNPCs);
 }
 
+function getRecipeHTML(itemId) {
+  const item = itemData[itemId];
+  if (!item || !item.data || !Array.isArray(item.data.recipe_items)) return '';
+
+  const parts = item.data.recipe_items
+    .filter(r => r.item_id !== -1 && r.amount > 0)
+    .map(r => {
+      const name = itemIDMap[r.item_id] || `Item #${r.item_id}`;
+      return `${name} x${r.amount}`;
+    });
+
+  if (!parts.length) return '';
+  return `
+    <div style="margin-top:6px;font-size:11px;color:#ccc;">
+      <strong>Requires:</strong><br>${parts.join('<br>')}
+    </div>
+  `;
+}
+
 function displayNPCs(npcs) {
   const tbody = document.querySelector('#npcTable tbody');
   tbody.innerHTML = '';
@@ -277,19 +296,22 @@ function displayNPCs(npcs) {
         document.body.appendChild(tooltip);
 
         spriteDiv.addEventListener('mouseenter', e => {
-          tooltip.innerHTML = npc.drop_items
-            .map(drop => {
-              const itemName = itemIDMap[drop.item_id];
-              if (!itemName || itemName === "(not dropped)") return null;
-              return `
-                <div style="margin-bottom:8px;">
-                  <div>${itemName} x${drop.amount}</div>
-                  <div style="font-size: 10px; color: #ccc;">Drop rate: ${drop.chance}%</div>
-                </div>
-              `;
-            })
-            .filter(Boolean)
-            .join('');
+         tooltip.innerHTML = npc.drop_items
+  .map(drop => {
+    const itemName = itemIDMap[drop.item_id];
+    if (!itemName || itemName === "(not dropped)") return null;
+
+    return `
+      <div style="margin-bottom:8px;">
+        <div>${itemName} x${drop.amount}</div>
+        <div style="font-size:10px;color:#ccc;">Drop rate: ${drop.chance}%</div>
+        ${getRecipeHTML(drop.item_id)}
+      </div>
+    `;
+  })
+  .filter(Boolean)
+  .join('');
+
 
           tooltip.style.display = 'block';
           const rect = spriteDiv.getBoundingClientRect();
