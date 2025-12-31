@@ -561,13 +561,13 @@ async function fetchAndDisplayItems() {
     try {
         let items = await fetchItemData();
 
-        // Build a map from item ID to item name for quick lookup (new)
-        itemNamesMap = {};
-        items.forEach(i => {
-            if (i.id !== undefined && i.name) {
-                itemNamesMap[i.id] = i.name;
-            }
-        });
+        // Build item ID → name map USING ARRAY INDEX (IDs start at 0)
+itemNamesMap = {};
+items.forEach((item, index) => {
+    if (item?.name) {
+        itemNamesMap[index] = item.name;
+    }
+});
 
         const sortKey = document.getElementById("sortStat")?.value;
         if (sortKey && sortKey !== "none") {
