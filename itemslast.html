@@ -625,31 +625,20 @@ items.forEach((item, index) => {
                 descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
             }
 
-            // Custom recipe display (CORRECT: recipe_items live in item.data)
+            // Custom recipe display — ALL entries are required items
 const recipe = item.data?.recipe_items;
 
 if (
     item.name.toLowerCase().includes('recipe') &&
-    Array.isArray(recipe) &&
-    recipe.length > 0
+    Array.isArray(recipe)
 ) {
-    // Crafted item is ALWAYS index 0
-    const crafted = recipe[0];
-    if (crafted.item_id !== -1) {
-        const craftedName =
-            itemNamesMap[crafted.item_id] ?? `Item ID ${crafted.item_id}`;
-        descHTML += `<br><strong>Crafted item:</strong> ${craftedName}<br>`;
-    }
+    const requiredItems = recipe.filter(
+        r => r.item_id !== -1 && r.amount > 0
+    );
 
-    const requiredItems = recipe
-        .slice(1)
-        .filter(r => r.item_id !== -1 && r.amount > 0);
+    if (requiredItems.length) {
+        descHTML += `<br><strong>Required items:</strong><br>`;
 
-    descHTML += `<strong>Required items:</strong><br>`;
-
-    if (!requiredItems.length) {
-        descHTML += '(None)';
-    } else {
         for (const req of requiredItems) {
             const reqName =
                 itemNamesMap[req.item_id] ?? `Item ID ${req.item_id}`;
@@ -657,8 +646,6 @@ if (
         }
     }
 }
-
-
 
             descCell.innerHTML = descHTML;
             row.appendChild(descCell);
