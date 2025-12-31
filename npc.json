@@ -82140,7 +82140,7 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 0,
-    "behavior": 0,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 4,
     "hostility_flags": -1,
@@ -82151,11 +82151,11 @@
       "sp": 0
     },
     "stats": {
-      "atk": 100000,
+      "atk": 2500,
       "def": 0,
-      "rat": 100000,
+      "rat": 0,
       "rdf": 0,
-      "mat": 100000,
+      "mat": 10000,
       "mdf": 0
     },
     "drop_items": [
@@ -82240,7 +82240,7 @@
     "move_chance": 0,
     "move_delay": 100,
     "move_amount": 1,
-    "attack_delay": 100,
+    "attack_delay": 25,
     "flee_threshold": 0,
     "behavior": 1,
     "targeting": 9,
@@ -82253,7 +82253,7 @@
       "sp": 0
     },
     "stats": {
-      "atk": 1500,
+      "atk": 500,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -82342,7 +82342,7 @@
     "move_chance": 0,
     "move_delay": 100,
     "move_amount": 1,
-    "attack_delay": 100,
+    "attack_delay": 25,
     "flee_threshold": 0,
     "behavior": 1,
     "targeting": 9,
@@ -82355,7 +82355,7 @@
       "sp": 0
     },
     "stats": {
-      "atk": 1500,
+      "atk": 500,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -103962,7 +103962,7 @@
     },
     "scale": 1,
     "color": "#bc3200",
-    "spawn_delay": 1,
+    "spawn_delay": 4,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
@@ -104064,7 +104064,7 @@
     },
     "scale": 1,
     "color": "#bc3200",
-    "spawn_delay": 1,
+    "spawn_delay": 4,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
@@ -104166,7 +104166,7 @@
     },
     "scale": 1,
     "color": "#bc3200",
-    "spawn_delay": 1,
+    "spawn_delay": 4,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
@@ -104270,7 +104270,7 @@
     "color": "#bc3200",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 120,
     "move_amount": 0,
     "attack_delay": 100,
     "flee_threshold": 0,
@@ -104280,7 +104280,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 30000,
+      "hp": 20000,
       "mp": 0,
       "sp": 0
     },
