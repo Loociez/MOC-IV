@@ -561,6 +561,14 @@ async function fetchAndDisplayItems() {
     try {
         let items = await fetchItemData();
 
+        // Build a map from item ID to item name for quick lookup (new)
+        itemNamesMap = {};
+        items.forEach(i => {
+            if (i.id !== undefined && i.name) {
+                itemNamesMap[i.id] = i.name;
+            }
+        });
+
         const sortKey = document.getElementById("sortStat")?.value;
         if (sortKey && sortKey !== "none") {
             items.sort((a, b) => {
@@ -585,73 +593,67 @@ async function fetchAndDisplayItems() {
             row.appendChild(selectCell);
 
             const nameCell = document.createElement('td');
-           let nameHTML = item.name;
-if (item.level_req !== undefined) {
-    nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
-}
+            let nameHTML = item.name;
+            if (item.level_req !== undefined) {
+                nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
+            }
 
-if (typeof item.sprite === 'number') {
-    const SPRITE_SIZE = 32;
-    const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
-    const spritesPerRow = 32;        // 32 sprites horizontally
+            if (typeof item.sprite === 'number') {
+                const SPRITE_SIZE = 32;
+                const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
+                const spritesPerRow = 32;        // 32 sprites horizontally
 
-    const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
-    const spriteIndex = item.sprite % SPRITES_PER_SHEET;
+                const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
+                const spriteIndex = item.sprite % SPRITES_PER_SHEET;
 
-    const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
-    const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+                const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+                const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
 
-    const backgroundImage = `url('images/items${sheetIndex}.png')`;
+                const backgroundImage = `url('images/items${sheetIndex}.png')`;
 
-    nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
-}
+                nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
+            }
 
-
-nameCell.innerHTML = nameHTML;
-
+            nameCell.innerHTML = nameHTML;
             row.appendChild(nameCell);
 
             const descCell = document.createElement('td');
-let descHTML = item.desc || 'No description';
+            let descHTML = item.desc || 'No description';
 
-if (item.prof_req_flags !== undefined) {
-    const classesText = getItemClasses(item.prof_req_flags);
-    descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
-}
+            if (item.prof_req_flags !== undefined) {
+                const classesText = getItemClasses(item.prof_req_flags);
+                descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
+            }
 
-// Custom recipe display
-if (item.name.toLowerCase().includes('recipe') && Array.isArray(item.recipe_items)) {
-    // Find the crafted item — assume first item in recipe_items is crafted item (item_id > 0)
-    const craftedItemEntry = item.recipe_items.find(ri => ri.item_id > 0);
-    let craftedItemName = "Unknown Item";
-    if (craftedItemEntry) {
-        // Try to find crafted item name from items list if you have it; else fallback to id
-        // Since you have the full items in your script, you could do a lookup:
-        // But here, for simplicity, we'll just show item id (or you can enhance with a lookup)
-        craftedItemName = itemNamesMap?.[craftedItemEntry.item_id] || `Item ID ${craftedItemEntry.item_id}`;
-    }
+            // Custom recipe display with itemNamesMap lookup (new)
+            if (item.name.toLowerCase().includes('recipe') && Array.isArray(item.recipe_items)) {
+                // Find the crafted item — assume first item in recipe_items is crafted item (item_id > 0)
+                const craftedItemEntry = item.recipe_items.find(ri => ri.item_id > 0);
+                let craftedItemName = "Unknown Item";
+                if (craftedItemEntry) {
+                    craftedItemName = itemNamesMap?.[craftedItemEntry.item_id] || `Item ID ${craftedItemEntry.item_id}`;
+                }
 
-    descHTML += `<br><strong>Crafted item:</strong> ${craftedItemName}<br>`;
-    descHTML += `<strong>Required items:</strong><br>`;
+                descHTML += `<br><strong>Crafted item:</strong> ${craftedItemName}<br>`;
+                descHTML += `<strong>Required items:</strong><br>`;
 
-    // Show required items (those with item_id > 0 but not the crafted item)
-    const requiredItems = item.recipe_items.filter(ri => ri.item_id > 0 && ri !== craftedItemEntry);
-    if (requiredItems.length === 0) {
-        descHTML += '(None)';
-    } else {
-        for (const reqItem of requiredItems) {
-            const reqName = itemNamesMap?.[reqItem.item_id] || `Item ID ${reqItem.item_id}`;
-            const reqAmount = reqItem.amount || 1;
-            descHTML += `${reqName} (${reqAmount})<br>`;
-        }
-    }
-}
+                // Show required items (those with item_id > 0 but not the crafted item)
+                const requiredItems = item.recipe_items.filter(ri => ri.item_id > 0 && ri !== craftedItemEntry);
+                if (requiredItems.length === 0) {
+                    descHTML += '(None)';
+                } else {
+                    for (const reqItem of requiredItems) {
+                        const reqName = itemNamesMap?.[reqItem.item_id] || `Item ID ${reqItem.item_id}`;
+                        const reqAmount = reqItem.amount || 1;
+                        descHTML += `${reqName} (${reqAmount})<br>`;
+                    }
+                }
+            }
 
+            descCell.innerHTML = descHTML;
+            row.appendChild(descCell);
 
-descCell.innerHTML = descHTML;
-row.appendChild(descCell);
-
-
+            // ... rest of your code for stats, repair cost, uses, sell value, handedness, favorites, etc. ...
 
             const dataCell = document.createElement('td');
             let stats = item.data ? Object.entries(item.data) : [];
@@ -687,47 +689,47 @@ row.appendChild(descCell);
             // Spell Amp shortened display
             const spellAmpLabels = {
                 "!bard_buff_uptime": "Bard Buff Uptime",
-				"!bard_buff_cost": "Bard Buff Cost",
+                "!bard_buff_cost": "Bard Buff Cost",
                 "!jester_confuse_cost": "Jester Confuse Cost",
-				"!jester_playerconfuse_uptime": "Jester player uptime",
-				"!jester_npcconfuse_uptime": "Jester NPC Uptime",
+                "!jester_playerconfuse_uptime": "Jester player uptime",
+                "!jester_npcconfuse_uptime": "Jester NPC Uptime",
                 "!cleric_petheal_amount": "Cleric Pet Heal",
-				"!cleric_petheal_cost": "Cleric Pet Heal Cost",
+                "!cleric_petheal_cost": "Cleric Pet Heal Cost",
                 "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
-				"!dragoon_invisible_cost": "Dragoon Invis Cost",
+                "!dragoon_invisible_cost": "Dragoon Invis Cost",
                 "!warlock_npcaoe_damage": "Warlock NPC AoE",
-				"!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
-				"!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
-				"!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
-				"!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
-				"!warlock_npcaoe_cost": "Warlock NPC Cost Cast",
-				"!warlock_selfaoe_cost": "Warlock Self Cost Cast",
-				"!warlock_playeraoe_cost": "Warlock Opponent Cost Cast",
-				"!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
+                "!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
+                "!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
+                "!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
+                "!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
+                "!warlock_npcaoe_cost": "Warlock NPC Cost Cast",
+                "!warlock_selfaoe_cost": "Warlock Self Cost Cast",
+                "!warlock_playeraoe_cost": "Warlock Opponent Cost Cast",
+                "!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
                 "!cleric_playerheal_amount": "Cleric Player Heal",
-				"!cleric_playerheal_cost": "Cleric Player Heal Cost",
-				"!cleric_allheal_cooldown": "Cleric Cooldown",
+                "!cleric_playerheal_cost": "Cleric Player Heal Cost",
+                "!cleric_allheal_cooldown": "Cleric Cooldown",
                 "!dragoon_playeraoe_damage": "Dragoon Player AoE",
                 "!warlock_playeraoe_damage": "Warlock Player AoE",
                 "!assassin_npcpoison_damage": "Assassin NPC Poison",
-				"!assassin_cloak_cost": "Assassin Cloak Cost",
-				"!assassins_npcpoison_ticks": "Assassin NPC Ticks",
-				"!assassins_playerpoison_ticks": "Assassin Player Ticks",
+                "!assassin_cloak_cost": "Assassin Cloak Cost",
+                "!assassins_npcpoison_ticks": "Assassin NPC Ticks",
+                "!assassins_playerpoison_ticks": "Assassin Player Ticks",
                 "!necromancer_minion_damage": "Necromancer Minion DMG",
-				"!necromancer_minion_hp": "Necroamncer Minion HP",
-				"!necromancer_minion_cost": "Necromancer Minion Cost",
-				"!necromancer_minion_cooldown": "Necromancer Minion Cooldown",
+                "!necromancer_minion_hp": "Necroamncer Minion HP",
+                "!necromancer_minion_cost": "Necromancer Minion Cost",
+                "!necromancer_minion_cooldown": "Necromancer Minion Cooldown",
                 "!samurai_npcriposte_damage": "Samurai NPC Riposte",
-				"!samurai_riposte_cooldown": "Samurai Riposte cooldown",
-				"!samurai_riposte_cost": "Samurai Riposte Cost",
+                "!samurai_riposte_cooldown": "Samurai Riposte cooldown",
+                "!samurai_riposte_cost": "Samurai Riposte Cost",
                 "!barbarian_alldamage_amount": "Barbarian All Damage",
                 "!marksman_npcshotgun_damage": "Marksman NPC Shotgun",
-				"!marksman_shotgun_cooldown": "Marksman Shotgun Cooldown",
+                "!marksman_shotgun_cooldown": "Marksman Shotgun Cooldown",
                 "!assassin_playerpoison_damage": "Assassin Player Poison",
-				"!assassin_cloak_cooldown": "Assassin cloak cooldown",
+                "!assassin_cloak_cooldown": "Assassin cloak cooldown",
                 "!samurai_playerriposte_damage": "Samurai Player Riposte",
                 "!marksman_playershotgun_damage": "Marksman Player Shotgun",
-				"!marksman_shotgun_cost": "Marksman Shotgun Cost",
+                "!marksman_shotgun_cost": "Marksman Shotgun Cost",
                 "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
                 "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
             };
