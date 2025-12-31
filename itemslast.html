@@ -619,22 +619,34 @@ if (item.prof_req_flags !== undefined) {
     descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
 }
 
-// Check if the item is a recipe and has recipe ingredients
-if (item.name.toLowerCase().includes('recipe') && item.recipe_ingredients) {
-    // Show required items
-    descHTML += '<br><strong>Requires:</strong><ul style="margin:0; padding-left: 18px; color:#ffdd55;">';
-    for (const reqItem of item.recipe_ingredients) {
-        descHTML += `<li>${reqItem.amount ? reqItem.amount + 'x ' : ''}${reqItem.name || reqItem}</li>`;
+// Custom recipe display
+if (item.name.toLowerCase().includes('recipe') && Array.isArray(item.recipe_items)) {
+    // Find the crafted item — assume first item in recipe_items is crafted item (item_id > 0)
+    const craftedItemEntry = item.recipe_items.find(ri => ri.item_id > 0);
+    let craftedItemName = "Unknown Item";
+    if (craftedItemEntry) {
+        // Try to find crafted item name from items list if you have it; else fallback to id
+        // Since you have the full items in your script, you could do a lookup:
+        // But here, for simplicity, we'll just show item id (or you can enhance with a lookup)
+        craftedItemName = itemNamesMap?.[craftedItemEntry.item_id] || `Item ID ${craftedItemEntry.item_id}`;
     }
-    descHTML += '</ul>';
 
-    // Show what the recipe crafts, if available
-    if (item.recipe_result) {
-        // If recipe_result is an object with a name property, show that, else show as is
-        const craftedItemName = typeof item.recipe_result === 'object' && item.recipe_result.name ? item.recipe_result.name : item.recipe_result;
-        descHTML += `<br><strong>Crafts:</strong> <span style="color:#55ff55;">${craftedItemName}</span>`;
+    descHTML += `<br><strong>Crafted item:</strong> ${craftedItemName}<br>`;
+    descHTML += `<strong>Required items:</strong><br>`;
+
+    // Show required items (those with item_id > 0 but not the crafted item)
+    const requiredItems = item.recipe_items.filter(ri => ri.item_id > 0 && ri !== craftedItemEntry);
+    if (requiredItems.length === 0) {
+        descHTML += '(None)';
+    } else {
+        for (const reqItem of requiredItems) {
+            const reqName = itemNamesMap?.[reqItem.item_id] || `Item ID ${reqItem.item_id}`;
+            const reqAmount = reqItem.amount || 1;
+            descHTML += `${reqName} (${reqAmount})<br>`;
+        }
     }
 }
+
 
 descCell.innerHTML = descHTML;
 row.appendChild(descCell);
