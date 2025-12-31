@@ -613,12 +613,24 @@ nameCell.innerHTML = nameHTML;
 
             const descCell = document.createElement('td');
 let descHTML = item.desc || 'No description';
+
 if (item.prof_req_flags !== undefined) {
     const classesText = getItemClasses(item.prof_req_flags);
     descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
 }
+
+// Add required items if this is a recipe
+if (item.name.toLowerCase().includes('recipe') && item.recipe_ingredients) {
+    descHTML += '<br><strong>Requires:</strong><ul style="margin:0; padding-left: 18px; color:#ffdd55;">';
+    for (const reqItem of item.recipe_ingredients) {
+        descHTML += `<li>${reqItem.amount ? reqItem.amount + 'x ' : ''}${reqItem.name || reqItem}</li>`;
+    }
+    descHTML += '</ul>';
+}
+
 descCell.innerHTML = descHTML;
 row.appendChild(descCell);
+
 
             const dataCell = document.createElement('td');
             let stats = item.data ? Object.entries(item.data) : [];
