@@ -625,36 +625,39 @@ items.forEach((item, index) => {
                 descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
             }
 
-            // Custom recipe display with itemNamesMap lookup (FIXED)
-           if (
+            // Custom recipe display (CORRECT: recipe_items live in item.data)
+const recipe = item.data?.recipe_items;
+
+if (
     item.name.toLowerCase().includes('recipe') &&
-    Array.isArray(item.recipe_items) &&
-    item.recipe_items.length > 0
+    Array.isArray(recipe) &&
+    recipe.length > 0
 ) {
     // Crafted item is ALWAYS index 0
-    const crafted = item.recipe_items[0];
-    const craftedItemName =
-        crafted.item_id !== -1
-            ? itemNamesMap[crafted.item_id] || `Item ID ${crafted.item_id}`
-            : "Unknown Item";
+    const crafted = recipe[0];
+    if (crafted.item_id !== -1) {
+        const craftedName =
+            itemNamesMap[crafted.item_id] ?? `Item ID ${crafted.item_id}`;
+        descHTML += `<br><strong>Crafted item:</strong> ${craftedName}<br>`;
+    }
 
-    descHTML += `<br><strong>Crafted item:</strong> ${craftedItemName}<br>`;
+    const requiredItems = recipe
+        .slice(1)
+        .filter(r => r.item_id !== -1 && r.amount > 0);
+
     descHTML += `<strong>Required items:</strong><br>`;
 
-    const requiredItems = item.recipe_items
-        .slice(1)
-        .filter(ri => ri.item_id !== -1 && ri.amount > 0);
-
-    if (requiredItems.length === 0) {
+    if (!requiredItems.length) {
         descHTML += '(None)';
     } else {
-        for (const reqItem of requiredItems) {
+        for (const req of requiredItems) {
             const reqName =
-                itemNamesMap[reqItem.item_id] || `Item ID ${reqItem.item_id}`;
-            descHTML += `${reqName} (${reqItem.amount})<br>`;
+                itemNamesMap[req.item_id] ?? `Item ID ${req.item_id}`;
+            descHTML += `${reqName} x${req.amount}<br>`;
         }
     }
 }
+
 
 
             descCell.innerHTML = descHTML;
@@ -663,7 +666,10 @@ items.forEach((item, index) => {
             // ... rest of your code for stats, repair cost, uses, sell value, handedness, favorites, etc. ...
 
             const dataCell = document.createElement('td');
-            let stats = item.data ? Object.entries(item.data) : [];
+            let stats = item.data
+    ? Object.entries(item.data).filter(([key]) => key !== 'recipe_items')
+    : [];
+
             if (item.tile_range) stats.push(['tile range', item.tile_range]);
 
             const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
