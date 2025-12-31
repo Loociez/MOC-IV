@@ -626,36 +626,36 @@ items.forEach((item, index) => {
             }
 
             // Custom recipe display with itemNamesMap lookup (FIXED)
-            if (
-                item.name.toLowerCase().includes('recipe') &&
-                Array.isArray(item.recipe_items) &&
-                item.recipe_items.length > 0
-            ) {
-                // Crafted item is ALWAYS index 0 (item_id can be 0)
-                const crafted = item.recipe_items[0];
-                const craftedItemName =
-                    crafted.item_id !== -1
-                        ? itemNamesMap?.[crafted.item_id] || `Item ID ${crafted.item_id}`
-                        : "Unknown Item";
+           if (
+    item.name.toLowerCase().includes('recipe') &&
+    Array.isArray(item.recipe_items) &&
+    item.recipe_items.length > 0
+) {
+    // Crafted item is ALWAYS index 0
+    const crafted = item.recipe_items[0];
+    const craftedItemName =
+        crafted.item_id !== -1
+            ? itemNamesMap[crafted.item_id] || `Item ID ${crafted.item_id}`
+            : "Unknown Item";
 
-                descHTML += `<br><strong>Crafted item:</strong> ${craftedItemName}<br>`;
-                descHTML += `<strong>Required items:</strong><br>`;
+    descHTML += `<br><strong>Crafted item:</strong> ${craftedItemName}<br>`;
+    descHTML += `<strong>Required items:</strong><br>`;
 
-                // Remaining entries are required materials
-                const requiredItems = item.recipe_items
-                    .slice(1)
-                    .filter(ri => ri.item_id !== -1 && ri.amount > 0);
+    const requiredItems = item.recipe_items
+        .slice(1)
+        .filter(ri => ri.item_id !== -1 && ri.amount > 0);
 
-                if (requiredItems.length === 0) {
-                    descHTML += '(None)';
-                } else {
-                    for (const reqItem of requiredItems) {
-                        const reqName =
-                            itemNamesMap?.[reqItem.item_id] || `Item ID ${reqItem.item_id}`;
-                        descHTML += `${reqName} (${reqItem.amount})<br>`;
-                    }
-                }
-            }
+    if (requiredItems.length === 0) {
+        descHTML += '(None)';
+    } else {
+        for (const reqItem of requiredItems) {
+            const reqName =
+                itemNamesMap[reqItem.item_id] || `Item ID ${reqItem.item_id}`;
+            descHTML += `${reqName} (${reqItem.amount})<br>`;
+        }
+    }
+}
+
 
             descCell.innerHTML = descHTML;
             row.appendChild(descCell);
