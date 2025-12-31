@@ -12,10 +12,12 @@
       padding: 10px;
       max-height: 500px;
       overflow: auto;
+      white-space: pre-wrap;
     }
     button {
       padding: 6px 12px;
       cursor: pointer;
+      margin-right: 8px;
     }
   </style>
 </head>
@@ -25,7 +27,8 @@
   <code>https://loociez.github.io/MOC-IV/last.json</code>
   <br><br>
 
-  <button onclick="loadItems()">Load Items</button>
+  <button onclick="loadItems()">View List</button>
+  <button onclick="exportJSON()">Export JSON</button>
 
   <h3>Results:</h3>
   <pre id="output">Waiting...</pre>
@@ -33,36 +36,58 @@
   <script>
     const LAST_JSON_URL = 'https://loociez.github.io/MOC-IV/last.json';
 
+    async function fetchItems() {
+      const response = await fetch(LAST_JSON_URL, { cache: 'no-store' });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const items = await response.json();
+
+      if (!Array.isArray(items)) {
+        throw new Error('JSON is not an array');
+      }
+
+      return items;
+    }
+
     async function loadItems() {
       const output = document.getElementById('output');
       output.textContent = 'Loading...';
 
       try {
-        const response = await fetch(LAST_JSON_URL, {
-          cache: 'no-store'
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const items = await response.json();
-
-        if (!Array.isArray(items)) {
-          throw new Error('JSON is not an array');
-        }
-
+        const items = await fetchItems();
         const lines = [];
 
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
-          const name = item?.name || '(Unnamed)';
+          const name = item && item.name ? item.name : '(not dropped)';
           lines.push(`${i}: ${name}`);
         }
 
         output.textContent = lines.join('\n');
       } catch (err) {
         output.textContent = 'Error loading items:\n' + err.message;
+      }
+    }
+
+    async function exportJSON() {
+      const output = document.getElementById('output');
+      output.textContent = 'Loading JSON...';
+
+      try {
+        const items = await fetchItems();
+        const result = {};
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          result[i] = item && item.name ? item.name : '(not dropped)';
+        }
+
+        output.textContent = JSON.stringify(result, null, 2);
+      } catch (err) {
+        output.textContent = 'Error exporting JSON:\n' + err.message;
       }
     }
   </script>

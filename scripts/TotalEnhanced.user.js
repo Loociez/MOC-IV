@@ -14,6 +14,44 @@
 (function() {
     'use strict';
 
+// === Ctrl+K MASTER TOGGLE (Hard On / Off) ===
+let __TE_ENABLED = true;
+const __TE_NODES = new Set();
+
+// Track everything this script adds to the DOM
+const __origAppend = Element.prototype.appendChild;
+Element.prototype.appendChild = function (node) {
+    if (__TE_ENABLED) {
+        __TE_NODES.add(node);
+        return __origAppend.call(this, node);
+    } else {
+        return node; // silently block inserts
+    }
+};
+
+// Keyboard toggle
+window.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        __TE_ENABLED = !__TE_ENABLED;
+
+        if (!__TE_ENABLED) {
+            // Disable: remove all injected nodes
+            __TE_NODES.forEach(node => {
+                if (node && node.parentNode) {
+                    node.parentNode.removeChild(node);
+                }
+            });
+            console.log('[TotalEnhanced] DISABLED (Ctrl+K)');
+        } else {
+            console.log('[TotalEnhanced] ENABLED (Ctrl+K)');
+            location.reload(); // clean re-init (safe & simple)
+        }
+    }
+});
+
+
+
   // Combined Enhancer Script
 
 // Includes: Vitals, Skill Enhancer, Guild Enhancer, Bank Enhancer and QoL settings
