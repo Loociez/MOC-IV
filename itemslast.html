@@ -556,7 +556,7 @@ function toggleFavorite(item) {
     localStorage.setItem('favorites', JSON.stringify(favorites));
     filterTable(); // Reapply filter after favorite toggle
 }
-
+let itemNamesMap = {};
 async function fetchAndDisplayItems() {
     try {
         let items = await fetchItemData();
