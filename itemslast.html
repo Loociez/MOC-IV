@@ -619,17 +619,26 @@ if (item.prof_req_flags !== undefined) {
     descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
 }
 
-// Add required items if this is a recipe
+// Check if the item is a recipe and has recipe ingredients
 if (item.name.toLowerCase().includes('recipe') && item.recipe_ingredients) {
+    // Show required items
     descHTML += '<br><strong>Requires:</strong><ul style="margin:0; padding-left: 18px; color:#ffdd55;">';
     for (const reqItem of item.recipe_ingredients) {
         descHTML += `<li>${reqItem.amount ? reqItem.amount + 'x ' : ''}${reqItem.name || reqItem}</li>`;
     }
     descHTML += '</ul>';
+
+    // Show what the recipe crafts, if available
+    if (item.recipe_result) {
+        // If recipe_result is an object with a name property, show that, else show as is
+        const craftedItemName = typeof item.recipe_result === 'object' && item.recipe_result.name ? item.recipe_result.name : item.recipe_result;
+        descHTML += `<br><strong>Crafts:</strong> <span style="color:#55ff55;">${craftedItemName}</span>`;
+    }
 }
 
 descCell.innerHTML = descHTML;
 row.appendChild(descCell);
+
 
 
             const dataCell = document.createElement('td');
