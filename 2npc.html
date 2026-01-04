@@ -192,7 +192,7 @@ async function loadNPCs() {
   const itemResponse = await fetch('2last.json');
   itemData = await itemResponse.json();
 
-  const idResponse = await fetch('itemids.json');
+  const idResponse = await fetch('2itemid.json');
   itemIDMap = await idResponse.json();
 
   const response = await fetch('2npc.json');
