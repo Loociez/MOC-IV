@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Item Table View</title>
+  <style>
+/* --- Default Theme (Purple/Gold) --- */
+body.theme-default {
+  font-family: Arial, sans-serif;
+  background-color: #4b0082; /* Dark purple */
+  color: gold;
+  margin: 0;
+  padding: 0;
+}
+
+body.theme-default table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #4b0082;
+  color: gold;
+}
+
+body.theme-default th,
+body.theme-default td {
+  border: 1px solid gold;
+  padding: 8px;
+  text-align: left;
+}
+
+body.theme-default th {
+  background-color: #6a0dad; /* Slightly lighter purple */
+}
+
+body.theme-default tr:nth-child(even) {
+  background-color: #5a0088;
+}
+
+body.theme-default .data {
+  font-size: 0.9em;
+  color: #eee;
+  white-space: pre-line;
+}
+
+body.theme-default #searchBar {
+  margin: 20px auto;
+  display: block;
+  width: 90%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid gold;
+  border-radius: 4px;
+  background-color: #4b0082;
+  color: gold;
+}
+
+body.theme-default #searchBar::placeholder {
+  color: gold;
+}
+
+body.theme-default h1 {
+  text-align: center;
+  margin: 20px 0;
+  color: gold;
+}
+
+body.theme-default select {
+  background-color: #4b0082;
+  color: gold;
+  border: 1px solid gold;
+}
+
+body.theme-default .sprite {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+
+/* --- Dark Theme --- */
+body.theme-dark {
+  font-family: Arial, sans-serif;
+  background-color: #121212; /* Dark background */
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+}
+
+body.theme-dark table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+body.theme-dark th,
+body.theme-dark td {
+  border: 1px solid #444;
+  padding: 8px;
+  text-align: left;
+}
+
+body.theme-dark th {
+  background-color: #333;
+}
+
+body.theme-dark tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+body.theme-dark .data {
+  font-size: 0.9em;
+  color: #ccc;
+  white-space: pre-line;
+}
+
+body.theme-dark #searchBar {
+  margin: 20px auto;
+  display: block;
+  width: 90%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+body.theme-dark #searchBar::placeholder {
+  color: #ccc;
+}
+
+body.theme-dark h1 {
+  text-align: center;
+  margin: 20px 0;
+  color: #f5a623;
+}
+
+body.theme-dark select {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+
+body.theme-dark .sprite {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+
+/* --- Light Theme --- */
+body.theme-light {
+  font-family: Arial, sans-serif;
+  background-color: #fafafa;
+  color: #222222;
+  margin: 0;
+  padding: 0;
+}
+
+body.theme-light table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #ffffff;
+  color: #222222;
+  border: 1px solid #ccc;
+}
+
+body.theme-light th,
+body.theme-light td {
+  border: 1px solid #bbb;
+  padding: 8px;
+  text-align: left;
+}
+
+body.theme-light th {
+  background-color: #ffd580; /* Soft gold/orange */
+}
+
+body.theme-light tr:nth-child(even) {
+  background-color: #fff8e1; /* Light cream */
+}
+
+body.theme-light .data {
+  font-size: 0.9em;
+  color: #555;
+  white-space: pre-line;
+}
+
+body.theme-light #searchBar {
+  margin: 20px auto;
+  display: block;
+  width: 90%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff8e1;
+  color: #222;
+}
+
+body.theme-light #searchBar::placeholder {
+  color: #aaa;
+}
+
+body.theme-light h1 {
+  text-align: center;
+  margin: 20px 0;
+  color: #ff6600;
+}
+
+body.theme-light select {
+  background-color: #fff8e1;
+  color: #222;
+  border: 1px solid #ccc;
+}
+
+body.theme-light .sprite {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+
+/* --- Ocean Theme --- */
+body.theme-ocean {
+  font-family: Arial, sans-serif;
+  background-color: #2a3f54;
+  color: #d7e6f0;
+  margin: 0;
+  padding: 0;
+}
+
+body.theme-ocean table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #1b2a3a;
+  color: #d7e6f0;
+}
+
+body.theme-ocean th,
+body.theme-ocean td {
+  border: 1px solid #4a90e2;
+  padding: 8px;
+  text-align: left;
+}
+
+body.theme-ocean th {
+  background-color: #356094;
+}
+
+body.theme-ocean tr:nth-child(even) {
+  background-color: #23405a;
+}
+
+body.theme-ocean .data {
+  font-size: 0.9em;
+  color: #cce4ff;
+  white-space: pre-line;
+}
+
+body.theme-ocean #searchBar {
+  margin: 20px auto;
+  display: block;
+  width: 90%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #4a90e2;
+  border-radius: 4px;
+  background-color: #23405a;
+  color: #cce4ff;
+}
+
+body.theme-ocean #searchBar::placeholder {
+  color: #a0c4ff;
+}
+
+body.theme-ocean h1 {
+  text-align: center;
+  margin: 20px 0;
+  color: #4a90e2;
+}
+
+body.theme-ocean select {
+  background-color: #23405a;
+  color: #cce4ff;
+  border: 1px solid #4a90e2;
+}
+
+body.theme-ocean .sprite {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+
+/* --- Forest Theme --- */
+body.theme-forest {
+  font-family: Arial, sans-serif;
+  background-color: #1c2d16;
+  color: #b6d7a8;
+  margin: 0;
+  padding: 0;
+}
+
+body.theme-forest table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #2b441f;
+  color: #b6d7a8;
+}
+
+body.theme-forest th,
+body.theme-forest td {
+  border: 1px solid #a9c18e;
+  padding: 8px;
+  text-align: left;
+}
+
+body.theme-forest th {
+  background-color: #4a752c;
+}
+
+body.theme-forest tr:nth-child(even) {
+  background-color: #3a5e29;
+}
+
+body.theme-forest .data {
+  font-size: 0.9em;
+  color: #e0f2d6;
+  white-space: pre-line;
+}
+
+body.theme-forest #searchBar {
+  margin: 20px auto;
+  display: block;
+  width: 90%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #a9c18e;
+  border-radius: 4px;
+  background-color: #3a5e29;
+  color: #e0f2d6;
+}
+
+body.theme-forest #searchBar::placeholder {
+  color: #cde0b3;
+}
+
+body.theme-forest h1 {
+  text-align: center;
+  margin: 20px 0;
+  color: #a9c18e;
+}
+
+body.theme-forest select {
+  background-color: #3a5e29;
+  color: #e0f2d6;
+  border: 1px solid #a9c18e;
+}
+
+body.theme-forest .sprite {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+
+  </style>
+</head>
+<body class="theme-default">
+<p><center>
+  Check out 
+  <a href="https://mirageonlineclassic.com" target="_blank" class="mirage-link">
+    Mirage Online Classic
+  </a>
+  – the greatest pixel MMORPG!
+</p>
+
+<style>
+  .mirage-link {
+    background-color: black;     /* solid background */
+    color: white;                /* text color */
+    padding: 4px 8px;            /* space around text */
+    border-radius: 6px;          /* rounded corners */
+    text-decoration: none;       /* remove underline */
+    font-weight: bold;           /* make it pop */
+  }
+  .mirage-link:hover {
+    background-color: #222;      /* subtle hover effect */
+  }
+</style></center>
+  <h1 id="itemListHeading">Last Known 01/04/26 - Item List</h1>
+  <label for="themeSelector" style="margin-left: 10px;">Theme:</label>
+<select id="themeSelector">
+  <option value="theme-default">MoC (Default)</option>
+  <option value="theme-dark">Dark</option>
+  <option value="theme-light">Light</option>
+  <option value="theme-ocean">Ocean</option>
+  <option value="theme-forest">Forest</option>
+</select>
+
+
+  <input
+    type="text"
+    id="searchBar"
+    placeholder="Search for an item..."
+    oninput="filterTable()"
+  />
+  <label style="margin-left: 10px;" id="weaponFilterLabel"
+    ><input type="checkbox" id="weaponFilter" onclick="filterTable()" />
+    Weapons Only</label
+  >
+  <label style="margin-left: 10px;" id="petFilterLabel"
+    ><input type="checkbox" id="petFilter" onclick="filterTable()" /> Pets
+    Only</label
+  >
+  <label style="margin-left: 10px;" id="recipeFilterLabel"
+    ><input type="checkbox" id="recipeFilter" onclick="filterTable()" /> Recipes
+    Only</label
+  >
+  <label style="margin-left: 10px;" id="rareFilterLabel"
+    ><input type="checkbox" id="rareFilter" onclick="filterTable()" /> Rare+</label
+  >
+  <label style="margin-left: 10px;" id="favoritesFilterLabel"
+    ><input
+      type="checkbox"
+      id="favoritesFilter"
+      onclick="filterTable()"
+    /> Show Favorites Only</label
+  >
+
+  <label for="sortStat" style="margin-left: 10px;">Sort by:</label>
+  <select id="sortStat" onchange="filterTable()">
+    <option value="">-- None --</option>
+    <option value="max_atk">Max Physical Attack</option>
+    <option value="max_mat">Max Magical Attack</option>
+    <option value="max_hp">Max HP</option>
+    <option value="max_def">Max Defense</option>
+    <option value="max_mdf">Max M. Defense</option>
+    <option value="max_rat">Max Ranged Attack</option>
+    <option value="max_rdf">Max Ranged Defense</option>
+  </select>
+
+  <button onclick="clearComparison()">Clear Comparison</button>
+  <button onclick="clearFavorites()">Clear Favorites</button>
+  <button onclick="generateShareLink()">Share Comparison</button>
+  <button onclick="copyStats()">Copy Stats</button>
+  <button onclick="copyDescription()">Copy Description</button>
+
+  <table id="itemTable">
+    <thead>
+      <tr>
+        <th>Select</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Stats</th>
+        <th>Repair Cost</th>
+        <th>Uses</th>
+        <th>Sell Value</th>
+        <th>Handedness</th>
+        <th>Fav's</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows populated dynamically -->
+    </tbody>
+  </table>
+
+ <script>
+let selectedItems = [];
+// --- Profession bits from ItemP.html ---
+const classBits = {
+  0: "Bladesman",
+  1: "Occultist",
+  2: "Bowman"
+};
+
+function isBitSet(flags, bit) {
+  const uflags = flags >>> 0;
+  return (uflags & (1 << bit)) !== 0;
+}
+
+function getItemClasses(prof_req_flags) {
+  const itemClasses = [];
+  for (const bit in classBits) {
+    if (isBitSet(prof_req_flags, bit)) {
+      itemClasses.push(classBits[bit]);
+    }
+  }
+  return itemClasses.length > 0 ? itemClasses.join(', ') : "All Classes";
+}
+// --- end professions logic ---
+
+
+async function fetchWithTimeout(url, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('Request timed out')), timeout);
+        fetch(url).then(response => {
+            clearTimeout(timer);
+            if (!response.ok) reject(new Error(`HTTP error! status: ${response.status}`));
+            else resolve(response);
+        }).catch(err => {
+            clearTimeout(timer);
+            reject(err);
+        });
+    });
+}
+
+async function fetchItemData() {
+    try {
+        const response = await fetch('2last.json');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch item data:', error);
+    }
+}
+
+function isFavorite(name) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    return favorites.includes(name);
+}
+
+function toggleFavorite(item) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    if (favorites.includes(item.name)) {
+        favorites = favorites.filter(name => name !== item.name);
+    } else {
+        favorites.push(item.name);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    filterTable(); // Reapply filter after favorite toggle
+}
+let itemNamesMap = {};
+async function fetchAndDisplayItems() {
+    try {
+        let items = await fetchItemData();
+
+        // Build item ID → name map USING ARRAY INDEX (IDs start at 0)
+itemNamesMap = {};
+items.forEach((item, index) => {
+    if (item?.name) {
+        itemNamesMap[index] = item.name;
+    }
+});
+
+        const sortKey = document.getElementById("sortStat")?.value;
+        if (sortKey && sortKey !== "none") {
+            items.sort((a, b) => {
+                const aValue = a.data?.[sortKey] ?? -Infinity;
+                const bValue = b.data?.[sortKey] ?? -Infinity;
+                return bValue - aValue;
+            });
+        }
+
+        const tableBody = document.getElementById('itemTable').querySelector('tbody');
+        tableBody.innerHTML = '';
+
+        items.forEach(item => {
+            const row = document.createElement('tr');
+
+            const selectCell = document.createElement('td');
+            const selectCheckbox = document.createElement('input');
+            selectCheckbox.type = 'checkbox';
+            selectCheckbox.value = item.name;
+            selectCheckbox.onclick = () => handleItemSelection(item, selectCheckbox);
+            selectCell.appendChild(selectCheckbox);
+            row.appendChild(selectCell);
+
+            const nameCell = document.createElement('td');
+            let nameHTML = item.name;
+            if (item.level_req !== undefined) {
+                nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
+            }
+
+            if (typeof item.sprite === 'number') {
+                const SPRITE_SIZE = 32;
+                const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
+                const spritesPerRow = 32;        // 32 sprites horizontally
+
+                const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
+                const spriteIndex = item.sprite % SPRITES_PER_SHEET;
+
+                const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+                const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+
+                const backgroundImage = `url('images/items${sheetIndex}.png')`;
+
+                nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
+            }
+
+            nameCell.innerHTML = nameHTML;
+            row.appendChild(nameCell);
+
+            const descCell = document.createElement('td');
+            let descHTML = item.desc || 'No description';
+
+            if (item.prof_req_flags !== undefined) {
+                const classesText = getItemClasses(item.prof_req_flags);
+                descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
+            }
+
+            // Custom recipe display — ALL entries are required items
+const recipe = item.data?.recipe_items;
+
+if (
+    item.name.toLowerCase().includes('recipe') &&
+    Array.isArray(recipe)
+) {
+    const requiredItems = recipe.filter(
+        r => r.item_id !== -1 && r.amount > 0
+    );
+
+    if (requiredItems.length) {
+        descHTML += `<br><strong>Required items:</strong><br>`;
+
+        for (const req of requiredItems) {
+            const reqName =
+                itemNamesMap[req.item_id] ?? `Item ID ${req.item_id}`;
+            descHTML += `${reqName} x${req.amount}<br>`;
+        }
+    }
+}
+
+            descCell.innerHTML = descHTML;
+            row.appendChild(descCell);
+
+            // ... rest of your code for stats, repair cost, uses, sell value, handedness, favorites, etc. ...
+
+            const dataCell = document.createElement('td');
+            let stats = item.data
+    ? Object.entries(item.data).filter(([key]) => key !== 'recipe_items')
+    : [];
+
+            if (item.tile_range) stats.push(['tile range', item.tile_range]);
+
+            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
+            const groupedStats = {};
+            stats.forEach(([key, value]) => {
+                const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
+                if (excludedKeys.includes(normalizedKey) || key.startsWith('!')) return;
+                const match = key.match(/^(min|max)_(.+)$/);
+                if (match) {
+                    const [, bound, statName] = match;
+                    if (!groupedStats[statName]) groupedStats[statName] = {};
+                    groupedStats[statName][bound] = value;
+                } else {
+                    groupedStats[key] = value;
+                }
+            });
+
+            let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
+                if (typeof value === 'object') {
+                    const min = value.min;
+                    const max = value.max;
+                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+                    else if (min !== undefined) return `${key} (min): ${min}`;
+                    else if (max !== undefined) return `${key} (max): ${max}`;
+                    else return `${key}: ?`;
+                }
+                return `${key.replace(/_/g, ' ')}: ${value}`;
+            });
+
+            // Spell Amp shortened display
+            const spellAmpLabels = {
+                "!bard_buff_uptime": "Bard Buff Uptime",
+                "!bard_buff_cost": "Bard Buff Cost",
+                "!jester_confuse_cost": "Jester Confuse Cost",
+                "!jester_playerconfuse_uptime": "Jester player uptime",
+                "!jester_npcconfuse_uptime": "Jester NPC Uptime",
+                "!cleric_petheal_amount": "Cleric Pet Heal",
+                "!cleric_petheal_cost": "Cleric Pet Heal Cost",
+                "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
+                "!dragoon_invisible_cost": "Dragoon Invis Cost",
+                "!warlock_npcaoe_damage": "Warlock NPC AoE",
+                "!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
+                "!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
+                "!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
+                "!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
+                "!warlock_npcaoe_cost": "Warlock NPC Cost Cast",
+                "!warlock_selfaoe_cost": "Warlock Self Cost Cast",
+                "!warlock_playeraoe_cost": "Warlock Opponent Cost Cast",
+                "!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
+                "!cleric_playerheal_amount": "Cleric Player Heal",
+                "!cleric_playerheal_cost": "Cleric Player Heal Cost",
+                "!cleric_allheal_cooldown": "Cleric Cooldown",
+                "!dragoon_playeraoe_damage": "Dragoon Player AoE",
+                "!warlock_playeraoe_damage": "Warlock Player AoE",
+                "!assassin_npcpoison_damage": "Assassin NPC Poison",
+                "!assassin_cloak_cost": "Assassin Cloak Cost",
+                "!assassins_npcpoison_ticks": "Assassin NPC Ticks",
+                "!assassins_playerpoison_ticks": "Assassin Player Ticks",
+                "!necromancer_minion_damage": "Necromancer Minion DMG",
+                "!necromancer_minion_hp": "Necroamncer Minion HP",
+                "!necromancer_minion_cost": "Necromancer Minion Cost",
+                "!necromancer_minion_cooldown": "Necromancer Minion Cooldown",
+                "!samurai_npcriposte_damage": "Samurai NPC Riposte",
+                "!samurai_riposte_cooldown": "Samurai Riposte cooldown",
+                "!samurai_riposte_cost": "Samurai Riposte Cost",
+                "!barbarian_alldamage_amount": "Barbarian All Damage",
+                "!marksman_npcshotgun_damage": "Marksman NPC Shotgun",
+                "!marksman_shotgun_cooldown": "Marksman Shotgun Cooldown",
+                "!assassin_playerpoison_damage": "Assassin Player Poison",
+                "!assassin_cloak_cooldown": "Assassin cloak cooldown",
+                "!samurai_playerriposte_damage": "Samurai Player Riposte",
+                "!marksman_playershotgun_damage": "Marksman Player Shotgun",
+                "!marksman_shotgun_cost": "Marksman Shotgun Cost",
+                "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
+                "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
+            };
+
+            const spellAmpEntries = Object.entries(spellAmpLabels)
+                .filter(([key]) => item.data?.[key] !== undefined)
+                .map(([key, label]) => `${label}: ${item.data[key]}`);
+
+            if (spellAmpEntries.length > 0) {
+                formattedLines.push("");
+                formattedLines.push("Spell Amp:");
+                formattedLines.push(...spellAmpEntries);
+            }
+
+            const formattedData = formattedLines.join('\n');
+
+            dataCell.textContent = formattedData.trim() || 'No stats';
+            dataCell.classList.add('data');
+            row.appendChild(dataCell);
+
+            const repairCostCell = document.createElement('td');
+            repairCostCell.textContent = item.repair_cost || 'No repair cost';
+            row.appendChild(repairCostCell);
+
+            const usesCell = document.createElement('td');
+            usesCell.textContent = item.uses || 'No uses data';
+            row.appendChild(usesCell);
+
+            const sellValueCell = document.createElement('td');
+            sellValueCell.textContent = item.recycle_value || 'No sell value';
+            row.appendChild(sellValueCell);
+
+            const handednessCell = document.createElement('td');
+            const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
+            handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
+            row.appendChild(handednessCell);
+
+            const favoriteCell = document.createElement('td');
+            const favoriteCheckbox = document.createElement('input');
+            favoriteCheckbox.type = 'checkbox';
+            favoriteCheckbox.checked = isFavorite(item.name);
+            favoriteCheckbox.onclick = () => toggleFavorite(item);
+            favoriteCell.appendChild(favoriteCheckbox);
+            row.appendChild(favoriteCell);
+
+            tableBody.appendChild(row);
+        });
+
+        filterTable(); // Apply filters after display
+    } catch (error) {
+        console.error('Error fetching or displaying data:', error);
+        alert(`Failed to load data: ${error.message}`);
+    }
+}
+
+function handleItemSelection(item, checkbox) {
+    if (checkbox.checked) {
+        selectedItems.push(item);
+    } else {
+        selectedItems = selectedItems.filter(selectedItem => selectedItem !== item);
+    }
+    displayComparison(selectedItems);
+}
+
+function displayComparison(selectedItems) {
+    const comparisonTableBody = document.getElementById('comparisonTable').querySelector('tbody');
+    comparisonTableBody.innerHTML = '';
+
+    if (selectedItems.length < 2) {
+        document.getElementById('comparisonModal').style.display = 'none';
+        return;
+    }
+
+    const [item1, item2] = selectedItems;
+    const stats1 = item1.data || {};
+    const stats2 = item2.data || {};
+    const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin", "damage stat", "sprite rotation"];
+
+    const row = document.createElement('tr');
+    const nameCell = document.createElement('td');
+    nameCell.textContent = item1.name + " vs " + item2.name;
+    row.appendChild(nameCell);
+
+    const statsCell1 = document.createElement('td');
+    Object.entries(stats1).forEach(([key, value]) => {
+        if (excludedFields.includes(key.toLowerCase())) return;
+        const statElement = document.createElement('span');
+        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
+        statsCell1.appendChild(statElement);
+        statsCell1.appendChild(document.createElement('br'));
+    });
+    row.appendChild(statsCell1);
+
+    const statsCell2 = document.createElement('td');
+    Object.entries(stats2).forEach(([key, value]) => {
+        if (excludedFields.includes(key.toLowerCase())) return;
+        const statElement = document.createElement('span');
+        statElement.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
+        statsCell2.appendChild(statElement);
+        statsCell2.appendChild(document.createElement('br'));
+    });
+    row.appendChild(statsCell2);
+
+    highlightStats(stats1, stats2, statsCell1, statsCell2);
+
+    const repairCostCell = document.createElement('td');
+    repairCostCell.textContent = item1.repair_cost || 'No repair cost';
+    row.appendChild(repairCostCell);
+
+    const usesCell = document.createElement('td');
+    usesCell.textContent = item1.uses || 'No uses data';
+    row.appendChild(usesCell);
+
+    const sellValueCell = document.createElement('td');
+    sellValueCell.textContent = item1.recycle_value || 'No sell value';
+    row.appendChild(sellValueCell);
+
+    const handednessCell = document.createElement('td');
+    handednessCell.textContent = item1.data && item1.data.two_handed ? 'Two Handed' : 'One Handed';
+    row.appendChild(handednessCell);
+
+    comparisonTableBody.appendChild(row);
+    document.getElementById('comparisonModal').style.display = 'block';
+}
+
+function highlightStats(stats1, stats2, statsCell1, statsCell2) {
+    const stats1Entries = Object.entries(stats1);
+    const stats2Entries = Object.entries(stats2);
+    stats1Entries.forEach(([key, value], index) => {
+        if (!stats2Entries[index]) return;
+        const otherValue = stats2Entries[index][1];
+        if (value > otherValue) {
+            statsCell1.children[index].classList.add('higher');
+            statsCell2.children[index].classList.add('lower');
+        } else if (value < otherValue) {
+            statsCell1.children[index].classList.add('lower');
+            statsCell2.children[index].classList.add('higher');
+        }
+    });
+}
+
+function clearComparison() {
+    selectedItems = [];
+    document.querySelectorAll('#itemTable input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.getElementById('comparisonModal').style.display = 'none';
+}
+
+function closeModal() {
+    document.getElementById('comparisonModal').style.display = 'none';
+}
+
+function filterTable() {
+    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+    const weaponFilter = document.getElementById('weaponFilter').checked;
+    const petFilter = document.getElementById('petFilter').checked;
+    const recipeFilter = document.getElementById('recipeFilter').checked;
+    const rareFilter = document.getElementById('rareFilter').checked;
+    const favoritesFilter = document.getElementById('favoritesFilter').checked;
+    const rows = document.querySelectorAll('#itemTable tbody tr');
+
+    rows.forEach(row => {
+        const nameCell = row.querySelector('td:nth-child(2)');
+        const descriptionCell = row.querySelector('td:nth-child(3)');
+        const statsCell = row.querySelector('td:nth-child(4)');
+        const matchesSearch =
+            (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
+            (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
+        const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
+        const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
+        const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
+        const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
+        const isFavoriteItem = isFavorite(nameCell.textContent);
+
+        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && (!favoritesFilter || isFavoriteItem)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
+    fetchAndDisplayItems(); // initial load
+});
+</script>
+
+<!-- Comparison Modal -->
+<div id="comparisonModal" class="modal" style="display:none; position:fixed; top:10%; left:5%; width:90%; height:80%; background:#222; color:white; border:2px solid gold; padding:20px; overflow:auto; z-index:1000;">
+  <button onclick="closeModal()" style="float:right; background:red; color:white; border:none; padding:5px 10px; cursor:pointer;">Close</button>
+  <table id="comparisonTable" style="background-color:#333; color:white; width:100%;">
+    <thead>
+      <tr><th>Name</th><th>Stats 1</th><th>Stats 2</th><th>Repair</th><th>Uses</th><th>Value</th><th>Handedness</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+function copyStats() {
+  const selected = document.querySelectorAll('#itemTable tbody input[type=checkbox]:checked');
+  if (!selected.length) return alert("No items selected.");
+  const stats = Array.from(selected).map(cb => {
+    const row = cb.closest('tr');
+    const name = row.cells[1].textContent.trim();
+    const data = row.cells[3].textContent.trim();
+    return `Name: ${name}\nStats:\n${data}`;
+  }).join('\n\n');
+  navigator.clipboard.writeText(stats).then(() => alert("Stats copied to clipboard!"));
+}
+
+function copyDescription() {
+  const selected = document.querySelectorAll('#itemTable tbody input[type=checkbox]:checked');
+  if (!selected.length) return alert("No items selected.");
+  const descs = Array.from(selected).map(cb => {
+    const row = cb.closest('tr');
+    const name = row.cells[1].textContent.trim();
+    const desc = row.cells[2].textContent.trim();
+    return `Name: ${name}\nDescription:\n${desc}`;
+  }).join('\n\n');
+  navigator.clipboard.writeText(descs).then(() => alert("Descriptions copied to clipboard!"));
+}
+  // Theme switching logic
+  const themeSelector = document.getElementById('themeSelector');
+
+  function applyTheme(themeClass) {
+    // Remove any existing theme classes starting with 'theme-'
+    document.body.classList.forEach(cls => {
+      if (cls.startsWith('theme-')) {
+        document.body.classList.remove(cls);
+      }
+    });
+    // Add the selected theme class
+    if (themeClass) {
+      document.body.classList.add(themeClass);
+    }
+  }
+
+  // On page load, apply the default theme
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(themeSelector.value);
+  });
+
+  // Listen for theme selection changes
+  themeSelector.addEventListener('change', (e) => {
+    applyTheme(e.target.value);
+  });
+</script>
+
+</body>
+</html>

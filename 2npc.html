@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NPC Comparison</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: purple;
+      color: gold;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: gold;
+    }
+
+    #searchBar {
+      display: block;
+      width: 90%;
+      margin: 0 auto 20px;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid gold;
+      border-radius: 4px;
+      background-color: #4b0082;
+      color: gold;
+    }
+
+    #searchBar::placeholder {
+      color: gold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 auto 20px;
+      background-color: #4b0082;
+      color: gold;
+    }
+
+    th, td {
+      border: 1px solid gold;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #6a0dad;
+    }
+
+    tr:nth-child(even) {
+      background-color: #5a0088;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    
+.modal-content {
+  background-color: #fefefe;
+  color: black;
+  padding: 20px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+
+    .close {
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .higher {
+      background-color: green;
+      color: white;
+    }
+
+    .lower {
+      background-color: red;
+      color: white;
+    }
+	.sprite {
+  width: 32px;
+  height: 32px;
+  background-size: 1024px 1024px;
+  image-rendering: pixelated;
+  margin-top: 5px;
+}
+.sprite {
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+.npc-tooltip {
+  display: none;
+  position: absolute;
+  background: #111;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 6px;
+  font-size: 12px;
+  top: 100%;
+  left: 0;
+  white-space: nowrap;
+  z-index: 10;
+}
+td:hover .npc-tooltip {
+  display: block;
+}
+  </style>
+</head>
+<body>
+<p><center>
+  Check out 
+  <a href="https://mirageonlineclassic.com" target="_blank" class="mirage-link">
+    Mirage Online Classic
+  </a>
+  – the greatest pixel MMORPG!
+</p>
+
+<style>
+  .mirage-link {
+    background-color: black;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .mirage-link:hover {
+    background-color: #222;
+  }
+</style></center>
+<h1>Moc2 NPC List 01/04/26</h1>
+<center><h5>* Hover over the NPC Sprite for drops and rate</h5></center>
+
+<button id="itemDropBtn" style="margin: 10px auto; display: block; padding: 10px 20px; background-color: gold; color: purple; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">
+  Show Item Drop List
+</button>
+
+<input type="text" id="searchBar" placeholder="Search for an NPC...">
+
+<table id="npcTable">
+  <thead>
+    <tr>
+      <th>Select</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Stats</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="comparisonModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>NPC Comparison</h2>
+    <table id="comparisonTable">
+      <thead>
+        <tr>
+          <th>Attribute</th>
+          <th>NPC 1</th>
+          <th>NPC 2</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+<script>
+let allNPCs = [];
+let selectedNPCs = [];
+let itemData = [];
+let itemIDMap = {};
+
+async function loadNPCs() {
+  const itemResponse = await fetch('2last.json');
+  itemData = await itemResponse.json();
+
+  const idResponse = await fetch('itemids.json');
+  itemIDMap = await idResponse.json();
+
+  const response = await fetch('2npc.json');
+  const npcs = await response.json();
+  allNPCs = npcs;
+  displayNPCs(allNPCs);
+}
+
+function displayNPCs(npcs) {
+  const tbody = document.querySelector('#npcTable tbody');
+  tbody.innerHTML = '';
+
+  npcs.forEach(npc => {
+    const row = document.createElement('tr');
+
+    const selectCell = document.createElement('td');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.onclick = () => handleSelection(npc, checkbox);
+    selectCell.appendChild(checkbox);
+    row.appendChild(selectCell);
+
+    const nameCell = document.createElement('td');
+    const nameDiv = document.createElement('div');
+    nameDiv.textContent = npc.name;
+
+    if (typeof npc.sprite === 'number') {
+      const SPRITE_SIZE = 32;
+      const FRAMES_PER_SPRITE = 12;
+      const SPRITES_PER_SHEET = 1024;
+      const spritesPerRow = 32;
+
+      const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;
+      const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
+      const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
+
+      const x = (frameIndexInSheet % spritesPerRow) * SPRITE_SIZE;
+      const y = Math.floor(frameIndexInSheet / spritesPerRow) * SPRITE_SIZE;
+
+      const spriteDiv = document.createElement('div');
+      spriteDiv.className = 'sprite';
+      spriteDiv.style.width = SPRITE_SIZE + 'px';
+      spriteDiv.style.height = SPRITE_SIZE + 'px';
+      spriteDiv.style.backgroundImage = `url('images/sprites${sheetIndex}.png')`;
+      spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+      spriteDiv.style.backgroundRepeat = 'no-repeat';
+      spriteDiv.style.imageRendering = 'pixelated';
+
+      let frame = 0;
+      let animationInterval = null;
+
+      spriteDiv.addEventListener('mouseenter', () => {
+        animationInterval = setInterval(() => {
+          const currentFrameIndex = startingFrameIndex + frame;
+          const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
+          const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
+          spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+
+          frame = (frame + 1) % FRAMES_PER_SPRITE;
+        }, 100);
+      });
+
+      spriteDiv.addEventListener('mouseleave', () => {
+        clearInterval(animationInterval);
+        frame = 0;
+        spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+      });
+
+      if (npc.drop_items?.length) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.style.position = 'absolute';
+        tooltip.style.display = 'none';
+        tooltip.style.background = '#111';
+        tooltip.style.color = '#fff';
+        tooltip.style.padding = '6px';
+        tooltip.style.border = '1px solid #555';
+        tooltip.style.zIndex = 1000;
+        tooltip.style.fontSize = '12px';
+        tooltip.style.maxWidth = '200px';
+
+        document.body.appendChild(tooltip);
+
+        spriteDiv.addEventListener('mouseenter', e => {
+          tooltip.innerHTML = npc.drop_items
+            .map(drop => {
+              const itemName = itemIDMap[drop.item_id];
+              if (!itemName || itemName === "(not dropped)") return null;
+              return `
+                <div style="margin-bottom:8px;">
+                  <div>${itemName} x${drop.amount}</div>
+                  <div style="font-size: 10px; color: #ccc;">Drop rate: ${drop.chance}%</div>
+                </div>
+              `;
+            })
+            .filter(Boolean)
+            .join('');
+
+          tooltip.style.display = 'block';
+          const rect = spriteDiv.getBoundingClientRect();
+          tooltip.style.left = rect.right + 5 + 'px';
+          tooltip.style.top = rect.top + window.scrollY + 'px';
+        });
+
+        spriteDiv.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      }
+
+      nameDiv.appendChild(document.createElement('br'));
+      nameDiv.appendChild(spriteDiv);
+    }
+
+    nameCell.appendChild(nameDiv);
+    row.appendChild(nameCell);
+
+    const descCell = document.createElement('td');
+    descCell.textContent = npc.desc || 'No description';
+    row.appendChild(descCell);
+
+    const statsCell = document.createElement('td');
+    let statsText = '';
+
+    if (npc.stats) {
+      statsText = Object.entries(npc.stats)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n');
+    }
+
+    if (npc.vitals) {
+      const { hp, mp, sp } = npc.vitals;
+      statsText += (statsText ? '\n' : '') + `HP: ${hp}`;
+      if (mp) statsText += `\nMP: ${mp}`;
+      if (sp) statsText += `\nSP: ${sp}`;
+    }
+
+    /* ✅ ADDED: SHOW NPC SIGHT RANGE */
+    if (npc.sight_range !== undefined)
+      statsText += `\nSight Range: ${npc.sight_range}`;
+
+    statsCell.textContent = statsText || 'No stats';
+    statsCell.style.whiteSpace = 'pre-line';
+    row.appendChild(statsCell);
+
+    tbody.appendChild(row);
+  });
+}
+
+function handleSelection(npc, checkbox) {
+  if (checkbox.checked) {
+    selectedNPCs.push(npc);
+  } else {
+    selectedNPCs = selectedNPCs.filter(n => n !== npc);
+  }
+
+  if (selectedNPCs.length === 2) {
+    showComparison(selectedNPCs[0], selectedNPCs[1]);
+  }
+}
+
+function showComparison(npc1, npc2) {
+  const table = document.querySelector('#comparisonTable tbody');
+  table.innerHTML = '';
+
+  const stats1 = { ...npc1.stats };
+  const stats2 = { ...npc2.stats };
+
+  if (npc1.vitals && npc1.vitals.hp !== undefined) stats1.HP = npc1.vitals.hp;
+  if (npc2.vitals && npc2.vitals.hp !== undefined) stats2.HP = npc2.vitals.hp;
+
+  const allKeys = new Set([...Object.keys(stats1), ...Object.keys(stats2)]);
+
+  allKeys.forEach(key => {
+    const row = document.createElement('tr');
+    const keyCell = document.createElement('td');
+    keyCell.textContent = key;
+
+    const val1 = stats1[key] ?? '—';
+    const val2 = stats2[key] ?? '—';
+
+    const val1Cell = document.createElement('td');
+    const val2Cell = document.createElement('td');
+    val1Cell.textContent = val1;
+    val2Cell.textContent = val2;
+
+    if (!isNaN(val1) && !isNaN(val2)) {
+      const n1 = parseFloat(val1), n2 = parseFloat(val2);
+      if (n1 > n2) {
+        val1Cell.classList.add('higher');
+        val2Cell.classList.add('lower');
+      } else if (n1 < n2) {
+        val1Cell.classList.add('lower');
+        val2Cell.classList.add('higher');
+      }
+    }
+
+    row.appendChild(keyCell);
+    row.appendChild(val1Cell);
+    row.appendChild(val2Cell);
+    table.appendChild(row);
+  });
+
+  document.getElementById('comparisonModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('comparisonModal').style.display = 'none';
+}
+
+document.getElementById('searchBar').addEventListener('input', () => {
+  const term = document.getElementById('searchBar').value.toLowerCase();
+  const filtered = allNPCs.filter(npc =>
+    npc.name.toLowerCase().includes(term) ||
+    (npc.desc && npc.desc.toLowerCase().includes(term))
+  );
+  displayNPCs(filtered);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadNPCs();
+  
+  document.getElementById('itemDropBtn').addEventListener('click', () => {
+    document.getElementById('itemDropModal').style.display = 'flex';
+    populateItemDropList();
+  });
+
+  document.getElementById('itemSearch').addEventListener('input', () => {
+    populateItemDropList();
+  });
+
+  function populateItemDropList() {
+    const search = document.getElementById('itemSearch').value.toLowerCase();
+    const table = document.getElementById('itemDropTable');
+    table.innerHTML = '';
+
+    const itemToMonsters = {};
+
+    for (const npc of allNPCs) {
+      if (!npc.drop_items) continue;
+      for (const drop of npc.drop_items) {
+        const itemName = itemIDMap[drop.item_id];
+        if (!itemName || itemName === "(not dropped)") continue;
+
+        if (!itemToMonsters[itemName]) itemToMonsters[itemName] = [];
+        itemToMonsters[itemName].push(npc.name);
+      }
+    }
+
+    Object.entries(itemToMonsters).forEach(([itemName, monsters]) => {
+      if (!itemName.toLowerCase().includes(search)) return;
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${itemName}</td>
+        <td>${[...new Set(monsters)].join(', ')}</td>
+      `;
+      table.appendChild(row);
+    });
+  }
+
+});
+document.getElementById('itemDropBtn').addEventListener('click', () => {
+  document.getElementById('itemDropModal').style.display = 'flex';
+  populateItemDropList();
+});
+
+
+function populateItemDropList() {
+  const search = document.getElementById('itemSearch').value.toLowerCase();
+  const table = document.getElementById('itemDropTable');
+  table.innerHTML = '';
+
+  const itemToMonsters = {};
+
+  for (const npc of allNPCs) {
+    if (!npc.drop_items) continue;
+    for (const drop of npc.drop_items) {
+      const itemName = itemIDMap[drop.item_id];
+      if (!itemName || itemName === "(not dropped)") continue;
+
+      if (!itemToMonsters[itemName]) itemToMonsters[itemName] = [];
+      itemToMonsters[itemName].push(npc.name);
+    }
+  }
+
+  Object.entries(itemToMonsters).forEach(([itemName, monsters]) => {
+    if (!itemName.toLowerCase().includes(search)) return;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${itemName}</td>
+      <td>${[...new Set(monsters)].join(', ')}</td>
+    `;
+    table.appendChild(row);
+  });
+}
+
+</script>
+
+<div id="itemDropModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="document.getElementById('itemDropModal').style.display='none'">&times;</span>
+    <h2>Item Drop List</h2>
+    <input type="text" id="itemSearch" placeholder="Search for an item..." style="width:100%; padding: 8px; margin-bottom: 10px;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Dropped By</th>
+        </tr>
+      </thead>
+      <tbody id="itemDropTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
