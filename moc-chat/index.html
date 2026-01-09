@@ -112,7 +112,6 @@
 <script>
 (() => {
   const CHAT_API = 'https://moc.marocodes.eu/api/messages';
-  const API_TOKEN = 'f684f5c2474a579a37e6747e92e3b8a4';
   const INTERVAL = 2000;
 
   const chatLog = document.getElementById('chatLog');
@@ -181,9 +180,7 @@
     isFetching = true;
 
     try {
-      const res = await fetch(CHAT_API, {
-        headers: { Authorization: `Bearer ${API_TOKEN}` }
-      });
+      const res = await fetch(CHAT_API);
       if (!res.ok) throw new Error('API error');
 
       const data = await res.json();
