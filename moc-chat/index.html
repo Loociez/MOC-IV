@@ -31,6 +31,22 @@ body {
   line-height: 1.3;
 }
 
+/* ✨ NEW MESSAGE ANIMATION */
+.chat-message.new {
+  animation: newMessage 1.2s ease-out;
+}
+
+@keyframes newMessage {
+  0% {
+    background: rgba(255, 0, 255, 0.15);
+    transform: translateY(4px);
+  }
+  100% {
+    background: transparent;
+    transform: translateY(0);
+  }
+}
+
 .chat-time { color: #888; }
 .chat-user { color: #00ff00; }
 .chat-text { color: #ff00ff; }
@@ -56,6 +72,7 @@ body {
   /* =============================== */
 
   const chatLog = document.getElementById('chatLog');
+  let lastMessageKey = null;
 
   function escapeHtml(value) {
     if (value === undefined || value === null) return '';
@@ -66,6 +83,10 @@ body {
       '"':'&quot;',
       "'":'&#39;'
     })[m]);
+  }
+
+  function getMessageKey(m) {
+    return `${m.time ?? ''}|${m.user ?? m.username ?? ''}|${m.message ?? m.text ?? ''}`;
   }
 
   async function fetchChat() {
@@ -81,7 +102,6 @@ body {
       const messages = await res.json();
       if (!Array.isArray(messages)) return;
 
-      // ✅ FIX: reverse order so newest is at the bottom
       render(messages.slice().reverse());
 
     } catch (err) {
@@ -91,13 +111,18 @@ body {
   }
 
   function render(messages) {
+    const newLastKey = getMessageKey(messages[messages.length - 1]);
+
     chatLog.innerHTML = messages.map(m => {
+      const key = getMessageKey(m);
+      const isNew = lastMessageKey && key === newLastKey && key !== lastMessageKey;
+
       const time = escapeHtml(m.time ?? m.timestamp ?? '');
       const user = escapeHtml(m.user ?? m.username ?? 'Unknown');
       const text = escapeHtml(m.message ?? m.text ?? '');
 
       return `
-        <div class="chat-message">
+        <div class="chat-message ${isNew ? 'new' : ''}">
           <span class="chat-time">[${time}]</span>
           <span class="chat-user">${user}:</span>
           <span class="chat-text">${text}</span>
@@ -105,7 +130,7 @@ body {
       `;
     }).join('');
 
-    // Auto-scroll to latest message
+    lastMessageKey = newLastKey;
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
