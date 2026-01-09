@@ -1,72 +1,60 @@
 (() => {
-  const API_CLIENT_URL = 'https://moc.marocodes.eu/api/messages';  // Your API endpoint
-  const API_SECRET_TOKEN = 'f684f5c2474a579a37e6747e92e3b8a4';               // Your Bearer token
+  const API_CLIENT_URL = 'https://moc.marocodes.eu/api/messages';
+  const API_SECRET_TOKEN = 'f684f5c2474a579a37e6747e92e3b8a4';
 
-  // Utility: send one chat message to API client
-  async function sendChatMessage(msg) {
+  const sent = new Set();
+
+  async function sendRawMessage(text) {
     try {
-      const payload = {
-        message: `[${msg.time}] ${msg.user}: ${msg.message}`
-      };
-
       const res = await fetch(API_CLIENT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${API_SECRET_TOKEN}`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ message: text })
       });
 
       if (!res.ok) {
-        console.error('Failed to send message', await res.text());
+        console.error('Send failed', await res.text());
       }
     } catch (e) {
-      console.error('Error sending message', e);
+      console.error('Send error', e);
     }
   }
 
-  // Parse one <li> chat line into {time, user, message}
-  function parseChatLine(li) {
-    const spans = li.querySelectorAll('span');
-    if (spans.length < 3) return null;
+  function extractText(li) {
+    // Get visible text only, ignore styling
+    let text = li.textContent?.trim();
+    if (!text) return null;
 
-    const timeText = spans[0].textContent.trim().replace(/[()]/g, '');
-    const userText = spans[1].textContent.trim();
-    let messageText = spans[2].textContent.trim();
-    if (messageText.startsWith(': ')) messageText = messageText.slice(2);
-
-    return { time: timeText, user: userText, message: messageText };
+    // Normalize whitespace
+    text = text.replace(/\s+/g, ' ');
+    return text;
   }
 
-  const sentMessages = new Set();
-
-  function scanChatAndSend() {
+  function scanChat() {
     const chatbox = document.getElementById('winGameChatbox');
-    if (!chatbox) {
-      console.warn('Chatbox element not found');
-      return;
-    }
+    if (!chatbox) return;
 
     const lines = chatbox.querySelectorAll('li');
+
     lines.forEach(li => {
-      const msg = parseChatLine(li);
-      if (!msg) return;
+      const text = extractText(li);
+      if (!text) return;
 
-      const key = `${msg.time}|${msg.user}|${msg.message}`;
-      if (sentMessages.has(key)) return;
+      if (sent.has(text)) return;
+      sent.add(text);
 
-      sentMessages.add(key);
-      sendChatMessage(msg);
+      sendRawMessage(text);
     });
   }
 
-  const intervalId = setInterval(scanChatAndSend, 2000);
-  console.log('Chat relay started, sending messages to API client');
+  const interval = setInterval(scanChat, 1500);
+  console.log('MOC chat relay running');
 
-  // To stop later: window.stopChatRelay()
   window.stopChatRelay = () => {
-    clearInterval(intervalId);
-    console.log('Chat relay stopped');
+    clearInterval(interval);
+    console.log('MOC chat relay stopped');
   };
 })();

@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>MOC Global Chat Viewer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #1a1a1a;
-  color: #eee;
-  margin: 0;
-}
+  body {
+    font-family: Arial, sans-serif;
+    background: #1a1a1a;
+    color: #eee;
+    margin: 0;
+  }
 
-#chatView {
-  max-width: 900px;
-  margin: 1em auto;
-}
+  #chatView {
+    max-width: 900px;
+    margin: 1em auto;
+  }
 
-#chatLog {
-  background: #222;
-  padding: 1em;
-  height: 520px;
-  overflow-y: auto;
-  border-radius: 6px;
-}
+  #chatLog {
+    background: #222;
+    padding: 1em;
+    height: 520px;
+    overflow-y: auto;
+    border-radius: 6px;
+  }
 
-.chat-line {
-  margin-bottom: 6px;
-  line-height: 1.35;
-}
+  .chat-line {
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
 
-.chat-line.new {
-  animation: flash 1.2s ease-out;
-}
+  .chat-line.new {
+    animation: flash 1.2s ease-out;
+  }
 
-@keyframes flash {
-  0% { background: rgba(255,0,255,.18); transform: translateY(4px); }
-  100% { background: transparent; transform: none; }
-}
+  @keyframes flash {
+    0% { background: rgba(255,0,255,.18); transform: translateY(4px); }
+    100% { background: transparent; transform: none; }
+  }
 
-.time { color: #888; margin-right: 4px; }
-.user { color: #00ff00; margin-right: 4px; }
-.discord { color: #00b7ff; margin-right: 4px; }
-.text { color: #ff00ff; }
-.system { color: #ff00ff; font-style: italic; }
+  .time { color: #888; margin-right: 4px; }
+  .user { color: #00ff00; margin-right: 4px; }
+  .discord { color: #00b7ff; margin-right: 4px; }
+  .text { color: #ff00ff; }
+  .system { color: #ff00ff; font-style: italic; }
 </style>
 </head>
 
@@ -57,7 +57,6 @@ body {
 
 <script>
 (() => {
-
   const CHAT_API = 'https://moc.marocodes.eu/api/messages';
   const API_TOKEN = 'f684f5c2474a579a37e6747e92e3b8a4';
   const INTERVAL = 2000;
@@ -71,35 +70,55 @@ body {
     );
 
   function parseLine(raw) {
-    raw = escapeHtml(raw.trim());
+    let line =
+      typeof raw === 'string'
+        ? raw
+        : typeof raw?.message === 'string'
+          ? raw.message
+          : '';
 
-    // (01:36) (Discord) Jupiter: Lol
-    let discord = raw.match(/^\((\d\d:\d\d)\)\s+\(Discord\)\s+(.+?):\s+(.*)$/);
-    if (discord) {
+    line = line.trim();
+    if (!line) return null;
+
+    // Match Discord messages: (01:36) (Discord) Jupiter: Lol
+    let m = line.match(/^\((\d{2}:\d{2})\)\s*\(Discord\)\s*(.+?):\s*(.*)$/);
+    if (m) {
       return {
-        time: discord[1],
+        time: m[1],
+        user: m[2],
+        text: m[3],
         tag: 'Discord',
-        user: discord[2],
-        text: discord[3]
+        system: false
       };
     }
 
-    // (01:36) Loocie 🌸: message
-    let normal = raw.match(/^\((\d\d:\d\d)\)\s+(.+?):\s+(.*)$/);
-    if (normal) {
+    // Match normal messages: (01:36) User: message
+    m = line.match(/^\((\d{2}:\d{2})\)\s*(.+?):\s*(.*)$/);
+    if (m) {
       return {
-        time: normal[1],
-        user: normal[2],
-        text: normal[3]
+        time: m[1],
+        user: m[2],
+        text: m[3],
+        tag: null,
+        system: false
       };
     }
 
-    // Fallback
-    return { system: raw };
+    // Fallback / system message
+    return {
+      time: '',
+      user: '',
+      text: line,
+      tag: null,
+      system: true
+    };
   }
 
   function keyOf(raw) {
-    return raw;
+    // Use the raw string or message property as a unique key for new message detection
+    if (typeof raw === 'string') return raw;
+    if (raw && typeof raw.message === 'string') return raw.message;
+    return '';
   }
 
   async function fetchChat() {
@@ -112,23 +131,32 @@ body {
       const data = await res.json();
       if (!Array.isArray(data)) return;
 
+      // Reverse to show oldest first, newest last
       render(data.slice().reverse());
     } catch (e) {
       console.error(e);
+      chatLog.textContent = 'Error loading chat.';
     }
   }
 
   function render(lines) {
+    if (!lines.length) {
+      chatLog.innerHTML = '<i>No messages yet.</i>';
+      return;
+    }
+
     const newestKey = keyOf(lines[lines.length - 1]);
 
     chatLog.innerHTML = lines.map(raw => {
       const parsed = parseLine(raw);
+      if (!parsed) return '';
+
       const isNew = lastKey && keyOf(raw) === newestKey && newestKey !== lastKey;
 
       if (parsed.system) {
         return `
           <div class="chat-line ${isNew ? 'new' : ''}">
-            <span class="system">${parsed.system}</span>
+            <span class="system">${escapeHtml(parsed.text)}</span>
           </div>
         `;
       }
@@ -136,19 +164,19 @@ body {
       if (parsed.tag === 'Discord') {
         return `
           <div class="chat-line ${isNew ? 'new' : ''}">
-            <span class="time">(${parsed.time})</span>
+            <span class="time">(${escapeHtml(parsed.time)})</span>
             <span class="discord">(Discord)</span>
-            <span class="user">${parsed.user}:</span>
-            <span class="text">${parsed.text}</span>
+            <span class="user">${escapeHtml(parsed.user)}:</span>
+            <span class="text">${escapeHtml(parsed.text)}</span>
           </div>
         `;
       }
 
       return `
         <div class="chat-line ${isNew ? 'new' : ''}">
-          <span class="time">(${parsed.time})</span>
-          <span class="user">${parsed.user}:</span>
-          <span class="text">${parsed.text}</span>
+          <span class="time">(${escapeHtml(parsed.time)})</span>
+          <span class="user">${escapeHtml(parsed.user)}:</span>
+          <span class="text">${escapeHtml(parsed.text)}</span>
         </div>
       `;
     }).join('');
