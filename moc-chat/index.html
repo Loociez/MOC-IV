@@ -56,6 +56,8 @@
   border-radius: 8px;
   position: relative;
   transition: background-color 0.4s ease;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .chat-line.new {
@@ -64,9 +66,9 @@
 }
 
 .chat-line.system {
+  color: #ff4444; /* red for system messages */
   font-style: italic;
-  color: #ff77ffcc;
-  background: rgba(255, 0, 255, 0.1);
+  background: rgba(255, 0, 0, 0.1);
 }
 
 .time {
@@ -78,10 +80,9 @@
 }
 
 .user {
-  color: #00ff99;
-  margin-right: 8px;
   font-weight: 700;
-  text-shadow: 0 0 5px #00ffbbaa;
+  margin-right: 8px;
+  user-select: none;
 }
 
 .discord {
@@ -123,56 +124,50 @@
       ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
     );
 
-  // 🔥 FLATTEN ANY MESSAGE SHAPE INTO TEXT
-  function flattenMessage(msg) {
-    if (typeof msg === 'string') return msg;
-
-    if (Array.isArray(msg)) {
-      return msg.map(part => {
-        if (typeof part === 'string') return part;
-        if (typeof part?.text === 'string') return part.text;
-        return '';
-      }).join('');
-    }
-
-    if (typeof msg?.text === 'string') return msg.text;
-
-    return '';
+  // Helper to create a colored span for username
+  function userSpan(name, color) {
+    const safeName = escapeHtml(name);
+    const safeColor = /^#[0-9a-f]{6}$/i.test(color) ? color : '#fff';
+    return `<span class="user" style="color: ${safeColor}; text-shadow: 0 0 6px ${safeColor}aa;">${safeName}</span>`;
   }
 
-  function parseLine(raw) {
-    const line = flattenMessage(raw?.message).trim();
-    if (!line) return null;
-
-    // Extract time
-    const timeMatch = line.match(/^\((\d{2}:\d{2})\)\s*/);
-    const time = timeMatch ? timeMatch[1] : '';
-    const content = timeMatch ? line.slice(timeMatch[0].length) : line;
-
-    // Discord
-    let textLine = content;
-    let isDiscord = false;
-    if (textLine.startsWith('(Discord)')) {
-      isDiscord = true;
-      textLine = textLine.replace('(Discord)', '').trim();
-    }
-
-    const colonIndex = textLine.indexOf(':');
-    if (colonIndex === -1) {
-      return { time, user: '', text: textLine, tag: null, system: true };
-    }
-
-    return {
-      time,
-      user: textLine.slice(0, colonIndex).trim(),
-      text: textLine.slice(colonIndex + 1).trim(),
-      tag: isDiscord ? 'Discord' : null,
-      system: false
-    };
+  function parseTime(rawTime) {
+    // Expect "YYYY-MM-DD HH:mm:ss" and convert to "(HH:mm)"
+    if (!rawTime) return '';
+    const match = rawTime.match(/\d{4}-\d{2}-\d{2} (\d{2}:\d{2}):\d{2}/);
+    return match ? `(${match[1]})` : '';
   }
 
-  function keyOf(raw) {
-    return flattenMessage(raw?.message);
+  // Render one line depending on user presence & content type
+  function renderLine(line) {
+    const timeStr = parseTime(line.time || line.created_at) || '';
+    const user = line.user || '';
+    const userColor = line.user_color || '#fff';
+    const message = line.message || '';
+    const raw = line.raw || message;
+
+    // If user is empty => system message or kill message, show entire raw text in red style
+    if (!user.trim()) {
+      return `<div class="chat-line system">${escapeHtml(raw)}</div>`;
+    }
+
+    // Else, show time + colored username + message (raw without username/time)
+    // Extract message text after username + colon in raw if possible
+    // Otherwise fallback to line.message
+    
+    // Try to extract message text from raw (after first colon after username)
+    const colonPos = raw.indexOf(':');
+    let msgText = message;
+    if (colonPos !== -1) {
+      // message text is everything after colon + space
+      msgText = raw.slice(colonPos + 1).trim();
+    }
+
+    return `<div class="chat-line">
+      <span class="time">${escapeHtml(timeStr)}</span>
+      ${userSpan(user, userColor)}:
+      <span class="text">${escapeHtml(msgText)}</span>
+    </div>`;
   }
 
   async function fetchChat() {
@@ -185,6 +180,7 @@
 
       const data = await res.json();
       if (Array.isArray(data)) {
+        // Reverse to show oldest first (assuming API newest first)
         render(data.slice().reverse());
       }
     } catch (e) {
@@ -197,37 +193,9 @@
   }
 
   function render(lines) {
-    const newestKey = keyOf(lines.at(-1));
-
-    chatLog.innerHTML = lines.map(raw => {
-      const parsed = parseLine(raw);
-      if (!parsed) return '';
-
-      const isNew = lastKey && keyOf(raw) === newestKey && newestKey !== lastKey;
-
-      if (parsed.system) {
-        return `<div class="chat-line ${isNew ? 'new' : ''}">
-          <span class="system">${escapeHtml(parsed.text)}</span>
-        </div>`;
-      }
-
-      if (parsed.tag === 'Discord') {
-        return `<div class="chat-line ${isNew ? 'new' : ''}">
-          <span class="time">(${parsed.time})</span>
-          <span class="discord">(Discord)</span>
-          <span class="user">${escapeHtml(parsed.user)}:</span>
-          <span class="text">${escapeHtml(parsed.text)}</span>
-        </div>`;
-      }
-
-      return `<div class="chat-line ${isNew ? 'new' : ''}">
-        <span class="time">(${parsed.time})</span>
-        <span class="user">${escapeHtml(parsed.user)}:</span>
-        <span class="text">${escapeHtml(parsed.text)}</span>
-      </div>`;
-    }).join('');
-
-    lastKey = newestKey;
+    const newestId = lines.length ? lines[lines.length -1].id : null;
+    chatLog.innerHTML = lines.map(line => renderLine(line)).join('');
+    lastKey = newestId;
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
