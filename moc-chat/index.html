@@ -7,7 +7,7 @@
 
 <style>
   body {
-  font-family: 'Press Start 2P', monospace, Arial, sans-serif;
+  font-family: 'Press Start 2P', 'Segoe UI Emoji', 'Noto Color Emoji', monospace, Arial, sans-serif;
   background: radial-gradient(circle at top left, #12002b, #000000);
   color: #eee;
   margin: 0;
@@ -124,10 +124,7 @@
     );
 
   function parseLine(raw) {
-    // If raw is an object and color is "#00ffff", ignore this message entirely
-    if (raw && raw.color && raw.color.toLowerCase() === '#00ffff') {
-      return null;  // skip guild messages
-    }
+    // **Removed filter for color "#00ffff" to include all messages**
 
     let line =
       typeof raw === 'string'

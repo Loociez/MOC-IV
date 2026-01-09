@@ -40,12 +40,10 @@
     const lines = chatbox.querySelectorAll('li');
 
     lines.forEach(li => {
-      // Ignore guild messages by checking their color style
-      const color = li.style.color?.toLowerCase();
-      if (color === '#00ffff') return; // skip guild messages
+      // **Removed color filtering - now sending all lines**
 
       const text = extractText(li);
-      if (!text) return;
+      if (!text) return;  // skip empty text lines only
 
       if (sent.has(text)) return;
       sent.add(text);
