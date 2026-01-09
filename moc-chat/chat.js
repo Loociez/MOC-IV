@@ -40,6 +40,10 @@
     const lines = chatbox.querySelectorAll('li');
 
     lines.forEach(li => {
+      // Ignore guild messages by checking their color style
+      const color = li.style.color?.toLowerCase();
+      if (color === '#00ffff') return; // skip guild messages
+
       const text = extractText(li);
       if (!text) return;
 

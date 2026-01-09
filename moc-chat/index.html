@@ -125,6 +125,11 @@
     );
 
   function parseLine(raw) {
+    // If raw is an object and color is "#00ffff", ignore this message entirely
+    if (raw && raw.color && raw.color.toLowerCase() === '#00ffff') {
+      return null;  // skip guild messages
+    }
+
     let line =
       typeof raw === 'string'
         ? raw
@@ -204,7 +209,7 @@
 
     chatLog.innerHTML = lines.map(raw => {
       const parsed = parseLine(raw);
-      if (!parsed) return '';
+      if (!parsed) return ''; // skip ignored messages
 
       const isNew = lastKey && keyOf(raw) === newestKey && newestKey !== lastKey;
 
