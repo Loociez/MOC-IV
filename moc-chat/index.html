@@ -123,58 +123,56 @@
       ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
     );
 
+  // 🔥 FLATTEN ANY MESSAGE SHAPE INTO TEXT
+  function flattenMessage(msg) {
+    if (typeof msg === 'string') return msg;
+
+    if (Array.isArray(msg)) {
+      return msg.map(part => {
+        if (typeof part === 'string') return part;
+        if (typeof part?.text === 'string') return part.text;
+        return '';
+      }).join('');
+    }
+
+    if (typeof msg?.text === 'string') return msg.text;
+
+    return '';
+  }
+
   function parseLine(raw) {
-    // **Removed filter for color "#00ffff" to include all messages**
-
-    let line =
-      typeof raw === 'string'
-        ? raw
-        : typeof raw?.message === 'string'
-          ? raw.message
-          : '';
-
-    line = line.trim();
+    const line = flattenMessage(raw?.message).trim();
     if (!line) return null;
 
-    // Match Discord messages: (01:36) (Discord) Jupiter: Lol
-    let m = line.match(/^\((\d{2}:\d{2})\)\s*\(Discord\)\s*(.+?):\s*(.*)$/);
-    if (m) {
-      return {
-        time: m[1],
-        user: m[2],
-        text: m[3],
-        tag: 'Discord',
-        system: false
-      };
+    // Extract time
+    const timeMatch = line.match(/^\((\d{2}:\d{2})\)\s*/);
+    const time = timeMatch ? timeMatch[1] : '';
+    const content = timeMatch ? line.slice(timeMatch[0].length) : line;
+
+    // Discord
+    let textLine = content;
+    let isDiscord = false;
+    if (textLine.startsWith('(Discord)')) {
+      isDiscord = true;
+      textLine = textLine.replace('(Discord)', '').trim();
     }
 
-    // Match normal messages: (01:36) User: message
-    m = line.match(/^\((\d{2}:\d{2})\)\s*(.+?):\s*(.*)$/);
-    if (m) {
-      return {
-        time: m[1],
-        user: m[2],
-        text: m[3],
-        tag: null,
-        system: false
-      };
+    const colonIndex = textLine.indexOf(':');
+    if (colonIndex === -1) {
+      return { time, user: '', text: textLine, tag: null, system: true };
     }
 
-    // Fallback / system message
     return {
-      time: '',
-      user: '',
-      text: line,
-      tag: null,
-      system: true
+      time,
+      user: textLine.slice(0, colonIndex).trim(),
+      text: textLine.slice(colonIndex + 1).trim(),
+      tag: isDiscord ? 'Discord' : null,
+      system: false
     };
   }
 
   function keyOf(raw) {
-    // Use the raw string or message property as a unique key for new message detection
-    if (typeof raw === 'string') return raw;
-    if (raw && typeof raw.message === 'string') return raw.message;
-    return '';
+    return flattenMessage(raw?.message);
   }
 
   async function fetchChat() {
@@ -187,7 +185,6 @@
       const data = await res.json();
       if (!Array.isArray(data)) return;
 
-      // Reverse to show oldest first, newest last
       render(data.slice().reverse());
     } catch (e) {
       console.error(e);
@@ -196,45 +193,34 @@
   }
 
   function render(lines) {
-    if (!lines.length) {
-      chatLog.innerHTML = '<i>No messages yet.</i>';
-      return;
-    }
-
-    const newestKey = keyOf(lines[lines.length - 1]);
+    const newestKey = keyOf(lines.at(-1));
 
     chatLog.innerHTML = lines.map(raw => {
       const parsed = parseLine(raw);
-      if (!parsed) return ''; // skip ignored messages
+      if (!parsed) return '';
 
       const isNew = lastKey && keyOf(raw) === newestKey && newestKey !== lastKey;
 
       if (parsed.system) {
-        return `
-          <div class="chat-line ${isNew ? 'new' : ''}">
-            <span class="system">${escapeHtml(parsed.text)}</span>
-          </div>
-        `;
+        return `<div class="chat-line ${isNew ? 'new' : ''}">
+          <span class="system">${escapeHtml(parsed.text)}</span>
+        </div>`;
       }
 
       if (parsed.tag === 'Discord') {
-        return `
-          <div class="chat-line ${isNew ? 'new' : ''}">
-            <span class="time">(${escapeHtml(parsed.time)})</span>
-            <span class="discord">(Discord)</span>
-            <span class="user">${escapeHtml(parsed.user)}:</span>
-            <span class="text">${escapeHtml(parsed.text)}</span>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="chat-line ${isNew ? 'new' : ''}">
-          <span class="time">(${escapeHtml(parsed.time)})</span>
+        return `<div class="chat-line ${isNew ? 'new' : ''}">
+          <span class="time">(${parsed.time})</span>
+          <span class="discord">(Discord)</span>
           <span class="user">${escapeHtml(parsed.user)}:</span>
           <span class="text">${escapeHtml(parsed.text)}</span>
-        </div>
-      `;
+        </div>`;
+      }
+
+      return `<div class="chat-line ${isNew ? 'new' : ''}">
+        <span class="time">(${parsed.time})</span>
+        <span class="user">${escapeHtml(parsed.user)}:</span>
+        <span class="text">${escapeHtml(parsed.text)}</span>
+      </div>`;
     }).join('');
 
     lastKey = newestKey;
@@ -243,7 +229,6 @@
 
   fetchChat();
   setInterval(fetchChat, INTERVAL);
-
 })();
 </script>
 
