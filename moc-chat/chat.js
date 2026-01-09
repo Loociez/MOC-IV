@@ -1,96 +1,72 @@
 (() => {
-  const WEBSITE_URL = 'https://yourgithubusername.github.io/moc-chat/'; // Change this
+  const API_CLIENT_URL = 'https://moc.marocodes.eu/api/messages';  // Your API endpoint
+  const API_SECRET_TOKEN = 'f684f5c2474a579a37e6747e92e3b8a4';               // Your Bearer token
 
-  // Helper: parse chat <li> element into {time, user, message}
-  function parseChatLI(li) {
-    const spans = li.querySelectorAll('span[data-processed="true"]');
-    if (spans.length < 3) return null;
-    const time = spans[0].innerText.trim().replace(/[()]/g, '');
-    const user = spans[1].innerText.trim();
-    const message = spans[2].innerText.trim();
-    return { time, user, message };
-  }
-
-  // Observe chat messages container - update this selector to actual global chat UL
-  const chatContainer = document.querySelector('#winGameChatbox ul'); // Adjust if needed
-
-  if (!chatContainer) {
-    console.error("Chat container not found");
-    return;
-  }
-
-  let sending = false;
-  let observer = null;
-
-  async function sendMessage(data) {
+  // Utility: send one chat message to API client
+  async function sendChatMessage(msg) {
     try {
-      await fetch(WEBSITE_URL + 'api/chat', {
+      const payload = {
+        message: `[${msg.time}] ${msg.user}: ${msg.message}`
+      };
+
+      const res = await fetch(API_CLIENT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_SECRET_TOKEN}`
+        },
+        body: JSON.stringify(payload)
       });
-    } catch (e) {
-      console.error('Send failed', e);
-    }
-  }
 
-  function startSending() {
-    if (sending) return;
-    sending = true;
-
-    observer = new MutationObserver(mutations => {
-      for (const mut of mutations) {
-        for (const node of mut.addedNodes) {
-          if (node.nodeType === 1 && node.tagName === 'LI') {
-            const parsed = parseChatLI(node);
-            if (parsed) {
-              console.log('Sending chat:', parsed);
-              sendMessage(parsed);
-            }
-          }
-        }
+      if (!res.ok) {
+        console.error('Failed to send message', await res.text());
       }
-    });
-
-    observer.observe(chatContainer, { childList: true });
-    console.log('Started sending chat messages');
-  }
-
-  function stopSending() {
-    if (!sending) return;
-    sending = false;
-    if (observer) observer.disconnect();
-    console.log('Stopped sending chat messages');
-  }
-
-  // Add UI button to start/stop
-  let btn = document.getElementById('chatSendToggleBtn');
-  if (!btn) {
-    btn = document.createElement('button');
-    btn.id = 'chatSendToggleBtn';
-    btn.textContent = 'Start Sending Chat';
-    btn.style.position = 'fixed';
-    btn.style.bottom = '10px';
-    btn.style.right = '10px';
-    btn.style.zIndex = 9999;
-    btn.style.padding = '10px';
-    btn.style.backgroundColor = '#ff00ff';
-    btn.style.color = 'white';
-    btn.style.border = 'none';
-    btn.style.borderRadius = '5px';
-    btn.style.cursor = 'pointer';
-    document.body.appendChild(btn);
-  }
-
-  btn.onclick = () => {
-    if (!sending) {
-      startSending();
-      btn.textContent = 'Stop Sending Chat';
-    } else {
-      stopSending();
-      btn.textContent = 'Start Sending Chat';
+    } catch (e) {
+      console.error('Error sending message', e);
     }
-  };
+  }
 
-  console.log('Chat sender script ready. Click the button to start.');
+  // Parse one <li> chat line into {time, user, message}
+  function parseChatLine(li) {
+    const spans = li.querySelectorAll('span');
+    if (spans.length < 3) return null;
+
+    const timeText = spans[0].textContent.trim().replace(/[()]/g, '');
+    const userText = spans[1].textContent.trim();
+    let messageText = spans[2].textContent.trim();
+    if (messageText.startsWith(': ')) messageText = messageText.slice(2);
+
+    return { time: timeText, user: userText, message: messageText };
+  }
+
+  const sentMessages = new Set();
+
+  function scanChatAndSend() {
+    const chatbox = document.getElementById('winGameChatbox');
+    if (!chatbox) {
+      console.warn('Chatbox element not found');
+      return;
+    }
+
+    const lines = chatbox.querySelectorAll('li');
+    lines.forEach(li => {
+      const msg = parseChatLine(li);
+      if (!msg) return;
+
+      const key = `${msg.time}|${msg.user}|${msg.message}`;
+      if (sentMessages.has(key)) return;
+
+      sentMessages.add(key);
+      sendChatMessage(msg);
+    });
+  }
+
+  const intervalId = setInterval(scanChatAndSend, 2000);
+  console.log('Chat relay started, sending messages to API client');
+
+  // To stop later: window.stopChatRelay()
+  window.stopChatRelay = () => {
+    clearInterval(intervalId);
+    console.log('Chat relay stopped');
+  };
 })();
