@@ -81,7 +81,8 @@ body {
       const messages = await res.json();
       if (!Array.isArray(messages)) return;
 
-      render(messages);
+      // ✅ FIX: reverse order so newest is at the bottom
+      render(messages.slice().reverse());
 
     } catch (err) {
       chatLog.innerHTML = '<em>Failed to load chat…</em>';
@@ -104,6 +105,7 @@ body {
       `;
     }).join('');
 
+    // Auto-scroll to latest message
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
