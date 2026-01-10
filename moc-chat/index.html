@@ -65,12 +65,6 @@
   box-shadow: 0 0 15px #ff00ffcc;
 }
 
-.chat-line.system {
-  color: #ff4444; /* red for system messages */
-  font-style: italic;
-  background: rgba(255, 0, 0, 0.1);
-}
-
 .user-colored {
   font-weight: 700;
   user-select: none;
@@ -108,7 +102,6 @@
     const escapedUser = user.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     // Regex: time + space + username + colon, capture groups for parts
     const regex = new RegExp(`^(\\(\\d{2}:\\d{2}\\) )(${escapedUser})(:)`);
-    const safeColor = /^#[0-9a-f]{6}$/i.test(userColor) ? userColor : '#fff';
 
     const match = raw.match(regex);
     if (!match) {
@@ -120,6 +113,7 @@
     // match[1] = time with parens and space, match[2] = username, match[3] = colon
     // We escape the raw string parts except the username part which we color inline with a <span>
     const beforeUser = escapeHtml(match[1]);
+    const safeColor = /^#[0-9a-f]{6}$/i.test(userColor) ? userColor : '#fff';
     const coloredUser = `<span style="color:${safeColor};">${escapeHtml(match[2])}</span>`;
     const afterUser = escapeHtml(raw.slice(match[1].length + match[2].length));
 
@@ -131,13 +125,11 @@
     const userColor = line.user_color || '#fff';
     const raw = line.raw || line.message || '';
 
-    if (!user) {
-      // System message - red text
-      return `<div class="chat-line system">${escapeHtml(raw)}</div>`;
-    }
+    // Always color line by user_color (including system messages)
+    const safeColor = /^#[0-9a-f]{6}$/i.test(userColor) ? userColor : '#fff';
+    const contentHtml = colorizeUsername(raw, user, userColor);
 
-    // Player message - color username inline
-    return `<div class="chat-line">${colorizeUsername(raw, user, userColor)}</div>`;
+    return `<div class="chat-line" style="color:${safeColor};">${contentHtml}</div>`;
   }
 
   async function fetchChat() {
@@ -169,7 +161,6 @@
   fetchChat();
 })();
 </script>
-
 
 </body>
 </html>
