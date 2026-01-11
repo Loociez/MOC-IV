@@ -68191,9 +68191,9 @@
         "chance": 0
       },
       {
-        "item_id": 976,
-        "amount": 1,
-        "chance": 100
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
       },
       {
         "item_id": 911,
@@ -68201,9 +68201,9 @@
         "chance": 0.002
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 976,
+        "amount": 1,
+        "chance": 99
       },
       {
         "item_id": -1,
@@ -71047,14 +71047,14 @@
         "chance": 0
       },
       {
-        "item_id": 976,
-        "amount": 1,
-        "chance": 100
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
       },
       {
         "item_id": 1142,
         "amount": 1,
-        "chance": 0.02
+        "chance": 0.025
       },
       {
         "item_id": 977,
@@ -71062,9 +71062,9 @@
         "chance": 2
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 976,
+        "amount": 1,
+        "chance": 99
       },
       {
         "item_id": -1,
@@ -71604,11 +71604,11 @@
     ]
   },
   {
-    "name": "",
+    "name": "testing a bug",
     "desc": "",
     "tag": "",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
@@ -71640,7 +71640,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 600,
       "mp": 0,
       "sp": 0
     },
@@ -71654,28 +71654,28 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 0,
+        "amount": 1,
+        "chance": 99
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1,
+        "amount": 1,
+        "chance": 99
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 2,
+        "amount": 1,
+        "chance": 99
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 6,
+        "amount": 1,
+        "chance": 0.25
       },
       {
-        "item_id": -1,
-        "amount": 0,
+        "item_id": 80,
+        "amount": 1,
         "chance": 0
       },
       {
