@@ -95,11 +95,13 @@
       color: white;
     }
 	.sprite {
-  width: 32px;
-  height: 32px;
-  background-size: 1024px 1024px;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
   image-rendering: pixelated;
-  margin-top: 5px;
+  transform: scale(2);
+  transform-origin: top left;
+  margin-top: 6px;
 }
 .sprite {
   background-repeat: no-repeat;
@@ -220,46 +222,57 @@ function displayNPCs(npcs) {
     nameDiv.textContent = npc.name;
 
     if (typeof npc.sprite === 'number') {
-      const SPRITE_SIZE = 32;
-      const FRAMES_PER_SPRITE = 12;
-      const SPRITES_PER_SHEET = 1024;
-      const spritesPerRow = 32;
+  // --- NPC SPRITE CONFIG ---
+  const FRAME_SIZE = 16;
+  const DISPLAY_SCALE = 2;
 
-      const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;
-      const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
-      const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
+  const SHEET_WIDTH = 720;
+  const SHEET_HEIGHT = 512;
 
-      const x = (frameIndexInSheet % spritesPerRow) * SPRITE_SIZE;
-      const y = Math.floor(frameIndexInSheet / spritesPerRow) * SPRITE_SIZE;
+  const FRAMES_PER_SPRITE = 12;
 
-      const spriteDiv = document.createElement('div');
-      spriteDiv.className = 'sprite';
-      spriteDiv.style.width = SPRITE_SIZE + 'px';
-      spriteDiv.style.height = SPRITE_SIZE + 'px';
-      spriteDiv.style.backgroundImage = `url('2sprites/monster${sheetIndex}.png')`;
-      spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
-      spriteDiv.style.backgroundRepeat = 'no-repeat';
-      spriteDiv.style.imageRendering = 'pixelated';
+  const SPRITES_PER_ROW = SHEET_WIDTH / FRAME_SIZE; // 45
+  const SPRITES_PER_COL = SHEET_HEIGHT / FRAME_SIZE; // 32
+  const FRAMES_PER_SHEET = SPRITES_PER_ROW * SPRITES_PER_COL; // 1440
 
-      let frame = 0;
-      let animationInterval = null;
+  const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;
 
-      spriteDiv.addEventListener('mouseenter', () => {
-        animationInterval = setInterval(() => {
-          const currentFrameIndex = startingFrameIndex + frame;
-          const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
-          const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
-          spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+  const sheetIndex = Math.floor(startingFrameIndex / FRAMES_PER_SHEET);
+  const frameIndexInSheet = startingFrameIndex % FRAMES_PER_SHEET;
 
-          frame = (frame + 1) % FRAMES_PER_SPRITE;
-        }, 100);
-      });
+  const baseX = (frameIndexInSheet % SPRITES_PER_ROW) * FRAME_SIZE;
+  const baseY = Math.floor(frameIndexInSheet / SPRITES_PER_ROW) * FRAME_SIZE;
 
-      spriteDiv.addEventListener('mouseleave', () => {
-        clearInterval(animationInterval);
-        frame = 0;
-        spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
-      });
+  const spriteDiv = document.createElement('div');
+  spriteDiv.className = 'sprite';
+  spriteDiv.style.backgroundImage = `url('2sprites/monster${sheetIndex}.png')`;
+  spriteDiv.style.backgroundPosition = `-${baseX}px -${baseY}px`;
+  spriteDiv.style.backgroundSize = `${SHEET_WIDTH}px ${SHEET_HEIGHT}px`;
+
+  let frame = 0;
+  let animationInterval = null;
+
+  spriteDiv.addEventListener('mouseenter', () => {
+    animationInterval = setInterval(() => {
+      const currentFrame = startingFrameIndex + frame;
+      const frameX = (currentFrame % SPRITES_PER_ROW) * FRAME_SIZE;
+      const frameY = Math.floor(currentFrame / SPRITES_PER_ROW) * FRAME_SIZE;
+
+      spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+      frame = (frame + 1) % FRAMES_PER_SPRITE;
+    }, 100);
+  });
+
+  spriteDiv.addEventListener('mouseleave', () => {
+    clearInterval(animationInterval);
+    frame = 0;
+    spriteDiv.style.backgroundPosition = `-${baseX}px -${baseY}px`;
+  });
+
+  nameDiv.appendChild(document.createElement('br'));
+  nameDiv.appendChild(spriteDiv);
+}
+
 
       if (npc.drop_items?.length) {
         const tooltip = document.createElement('div');
