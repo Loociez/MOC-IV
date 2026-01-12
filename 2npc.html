@@ -95,13 +95,11 @@
       color: white;
     }
 	.sprite {
-  width: 16px;
-  height: 16px;
-  background-repeat: no-repeat;
+  width: 32px;
+  height: 32px;
+  background-size: 1024px 1024px;
   image-rendering: pixelated;
-  transform: scale(2);
-  transform-origin: top left;
-  margin-top: 6px;
+  margin-top: 5px;
 }
 .sprite {
   background-repeat: no-repeat;
@@ -221,106 +219,92 @@ function displayNPCs(npcs) {
     const nameDiv = document.createElement('div');
     nameDiv.textContent = npc.name;
 
-   if (typeof npc.sprite === 'number') {
-  // --- MONSTER SPRITE CONFIG (BLOCK LAYOUT) ---
-  var TILE_SIZE = 16;
-  var FRAMES_PER_SPRITE = 12;
+    if (typeof npc.sprite === 'number') {
+      const SPRITE_SIZE = 32;
+      const FRAMES_PER_SPRITE = 12;
+      const SPRITES_PER_SHEET = 1024;
+      const spritesPerRow = 32;
 
-  var BLOCK_COLS = 3;
-  var BLOCK_ROWS = 4;
+      const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;
+      const sheetIndex = Math.floor(startingFrameIndex / SPRITES_PER_SHEET);
+      const frameIndexInSheet = startingFrameIndex % SPRITES_PER_SHEET;
 
-  var SHEET_WIDTH = 720;
-  var SHEET_HEIGHT = 512;
+      const x = (frameIndexInSheet % spritesPerRow) * SPRITE_SIZE;
+      const y = Math.floor(frameIndexInSheet / spritesPerRow) * SPRITE_SIZE;
 
-  var TILES_PER_ROW = SHEET_WIDTH / TILE_SIZE; // 45
-  var TILES_PER_COL = SHEET_HEIGHT / TILE_SIZE; // 32
+      const spriteDiv = document.createElement('div');
+      spriteDiv.className = 'sprite';
+      spriteDiv.style.width = SPRITE_SIZE + 'px';
+      spriteDiv.style.height = SPRITE_SIZE + 'px';
+      spriteDiv.style.backgroundImage = `url('2sprites/monster${sheetIndex}.png')`;
+      spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+      spriteDiv.style.backgroundRepeat = 'no-repeat';
+      spriteDiv.style.imageRendering = 'pixelated';
 
-  var MONSTERS_PER_ROW = TILES_PER_ROW / BLOCK_COLS; // 15
-  var MONSTERS_PER_COL = TILES_PER_COL / BLOCK_ROWS; // 8
-  var MONSTERS_PER_SHEET = MONSTERS_PER_ROW * MONSTERS_PER_COL; // 120
+      let frame = 0;
+      let animationInterval = null;
 
-  var sheetIndex = Math.floor(npc.sprite / MONSTERS_PER_SHEET);
-  var monsterIndex = npc.sprite % MONSTERS_PER_SHEET;
+      spriteDiv.addEventListener('mouseenter', () => {
+        animationInterval = setInterval(() => {
+          const currentFrameIndex = startingFrameIndex + frame;
+          const frameX = (currentFrameIndex % spritesPerRow) * SPRITE_SIZE;
+          const frameY = Math.floor(currentFrameIndex / spritesPerRow) * SPRITE_SIZE;
+          spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
 
-  var monsterCol = monsterIndex % MONSTERS_PER_ROW;
-  var monsterRow = Math.floor(monsterIndex / MONSTERS_PER_ROW);
+          frame = (frame + 1) % FRAMES_PER_SPRITE;
+        }, 100);
+      });
 
-  var blockBaseX = monsterCol * BLOCK_COLS * TILE_SIZE;
-  var blockBaseY = monsterRow * BLOCK_ROWS * TILE_SIZE;
+      spriteDiv.addEventListener('mouseleave', () => {
+        clearInterval(animationInterval);
+        frame = 0;
+        spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+      });
 
-  var spriteDiv = document.createElement('div');
-  spriteDiv.className = 'sprite';
-  spriteDiv.style.backgroundImage = "url('2sprites/monster" + sheetIndex + ".png')";
-  spriteDiv.style.backgroundSize = SHEET_WIDTH + "px " + SHEET_HEIGHT + "px";
+      if (npc.drop_items?.length) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.style.position = 'absolute';
+        tooltip.style.display = 'none';
+        tooltip.style.background = '#111';
+        tooltip.style.color = '#fff';
+        tooltip.style.padding = '6px';
+        tooltip.style.border = '1px solid #555';
+        tooltip.style.zIndex = 1000;
+        tooltip.style.fontSize = '12px';
+        tooltip.style.maxWidth = '200px';
 
-  var frame = 0;
-  var animationInterval = null;
+        document.body.appendChild(tooltip);
 
-  function updateFrame() {
-    var frameCol = frame % BLOCK_COLS;
-    var frameRow = Math.floor(frame / BLOCK_COLS);
+        spriteDiv.addEventListener('mouseenter', e => {
+          tooltip.innerHTML = npc.drop_items
+            .map(drop => {
+              const itemName = itemIDMap[drop.item_id];
+              if (!itemName || itemName === "(not dropped)") return null;
+              return `
+                <div style="margin-bottom:8px;">
+                  <div>${itemName} x${drop.amount}</div>
+                  <div style="font-size: 10px; color: #ccc;">Drop rate: ${drop.chance}%</div>
+                </div>
+              `;
+            })
+            .filter(Boolean)
+            .join('');
 
-    var x = blockBaseX + frameCol * TILE_SIZE;
-    var y = blockBaseY + frameRow * TILE_SIZE;
+          tooltip.style.display = 'block';
+          const rect = spriteDiv.getBoundingClientRect();
+          tooltip.style.left = rect.right + 5 + 'px';
+          tooltip.style.top = rect.top + window.scrollY + 'px';
+        });
 
-    spriteDiv.style.backgroundPosition = "-" + x + "px -" + y + "px";
-  }
+        spriteDiv.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      }
 
-  updateFrame();
-
-  spriteDiv.addEventListener('mouseenter', function () {
-    animationInterval = setInterval(function () {
-      frame = (frame + 1) % FRAMES_PER_SPRITE;
-      updateFrame();
-    }, 100);
-  });
-
-  spriteDiv.addEventListener('mouseleave', function () {
-    clearInterval(animationInterval);
-    frame = 0;
-    updateFrame();
-  });
-
-  nameDiv.appendChild(document.createElement('br'));
-  nameDiv.appendChild(spriteDiv);
-}
-
-      if (npc.drop_items && npc.drop_items.length) {
-  var tooltip = document.createElement('div');
-  tooltip.className = 'npc-tooltip';
-
-  document.body.appendChild(tooltip);
-
-  spriteDiv.addEventListener('mouseenter', function () {
-    var html = '';
-
-    for (var i = 0; i < npc.drop_items.length; i++) {
-      var drop = npc.drop_items[i];
-      var itemName = itemIDMap[drop.item_id];
-
-      if (!itemName || itemName === "(not dropped)") continue;
-
-      html +=
-        '<div style="margin-bottom:8px;">' +
-          '<div>' + itemName + ' x' + drop.amount + '</div>' +
-          '<div style="font-size:10px;color:#ccc;">Drop rate: ' + drop.chance + '%</div>' +
-        '</div>';
+      nameDiv.appendChild(document.createElement('br'));
+      nameDiv.appendChild(spriteDiv);
     }
-
-    if (!html) return;
-
-    tooltip.innerHTML = html;
-    tooltip.style.display = 'block';
-
-    var rect = spriteDiv.getBoundingClientRect();
-    tooltip.style.left = (rect.right + 5) + 'px';
-    tooltip.style.top = (rect.top + window.scrollY) + 'px';
-  });
-
-  spriteDiv.addEventListener('mouseleave', function () {
-    tooltip.style.display = 'none';
-  });
-}
 
     nameCell.appendChild(nameDiv);
     row.appendChild(nameCell);
@@ -386,9 +370,9 @@ function showComparison(npc1, npc2) {
     const keyCell = document.createElement('td');
     keyCell.textContent = key;
 
-const val1 = (stats1[key] !== undefined && stats1[key] !== null) ? stats1[key] : '—';
-const val2 = (stats2[key] !== undefined && stats2[key] !== null) ? stats2[key] : '—';
-
+    // REPLACED ?? WITH COMPATIBLE CONDITIONALS
+    const val1 = (stats1[key] !== undefined && stats1[key] !== null) ? stats1[key] : '—';
+    const val2 = (stats2[key] !== undefined && stats2[key] !== null) ? stats2[key] : '—';
 
     const val1Cell = document.createElement('td');
     const val2Cell = document.createElement('td');
