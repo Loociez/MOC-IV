@@ -221,62 +221,61 @@ function displayNPCs(npcs) {
     const nameDiv = document.createElement('div');
     nameDiv.textContent = npc.name;
 
-    if (typeof npc.sprite === 'number') {
+   if (typeof npc.sprite === 'number') {
   // --- MONSTER SPRITE CONFIG (BLOCK LAYOUT) ---
-  const TILE_SIZE = 16;
-  const FRAMES_PER_SPRITE = 12;
+  var TILE_SIZE = 16;
+  var FRAMES_PER_SPRITE = 12;
 
-  const BLOCK_COLS = 3; // 3 frames wide
-  const BLOCK_ROWS = 4; // 4 frames tall
+  var BLOCK_COLS = 3;
+  var BLOCK_ROWS = 4;
 
-  const SHEET_WIDTH = 720;
-  const SHEET_HEIGHT = 512;
+  var SHEET_WIDTH = 720;
+  var SHEET_HEIGHT = 512;
 
-  const TILES_PER_ROW = SHEET_WIDTH / TILE_SIZE; // 45
-  const TILES_PER_COL = SHEET_HEIGHT / TILE_SIZE; // 32
+  var TILES_PER_ROW = SHEET_WIDTH / TILE_SIZE; // 45
+  var TILES_PER_COL = SHEET_HEIGHT / TILE_SIZE; // 32
 
-  const MONSTERS_PER_ROW = TILES_PER_ROW / BLOCK_COLS; // 15
-  const MONSTERS_PER_COL = TILES_PER_COL / BLOCK_ROWS; // 8
-  const MONSTERS_PER_SHEET = MONSTERS_PER_ROW * MONSTERS_PER_COL; // 120
+  var MONSTERS_PER_ROW = TILES_PER_ROW / BLOCK_COLS; // 15
+  var MONSTERS_PER_COL = TILES_PER_COL / BLOCK_ROWS; // 8
+  var MONSTERS_PER_SHEET = MONSTERS_PER_ROW * MONSTERS_PER_COL; // 120
 
-  // npc.sprite is ZERO-BASED ✔
-  const sheetIndex = Math.floor(npc.sprite / MONSTERS_PER_SHEET);
-  const monsterIndex = npc.sprite % MONSTERS_PER_SHEET;
+  var sheetIndex = Math.floor(npc.sprite / MONSTERS_PER_SHEET);
+  var monsterIndex = npc.sprite % MONSTERS_PER_SHEET;
 
-  const monsterCol = monsterIndex % MONSTERS_PER_ROW;
-  const monsterRow = Math.floor(monsterIndex / MONSTERS_PER_ROW);
+  var monsterCol = monsterIndex % MONSTERS_PER_ROW;
+  var monsterRow = Math.floor(monsterIndex / MONSTERS_PER_ROW);
 
-  const blockBaseX = monsterCol * BLOCK_COLS * TILE_SIZE;
-  const blockBaseY = monsterRow * BLOCK_ROWS * TILE_SIZE;
+  var blockBaseX = monsterCol * BLOCK_COLS * TILE_SIZE;
+  var blockBaseY = monsterRow * BLOCK_ROWS * TILE_SIZE;
 
-  const spriteDiv = document.createElement('div');
+  var spriteDiv = document.createElement('div');
   spriteDiv.className = 'sprite';
-  spriteDiv.style.backgroundImage = `url('2sprites/monster${sheetIndex}.png')`;
-  spriteDiv.style.backgroundSize = `${SHEET_WIDTH}px ${SHEET_HEIGHT}px`;
+  spriteDiv.style.backgroundImage = "url('2sprites/monster" + sheetIndex + ".png')";
+  spriteDiv.style.backgroundSize = SHEET_WIDTH + "px " + SHEET_HEIGHT + "px";
 
-  let frame = 0;
-  let animationInterval = null;
+  var frame = 0;
+  var animationInterval = null;
 
-  const updateFrame = () => {
-    const frameCol = frame % BLOCK_COLS;
-    const frameRow = Math.floor(frame / BLOCK_COLS);
+  function updateFrame() {
+    var frameCol = frame % BLOCK_COLS;
+    var frameRow = Math.floor(frame / BLOCK_COLS);
 
-    const x = blockBaseX + frameCol * TILE_SIZE;
-    const y = blockBaseY + frameRow * TILE_SIZE;
+    var x = blockBaseX + frameCol * TILE_SIZE;
+    var y = blockBaseY + frameRow * TILE_SIZE;
 
-    spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
-  };
+    spriteDiv.style.backgroundPosition = "-" + x + "px -" + y + "px";
+  }
 
   updateFrame();
 
-  spriteDiv.addEventListener('mouseenter', () => {
-    animationInterval = setInterval(() => {
+  spriteDiv.addEventListener('mouseenter', function () {
+    animationInterval = setInterval(function () {
       frame = (frame + 1) % FRAMES_PER_SPRITE;
       updateFrame();
     }, 100);
   });
 
-  spriteDiv.addEventListener('mouseleave', () => {
+  spriteDiv.addEventListener('mouseleave', function () {
     clearInterval(animationInterval);
     frame = 0;
     updateFrame();
@@ -285,6 +284,7 @@ function displayNPCs(npcs) {
   nameDiv.appendChild(document.createElement('br'));
   nameDiv.appendChild(spriteDiv);
 }
+
 
 
       if (npc.drop_items?.length) {
