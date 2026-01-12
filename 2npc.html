@@ -95,8 +95,8 @@
       color: white;
     }
 	.sprite {
-  width: 16px;
-  height: 16px;
+  width: 32px;
+  height: 32px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   transform: scale(2);
@@ -223,7 +223,7 @@ function displayNPCs(npcs) {
 
     if (typeof npc.sprite === 'number') {
   // --- NPC SPRITE CONFIG ---
-  const FRAME_SIZE = 16;
+  const FRAME_SIZE = 32;
   const DISPLAY_SCALE = 2;
 
   const SHEET_WIDTH = 720;
