@@ -73,8 +73,8 @@ body.theme-default select {
 
 body.theme-default .sprite {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   margin-top: 4px;
@@ -148,8 +148,8 @@ body.theme-dark select {
 
 body.theme-dark .sprite {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   margin-top: 4px;
@@ -224,8 +224,8 @@ body.theme-light select {
 
 body.theme-light .sprite {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   margin-top: 4px;
@@ -299,8 +299,8 @@ body.theme-ocean select {
 
 body.theme-ocean .sprite {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   margin-top: 4px;
@@ -374,8 +374,8 @@ body.theme-forest select {
 
 body.theme-forest .sprite {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   margin-top: 4px;
@@ -590,16 +590,13 @@ items.forEach((item, index) => {
                 nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
             }
 
-           if (typeof item.sprite === 'number') {
-    // --- SINGLE-FRAME ITEM SPRITES ---
-    const FRAME_SIZE = 16;        // actual sprite size
-    const DISPLAY_SIZE = 32;      // scaled display size
+          if (typeof item.sprite === 'number') {
+    const FRAME_SIZE = 16;
     const SHEET_WIDTH = 1024;
     const SHEET_HEIGHT = 272;
 
     const SPRITES_PER_ROW = SHEET_WIDTH / FRAME_SIZE; // 64
-    const SPRITES_PER_COL = SHEET_HEIGHT / FRAME_SIZE; // 17
-    const SPRITES_PER_SHEET = SPRITES_PER_ROW * SPRITES_PER_COL; // 1088
+    const SPRITES_PER_SHEET = (SHEET_HEIGHT / FRAME_SIZE) * SPRITES_PER_ROW; // 1088
 
     const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);
     const spriteIndex = item.sprite % SPRITES_PER_SHEET;
@@ -607,19 +604,15 @@ items.forEach((item, index) => {
     const x = (spriteIndex % SPRITES_PER_ROW) * FRAME_SIZE;
     const y = Math.floor(spriteIndex / SPRITES_PER_ROW) * FRAME_SIZE;
 
-    const backgroundImage = `url('2sprites/items${sheetIndex}.png')`;
-
     nameHTML += `
-        <br>
-        <div class="sprite"
-             style="
-                background-image: ${backgroundImage};
-                background-position: -${x}px -${y}px;
-                background-size: ${SHEET_WIDTH}px ${SHEET_HEIGHT}px;
-                width: ${DISPLAY_SIZE}px;
-                height: ${DISPLAY_SIZE}px;
-             ">
-        </div>
+      <br>
+      <div class="sprite"
+           style="
+             background-image: url('2sprites/items${sheetIndex}.png');
+             background-position: -${x}px -${y}px;
+             background-size: ${SHEET_WIDTH}px ${SHEET_HEIGHT}px;
+           ">
+      </div>
     `;
 }
 
