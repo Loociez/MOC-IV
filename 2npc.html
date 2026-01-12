@@ -95,8 +95,8 @@
       color: white;
     }
 	.sprite {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   transform: scale(2);
@@ -222,51 +222,64 @@ function displayNPCs(npcs) {
     nameDiv.textContent = npc.name;
 
     if (typeof npc.sprite === 'number') {
-  // --- NPC SPRITE CONFIG ---
-  const FRAME_SIZE = 32;
-  const DISPLAY_SCALE = 2;
+  // --- MONSTER SPRITE CONFIG (BLOCK LAYOUT) ---
+  const TILE_SIZE = 16;
+  const FRAMES_PER_SPRITE = 12;
+
+  const BLOCK_COLS = 3; // 3 frames wide
+  const BLOCK_ROWS = 4; // 4 frames tall
 
   const SHEET_WIDTH = 720;
   const SHEET_HEIGHT = 512;
 
-  const FRAMES_PER_SPRITE = 12;
+  const TILES_PER_ROW = SHEET_WIDTH / TILE_SIZE; // 45
+  const TILES_PER_COL = SHEET_HEIGHT / TILE_SIZE; // 32
 
-  const SPRITES_PER_ROW = SHEET_WIDTH / FRAME_SIZE; // 45
-  const SPRITES_PER_COL = SHEET_HEIGHT / FRAME_SIZE; // 32
-  const FRAMES_PER_SHEET = SPRITES_PER_ROW * SPRITES_PER_COL; // 1440
+  const MONSTERS_PER_ROW = TILES_PER_ROW / BLOCK_COLS; // 15
+  const MONSTERS_PER_COL = TILES_PER_COL / BLOCK_ROWS; // 8
+  const MONSTERS_PER_SHEET = MONSTERS_PER_ROW * MONSTERS_PER_COL; // 120
 
-  const startingFrameIndex = npc.sprite * FRAMES_PER_SPRITE;
+  // npc.sprite is ZERO-BASED ✔
+  const sheetIndex = Math.floor(npc.sprite / MONSTERS_PER_SHEET);
+  const monsterIndex = npc.sprite % MONSTERS_PER_SHEET;
 
-  const sheetIndex = Math.floor(startingFrameIndex / FRAMES_PER_SHEET);
-  const frameIndexInSheet = startingFrameIndex % FRAMES_PER_SHEET;
+  const monsterCol = monsterIndex % MONSTERS_PER_ROW;
+  const monsterRow = Math.floor(monsterIndex / MONSTERS_PER_ROW);
 
-  const baseX = (frameIndexInSheet % SPRITES_PER_ROW) * FRAME_SIZE;
-  const baseY = Math.floor(frameIndexInSheet / SPRITES_PER_ROW) * FRAME_SIZE;
+  const blockBaseX = monsterCol * BLOCK_COLS * TILE_SIZE;
+  const blockBaseY = monsterRow * BLOCK_ROWS * TILE_SIZE;
 
   const spriteDiv = document.createElement('div');
   spriteDiv.className = 'sprite';
   spriteDiv.style.backgroundImage = `url('2sprites/monster${sheetIndex}.png')`;
-  spriteDiv.style.backgroundPosition = `-${baseX}px -${baseY}px`;
   spriteDiv.style.backgroundSize = `${SHEET_WIDTH}px ${SHEET_HEIGHT}px`;
 
   let frame = 0;
   let animationInterval = null;
 
+  const updateFrame = () => {
+    const frameCol = frame % BLOCK_COLS;
+    const frameRow = Math.floor(frame / BLOCK_COLS);
+
+    const x = blockBaseX + frameCol * TILE_SIZE;
+    const y = blockBaseY + frameRow * TILE_SIZE;
+
+    spriteDiv.style.backgroundPosition = `-${x}px -${y}px`;
+  };
+
+  updateFrame();
+
   spriteDiv.addEventListener('mouseenter', () => {
     animationInterval = setInterval(() => {
-      const currentFrame = startingFrameIndex + frame;
-      const frameX = (currentFrame % SPRITES_PER_ROW) * FRAME_SIZE;
-      const frameY = Math.floor(currentFrame / SPRITES_PER_ROW) * FRAME_SIZE;
-
-      spriteDiv.style.backgroundPosition = `-${frameX}px -${frameY}px`;
       frame = (frame + 1) % FRAMES_PER_SPRITE;
+      updateFrame();
     }, 100);
   });
 
   spriteDiv.addEventListener('mouseleave', () => {
     clearInterval(animationInterval);
     frame = 0;
-    spriteDiv.style.backgroundPosition = `-${baseX}px -${baseY}px`;
+    updateFrame();
   });
 
   nameDiv.appendChild(document.createElement('br'));
