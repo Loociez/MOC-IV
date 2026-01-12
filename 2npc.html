@@ -322,11 +322,6 @@ function displayNPCs(npcs) {
   });
 }
 
-
-      nameDiv.appendChild(document.createElement('br'));
-      nameDiv.appendChild(spriteDiv);
-    }
-
     nameCell.appendChild(nameDiv);
     row.appendChild(nameCell);
 
@@ -391,8 +386,9 @@ function showComparison(npc1, npc2) {
     const keyCell = document.createElement('td');
     keyCell.textContent = key;
 
-    const val1 = stats1[key] ?? '—';
-    const val2 = stats2[key] ?? '—';
+const val1 = (stats1[key] !== undefined && stats1[key] !== null) ? stats1[key] : '—';
+const val2 = (stats2[key] !== undefined && stats2[key] !== null) ? stats2[key] : '—';
+
 
     const val1Cell = document.createElement('td');
     const val2Cell = document.createElement('td');
