@@ -285,48 +285,43 @@ function displayNPCs(npcs) {
   nameDiv.appendChild(spriteDiv);
 }
 
+      if (npc.drop_items && npc.drop_items.length) {
+  var tooltip = document.createElement('div');
+  tooltip.className = 'npc-tooltip';
 
+  document.body.appendChild(tooltip);
 
-      if (npc.drop_items?.length) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.style.position = 'absolute';
-        tooltip.style.display = 'none';
-        tooltip.style.background = '#111';
-        tooltip.style.color = '#fff';
-        tooltip.style.padding = '6px';
-        tooltip.style.border = '1px solid #555';
-        tooltip.style.zIndex = 1000;
-        tooltip.style.fontSize = '12px';
-        tooltip.style.maxWidth = '200px';
+  spriteDiv.addEventListener('mouseenter', function () {
+    var html = '';
 
-        document.body.appendChild(tooltip);
+    for (var i = 0; i < npc.drop_items.length; i++) {
+      var drop = npc.drop_items[i];
+      var itemName = itemIDMap[drop.item_id];
 
-        spriteDiv.addEventListener('mouseenter', e => {
-          tooltip.innerHTML = npc.drop_items
-            .map(drop => {
-              const itemName = itemIDMap[drop.item_id];
-              if (!itemName || itemName === "(not dropped)") return null;
-              return `
-                <div style="margin-bottom:8px;">
-                  <div>${itemName} x${drop.amount}</div>
-                  <div style="font-size: 10px; color: #ccc;">Drop rate: ${drop.chance}%</div>
-                </div>
-              `;
-            })
-            .filter(Boolean)
-            .join('');
+      if (!itemName || itemName === "(not dropped)") continue;
 
-          tooltip.style.display = 'block';
-          const rect = spriteDiv.getBoundingClientRect();
-          tooltip.style.left = rect.right + 5 + 'px';
-          tooltip.style.top = rect.top + window.scrollY + 'px';
-        });
+      html +=
+        '<div style="margin-bottom:8px;">' +
+          '<div>' + itemName + ' x' + drop.amount + '</div>' +
+          '<div style="font-size:10px;color:#ccc;">Drop rate: ' + drop.chance + '%</div>' +
+        '</div>';
+    }
 
-        spriteDiv.addEventListener('mouseleave', () => {
-          tooltip.style.display = 'none';
-        });
-      }
+    if (!html) return;
+
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+
+    var rect = spriteDiv.getBoundingClientRect();
+    tooltip.style.left = (rect.right + 5) + 'px';
+    tooltip.style.top = (rect.top + window.scrollY) + 'px';
+  });
+
+  spriteDiv.addEventListener('mouseleave', function () {
+    tooltip.style.display = 'none';
+  });
+}
+
 
       nameDiv.appendChild(document.createElement('br'));
       nameDiv.appendChild(spriteDiv);
