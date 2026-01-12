@@ -591,20 +591,38 @@ items.forEach((item, index) => {
             }
 
             if (typeof item.sprite === 'number') {
-                const SPRITE_SIZE = 32;
-                const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
-                const spritesPerRow = 32;        // 32 sprites horizontally
+    // --- NEW SPRITE SHEET LOGIC ---
+    const FRAME_SIZE = 16;              // actual sprite size
+    const DISPLAY_SIZE = 32;            // scaled display size
+    const SHEET_WIDTH = 1024;
+    const SHEET_HEIGHT = 272;
 
-                const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
-                const spriteIndex = item.sprite % SPRITES_PER_SHEET;
+    const SPRITES_PER_ROW = SHEET_WIDTH / FRAME_SIZE; // 64
+    const SPRITES_PER_COL = SHEET_HEIGHT / FRAME_SIZE; // 17
+    const SPRITES_PER_SHEET = SPRITES_PER_ROW * SPRITES_PER_COL; // 1088
 
-                const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
-                const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+    const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);
+    const spriteIndex = item.sprite % SPRITES_PER_SHEET;
 
-                const backgroundImage = `url('2sprites/items${sheetIndex}.png')`;
+    const x = (spriteIndex % SPRITES_PER_ROW) * FRAME_SIZE;
+    const y = Math.floor(spriteIndex / SPRITES_PER_ROW) * FRAME_SIZE;
 
-                nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
-            }
+    const backgroundImage = `url('2sprites/items${sheetIndex}.png')`;
+
+    nameHTML += `
+        <br>
+        <div class="sprite"
+             style="
+                background-image: ${backgroundImage};
+                background-position: -${x}px -${y}px;
+                background-size: ${SHEET_WIDTH}px ${SHEET_HEIGHT}px;
+                width: ${DISPLAY_SIZE}px;
+                height: ${DISPLAY_SIZE}px;
+             ">
+        </div>
+    `;
+}
+
 
             nameCell.innerHTML = nameHTML;
             row.appendChild(nameCell);
