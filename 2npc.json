@@ -2983,7 +2983,7 @@
     "scale": 0.85,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 65,
     "move_delay": 90,
     "move_amount": 2,
     "attack_delay": 100,
@@ -3060,7 +3060,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Castle Maid",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3075,38 +3075,38 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 113,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 45,
     "move_delay": 100,
-    "move_amount": 1,
+    "move_amount": 2,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 40,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 2,
+      "def": 2,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 2,
       "mat": 0,
-      "mdf": 0
+      "mdf": 2
     },
     "drop_items": [
       {
@@ -3162,7 +3162,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Door Guard",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3177,7 +3177,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 222,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -3187,28 +3187,28 @@
     "scale": 1,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 0,
     "move_delay": 100,
-    "move_amount": 1,
+    "move_amount": 0,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 200,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 40,
+      "def": 20,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 20,
       "mat": 0,
-      "mdf": 0
+      "mdf": 20
     },
     "drop_items": [
       {
@@ -3264,7 +3264,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Guard Trainer",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3279,10 +3279,10 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 237,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 1,
       "saturation": 100,
       "brightness": 100
     },
@@ -3294,23 +3294,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
+      "hp": 400,
+      "mp": 35,
+      "sp": 135
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 70,
+      "def": 25,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 25,
       "mat": 0,
-      "mdf": 0
+      "mdf": 25
     },
     "drop_items": [
       {
@@ -3366,7 +3366,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Squire",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3379,9 +3379,9 @@
     "death_say": "",
     "kill_verb": "killed",
     "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "death_sound_id": 15,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 106,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -3390,29 +3390,29 @@
     },
     "scale": 1,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 5,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 90,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 90,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
+      "hp": 80,
+      "mp": 10,
+      "sp": 100
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 30,
+      "def": 4,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 4,
       "mat": 0,
-      "mdf": 0
+      "mdf": 4
     },
     "drop_items": [
       {
@@ -3468,7 +3468,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "King's Quarters Guard",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3483,7 +3483,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 222,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -3493,28 +3493,28 @@
     "scale": 1,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 0,
     "move_delay": 100,
-    "move_amount": 1,
+    "move_amount": 0,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
+      "hp": 275,
+      "mp": 100,
+      "sp": 135
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 65,
+      "def": 25,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 25,
       "mat": 0,
-      "mdf": 0
+      "mdf": 25
     },
     "drop_items": [
       {
@@ -3570,7 +3570,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "King Victor",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3585,7 +3585,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 324,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -3595,28 +3595,28 @@
     "scale": 1,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "move_chance": 0,
+    "move_delay": 0,
+    "move_amount": 0,
+    "attack_delay": 80,
+    "flee_threshold": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
+      "hp": 600,
+      "mp": 100,
+      "sp": 166
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 81,
+      "def": 30,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 30,
       "mat": 0,
-      "mdf": 0
+      "mdf": 30
     },
     "drop_items": [
       {
@@ -3672,7 +3672,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Queen Cleo",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3687,38 +3687,38 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 21,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 325,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 0,
     "move_delay": 100,
-    "move_amount": 1,
+    "move_amount": 0,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 0
+      "hp": 440,
+      "mp": 100,
+      "sp": 138
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 48,
+      "def": 15,
       "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
+      "rdf": 15,
+      "mat": 72,
+      "mdf": 15
     },
     "drop_items": [
       {
@@ -3774,7 +3774,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Rank 1 Guard",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -3789,7 +3789,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 223,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -3804,23 +3804,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 510,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
-      "rat": 0,
-      "rdf": 0,
+      "atk": 74,
+      "def": 20,
+      "rat": 62,
+      "rdf": 25,
       "mat": 0,
-      "mdf": 0
+      "mdf": 25
     },
     "drop_items": [
       {
