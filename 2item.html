@@ -590,10 +590,10 @@ items.forEach((item, index) => {
                 nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
             }
 
-            if (typeof item.sprite === 'number') {
-    // --- NEW SPRITE SHEET LOGIC ---
-    const FRAME_SIZE = 16;              // actual sprite size
-    const DISPLAY_SIZE = 32;            // scaled display size
+           if (typeof item.sprite === 'number') {
+    // --- SINGLE-FRAME ITEM SPRITES ---
+    const FRAME_SIZE = 16;        // actual sprite size
+    const DISPLAY_SIZE = 32;      // scaled display size
     const SHEET_WIDTH = 1024;
     const SHEET_HEIGHT = 272;
 
