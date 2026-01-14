@@ -103,8 +103,10 @@
 
     function stop() {
       cancelAnimationFrame(anim);
-      canvas?.remove();
-      canvas = null;
+      if (canvas) {
+        canvas.remove();
+        canvas = null;
+      }
     }
 
     return { start, stop };
@@ -124,7 +126,7 @@
   }, 800);
 })();
 
-(() => {
+;(() => {
   const css = `
   :root {
     --bg-main: #000000;
