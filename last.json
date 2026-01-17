@@ -14158,8 +14158,7 @@
       "damage_stat": 0,
       "!all_backattack_damage": "90",
       "!assassin_npcpoison_ticks": "2",
-      "!assassin_playerpoison_ticks": "2",
-      "!assassin_cloak_shorteruptime": "33"
+      "!assassin_playerpoison_ticks": "2"
     }
   },
   {
@@ -28108,11 +28107,11 @@
       "max_rat": 50,
       "max_rdf": -1,
       "min_atk": 0,
-      "min_def": -30,
+      "min_def": -10,
       "min_mat": 0,
-      "min_mdf": -30,
+      "min_mdf": -10,
       "min_rat": 40,
-      "min_rdf": -30,
+      "min_rdf": -10,
       "damage_stat": 2
     }
   },
@@ -37176,21 +37175,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": 1000,
+      "max_hp": 1400,
       "max_mp": 20,
       "max_sp": 20,
       "max_atk": 0,
-      "max_def": 0,
+      "max_def": 1,
       "max_mat": 0,
-      "max_mdf": 0,
+      "max_mdf": 1,
       "max_rat": 0,
-      "max_rdf": 0,
+      "max_rdf": 1,
       "min_atk": 0,
-      "min_def": 0,
+      "min_def": 1,
       "min_mat": 0,
-      "min_mdf": 0,
+      "min_mdf": 1,
       "min_rat": 0,
-      "min_rdf": 0,
+      "min_rdf": 1,
       "damage_stat": 1
     }
   },
@@ -53854,69 +53853,128 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Alephabat",
+    "desc": "+100% NPC Experience",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 3011,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.4,
     "color": "#008b8b",
     "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "spawn_delay": 0,
+    "type": 5,
+    "uses": 10000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
+    "break_chance": 10,
+    "recycle_value": 0,
+    "level_req": 30,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 700,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 5,
+      "max_def": 5,
+      "max_mat": 5,
+      "max_mdf": 5,
+      "max_rat": 5,
+      "max_rdf": 5,
+      "min_atk": 5,
+      "min_def": 5,
+      "min_mat": 5,
+      "min_mdf": 5,
+      "min_rat": 5,
+      "min_rdf": 5,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
+    "name": "Recipe:  Alephabat",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 275,
       "saturation": 100,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
+    "color": "#dddddd",
+    "show_name": true,
+    "spawn_delay": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 50,
-    "recycle_value": 1,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 1210,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 1160
+        },
+        {
+          "amount": 1,
+          "item_id": 1161
+        },
+        {
+          "amount": 1,
+          "item_id": 1162
+        },
+        {
+          "amount": 1,
+          "item_id": 1163
+        },
+        {
+          "amount": 1,
+          "item_id": 1164
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
