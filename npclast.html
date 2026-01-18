@@ -334,7 +334,7 @@ function displayNPCs(npcs) {
       statsText += `\nSight Range: ${npc.sight_range}`;
 	  
 	  if (npc.spawn_delay !== undefined)
-  statsText += `\nRespawn time: ${npc.spawn_delay}`;
+  statsText += `\nRespawn time(Minutes): ${npc.spawn_delay}`;
 
 
     statsCell.textContent = statsText || 'No stats';
