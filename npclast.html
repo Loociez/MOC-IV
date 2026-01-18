@@ -332,6 +332,10 @@ function displayNPCs(npcs) {
     /* ✅ ADDED: SHOW NPC SIGHT RANGE */
     if (npc.sight_range !== undefined)
       statsText += `\nSight Range: ${npc.sight_range}`;
+	  
+	  if (npc.spawn_delay !== undefined)
+  statsText += `\nRespawn time: ${npc.spawn_delay}`;
+
 
     statsCell.textContent = statsText || 'No stats';
     statsCell.style.whiteSpace = 'pre-line';
