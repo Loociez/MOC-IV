@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Item Table View</title>
   <style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Item Table View</title>
+  <style>
 /* =========================
    GLOBAL
 ========================= */
@@ -37,6 +44,9 @@ body {
   transform-origin: top left;
 
   margin-top: 6px;
+
+  /* 🔹 NEW: global sprite saturation support */
+  filter: saturate(var(--sprite-saturation, 100%));
 }
 
 /* =========================
@@ -152,6 +162,29 @@ th {
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+  </style>
+</head>
+<body class="theme-ocean">
+<p><center>
+  Check out 
+  <a href="https://mirageonlineclassic.com" target="_blank" class="mirage-link">
+    Mirage Online Classic
+  </a>
+  – the greatest pixel MMORPG!
+</p>
+
+<style>
+  .mirage-link {
+    background-color: black;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .mirage-link:hover {
+    background-color: #222;
+  }
   </style>
 </head>
 <body class="theme-ocean">
