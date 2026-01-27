@@ -816,7 +816,7 @@
     ]
   },
   {
-    "name": "Frogga",
+    "name": "Frog",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -852,23 +852,23 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 80,
+      "hp": 50,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 28,
-      "def": 6,
+      "atk": 24,
+      "def": 3,
       "rat": 0,
-      "rdf": 6,
+      "rdf": 3,
       "mat": 0,
-      "mdf": 6
+      "mdf": 3
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 188,
+        "amount": 1,
+        "chance": 3
       },
       {
         "item_id": -1,
@@ -2871,7 +2871,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 99,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -4116,12 +4116,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 290,
+      "hp": 225,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 34,
+      "atk": 36,
       "def": 7,
       "rat": 0,
       "rdf": 7,
@@ -4223,7 +4223,7 @@
       "sp": 0
     },
     "stats": {
-      "atk": 21,
+      "atk": 29,
       "def": 4,
       "rat": 0,
       "rdf": 4,
@@ -4310,7 +4310,7 @@
     "color": "#008b8b",
     "spawn_delay": 6,
     "move_chance": 25,
-    "move_delay": 90,
+    "move_delay": 60,
     "move_amount": 2,
     "attack_delay": 90,
     "flee_threshold": 0,
@@ -4320,12 +4320,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 240,
+      "hp": 180,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 40,
+      "atk": 38,
       "def": 4,
       "rat": 0,
       "rdf": 4,
@@ -5100,7 +5100,7 @@
     ]
   },
   {
-    "name": "Neighhh im on a horse",
+    "name": "Ironhand",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5115,11 +5115,11 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 259,
+    "sprite": 120,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 65,
       "brightness": 100
     },
     "scale": 1,
@@ -5130,23 +5130,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 120,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 20,
+      "def": 4,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 4,
       "mat": 0,
-      "mdf": 0
+      "mdf": 4
     },
     "drop_items": [
       {
@@ -5202,7 +5202,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Hazel",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5217,14 +5217,14 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 35,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
@@ -5232,23 +5232,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
-      "mp": 0,
+      "hp": 90,
+      "mp": 100,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 6,
+      "def": 3,
       "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
+      "rdf": 3,
+      "mat": 9,
+      "mdf": 3
     },
     "drop_items": [
       {
@@ -5304,7 +5304,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Villager",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5319,14 +5319,14 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 26,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
@@ -5334,23 +5334,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 65,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 5,
+      "def": 2,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 2,
       "mat": 0,
-      "mdf": 0
+      "mdf": 2
     },
     "drop_items": [
       {
@@ -5406,7 +5406,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Maniac Frog",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5418,47 +5418,47 @@
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "attack_sound_id": 12,
+    "death_sound_id": 13,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 68,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 5625,
+      "saturation": 125,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.45,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 6,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
+    "move_delay": 80,
+    "move_amount": 2,
     "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 58,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 27,
+      "def": 3,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 3,
       "mat": 0,
-      "mdf": 0
+      "mdf": 3
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 188,
+        "amount": 1,
+        "chance": 3
       },
       {
         "item_id": -1,
@@ -5508,11 +5508,11 @@
     ]
   },
   {
-    "name": "",
+    "name": "Maniac Flame Frog",
     "desc": "",
-    "tag": "",
+    "tag": "🐸",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
@@ -5520,65 +5520,65 @@
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "attack_sound_id": 12,
+    "death_sound_id": 13,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 68,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 1680,
+      "saturation": 175,
       "brightness": 100
     },
     "scale": 1,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 60,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "move_delay": 80,
+    "move_amount": 2,
+    "attack_delay": 90,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 500,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 12,
+      "def": 9,
       "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
+      "rdf": 9,
+      "mat": 26,
+      "mdf": 9
     },
     "drop_items": [
       {
-        "item_id": -1,
+        "item_id": 185,
         "amount": 0,
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 196,
+        "amount": 1,
+        "chance": 33
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 187,
+        "amount": 1,
+        "chance": 33
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 5,
+        "amount": 50,
+        "chance": 100
       },
       {
-        "item_id": -1,
+        "item_id": 184,
         "amount": 0,
         "chance": 0
       },
@@ -5610,7 +5610,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Black Fly",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5622,47 +5622,47 @@
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "attack_sound_id": 12,
+    "death_sound_id": 13,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 211,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 0,
+      "brightness": 75
     },
-    "scale": 1,
+    "scale": 0.55,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 8,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
+    "move_delay": 80,
+    "move_amount": 2,
     "attack_delay": 100,
     "flee_threshold": 10,
     "behavior": 0,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 40,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 22,
+      "def": 1,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 1,
       "mat": 0,
-      "mdf": 0
+      "mdf": 1
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 189,
+        "amount": 1,
+        "chance": 4
       },
       {
         "item_id": -1,
@@ -5712,7 +5712,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Young Ibex",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5724,41 +5724,41 @@
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "attack_sound_id": 12,
+    "death_sound_id": 13,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 158,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 6,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "move_delay": 80,
+    "move_amount": 2,
+    "attack_delay": 90,
+    "flee_threshold": 1,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 75,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 29,
+      "def": 5,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 5,
       "mat": 0,
-      "mdf": 0
+      "mdf": 5
     },
     "drop_items": [
       {
@@ -5772,14 +5772,14 @@
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 191,
+        "amount": 1,
+        "chance": 6
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 192,
+        "amount": 1,
+        "chance": 6
       },
       {
         "item_id": -1,
@@ -5814,7 +5814,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Bexi Ibex",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5826,41 +5826,41 @@
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "attack_sound_id": 12,
+    "death_sound_id": 13,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 158,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 7777,
+      "saturation": 350,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 6,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "move_delay": 80,
+    "move_amount": 2,
+    "attack_delay": 90,
+    "flee_threshold": 1,
     "behavior": 0,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 84,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 32,
+      "def": 5,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 5,
       "mat": 0,
-      "mdf": 0
+      "mdf": 5
     },
     "drop_items": [
       {
@@ -5869,14 +5869,14 @@
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 191,
+        "amount": 1,
+        "chance": 6
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 192,
+        "amount": 1,
+        "chance": 6
       },
       {
         "item_id": -1,
@@ -5916,7 +5916,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "White Tail",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -5928,41 +5928,41 @@
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
-    "attack_sound_id": 1,
-    "death_sound_id": 2,
+    "attack_sound_id": 12,
+    "death_sound_id": 13,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 186,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 222,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 6,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
+    "move_delay": 80,
+    "move_amount": 2,
     "attack_delay": 100,
-    "flee_threshold": 10,
+    "flee_threshold": 1,
     "behavior": 0,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 90,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 30,
+      "def": 2,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 2,
       "mat": 0,
-      "mdf": 0
+      "mdf": 2
     },
     "drop_items": [
       {
@@ -6018,7 +6018,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Alpha Ibex",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6033,44 +6033,44 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 159,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 1.2,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 80,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 90,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 620,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 48,
+      "def": 7,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 7,
       "mat": 0,
-      "mdf": 0
+      "mdf": 7
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 5,
+        "amount": 50,
+        "chance": 100
       },
       {
         "item_id": -1,
@@ -6078,14 +6078,14 @@
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 195,
+        "amount": 1,
+        "chance": 33
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 199,
+        "amount": 1,
+        "chance": 33
       },
       {
         "item_id": -1,
@@ -6120,7 +6120,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Lucy",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6135,14 +6135,14 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 103,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
@@ -6150,23 +6150,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 65,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 3,
+      "def": 2,
       "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
+      "rdf": 2,
+      "mat": 5,
+      "mdf": 2
     },
     "drop_items": [
       {
@@ -6222,7 +6222,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Blaine",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6237,7 +6237,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 92,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -6252,23 +6252,23 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 3,
     "targeting": 0,
     "sight_range": 1,
-    "hostility_flags": -1,
+    "hostility_flags": 0,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 90,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 5,
+      "def": 2,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 2,
       "mat": 0,
-      "mdf": 0
+      "mdf": 2
     },
     "drop_items": [
       {
@@ -6324,7 +6324,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Troll Scout",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6339,7 +6339,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 296,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -6426,7 +6426,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Troll Mage",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6441,7 +6441,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 300,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -6528,7 +6528,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Troll Warrior",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6543,7 +6543,7 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 298,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -6630,7 +6630,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Warlord Kel'e",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6645,14 +6645,14 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 303,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 1.25,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
@@ -6732,7 +6732,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Spirit of Kel'e",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -6747,14 +6747,14 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 303,
     "sprite_color": {
-      "alpha": 1,
+      "alpha": 0.5,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 0,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 1.25,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
@@ -102000,7 +102000,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Rich Test NPC",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -102024,7 +102024,7 @@
     },
     "scale": 1,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 0,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
@@ -102036,7 +102036,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 1,
       "mp": 0,
       "sp": 0
     },

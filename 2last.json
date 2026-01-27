@@ -120,31 +120,31 @@
     }
   },
   {
-    "name": "Untampered Blade",
+    "name": "Knife",
     "desc": "A weak blade",
-    "revision": 0,
-    "sprite": 7,
+    "revision": 1,
+    "sprite": 432,
     "sprite_color": {
       "alpha": 1,
       "hue": 222,
-      "saturation": 222,
+      "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.85,
+    "scale": 0.55,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 1,
     "type": 1,
-    "uses": 100,
+    "uses": 300,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 1,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 4,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
@@ -152,13 +152,13 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 5,
+      "max_atk": 6,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 5,
+      "min_atk": 6,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -315,7 +315,7 @@
     "show_name": false,
     "spawn_delay": 60,
     "type": 11,
-    "uses": 400,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -349,7 +349,7 @@
   },
   {
     "name": "Aqua's Invocation",
-    "desc": "A spell found from an Aqua Slimer. Requires both hands to equip",
+    "desc": "A spell found from an Aqua Slimer. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 369,
     "sprite_color": {
@@ -377,34 +377,35 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "hue": 170,
-      "move": true,
-      "spin": true,
-      "alpha": 1,
-      "scale": 0.75,
-      "speed": 0.14,
+      "!mp_cost": "3",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 10,
+      "max_mat": 10,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "sprite": 129,
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 10,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 0,
-      "min_def": 0,
-      "min_mat": 10,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
-      "brightness": 100,
-      "saturation": 100,
-      "tile_range": 5,
-      "two_handed": true,
       "damage_stat": 4,
-      "sprite_rotation": -45
+      "two_handed": true,
+      "tile_range": 5,
+      "sprite_rotation": -45,
+      "sprite": 129,
+      "hue": 170,
+      "saturation": 100,
+      "brightness": 100,
+      "alpha": 1,
+      "scale": 0.75,
+      "spin": true,
+      "speed": 0.14,
+      "move": true
     }
   },
   {
@@ -425,7 +426,7 @@
     "type": 6,
     "uses": 1,
     "limit": 10,
-    "cooldown_delay": 8,
+    "cooldown_delay": 6,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
@@ -443,10 +444,10 @@
     }
   },
   {
-    "name": "Slime Mucus",
-    "desc": "A little thick on the way down, otherwise just a bit sour.",
-    "revision": 0,
-    "sprite": 271,
+    "name": "Rough Basswood",
+    "desc": "0",
+    "revision": 1,
+    "sprite": 956,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -457,24 +458,22 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 6,
+    "type": 0,
     "uses": 1,
-    "limit": 5,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
-    "recycle_value": 0,
+    "recycle_value": 6,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 4,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "hp": 0,
-      "mp": 0,
-      "sp": 50
+
     }
   },
   {
@@ -492,7 +491,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 5,
+    "type": 2,
     "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
@@ -501,28 +500,40 @@
     "break_chance": 0,
     "recycle_value": 10,
     "level_req": 1,
-    "prof_req_flags": -4,
+    "prof_req_flags": -3,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 1,
+      "min_rat": 6,
+      "max_rat": 6,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 1,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 6,
-      "max_rdf": 0,
-      "min_atk": 0,
-      "min_def": 1,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 6,
-      "min_rdf": 0,
-      "damage_stat": 2
+      "damage_stat": 2,
+      "two_handed": true,
+      "tile_range": 7,
+      "sprite_rotation": -45,
+      "sprite": 538,
+      "hue": 0,
+      "saturation": 100,
+      "brightness": 100,
+      "alpha": 1,
+      "scale": 0.75,
+      "spin": false,
+      "speed": 0.12,
+      "move": true
     }
   },
   {
@@ -1096,23 +1107,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 9,
-      "max_atk": 12,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": true
+      "max_atk": 12,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 9,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": true,
+      "damage_stat": 0
     }
   },
   {
@@ -1165,7 +1176,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 5000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1342,12 +1353,12 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 5000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
-    "recycle_value": 1,
+    "recycle_value": 2,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": 2,
@@ -1375,12 +1386,12 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 1000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
-    "recycle_value": 1,
+    "recycle_value": 2,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": 1,
@@ -1446,7 +1457,7 @@
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
-    "recycle_value": 10,
+    "recycle_value": 6,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -1454,21 +1465,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 1,
+      "max_atk": 2,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 1,
+      "max_rat": 2,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 1,
+      "max_mat": 2,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 10,
-      "max_atk": 2,
-      "max_def": 0,
-      "max_mat": 2,
-      "max_mdf": 0,
-      "max_rat": 2,
-      "max_rdf": 0,
-      "min_atk": 1,
-      "min_def": 0,
-      "min_mat": 1,
-      "min_mdf": 0,
-      "min_rat": 1,
-      "min_rdf": 0,
       "damage_stat": 0
     }
   },
@@ -1506,17 +1517,17 @@
     }
   },
   {
-    "name": "Trainee's Longsword",
-    "desc": "A beginners longsword.",
+    "name": "Trainee's Sword",
+    "desc": "A beginners sword.",
     "revision": 0,
-    "sprite": 481,
+    "sprite": 480,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.85,
+    "scale": 0.95,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -1535,23 +1546,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 8,
-      "max_atk": 8,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": false
+      "max_atk": 8,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 8,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0
     }
   },
   {
@@ -1572,7 +1583,7 @@
     "type": 6,
     "uses": 1,
     "limit": 10,
-    "cooldown_delay": 8,
+    "cooldown_delay": 6,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
@@ -1607,7 +1618,7 @@
     "type": 6,
     "uses": 1,
     "limit": 10,
-    "cooldown_delay": 8,
+    "cooldown_delay": 6,
     "cooldown_id": -1,
     "repair_cost": 0,
     "break_chance": 0,
@@ -1674,7 +1685,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1707,7 +1718,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1734,13 +1745,13 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.85,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1773,7 +1784,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1806,7 +1817,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1833,13 +1844,13 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.85,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1872,7 +1883,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1905,7 +1916,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -1932,17 +1943,17 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.85,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
@@ -1971,7 +1982,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -2004,7 +2015,7 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -2031,13 +2042,13 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 0.85,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 20,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -2083,21 +2094,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 4,
+      "max_def": 5,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 4,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 4,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 5,
-      "max_mat": 0,
-      "max_mdf": 3,
-      "max_rat": 0,
-      "max_rdf": 3,
-      "min_atk": 0,
-      "min_def": 4,
-      "min_mat": 0,
-      "min_mdf": 3,
-      "min_rat": 0,
-      "min_rdf": 3,
       "damage_stat": 1
     }
   },
@@ -2169,7 +2180,7 @@
   },
   {
     "name": "Weaver's Invocation",
-    "desc": "A Spell Found off of an Arcane Weaver. Requires both hands to use.",
+    "desc": "A Spell Found off of an Arcane Weaver. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 368,
     "sprite_color": {
@@ -2197,6 +2208,7 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -2309,13 +2321,13 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 10,
+      "max_atk": 11,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 10,
+      "min_atk": 11,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -2355,21 +2367,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 3,
-      "max_mat": 0,
-      "max_mdf": 2,
-      "max_rat": 0,
-      "max_rdf": 2,
-      "min_atk": 0,
-      "min_def": 2,
-      "min_mat": 0,
-      "min_mdf": 2,
-      "min_rat": 0,
-      "min_rdf": 2,
       "damage_stat": 1
     }
   },
@@ -2403,21 +2415,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 3,
-      "max_mat": 0,
-      "max_mdf": 2,
-      "max_rat": 0,
-      "max_rdf": 2,
-      "min_atk": 0,
-      "min_def": 2,
-      "min_mat": 0,
-      "min_mdf": 2,
-      "min_rat": 0,
-      "min_rdf": 2,
       "damage_stat": 1
     }
   },
@@ -2499,21 +2511,21 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 5,
+      "max_def": 5,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 3,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 3,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 0,
-      "max_def": 5,
-      "max_mat": 0,
-      "max_mdf": 2,
-      "max_rat": 0,
-      "max_rdf": 2,
-      "min_atk": 0,
-      "min_def": 5,
-      "min_mat": 0,
-      "min_mdf": 2,
-      "min_rat": 0,
-      "min_rdf": 2,
       "damage_stat": 1
     }
   },
@@ -2548,7 +2560,7 @@
     "transferable": true,
     "data": {
       "min_atk": 12,
-      "max_atk": 15,
+      "max_atk": 14,
       "min_def": 0,
       "max_def": 0,
       "min_rat": 0,
@@ -2567,66 +2579,17 @@
     }
   },
   {
-    "name": "Slimer Longsword",
-    "desc": "",
+    "name": "Slimer Sword",
+    "desc": "A synthesized weapon",
     "revision": 0,
-    "sprite": 481,
+    "sprite": 480,
     "sprite_color": {
       "alpha": 1,
       "hue": 70,
       "saturation": 165,
       "brightness": 120
     },
-    "scale": 0.85,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 1,
-    "uses": 600,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 0,
-    "recycle_value": 1,
-    "level_req": 5,
-    "prof_req_flags": -7,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-      "min_atk": 12,
-      "max_atk": 12,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": 0,
-      "max_mp": 0,
-      "max_sp": 8,
-      "damage_stat": 0,
-      "two_handed": false
-    }
-  },
-  {
-    "name": "Slimer Shortsword",
-    "desc": "A light one handed sword",
-    "revision": 0,
-    "sprite": 433,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 300,
-      "saturation": 200,
-      "brightness": 100
-    },
-    "scale": 0.9,
+    "scale": 0.95,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -2645,23 +2608,56 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 10,
-      "max_atk": 10,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 8,
-      "damage_stat": 0,
-      "two_handed": false
+      "max_atk": 10,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 10,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0
+    }
+  },
+  {
+    "name": "Forge Key",
+    "desc": "A one time use key, used to unlock Ironhand's forge",
+    "revision": 0,
+    "sprite": 355,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 0,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.9,
+    "color": "#008b8b",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 8,
+    "uses": 1,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 0,
+    "recycle_value": 0,
+    "level_req": 1,
+    "prof_req_flags": -3,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "death_drop": false,
+    "transferable": false,
+    "data": {
+
     }
   },
   {
@@ -2694,23 +2690,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 9,
-      "max_atk": 9,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
-      "max_sp": 8,
-      "damage_stat": 0,
-      "two_handed": false
+      "max_sp": 16,
+      "max_atk": 8,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 8,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0
     }
   },
   {
@@ -3135,7 +3131,7 @@
   },
   {
     "name": "Aqua's Invocation of Ice",
-    "desc": "An upgraded spell: +5% to inflict slow for 3s on an enemy. Requires both hands to use.",
+    "desc": "An upgraded spell: +5% to inflict slow for 3s. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 369,
     "sprite_color": {
@@ -3163,9 +3159,10 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!slow_length": "3",
       "!slow_chance": "5",
+      "!slow_length": "2",
       "!slow_cooldown": "1",
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3198,14 +3195,14 @@
   },
   {
     "name": "Aquas Invocation of Flame",
-    "desc": "An upgraded spell: +5% to inflict burn DoT to an enemy. Requires both hands to use.",
+    "desc": "An upgraded spell: +5% to inflict burn DoT to an enemy. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 369,
     "sprite_color": {
       "alpha": 1,
       "hue": 200,
-      "saturation": 150,
-      "brightness": 120
+      "saturation": 100,
+      "brightness": 115
     },
     "scale": 0.85,
     "color": "#008b8b",
@@ -3226,6 +3223,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!burn_chance": "5",
+      "!burn_pertickdamage": "1",
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3258,7 +3258,7 @@
   },
   {
     "name": "Aquas Invocation of Lightning",
-    "desc": "An upgraded spell: +5% Chance to inflict stun for 1s to an enemy. Requires both hands to use.",
+    "desc": "An upgraded spell: +5% Chance to inflict stun for 1s to an enemy. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 369,
     "sprite_color": {
@@ -3286,9 +3286,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!stun_length": "1",
       "!stun_chance": "5",
-      "!stun_cooldown": "2",
+      "!stun_cooldown": "1",
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3349,49 +3349,49 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 73,
       "amount": 1,
       "chance": 100,
+      "item_id": 73,
       "recipe_items": [
         {
-          "item_id": 7,
-          "amount": 1
+          "amount": 1,
+          "item_id": 7
         },
         {
-          "item_id": 38,
-          "amount": 1
+          "amount": 1,
+          "item_id": 38
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -3400,7 +3400,7 @@
     "name": "Recipe: Aqua's Invocation of Flame",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -3413,62 +3413,62 @@
     "spawn_delay": 60,
     "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 3,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 74,
       "amount": 1,
       "chance": 100,
+      "item_id": 74,
       "recipe_items": [
         {
-          "item_id": 7,
-          "amount": 1
+          "amount": 1,
+          "item_id": 7
         },
         {
-          "item_id": 41,
-          "amount": 1
+          "amount": 1,
+          "item_id": 41
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
@@ -3477,10 +3477,10 @@
     "name": "Recipe: Aqua's Invocation of Lightning",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 222,
       "saturation": 100,
       "brightness": 100
     },
@@ -3490,69 +3490,69 @@
     "spawn_delay": 60,
     "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 3,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-      "item_id": 78,
       "amount": 1,
       "chance": 100,
+      "item_id": 78,
       "recipe_items": [
         {
-          "item_id": 7,
-          "amount": 1
+          "amount": 1,
+          "item_id": 7
         },
         {
-          "item_id": 44,
-          "amount": 0
+          "amount": 0,
+          "item_id": 44
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         },
         {
-          "item_id": -1,
-          "amount": 0
+          "amount": 0,
+          "item_id": -1
         }
       ]
     }
   },
   {
     "name": "Weaver's Invocation of Ice",
-    "desc": "An upgraded spell: +5% to inflict slow for 3s. Requires both hands to use",
+    "desc": "An upgraded spell: +5% to inflict slow for 3s. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 368,
     "sprite_color": {
@@ -3580,9 +3580,10 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!slow_length": "3",
       "!slow_chance": "5",
+      "!slow_length": "2",
       "!slow_cooldown": "1",
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3615,14 +3616,14 @@
   },
   {
     "name": "Weaver's Invocation of Flame",
-    "desc": "An upgraded spell: +5% to inflict burn DoT. Requires both hands to use",
+    "desc": "An upgraded spell: +5% to inflict burn DoT. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 368,
     "sprite_color": {
       "alpha": 1,
       "hue": 1,
       "saturation": 60,
-      "brightness": 165
+      "brightness": 135
     },
     "scale": 0.85,
     "color": "#008b8b",
@@ -3643,6 +3644,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!burn_pertickdamage": "1",
+      "!burn_chance": "5",
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3675,7 +3679,7 @@
   },
   {
     "name": "Weaver's Invocation of Lightning",
-    "desc": "An upgraded spell: +5% to inflict stun for 1s. Requires both hands to use",
+    "desc": "An upgraded spell: +5% to inflict stun for 1s. Consumes 3mp per attack",
     "revision": 0,
     "sprite": 368,
     "sprite_color": {
@@ -3703,9 +3707,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!stun_length": "1",
-      "!stun_cooldown": "2",
-      "!stun_chance": "50",
+      "!stun_chance": "5",
+      "!stun_cooldown": "1",
+      "!mp_cost": "3",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3738,7 +3742,7 @@
   },
   {
     "name": "Iron Staff of Ice",
-    "desc": "An upgraded staff. +5% to inflict slow on hit.",
+    "desc": "An upgraded staff. +5% to inflict slow for 3s on hit.",
     "revision": 0,
     "sprite": 484,
     "sprite_color": {
@@ -3766,8 +3770,8 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!slow_length": "3",
       "!slow_chance": "5",
+      "!slow_length": "2",
       "!slow_cooldown": "1",
       "min_atk": 0,
       "max_atk": 0,
@@ -3797,7 +3801,7 @@
       "alpha": 1,
       "hue": 0,
       "saturation": 165,
-      "brightness": 115
+      "brightness": 145
     },
     "scale": 0.85,
     "color": "#008b8b",
@@ -3818,6 +3822,8 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!burn_chance": "5",
+      "!burn_pertickdamage": "1",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3867,9 +3873,8 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!stun_length": "1",
       "!stun_chance": "5",
-      "!stun_cooldown": "2",
+      "!stun_cooldown": "1",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -3919,23 +3924,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 8,
-      "max_mat": 8,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 4,
-      "two_handed": false
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 8,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 8,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 4
     }
   },
   {
@@ -3949,7 +3954,7 @@
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -3968,37 +3973,37 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 8,
-      "max_mat": 9,
-      "min_mdf": 0,
-      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 8,
-      "damage_stat": 0,
-      "two_handed": false
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 9,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 8,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0
     }
   },
   {
     "name": "Slimer Wand of Ice",
-    "desc": "An upgraded wand. +5% to inflict slow",
+    "desc": "An upgraded wand. +5% to inflict slow for 3s on hit",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 482,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 150,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 200
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -4008,15 +4013,69 @@
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 8,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 8,
-    "prof_req_flags": -1,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!slow_chance": "5",
+      "!slow_length": "2",
+      "!slow_cooldown": "1",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 8,
+      "max_mat": 8,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 8,
+      "damage_stat": 4,
+      "two_handed": false
+    }
+  },
+  {
+    "name": "Slimer Wand of Flame",
+    "desc": "An upgraded wand. +5% to inflict burn DoT",
+    "revision": 0,
+    "sprite": 482,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 1,
+      "saturation": 200,
+      "brightness": 185
+    },
+    "scale": 0.9,
+    "color": "#008b8b",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 1,
+    "uses": 600,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 0,
+    "recycle_value": 1,
+    "level_req": 8,
+    "prof_req_flags": -6,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "!burn_pertickdamage": "1",
+      "!burn_chance": "5",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
@@ -4037,890 +4096,1314 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Wand of Lightning",
+    "desc": "An upgraded wand. +5% to inflict stun 1s",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 482,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 290,
+      "saturation": 165,
+      "brightness": 185
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 1,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_chance": "5",
+      "!stun_cooldown": "1",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 8,
+      "max_mat": 8,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 8,
+      "damage_stat": 4,
+      "two_handed": false
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Ring of Ice",
+    "desc": "An upgraded ring. +4% to inflict slow; +1 slow duration",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 801,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 120,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 190
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
+    "level_req": 8,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!slow_chance": "4",
+      "min_atk": 1,
+      "max_atk": 2,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 1,
+      "max_rat": 2,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 1,
+      "max_mat": 2,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 5,
+      "damage_stat": 0
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Ring of Flame",
+    "desc": "An upgraded ring. +4% to inflict burn; +1 damage to burn",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 801,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 280,
+      "saturation": 120,
+      "brightness": 190
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
+    "level_req": 8,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_chance": "4",
+      "!burn_pertickdamage": "1",
+      "min_atk": 1,
+      "max_atk": 2,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 1,
+      "max_rat": 2,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 1,
+      "max_mat": 2,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 5,
+      "damage_stat": 0
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Ring of Lightning",
+    "desc": "An upgraded ring. +4% to inflict stun for 1s",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 801,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 250,
+      "saturation": 200,
+      "brightness": 200
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
+    "level_req": 8,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_chance": "4",
+      "min_atk": 1,
+      "max_atk": 2,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 1,
+      "max_rat": 2,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 1,
+      "max_mat": 2,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 5,
+      "damage_stat": 0
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Ring of Wounding",
+    "desc": "An upgraded ring. +5% to inflict Bleed and increase DoT damage by 1",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 801,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 25,
+      "saturation": 165,
+      "brightness": 125
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
-    "prof_req_flags": -1,
+    "prof_req_flags": -3,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!bleed_chance": "5",
+      "!bleed_pertickdamage": "1",
+      "min_atk": 1,
+      "max_atk": 2,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 1,
+      "max_rat": 2,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 1,
+      "max_mat": 2,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 5,
+      "damage_stat": 0
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Necklace of Ice Resistance",
+    "desc": "An upgraded accessory. +2% resistance against slow",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 791,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 120,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
+    "level_req": 8,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!slow_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 1,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 1,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 1,
+      "max_hp": 15,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Necklace of Flame Resistance",
+    "desc": "An upgraded accessory. +2% resistance against burn DoT",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 791,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 315,
+      "saturation": 200,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
+    "level_req": 8,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 1,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 1,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 1,
+      "max_hp": 15,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Necklace of Lightning Resistance",
+    "desc": "An upgraded accessory. +2% resistance against stun",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 791,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 250,
+      "saturation": 145,
+      "brightness": 165
     },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
+    "level_req": 8,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 1,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 1,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 1,
+      "max_hp": 15,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Magician's Shirt of Ice",
+    "desc": "An upgraded armor. +4% to inflict slow; +1 slow duration",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 619,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 1,
+      "saturation": 65,
+      "brightness": 190
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!slow_chance": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Magician's Shirt of Flame",
+    "desc": "An upgraded armor. +4% to inflict burn; +1 damage to burn",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 619,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 180,
+      "saturation": 175,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_chance": "4",
+      "!burn_pertickdamage": "1",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Magician's Shirt of Lightning",
+    "desc": "An upgraded armor. +4% to inflict stun 1s",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 619,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 45,
+      "saturation": 145,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_chance": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Magician's Cloak of Ice",
+    "desc": "An upgraded cloak. +4% to inflict slow; +1 slow duration",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 695,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 65,
+      "brightness": 190
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!slow_chance": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Magician's Cloak of Flame",
+    "desc": "An upgraded cloak. +4% to inflict burn; +1 damage to burn",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 695,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 180,
+      "saturation": 175,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 0,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_pertickdamage": "1",
+      "!burn_chance": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Magician's Cloak of Lightning",
+    "desc": "An upgraded cloak. +4% to inflict stun 1s",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 695,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 45,
+      "saturation": 145,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 0,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_chance": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Longsword of Wounding",
+    "desc": "An upgraded weapon. +5% to inflict bleed DoT",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 481,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 333,
+      "saturation": 65,
+      "brightness": 190
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 1,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
-    "prof_req_flags": -1,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!bleed_chance": "5",
+      "min_atk": 11,
+      "max_atk": 11,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0,
+      "two_handed": false
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slimer Sword of Wounding",
+    "desc": "An upgraded sword. +5% to inflict Bleed DoT",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 480,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 55,
+      "saturation": 90,
+      "brightness": 200
     },
-    "scale": 1,
+    "scale": 0.95,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 1,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -3,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!bleed_pertickdamage": "1",
+      "!bleed_chance": "5",
+      "min_atk": 10,
+      "max_atk": 10,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 8,
+      "damage_stat": 0,
+      "two_handed": false
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Battleaxe of Wounding",
+    "desc": "An upgraded heavy axe. +8% to bleed; +1 to bleed damage. Consumes 1 SP per attack",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 455,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 200,
+      "saturation": 155,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 1,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 0,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!bleed_chance": "8",
+      "!bleed_pertickdamage": "1",
+      "min_atk": 12,
+      "max_atk": 14,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0,
+      "two_handed": true
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Chainmail of Flame Resistance",
+    "desc": "An upgraded armor. +2% resistance against burn DoT",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 624,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 1666,
+      "saturation": 1555,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Chainmail of Ice Resistance",
+    "desc": "An upgraded armor. +2% resistance against slow",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 624,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 1111,
+      "saturation": 1000,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "break_chance": 0,
+    "recycle_value": 0,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!slow_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Chainmail of Lightning Resistance",
+    "desc": "An upgraded armor. +2% resistance against stun",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 624,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 5555,
+      "saturation": 1000,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Helmet of Ice Resistance",
+    "desc": "An upgraded helmet. +2% resistance against slow",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 708,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 2222,
+      "saturation": 1555,
+      "brightness": 155
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!slow_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Helmet of Flame Resistance",
+    "desc": "An upgraded helmet. +2% resistance against flame DoT",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 708,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 1666,
+      "saturation": 1555,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Helmet of Lightning Resistance",
+    "desc": "An upgraded helmet. +2% resistance against stun",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 708,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 5555,
+      "saturation": 1250,
+      "brightness": 122
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!stun_resist": "2",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Iron Fishing Rod",
+    "desc": "Used to catch fish",
+    "revision": 1,
+    "sprite": 865,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 65,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "type": 11,
+    "uses": 200,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 25,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 0,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 2,
+      "max_mat": 0,
+      "max_mdf": 2,
+      "max_rat": 0,
+      "max_rdf": 2,
+      "min_atk": 0,
+      "min_def": 2,
+      "min_mat": 0,
+      "min_mdf": 1,
+      "min_rat": 0,
+      "min_rdf": 1,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Picaxe",
+    "desc": "Used for gathering ores",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 941,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 25,
+      "brightness": 125
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "type": 11,
+    "uses": 200,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 25,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 1,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 2,
+      "max_mat": 0,
+      "max_mdf": 2,
+      "max_rat": 0,
+      "max_rdf": 2,
+      "min_atk": 0,
+      "min_def": 2,
+      "min_mat": 0,
+      "min_mdf": 1,
+      "min_rat": 0,
+      "min_rdf": 1,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Iron Woodcutting Axe",
+    "desc": "Used for cutting down trees",
+    "revision": 1,
+    "sprite": 454,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 25,
+      "brightness": 115
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "type": 11,
+    "uses": 200,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 25,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 2,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 2,
+      "max_mat": 0,
+      "max_mdf": 2,
+      "max_rat": 0,
+      "max_rdf": 2,
+      "min_atk": 0,
+      "min_def": 2,
+      "min_mat": 0,
+      "min_mdf": 1,
+      "min_rat": 0,
+      "min_rdf": 1,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Hemp Fabric",
+    "desc": "Used for crafting clothing",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 292,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 65,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 1000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 6,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 4,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -4928,32 +5411,32 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Bundle of Hemp Cord",
+    "desc": "Used for crafting",
+    "revision": 1,
+    "sprite": 294,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 1000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 20,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 4,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -4961,32 +5444,32 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Liquified Slime",
+    "desc": "I think theres a chunk of eyeball still in there",
+    "revision": 1,
+    "sprite": 271,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 8,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 6,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -4994,32 +5477,32 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Fish Purée",
+    "desc": "Yum",
+    "revision": 1,
+    "sprite": 271,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 111,
+      "saturation": 155,
+      "brightness": 111
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 6,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 6,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -5027,28 +5510,28 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Slime Ether",
+    "desc": "Definitely some eyeball chunks still left in there",
+    "revision": 1,
+    "sprite": 274,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 300,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.8,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 6,
     "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
+    "limit": 10,
+    "cooldown_delay": 8,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 25,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -5056,14 +5539,16 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hp": 0,
+      "mp": 0,
+      "sp": 40
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Bar",
+    "desc": "Made from iron ores.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 960,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -5076,16 +5561,16 @@
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 1000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 6,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 3,
+    "skill_level_req": 1,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -5093,1327 +5578,3010 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Bar",
+    "desc": "Click to combine resources to forge an iron bar. 90% Success rate.",
+    "revision": 1,
+    "sprite": 387,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 25,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 3,
     "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 90,
+      "item_id": 120,
+      "recipe_items": [
+        {
+          "amount": 10,
+          "item_id": 29
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Helmet",
+    "desc": "Click to combine resources to forge an iron helmet",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 56,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Chainmail",
+    "desc": "Click to combine resources to forge an iron chainmail",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 55,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Chainmail of Flame Resistance",
+    "desc": "Click to combine resources to forge an iron chainmail of flame res.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 350,
+      "saturation": 200,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 106,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 55
+        },
+        {
+          "amount": 1,
+          "item_id": 42
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Chainmail of Ice Resistance",
+    "desc": "Click to combine resources into an iron chainmail of ice res.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 135,
+      "saturation": 55,
+      "brightness": 165
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 107,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 55
+        },
+        {
+          "amount": 1,
+          "item_id": 39
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Chainmail of Lightning Resistance",
+    "desc": "Click to combine resources to forge an iron chainmail of light res.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 155,
+      "brightness": 165
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 108,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 55
+        },
+        {
+          "amount": 1,
+          "item_id": 45
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Helmet of Flame Resistance",
+    "desc": "Click to combine resources into an iron helmet of flame res.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 333,
+      "saturation": 165,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 110,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 56
+        },
+        {
+          "amount": 1,
+          "item_id": 42
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Helmet of Ice Resistance",
+    "desc": "Click to combine resources into an iron helmet of ice res.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 165,
+      "saturation": 125,
+      "brightness": 155
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 109,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 56
+        },
+        {
+          "amount": 1,
+          "item_id": 39
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Helmet of Lightning Resistance",
+    "desc": "Click to combine resources into an iron helmet of lightning res.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 255,
+      "brightness": 165
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 111,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 56
+        },
+        {
+          "amount": 1,
+          "item_id": 45
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Longsword",
+    "desc": "Click to combine resources into an iron longsword",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 35,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 54,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 3,
+          "item_id": 9
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Longsword of Wounding",
+    "desc": "Click to combine resources into an iron longsword of wounding",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 45,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 103,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 54
+        },
+        {
+          "amount": 1,
+          "item_id": 47
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Battleaxe",
+    "desc": "Click to combine resources into an iron battle axe",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 350,
+      "saturation": 45,
+      "brightness": 90
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 59,
+      "recipe_items": [
+        {
+          "amount": 6,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 5,
+          "item_id": 9
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Battleaxe of Wounding",
     "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 35,
+      "saturation": 150,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 105,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 59
+        },
+        {
+          "amount": 1,
+          "item_id": 47
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Small Iron Shield",
+    "desc": "Click to combine resources into a small iron shield",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 25,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 57,
+      "recipe_items": [
+        {
+          "amount": 3,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 2,
+          "item_id": 9
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Kite Shield",
+    "desc": "Click to combine resources into a iron kite shield",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 35,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 58,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 4,
+          "item_id": 9
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Slimer Sword of Wounding",
+    "desc": "Click to combine resources into a slimer sword of wounding",
+    "revision": 1,
+    "sprite": 387,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 50,
+      "saturation": 135,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 104,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 60
+        },
+        {
+          "amount": 1,
+          "item_id": 47
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Fishing Rod",
+    "desc": "Click to combine resources into a fishing rod",
+    "revision": 1,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 65,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "item_id": 112,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "amount": 3,
+          "item_id": 9
+        },
+        {
+          "item_id": 120,
+          "amount": 3
+        },
+        {
+          "amount": 2,
+          "item_id": 116
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Picaxe",
+    "desc": "Click to combine resources into a iron picaxe",
+    "revision": 1,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 0,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "item_id": 113,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "amount": 3,
+          "item_id": 9
+        },
+        {
+          "amount": 1,
+          "item_id": 116
+        },
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Woodcutting Axe",
+    "desc": "Click to combin resources into a woodcutting axe",
+    "revision": 1,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 222,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "item_id": 0,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "amount": 3,
+          "item_id": 9
+        },
+        {
+          "amount": 1,
+          "item_id": 116
+        },
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Weaver's Invocation of Ice",
+    "desc": "Click to combine to forge a spell",
+    "revision": 1,
+    "sprite": 389,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 79,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 52
+        },
+        {
+          "amount": 1,
+          "item_id": 38
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Weaver's Invocation of Flame",
+    "desc": "Click to combine to forge a spell",
+    "revision": 1,
+    "sprite": 389,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 80,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 52
+        },
+        {
+          "amount": 1,
+          "item_id": 41
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe :Weaver's Invocation of Lightning",
+    "desc": "Click to combine to forge a spell",
+    "revision": 1,
+    "sprite": 389,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 300,
+      "saturation": 125,
+      "brightness": 145
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 81,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 52
+        },
+        {
+          "amount": 1,
+          "item_id": 44
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Staff of Ice",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 389,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 200,
+      "saturation": 200,
+      "brightness": 155
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 82,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 53
+        },
+        {
+          "amount": 1,
+          "item_id": 38
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Staff of Flame",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 389,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 15,
+      "saturation": 155,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 83,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 53
+        },
+        {
+          "amount": 1,
+          "item_id": 41
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Staff of Lightning",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 389,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 300,
+      "saturation": 64,
+      "brightness": 200
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 84,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 53
+        },
+        {
+          "amount": 1,
+          "item_id": 44
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Recipe: Iron Staff",
+    "desc": "Click to combine resources into a weapon",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 45,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 3,
+    "skill_level_req": 3,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 53,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 120
+        },
+        {
+          "amount": 3,
+          "item_id": 9
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Hemp Fabric",
+    "desc": "Click to combine resources into fabric. 90% Success rate.",
+    "revision": 1,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 65,
+      "saturation": 165,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 90,
+      "item_id": 115,
+      "recipe_items": [
+        {
+          "amount": 10,
+          "item_id": 66
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Bundle of Hemp Cord",
+    "desc": "Click to combine resources into cord. 90% Success rate.",
+    "revision": 1,
+    "sprite": 388,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 300,
+      "saturation": 125,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 6,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 90,
+      "item_id": 116,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 30,
+          "item_id": 66
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Shirt",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 25,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 3,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 69,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 115
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Shirt of Ice",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 125,
+      "brightness": 155
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 97,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 69
+        },
+        {
+          "amount": 1,
+          "item_id": 38
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Shirt of Flame",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 111,
+      "brightness": 111
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 98,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 69
+        },
+        {
+          "amount": 1,
+          "item_id": 41
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Shirt of Lightning",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 300,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 99,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 69
+        },
+        {
+          "amount": 1,
+          "item_id": 44
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Cloak",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 3333,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 4,
+    "skill_level_req": 3,
     "death_drop": true,
-    "transferable": true,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 70,
+      "recipe_items": [
+        {
+          "amount": 4,
+          "item_id": 66
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Cloak of Ice",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 65,
+      "brightness": 200
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 4,
+    "skill_level_req": 10,
     "death_drop": true,
-    "transferable": true,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 100,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 70
+        },
+        {
+          "amount": 1,
+          "item_id": 38
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Cloak of Flame",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 65,
+      "brightness": 200
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 10,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 101,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 70
+        },
+        {
+          "amount": 1,
+          "item_id": 41
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Magician's Cloak of Lightning",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 300,
+      "saturation": 65,
+      "brightness": 200
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 4,
     "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 102,
+      "recipe_items": [
+        {
+          "amount": 1,
+          "item_id": 70
+        },
+        {
+          "amount": 1,
+          "item_id": 44
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Frog Dungeon Key",
+    "desc": "Click to combine resources into a key",
+    "revision": 1,
+    "sprite": 381,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 200,
+      "saturation": 200,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
+    "skill_id": 4,
+    "skill_level_req": 4,
+    "death_drop": false,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 190,
+      "recipe_items": [
+        {
+          "amount": 3,
+          "item_id": 120
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 3,
+          "item_id": 189
+        },
+        {
+          "amount": 2,
+          "item_id": 188
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rat Dungeon Key",
+    "desc": "Click to combine resources into a key",
+    "revision": 1,
+    "sprite": 381,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 111,
+      "saturation": 65,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 4,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 0,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Mt. Ibex Dungeon Key",
+    "desc": "Click to combine resources into a key",
+    "revision": 1,
+    "sprite": 381,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 2222,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 4,
+    "skill_level_req": 6,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 193,
+      "recipe_items": [
+        {
+          "amount": 3,
+          "item_id": 120
+        },
+        {
+          "amount": 3,
+          "item_id": 191
+        },
+        {
+          "amount": 2,
+          "item_id": 192
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Dungeon Key",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -6439,14 +8607,14 @@
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "death_drop": false,
+    "transferable": false,
     "data": {
 
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Dungeon Key",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -6472,8 +8640,8 @@
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "death_drop": false,
+    "transferable": false,
     "data": {
 
     }
@@ -6578,135 +8746,311 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Liquified Slime",
+    "desc": "Click to combine resources into liquified slime",
+    "revision": 1,
+    "sprite": 373,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 6,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 117,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 2,
+          "item_id": 31
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Fish Purée",
+    "desc": "Click to combine resources into fish purée. 90% success rate",
+    "revision": 1,
+    "sprite": 373,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 65,
+      "saturation": 65,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 6,
+    "skill_level_req": 1,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 90,
+      "item_id": 118,
+      "recipe_items": [
+        {
+          "amount": 10,
+          "item_id": 24
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Slime Ether",
+    "desc": "Click to combine resources into a potion. 90% success rate",
+    "revision": 1,
+    "sprite": 373,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 25,
+      "saturation": 125,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "death_drop": true,
-    "transferable": true,
+    "skill_id": 6,
+    "skill_level_req": 3,
+    "death_drop": false,
+    "transferable": false,
     "data": {
-
+      "amount": 1,
+      "chance": 90,
+      "item_id": 119,
+      "recipe_items": [
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 2,
+          "item_id": 118
+        },
+        {
+          "amount": 1,
+          "item_id": 117
+        },
+        {
+          "amount": 10,
+          "item_id": 66
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Rough Basswood ",
+    "desc": "Click to combine resources into rough basswood. 90% success rate",
+    "revision": 1,
+    "sprite": 387,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 125,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 4,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 90,
+      "item_id": 9,
+      "recipe_items": [
+        {
+          "amount": 10,
+          "item_id": 28
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
@@ -7205,7 +9549,7 @@
     }
   },
   {
-    "name": "",
+    "name": "npc burn immune armor",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -7219,7 +9563,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 3,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -7234,131 +9578,252 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_resist": "100",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 1,
+      "max_def": 1,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 1,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 1,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Toad's Flame Boss Spell",
+    "desc": "A rare weapon",
+    "revision": 1,
+    "sprite": 483,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 165,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "type": 2,
+    "uses": 600,
+    "limit": 5,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 8,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 0,
+      "move": true,
+      "spin": false,
+      "alpha": 1,
+      "scale": 0.9,
+      "speed": 0.14,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 145,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 9,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 9,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "brightness": 100,
+      "saturation": 125,
+      "tile_range": 5,
+      "two_handed": false,
+      "!burn_ticks": "3",
+      "damage_stat": 4,
+      "!burn_chance": "35",
+      "!burn_cooldown": "2",
+      "sprite_rotation": -90,
+      "!burn_pertickdamage": "4"
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Frog's Flame Wand",
+    "desc": "A rare crafted weapon. +6% to inflict burn. Consumes 4mp per attack",
+    "revision": 1,
+    "sprite": 483,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 125,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "type": 2,
+    "uses": 600,
+    "limit": 5,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 10,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!burn_chance": "6",
+      "!burn_pertickdamage": "1",
+      "!mp_cost": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 8,
+      "max_mat": 9,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 4,
+      "two_handed": false,
+      "tile_range": 5,
+      "sprite_rotation": -90,
+      "sprite": 145,
+      "hue": 0,
+      "saturation": 100,
+      "brightness": 125,
+      "alpha": 1,
+      "scale": 0.9,
+      "spin": false,
+      "speed": 0.14,
+      "move": true
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Frog's Flame Wand",
+    "desc": "Click to combine resources into a weapon",
+    "revision": 1,
+    "sprite": 377,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 65,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 5,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 4,
+    "skill_level_req": 12,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 186,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "amount": 3,
+          "item_id": 9
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 3,
+          "item_id": 41
+        },
+        {
+          "amount": 3,
+          "item_id": 188
+        },
+        {
+          "amount": 1,
+          "item_id": 85
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Frog Eyeball",
+    "desc": "Carved out of a dead frog",
+    "revision": 1,
+    "sprite": 895,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 45,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.75,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 2,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -7370,28 +9835,28 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Dazed Black Fly",
+    "desc": "Not quite dead, but almost",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 896,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 2,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -7403,27 +9868,27 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Frog Dungeon Key",
+    "desc": "Unlocks the gate inside the Frog Lair. This key will be consumed on use & the gate will self close after 8s",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 358,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 111,
+      "saturation": 150,
+      "brightness": 150
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 8,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
@@ -7436,27 +9901,27 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Ibex Horn",
+    "desc": "Broken off during a fight with a Ibex",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 883,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 111,
+      "saturation": 125,
+      "brightness": 105
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
@@ -7469,27 +9934,27 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Ibex Dung",
+    "desc": "Used in crafts to mask the smell of humans",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 955,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 100,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
@@ -7502,27 +9967,27 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Mt. Ibex Key",
+    "desc": "Unlocks the gate inside Mt. Ibex. This key will be consumed on use & the gate will self close after 8s",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 358,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 2223,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 8,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
@@ -7535,230 +10000,407 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Horned Helmet",
+    "desc": "An upgraded helmet with Ibex horns",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 716,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 30,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 10,
+    "prof_req_flags": -7,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "min_atk": 1,
+      "max_atk": 2,
+      "min_def": 2,
+      "max_def": 3,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Horned Helmet",
+    "desc": "Click to combine resources into a helmet.",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 25,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 3,
+    "skill_level_req": 12,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 194,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 56,
+          "amount": 1
+        },
+        {
+          "item_id": 191,
+          "amount": 6
+        },
+        {
+          "item_id": 120,
+          "amount": 2
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Iron Platemail",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 386,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 5,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 3,
+    "skill_level_req": 12,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 0,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 120,
+          "amount": 6
+        },
+        {
+          "item_id": 115,
+          "amount": 2
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Iron Platemail",
+    "desc": "A heavy piece of armor",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 632,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 90,
       "brightness": 100
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 600,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
+    "level_req": 10,
     "prof_req_flags": -1,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 3,
+      "max_def": 4,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 2,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 2,
+      "max_mdf": 2,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Armored Magicians Shirt",
+    "desc": "Upgraded with iron pauldrons",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 622,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 175,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 115
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "type": 3,
+    "uses": 600,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
+    "break_chance": 0,
     "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
+    "level_req": 10,
+    "prof_req_flags": -6,
     "skill_id": -1,
     "skill_level_req": 0,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 2,
+      "max_def": 2,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 2,
+      "max_rdf": 2,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 3,
+      "max_mdf": 3,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Armored Magicians Shirt",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 0,
+      "brightness": 125
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "prof_req_flags": -6,
+    "skill_id": 3,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 198,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 120,
+          "amount": 4
+        },
+        {
+          "item_id": 69,
+          "amount": 1
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Armored Magicians Shirt of Ice",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 222,
+      "saturation": 35,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 3,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -7766,32 +10408,32 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Armored Magicians Shirt of Flame",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 35,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
-    "uses": 1,
-    "limit": 0,
+    "uses": 10,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 3,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -7799,32 +10441,32 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Recipe: Armored Magicians Shirt of Lightning",
+    "desc": "Click to combine resources into an armor",
+    "revision": 1,
+    "sprite": 379,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 275,
+      "saturation": 35,
+      "brightness": 115
     },
-    "scale": 1,
+    "scale": 0.85,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
     "type": 0,
     "uses": 1,
-    "limit": 0,
+    "limit": 10,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "break_chance": 0,
+    "recycle_value": 0,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
+    "skill_id": 3,
+    "skill_level_req": 10,
     "death_drop": true,
     "transferable": true,
     "data": {
@@ -7832,7 +10474,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Horned Helmet of Ice Resistance",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -7865,7 +10507,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Horned Helmet of Flame Resistance",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -7898,7 +10540,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Horned Helmet of Lightning Resistance",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -7931,7 +10573,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Platemail of Ice Resistance",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -7964,7 +10606,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Platemail of Flame Resistance",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -7997,7 +10639,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe: Iron Platemail of Lightning Resistance",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -14300,7 +16942,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Do not use 399/400. Placeholders for shop recipe exchange",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -34133,8 +36775,8 @@
     }
   },
   {
-    "name": "Tester",
-    "desc": "",
+    "name": "Burn Test",
+    "desc": "+100% to inflict Burn DoT;  +3 to Burn Damage",
     "revision": 0,
     "sprite": 126,
     "sprite_color": {
@@ -34162,13 +36804,12 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!slow_length": "5",
-      "!slow_chance": "100",
-      "!slow_cooldown": "5",
+      "!burn_chance": "100",
+      "!burn_pertickdamage": "3",
       "min_atk": 0,
       "max_atk": 0,
-      "min_def": 2,
-      "max_def": 2,
+      "min_def": 15,
+      "max_def": 15,
       "min_rat": 0,
       "max_rat": 0,
       "min_rdf": 1,
@@ -34177,7 +36818,7 @@
       "max_mat": 0,
       "min_mdf": 1,
       "max_mdf": 1,
-      "max_hp": 0,
+      "max_hp": 1000,
       "max_mp": 0,
       "max_sp": 0,
       "damage_stat": 1,
@@ -34185,10 +36826,10 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Bleed Test",
+    "desc": "+100% to inflict Bleed DoT;  +4 to Bleed Damage",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 506,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -34199,8 +36840,8 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 3,
+    "uses": 100000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -34214,14 +36855,31 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "!bleed_chance": "100",
+      "!bleed_pertickdamage": "4",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 15,
+      "max_def": 15,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 1,
+      "max_rdf": 1,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 1,
+      "max_mdf": 1,
+      "max_hp": 1000,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Stun Test",
+    "desc": "25% Chance to Stun;  +2 Second Stun Length",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 401,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -34232,8 +36890,8 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 4,
+    "uses": 10000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -34247,14 +36905,31 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 1000,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 15,
+      "max_mat": 0,
+      "max_mdf": 1,
+      "max_rat": 0,
+      "max_rdf": 1,
+      "min_atk": 0,
+      "min_def": 15,
+      "min_mat": 0,
+      "min_mdf": 1,
+      "min_rat": 0,
+      "min_rdf": 1,
+      "damage_stat": 1,
+      "!stun_chance": "25",
+      "!stun_length": "2"
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slow Test",
+    "desc": "100% Chance to Slow;  +2 Second Slow Length",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 422,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -34265,8 +36940,8 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 5,
+    "uses": 10000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -34280,14 +36955,31 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 1000,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 15,
+      "max_mat": 0,
+      "max_mdf": 1,
+      "max_rat": 0,
+      "max_rdf": 1,
+      "min_atk": 0,
+      "min_def": 15,
+      "min_mat": 0,
+      "min_mdf": 1,
+      "min_rat": 0,
+      "min_rdf": 1,
+      "damage_stat": 1,
+      "!slow_chance": "100",
+      "!slow_length": "2"
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Slow Resist Test",
+    "desc": "100% slow resist",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 121,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -34298,8 +36990,8 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 10000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -34313,7 +37005,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "max_hp": 1000,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 0,
+      "max_def": 2,
+      "max_mat": 0,
+      "max_mdf": 3,
+      "max_rat": 0,
+      "max_rdf": 2,
+      "min_atk": 0,
+      "min_def": 1,
+      "min_mat": 0,
+      "min_mdf": 2,
+      "min_rat": 0,
+      "min_rdf": 1,
+      "damage_stat": 1,
+      "!slow_resist": "50"
     }
   },
   {
