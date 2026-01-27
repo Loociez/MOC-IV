@@ -743,10 +743,6 @@ function copyDescription() {
     }
   }
 
-  // On page load, apply the default theme
-  document.addEventListener('DOMContentLoaded', () => {
-    applyTheme(themeSelector.value);
-  });
 
   // Listen for theme selection changes
   themeSelector.addEventListener('change', (e) => {
