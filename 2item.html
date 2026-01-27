@@ -30,7 +30,7 @@ body {
   height: 16px;
 
   background-repeat: no-repeat;
-  background-size: 1024px 272px; /* KEEP ORIGINAL SHEET SIZE */
+  background-size: 1024px 272px;
   image-rendering: pixelated;
 
   transform: scale(var(--sprite-scale));
@@ -38,8 +38,11 @@ body {
 
   margin-top: 6px;
 
-  /* 🔹 NEW: global sprite saturation support */
-  filter: saturate(var(--sprite-saturation, 100%));
+  filter:
+    hue-rotate(var(--sprite-hue, 0deg))
+    saturate(var(--sprite-saturation, 100%))
+    brightness(var(--sprite-brightness, 100%))
+    opacity(var(--sprite-alpha, 1));
 }
 
 /* =========================
@@ -380,16 +383,23 @@ items.forEach((item, index) => {
     const x = (spriteIndex % SPRITES_PER_ROW) * FRAME_SIZE;
     const y = Math.floor(spriteIndex / SPRITES_PER_ROW) * FRAME_SIZE;
 
-    nameHTML += `
-      <br>
-      <div class="sprite"
-           style="
-             background-image: url('2sprites/items${sheetIndex}.png');
-             background-position: -${x}px -${y}px;
-             background-size: ${SHEET_WIDTH}px ${SHEET_HEIGHT}px;
-           ">
-      </div>
-    `;
+   const color = item.sprite_color || {};
+
+nameHTML += `
+  <br>
+  <div class="sprite"
+       style="
+         background-image: url('2sprites/items${sheetIndex}.png');
+         background-position: -${x}px -${y}px;
+         background-size: ${SHEET_WIDTH}px ${SHEET_HEIGHT}px;
+
+         --sprite-hue: ${(color.hue ?? 0)}deg;
+         --sprite-saturation: ${(color.saturation ?? 100)}%;
+         --sprite-brightness: ${(color.brightness ?? 100)}%;
+         --sprite-alpha: ${(color.alpha ?? 1)};
+       ">
+  </div>
+`;
 }
 
 
