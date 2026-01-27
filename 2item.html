@@ -5,380 +5,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Item Table View</title>
   <style>
-/* --- Default Theme (Purple/Gold) --- */
-body.theme-default {
-  font-family: Arial, sans-serif;
-  background-color: #4b0082; /* Dark purple */
-  color: gold;
+/* =========================
+   GLOBAL
+========================= */
+
+:root {
+  --sprite-scale: 2; /* change to 3 if you want BIG sprites */
+}
+
+body {
   margin: 0;
-  padding: 0;
-}
-
-body.theme-default table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background-color: #4b0082;
-  color: gold;
-}
-
-body.theme-default th,
-body.theme-default td {
-  border: 1px solid gold;
-  padding: 8px;
-  text-align: left;
-}
-
-body.theme-default th {
-  background-color: #6a0dad; /* Slightly lighter purple */
-}
-
-body.theme-default tr:nth-child(even) {
-  background-color: #5a0088;
-}
-
-body.theme-default .data {
-  font-size: 0.9em;
+  font-family: Arial, sans-serif;
+  background: #111;
   color: #eee;
-  white-space: pre-line;
 }
 
-body.theme-default #searchBar {
-  margin: 20px auto;
-  display: block;
-  width: 90%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid gold;
-  border-radius: 4px;
-  background-color: #4b0082;
-  color: gold;
-}
+/* =========================
+   SPRITES (FIXED)
+========================= */
 
-body.theme-default #searchBar::placeholder {
-  color: gold;
-}
-
-body.theme-default h1 {
-  text-align: center;
-  margin: 20px 0;
-  color: gold;
-}
-
-body.theme-default select {
-  background-color: #4b0082;
-  color: gold;
-  border: 1px solid gold;
-}
-
-body.theme-default .sprite {
+.sprite {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
+
   background-repeat: no-repeat;
+  background-size: 1024px 272px; /* KEEP ORIGINAL SHEET SIZE */
   image-rendering: pixelated;
-  margin-top: 4px;
+
+  transform: scale(var(--sprite-scale));
+  transform-origin: top left;
+
+  margin-top: 6px;
 }
 
-/* --- Dark Theme --- */
-body.theme-dark {
-  font-family: Arial, sans-serif;
-  background-color: #121212; /* Dark background */
-  color: #e0e0e0;
-  margin: 0;
-  padding: 0;
-}
+/* =========================
+   TABLE / UI
+========================= */
 
-body.theme-dark table {
-  width: 100%;
+table {
   border-collapse: collapse;
-  margin: 20px 0;
-  background-color: #1e1e1e;
-  color: #e0e0e0;
+  width: 100%;
 }
 
-body.theme-dark th,
-body.theme-dark td {
-  border: 1px solid #444;
-  padding: 8px;
+th,
+td {
+  padding: 6px 8px;
   text-align: left;
 }
 
-body.theme-dark th {
-  background-color: #333;
+th {
+  font-weight: bold;
 }
 
-body.theme-dark tr:nth-child(even) {
-  background-color: #2a2a2a;
+/* =========================
+   THEMES
+========================= */
+
+/* ---- DEFAULT (MoC) ---- */
+.theme-default {
+  background: #111;
+  color: #eee;
 }
 
-body.theme-dark .data {
-  font-size: 0.9em;
-  color: #ccc;
-  white-space: pre-line;
+.theme-default table {
+  background: #1b1b1b;
 }
 
-body.theme-dark #searchBar {
-  margin: 20px auto;
-  display: block;
-  width: 90%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #444;
-  border-radius: 4px;
-  background-color: #1e1e1e;
-  color: #e0e0e0;
+.theme-default th {
+  background: #222;
 }
 
-body.theme-dark #searchBar::placeholder {
-  color: #ccc;
+.theme-default td {
+  border-bottom: 1px solid #2a2a2a;
 }
 
-body.theme-dark h1 {
-  text-align: center;
-  margin: 20px 0;
-  color: #f5a623;
+/* ---- DARK ---- */
+.theme-dark {
+  background: #0b0b0b;
+  color: #ddd;
 }
 
-body.theme-dark select {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-  border: 1px solid #444;
+.theme-dark table {
+  background: #151515;
 }
 
-body.theme-dark .sprite {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  margin-top: 4px;
+.theme-dark th {
+  background: #1f1f1f;
 }
 
-/* --- Light Theme --- */
-body.theme-light {
-  font-family: Arial, sans-serif;
-  background-color: #fafafa;
-  color: #222222;
-  margin: 0;
-  padding: 0;
+.theme-dark td {
+  border-bottom: 1px solid #2a2a2a;
 }
 
-body.theme-light table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background-color: #ffffff;
-  color: #222222;
-  border: 1px solid #ccc;
+/* ---- LIGHT ---- */
+.theme-light {
+  background: #f4f4f4;
+  color: #111;
 }
 
-body.theme-light th,
-body.theme-light td {
-  border: 1px solid #bbb;
-  padding: 8px;
-  text-align: left;
+.theme-light table {
+  background: #ffffff;
 }
 
-body.theme-light th {
-  background-color: #ffd580; /* Soft gold/orange */
+.theme-light th {
+  background: #e0e0e0;
 }
 
-body.theme-light tr:nth-child(even) {
-  background-color: #fff8e1; /* Light cream */
+.theme-light td {
+  border-bottom: 1px solid #ccc;
 }
 
-body.theme-light .data {
-  font-size: 0.9em;
-  color: #555;
-  white-space: pre-line;
+/* ---- OCEAN (DEFAULT LOAD) ---- */
+.theme-ocean {
+  background: linear-gradient(#0b2a3a, #041822);
+  color: #dff6ff;
 }
 
-body.theme-light #searchBar {
-  margin: 20px auto;
-  display: block;
-  width: 90%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff8e1;
-  color: #222;
+.theme-ocean table {
+  background: rgba(0, 40, 60, 0.6);
 }
 
-body.theme-light #searchBar::placeholder {
-  color: #aaa;
+.theme-ocean th {
+  background: rgba(0, 70, 100, 0.8);
 }
 
-body.theme-light h1 {
-  text-align: center;
-  margin: 20px 0;
-  color: #ff6600;
+.theme-ocean td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-body.theme-light select {
-  background-color: #fff8e1;
-  color: #222;
-  border: 1px solid #ccc;
+/* ---- FOREST ---- */
+.theme-forest {
+  background: linear-gradient(#0f2a18, #07140d);
+  color: #dfffe8;
 }
 
-body.theme-light .sprite {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  margin-top: 4px;
+.theme-forest table {
+  background: rgba(20, 50, 30, 0.7);
 }
 
-/* --- Ocean Theme --- */
-body.theme-ocean {
-  font-family: Arial, sans-serif;
-  background-color: #2a3f54;
-  color: #d7e6f0;
-  margin: 0;
-  padding: 0;
+.theme-forest th {
+  background: rgba(40, 80, 50, 0.8);
 }
 
-body.theme-ocean table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background-color: #1b2a3a;
-  color: #d7e6f0;
-}
-
-body.theme-ocean th,
-body.theme-ocean td {
-  border: 1px solid #4a90e2;
-  padding: 8px;
-  text-align: left;
-}
-
-body.theme-ocean th {
-  background-color: #356094;
-}
-
-body.theme-ocean tr:nth-child(even) {
-  background-color: #23405a;
-}
-
-body.theme-ocean .data {
-  font-size: 0.9em;
-  color: #cce4ff;
-  white-space: pre-line;
-}
-
-body.theme-ocean #searchBar {
-  margin: 20px auto;
-  display: block;
-  width: 90%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #4a90e2;
-  border-radius: 4px;
-  background-color: #23405a;
-  color: #cce4ff;
-}
-
-body.theme-ocean #searchBar::placeholder {
-  color: #a0c4ff;
-}
-
-body.theme-ocean h1 {
-  text-align: center;
-  margin: 20px 0;
-  color: #4a90e2;
-}
-
-body.theme-ocean select {
-  background-color: #23405a;
-  color: #cce4ff;
-  border: 1px solid #4a90e2;
-}
-
-body.theme-ocean .sprite {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  margin-top: 4px;
-}
-
-/* --- Forest Theme --- */
-body.theme-forest {
-  font-family: Arial, sans-serif;
-  background-color: #1c2d16;
-  color: #b6d7a8;
-  margin: 0;
-  padding: 0;
-}
-
-body.theme-forest table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background-color: #2b441f;
-  color: #b6d7a8;
-}
-
-body.theme-forest th,
-body.theme-forest td {
-  border: 1px solid #a9c18e;
-  padding: 8px;
-  text-align: left;
-}
-
-body.theme-forest th {
-  background-color: #4a752c;
-}
-
-body.theme-forest tr:nth-child(even) {
-  background-color: #3a5e29;
-}
-
-body.theme-forest .data {
-  font-size: 0.9em;
-  color: #e0f2d6;
-  white-space: pre-line;
-}
-
-body.theme-forest #searchBar {
-  margin: 20px auto;
-  display: block;
-  width: 90%;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #a9c18e;
-  border-radius: 4px;
-  background-color: #3a5e29;
-  color: #e0f2d6;
-}
-
-body.theme-forest #searchBar::placeholder {
-  color: #cde0b3;
-}
-
-body.theme-forest h1 {
-  text-align: center;
-  margin: 20px 0;
-  color: #a9c18e;
-}
-
-body.theme-forest select {
-  background-color: #3a5e29;
-  color: #e0f2d6;
-  border: 1px solid #a9c18e;
-}
-
-body.theme-forest .sprite {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  margin-top: 4px;
+.theme-forest td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
   </style>
