@@ -116520,12 +116520,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 50000,
+      "hp": 0,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 500,
+      "atk": 0,
       "def": 0,
       "rat": 0,
       "rdf": 0,
