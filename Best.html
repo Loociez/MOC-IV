@@ -214,7 +214,9 @@ button:disabled {
     <div class="manual-stats-row"><label for="manual_mdf">Magical Defense:</label><input type="number" id="manual_mdf" value="0" inputmode="numeric" /></div>
   </div>
 </div>
-<button id="ignoreToggleBtn" onclick="toggleIgnoreGodMiscItems()" aria-pressed="false">Ignore God/Misc Items</button>
+<button id="ignoreToggleBtn" onclick="toggleIgnoreGodMiscItems()" aria-pressed="false" style="background:#16a34a;color:white;border:none;">
+  Showing All Weapons
+</button>
 
 <div class="controls" role="region" aria-label="Class and stat selection">
   <div><label for="classSelect">Select Class:</label><select id="classSelect" disabled aria-required="true" aria-describedby="classHelp"><option value="">-- Loading classes... --</option></select></div>
@@ -874,7 +876,21 @@ filterItemsByClass = function(cls) {
 
 function toggleIgnoreGodMiscItems() {
   ignoreGodMiscItems = !ignoreGodMiscItems;
-  document.getElementById('ignoreToggleBtn').textContent = ignoreGodMiscItems ? "Including All Items" : "Ignore God/Misc Items";
+
+  const btn = document.getElementById('ignoreToggleBtn');
+
+  if (ignoreGodMiscItems) {
+    // God weapons ignored
+    btn.textContent = "Ignoring God/Misc Items";
+    btn.style.background = "#dc2626"; // red
+    btn.setAttribute("aria-pressed", "true");
+  } else {
+    // All weapons shown
+    btn.textContent = "Showing All Weapons";
+    btn.style.background = "#16a34a"; // green
+    btn.setAttribute("aria-pressed", "false");
+  }
+
   if (selectedClass && selectedStat) {
     filteredItemsByClass = filterItemsByClass(selectedClass);
     generateBuildUI();
