@@ -537,6 +537,8 @@ const typeMap = {
     3: "Armor",
     4: "Helm",
     5: "Offhand/Shield",
+    6: "Potion/Consumable",
+    7: "Warp",
     11: "Accessory"
 };
 // --- end professions logic ---
@@ -954,7 +956,7 @@ function filterTable() {
     const rareFilter = document.getElementById('rareFilter').checked;
     const favoritesFilter = document.getElementById('favoritesFilter').checked;
     const spellAmpFilter = document.getElementById('spellAmpFilter').value.toLowerCase();
-    const typeFilter = document.getElementById('typeFilter').value;
+    const typeFilterValue = document.getElementById('typeFilter').value;
 
     const rows = document.querySelectorAll('#itemTable tbody tr');
 
@@ -962,19 +964,29 @@ function filterTable() {
         const nameCell = row.querySelector('td:nth-child(2)');
         const descriptionCell = row.querySelector('td:nth-child(3)');
         const statsCell = row.querySelector('td:nth-child(4)');
+        const typeCell = row.itemType; // We'll assign this below
+
+        // Get the item type number from the data-cell or row.dataset
+        if (!row.dataset.itemType && nameCell) {
+            const itemName = nameCell.textContent.trim();
+            // Assume you have itemNamesMap and fetched items
+            const item = window.itemsData?.find(i => i.name === itemName);
+            if (item) row.dataset.itemType = item.type;
+        }
+
+        const itemType = row.dataset.itemType;
+
         const matchesSearch =
             (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
             (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
+
         const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
         const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
         const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
         const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
         const matchesSpellAmp = !spellAmpFilter || (statsCell && statsCell.textContent.toLowerCase().includes(spellAmpFilter));
+        const matchesType = !typeFilterValue || (itemType && itemType.toString() === typeFilterValue);
         const isFavoriteItem = isFavorite(nameCell.textContent);
-
-        // New type filter
-        const itemType = row.dataset.type; // We'll add data-type when building table
-        const matchesType = !typeFilter || (itemType && itemType === typeFilter);
 
         if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && matchesType && (!favoritesFilter || isFavoriteItem)) {
             row.style.display = '';
