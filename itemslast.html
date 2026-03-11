@@ -757,16 +757,21 @@ if (
 				"!vampire_heal_cooldown": "Vampire heal cooldown"
             };
 			
-			function populateSpellAmpDropdown() {
+			// Build Spell Amp dropdown dynamically from spellAmpLabels
+function populateSpellAmpDropdown() {
     const dropdown = document.getElementById("spellAmpFilter");
     if (!dropdown) return;
 
+    // reset options
     dropdown.innerHTML = '<option value="">None</option>';
 
-    Object.entries(spellAmpLabels).forEach(([key, label]) => {
+    Object.keys(spellAmpLabels).forEach(key => {
+        const label = spellAmpLabels[key];
+
         const option = document.createElement("option");
         option.value = label.toLowerCase();
         option.textContent = label;
+
         dropdown.appendChild(option);
     });
 }
@@ -952,11 +957,13 @@ const isFavoriteItem = isFavorite(nameCell.textContent);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    populateSpellAmpDropdown();
+
     document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
 
-    populateSpellAmpDropdown(); // auto build dropdown
+    fetchAndDisplayItems();
 
-    fetchAndDisplayItems(); // initial load
 });
 </script>
 
