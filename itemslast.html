@@ -457,25 +457,9 @@ body.theme-forest .sprite {
     <option value="max_rdf">Max Ranged Defense</option>
   </select>
   
-  <label for="spellAmpFilter" style="margin-left: 10px;">Spell Amp:</label>
+ <label for="spellAmpFilter" style="margin-left: 10px;">Spell Amp:</label>
 <select id="spellAmpFilter" onchange="filterTable()">
   <option value="">None</option>
-  <option value="Warlock Player AoE">Warlock Player AoE</option>
-  <option value="Warlock NPC AoE">Warlock NPC AoE</option>
-  <option value="Dragoon Player AoE">Dragoon Player AoE</option>
-  <option value="Dragoon NPC AoE">Dragoon NPC AoE</option>
-  <option value="Cleric Player Heal">Cleric Player Heal</option>
-  <option value="Cleric Pet Heal">Cleric Pet Heal</option>
-  <option value="Assassin Player Poison">Assassin Player Poison</option>
-  <option value="Assassin NPC Poison">Assassin NPC Poison</option>
-  <option value="Necromancer Minion DMG">Necromancer Minion DMG</option>
-  <option value="Necromancer Minion HP">Necromancer Minion HP</option>
-  <option value="Marksman Player Shotgun">Marksman Player Shotgun</option>
-  <option value="Marksman NPC Shotgun">Marksman NPC Shotgun</option>
-  <option value="Samurai Player Riposte">Samurai Player Riposte</option>
-  <option value="Samurai NPC Riposte">Samurai NPC Riposte</option>
-  <option value="Vampire Player Lifesteal">Vampire Player Lifesteal</option>
-  <option value="Vampire NPC Lifesteal">Vampire NPC Lifesteal</option>
 </select>
 
   <button onclick="clearComparison()">Clear Comparison</button>
@@ -772,6 +756,20 @@ if (
 				"!vampire_heal_uptime": "Vampire heal uptime",
 				"!vampire_heal_cooldown": "Vampire heal cooldown"
             };
+			
+			function populateSpellAmpDropdown() {
+    const dropdown = document.getElementById("spellAmpFilter");
+    if (!dropdown) return;
+
+    dropdown.innerHTML = '<option value="">None</option>';
+
+    Object.entries(spellAmpLabels).forEach(([key, label]) => {
+        const option = document.createElement("option");
+        option.value = label.toLowerCase();
+        option.textContent = label;
+        dropdown.appendChild(option);
+    });
+}
 
             const spellAmpEntries = Object.entries(spellAmpLabels)
                 .filter(([key]) => item.data?.[key] !== undefined)
@@ -955,6 +953,9 @@ const isFavoriteItem = isFavorite(nameCell.textContent);
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
+
+    populateSpellAmpDropdown(); // auto build dropdown
+
     fetchAndDisplayItems(); // initial load
 });
 </script>
