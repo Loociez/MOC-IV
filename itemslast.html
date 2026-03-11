@@ -462,6 +462,18 @@ body.theme-forest .sprite {
   <option value="">None</option>
 </select>
 
+<label for="typeFilter" style="margin-left: 10px;">Type:</label>
+<select id="typeFilter" onchange="filterTable()">
+  <option value="">All</option>
+  <option value="0">Item</option>
+  <option value="1">Weapon</option>
+  <option value="2">Weapon Projectile</option>
+  <option value="3">Armor</option>
+  <option value="4">Helm</option>
+  <option value="5">Offhand/Shield</option>
+  <option value="11">Accessory</option>
+</select>
+
   <button onclick="clearComparison()">Clear Comparison</button>
   <button onclick="clearFavorites()">Clear Favorites</button>
   <button onclick="generateShareLink()">Share Comparison</button>
@@ -518,6 +530,15 @@ function getItemClasses(prof_req_flags) {
   }
   return itemClasses.length > 0 ? itemClasses.join(', ') : "All Classes";
 }
+const typeMap = {
+    0: "Item",
+    1: "Weapon",
+    2: "Weapon Projectile",
+    3: "Armor",
+    4: "Helm",
+    5: "Offhand/Shield",
+    11: "Accessory"
+};
 // --- end professions logic ---
 
 
@@ -852,6 +873,7 @@ function displayComparison(selectedItems) {
     const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin", "damage stat", "sprite rotation"];
 
     const row = document.createElement('tr');
+row.dataset.type = String(item.type ?? '0');
     const nameCell = document.createElement('td');
     nameCell.textContent = item1.name + " vs " + item2.name;
     row.appendChild(nameCell);
@@ -932,6 +954,7 @@ function filterTable() {
     const rareFilter = document.getElementById('rareFilter').checked;
     const favoritesFilter = document.getElementById('favoritesFilter').checked;
     const spellAmpFilter = document.getElementById('spellAmpFilter').value.toLowerCase();
+    const typeFilter = document.getElementById('typeFilter').value;
 
     const rows = document.querySelectorAll('#itemTable tbody tr');
 
@@ -946,10 +969,14 @@ function filterTable() {
         const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
         const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
         const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
-const matchesSpellAmp = !spellAmpFilter || (statsCell && statsCell.textContent.toLowerCase().includes(spellAmpFilter));
-const isFavoriteItem = isFavorite(nameCell.textContent);
+        const matchesSpellAmp = !spellAmpFilter || (statsCell && statsCell.textContent.toLowerCase().includes(spellAmpFilter));
+        const isFavoriteItem = isFavorite(nameCell.textContent);
 
-        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && (!favoritesFilter || isFavoriteItem)) {
+        // New type filter
+        const itemType = row.dataset.type; // We'll add data-type when building table
+        const matchesType = !typeFilter || (itemType && itemType === typeFilter);
+
+        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && matchesType && (!favoritesFilter || isFavoriteItem)) {
             row.style.display = '';
         } else {
             row.style.display = 'none';
