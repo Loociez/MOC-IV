@@ -928,6 +928,7 @@ function filterTable() {
         const matchesSearch =
             (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
             (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
+
         const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
         const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
         const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
