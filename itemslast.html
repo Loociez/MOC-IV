@@ -501,6 +501,7 @@ body.theme-forest .sprite {
 
  <script>
 let selectedItems = [];
+let itemsData = []; // Store all fetched items globally for filtering
 // --- Profession bits from ItemP.html ---
 const classBits = {
   0: "Samurai",
@@ -672,14 +673,15 @@ function populateSpellAmpDropdown() {
 async function fetchAndDisplayItems() {
     try {
         let items = await fetchItemData();
+        window.itemsData = items; // store globally for filter lookup
 
         // Build item ID → name map USING ARRAY INDEX (IDs start at 0)
-itemNamesMap = {};
-items.forEach((item, index) => {
-    if (item?.name) {
-        itemNamesMap[index] = item.name;
-    }
-});
+        itemNamesMap = {};
+        items.forEach((item, index) => {
+            if (item?.name) {
+                itemNamesMap[index] = item.name;
+            }
+        });
 
         const sortKey = document.getElementById("sortStat")?.value;
         if (sortKey && sortKey !== "none") {
@@ -696,6 +698,10 @@ items.forEach((item, index) => {
         items.forEach(item => {
             const row = document.createElement('tr');
 
+            // Store item type directly on row
+            row.dataset.itemType = item.type ?? '0';
+
+            // Select checkbox
             const selectCell = document.createElement('td');
             const selectCheckbox = document.createElement('input');
             selectCheckbox.type = 'checkbox';
@@ -704,74 +710,53 @@ items.forEach((item, index) => {
             selectCell.appendChild(selectCheckbox);
             row.appendChild(selectCell);
 
+            // Name cell with sprite
             const nameCell = document.createElement('td');
             let nameHTML = item.name;
             if (item.level_req !== undefined) {
                 nameHTML += `<br><span style="font-size: 0.85em; color: #ccc;">Lvl Requirement: ${item.level_req}</span>`;
             }
-
             if (typeof item.sprite === 'number') {
                 const SPRITE_SIZE = 32;
-                const SPRITES_PER_SHEET = 1024; // total sprites per sheet (32x32)
-                const spritesPerRow = 32;        // 32 sprites horizontally
-
-                const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);  // starts at 0
+                const SPRITES_PER_SHEET = 1024;
+                const spritesPerRow = 32;
+                const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET);
                 const spriteIndex = item.sprite % SPRITES_PER_SHEET;
-
                 const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
                 const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
-
                 const backgroundImage = `url('images/items${sheetIndex}.png')`;
-
                 nameHTML += `<br><div class="sprite" style="background-image: ${backgroundImage}; background-position: -${x}px -${y}px; width: ${SPRITE_SIZE}px; height: ${SPRITE_SIZE}px;"></div>`;
             }
-
             nameCell.innerHTML = nameHTML;
             row.appendChild(nameCell);
 
+            // Description cell
             const descCell = document.createElement('td');
             let descHTML = item.desc || 'No description';
-
             if (item.prof_req_flags !== undefined) {
                 const classesText = getItemClasses(item.prof_req_flags);
                 descHTML += `<br><span style="font-size: 0.85em; color: lightgreen;">Classes: ${classesText}</span>`;
             }
 
-            // Custom recipe display — ALL entries are required items
-const recipe = item.data?.recipe_items;
-
-if (
-    item.name.toLowerCase().includes('recipe') &&
-    Array.isArray(recipe)
-) {
-    const requiredItems = recipe.filter(
-        r => r.item_id !== -1 && r.amount > 0
-    );
-
-    if (requiredItems.length) {
-        descHTML += `<br><strong>Required items:</strong><br>`;
-
-        for (const req of requiredItems) {
-            const reqName =
-                itemNamesMap[req.item_id] ?? `Item ID ${req.item_id}`;
-            descHTML += `${reqName} x${req.amount}<br>`;
-        }
-    }
-}
-
+            const recipe = item.data?.recipe_items;
+            if (item.name.toLowerCase().includes('recipe') && Array.isArray(recipe)) {
+                const requiredItems = recipe.filter(r => r.item_id !== -1 && r.amount > 0);
+                if (requiredItems.length) {
+                    descHTML += `<br><strong>Required items:</strong><br>`;
+                    for (const req of requiredItems) {
+                        const reqName = itemNamesMap[req.item_id] ?? `Item ID ${req.item_id}`;
+                        descHTML += `${reqName} x${req.amount}<br>`;
+                    }
+                }
+            }
             descCell.innerHTML = descHTML;
             row.appendChild(descCell);
 
-            // ... rest of your code for stats, repair cost, uses, sell value, handedness, favorites, etc. ...
-
+            // Stats cell
             const dataCell = document.createElement('td');
-            let stats = item.data
-    ? Object.entries(item.data).filter(([key]) => key !== 'recipe_items')
-    : [];
-
+            let stats = item.data ? Object.entries(item.data).filter(([key]) => key !== 'recipe_items') : [];
             if (item.tile_range) stats.push(['tile range', item.tile_range]);
-
-            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
+            const excludedKeys = ["hue","move","spin","alpha","scale","sprite","sprite rotation","brightness","saturation","damage stat"];
             const groupedStats = {};
             stats.forEach(([key, value]) => {
                 const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
@@ -785,7 +770,6 @@ if (
                     groupedStats[key] = value;
                 }
             });
-
             let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
                 if (typeof value === 'object') {
                     const min = value.min;
@@ -797,49 +781,24 @@ if (
                 }
                 return `${key.replace(/_/g, ' ')}: ${value}`;
             });
-
-            
-
             const spellAmpEntries = Object.entries(spellAmpLabels)
                 .filter(([key]) => item.data?.[key] !== undefined)
                 .map(([key, label]) => `${label}: ${item.data[key]}`);
-
             if (spellAmpEntries.length > 0) {
                 formattedLines.push("");
                 formattedLines.push("Spell Amp:");
                 formattedLines.push(...spellAmpEntries);
             }
-
-            const formattedData = formattedLines.join('\n');
-
-            dataCell.textContent = formattedData.trim() || 'No stats';
+            dataCell.textContent = formattedLines.join('\n').trim() || 'No stats';
             dataCell.classList.add('data');
             row.appendChild(dataCell);
 
-            const repairCostCell = document.createElement('td');
-            repairCostCell.textContent = item.repair_cost || 'No repair cost';
-            row.appendChild(repairCostCell);
-
-            const usesCell = document.createElement('td');
-            usesCell.textContent = item.uses || 'No uses data';
-            row.appendChild(usesCell);
-
-            const sellValueCell = document.createElement('td');
-            sellValueCell.textContent = item.recycle_value || 'No sell value';
-            row.appendChild(sellValueCell);
-
-            const handednessCell = document.createElement('td');
-            const isTwoHanded = item.data && item.data.two_handed === true || item.data.two_handed === 'true';
-            handednessCell.textContent = isTwoHanded ? 'Two Handed' : 'One Handed';
-            row.appendChild(handednessCell);
-
-            const favoriteCell = document.createElement('td');
-            const favoriteCheckbox = document.createElement('input');
-            favoriteCheckbox.type = 'checkbox';
-            favoriteCheckbox.checked = isFavorite(item.name);
-            favoriteCheckbox.onclick = () => toggleFavorite(item);
-            favoriteCell.appendChild(favoriteCheckbox);
-            row.appendChild(favoriteCell);
+            // Repair, Uses, Sell, Handedness, Favorite
+            const repairCostCell = document.createElement('td'); repairCostCell.textContent = item.repair_cost || 'No repair cost'; row.appendChild(repairCostCell);
+            const usesCell = document.createElement('td'); usesCell.textContent = item.uses || 'No uses data'; row.appendChild(usesCell);
+            const sellValueCell = document.createElement('td'); sellValueCell.textContent = item.recycle_value || 'No sell value'; row.appendChild(sellValueCell);
+            const handednessCell = document.createElement('td'); handednessCell.textContent = item.data && item.data.two_handed ? 'Two Handed' : 'One Handed'; row.appendChild(handednessCell);
+            const favoriteCell = document.createElement('td'); const favoriteCheckbox = document.createElement('input'); favoriteCheckbox.type = 'checkbox'; favoriteCheckbox.checked = isFavorite(item.name); favoriteCheckbox.onclick = () => toggleFavorite(item); favoriteCell.appendChild(favoriteCheckbox); row.appendChild(favoriteCell);
 
             tableBody.appendChild(row);
         });
@@ -964,22 +923,11 @@ function filterTable() {
         const nameCell = row.querySelector('td:nth-child(2)');
         const descriptionCell = row.querySelector('td:nth-child(3)');
         const statsCell = row.querySelector('td:nth-child(4)');
-        const typeCell = row.itemType; // We'll assign this below
-
-        // Get the item type number from the data-cell or row.dataset
-        if (!row.dataset.itemType && nameCell) {
-            const itemName = nameCell.textContent.trim();
-            // Assume you have itemNamesMap and fetched items
-            const item = window.itemsData?.find(i => i.name === itemName);
-            if (item) row.dataset.itemType = item.type;
-        }
-
         const itemType = row.dataset.itemType;
 
         const matchesSearch =
             (nameCell && nameCell.textContent.toLowerCase().includes(searchTerm)) ||
             (descriptionCell && descriptionCell.textContent.toLowerCase().includes(searchTerm));
-
         const matchesWeaponFilter = !weaponFilter || (statsCell && statsCell.textContent.toLowerCase().includes('two handed'));
         const matchesPetFilter = !petFilter || (nameCell && nameCell.textContent.includes('🐶'));
         const matchesRecipeFilter = !recipeFilter || (nameCell && nameCell.textContent.toLowerCase().includes('recipe')) || (descriptionCell && descriptionCell.textContent.toLowerCase().includes('recipe'));
@@ -988,11 +936,7 @@ function filterTable() {
         const matchesType = !typeFilterValue || (itemType && itemType.toString() === typeFilterValue);
         const isFavoriteItem = isFavorite(nameCell.textContent);
 
-        if (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && matchesType && (!favoritesFilter || isFavoriteItem)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+        row.style.display = (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && matchesType && (!favoritesFilter || isFavoriteItem)) ? '' : 'none';
     });
 }
 
