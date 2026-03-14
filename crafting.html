@@ -14,15 +14,9 @@
   --text:#f5d97b;
 }
 
-body.theme-default{--accent:#7a1fd1;--accent2:#3e0c66;--text:#f5d97b;}
-body.theme-dark{--accent:#444;--accent2:#222;--text:#e0e0e0;}
-body.theme-light{--accent:#ffd580;--accent2:#ffb347;--text:#222;}
-body.theme-ocean{--accent:#4a90e2;--accent2:#1b3a5a;--text:#d7e6f0;}
-body.theme-forest{--accent:#4a752c;--accent2:#2b441f;--text:#d6f2c2;}
-
 body{
 margin:0;
-font-family:"Segoe UI",Arial,sans-serif;
+font-family:"Segoe UI",Arial;
 color:var(--text);
 background:radial-gradient(circle at 30% 30%, var(--bg1), var(--bg2) 70%);
 }
@@ -43,25 +37,22 @@ z-index:-1;
 }
 
 @keyframes smokeMove{
-0%{transform:translateY(0) translateX(0)}
-50%{transform:translateY(-40px) translateX(20px)}
-100%{transform:translateY(20px) translateX(-30px)}
+0%{transform:translateY(0)}
+50%{transform:translateY(-40px)}
+100%{transform:translateY(20px)}
 }
 
 h1{
 text-align:center;
 margin:30px 0;
-text-shadow:0 0 10px rgba(255,215,0,.4);
 }
 
 .controls{
 width:95%;
 margin:auto;
 background:rgba(20,0,40,.65);
-border:1px solid rgba(255,215,0,.3);
 border-radius:14px;
 padding:14px;
-backdrop-filter:blur(10px);
 text-align:center;
 }
 
@@ -81,10 +72,7 @@ color:var(--text);
 padding:6px 10px;
 border-radius:6px;
 cursor:pointer;
-margin:4px;
 }
-
-button:hover{background:var(--accent);}
 
 table{
 width:95%;
@@ -101,48 +89,40 @@ background:linear-gradient(90deg,var(--accent),var(--accent2));
 }
 
 th,td{
-padding:12px;
-text-align:left;
+padding:10px;
 border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-tbody tr:hover{
-background:rgba(255,215,0,.08);
+.item{
+display:flex;
+align-items:center;
+gap:8px;
 }
 
-.tree{
-white-space:pre;
-font-family:monospace;
-padding:15px;
+.sprite{
+width:32px;
+height:32px;
+image-rendering:pixelated;
+background-repeat:no-repeat;
 }
 </style>
 </head>
 
-<body class="theme-default">
+<body>
 
 <h1>Mirage Online Classic Craft Tree Planner</h1>
 
 <div class="controls">
 
-<label>Theme:</label>
-<select id="themeSelector">
-<option value="theme-default">MoC</option>
-<option value="theme-dark">Dark</option>
-<option value="theme-light">Light</option>
-<option value="theme-ocean">Ocean</option>
-<option value="theme-forest">Forest</option>
-</select>
-
-<br>
-
 <label>Recipe:</label>
 <select id="recipeSelect"></select>
 
 <label>Qty:</label>
-<input type="number" id="recipeQty" value="1" min="1" style="width:80px;">
+<input type="number" id="recipeQty" value="1" min="1">
 
 <button onclick="addRecipe()">Add Recipe</button>
-<button onclick="calculate()">Calculate Materials</button>
+<button onclick="calculate()">Calculate</button>
+<button onclick="shareBuild()">Share Build</button>
 <button onclick="clearPlanner()">Clear</button>
 
 </div>
@@ -166,8 +146,6 @@ padding:15px;
 <tbody id="totalsTable"></tbody>
 </table>
 
-<div class="tree" id="craftTree"></div>
-
 <script>
 
 let itemsData=[]
@@ -184,6 +162,7 @@ itemNames[index]=item.name
 })
 
 populateRecipes()
+loadShared()
 
 }
 
@@ -206,10 +185,43 @@ dropdown.appendChild(opt)
 
 }
 
+function getSprite(id){
+
+const sheet=Math.floor(id/1024)
+const index=id%1024
+
+const x=(index%32)*32
+const y=Math.floor(index/32)*32
+
+const div=document.createElement("div")
+div.className="sprite"
+div.style.backgroundImage=`url(sprites${sheet}.png)`
+div.style.backgroundPosition=`-${x}px -${y}px`
+
+return div
+
+}
+
+function createItemCell(id,text){
+
+const wrapper=document.createElement("div")
+wrapper.className="item"
+
+wrapper.appendChild(getSprite(id))
+
+const span=document.createElement("span")
+span.textContent=text
+
+wrapper.appendChild(span)
+
+return wrapper
+
+}
+
 function addRecipe(){
 
-const id=parseInt(document.getElementById("recipeSelect").value)
-const qty=parseInt(document.getElementById("recipeQty").value)||1
+const id=parseInt(recipeSelect.value)
+const qty=parseInt(recipeQty.value)||1
 
 queuedRecipes.push({id,qty})
 
@@ -227,7 +239,7 @@ queuedRecipes.forEach(r=>{
 const tr=document.createElement("tr")
 const td=document.createElement("td")
 
-td.textContent=itemNames[r.id]+" x"+r.qty
+td.appendChild(createItemCell(r.id, itemNames[r.id]+" x"+r.qty))
 
 tr.appendChild(td)
 tbody.appendChild(tr)
@@ -239,56 +251,31 @@ tbody.appendChild(tr)
 function calculate(){
 
 const totals={}
-let tree=""
 
 queuedRecipes.forEach(r=>{
-
-tree+=itemNames[r.id]+" x"+r.qty+"\\n"
-
-expandRecipe(r.id,r.qty,totals,1)
-
+expandRecipe(r.id,r.qty,totals)
 })
 
 renderTotals(totals)
-renderTree()
 
 }
 
-function expandRecipe(id,qty,totals,depth){
+function expandRecipe(id,qty,totals){
 
 const item=itemsData[id]
 
 if(!item?.data?.recipe_items){
-addMaterial(id,qty,totals)
+totals[id]=(totals[id]||0)+qty
 return
 }
 
 item.data.recipe_items.forEach(req=>{
 
-if(req.item_id===-1||req.amount<=0) return
+if(req.item_id===-1 || req.amount<=0) return
 
-const total=req.amount*qty
-
-const sub=itemsData[req.item_id]
-
-if(sub?.data?.recipe_items){
-
-expandRecipe(req.item_id,total,totals,depth+1)
-
-}else{
-
-addMaterial(req.item_id,total,totals)
-
-}
+expandRecipe(req.item_id,req.amount*qty,totals)
 
 })
-
-}
-
-function addMaterial(id,amount,totals){
-
-if(!totals[id]) totals[id]=0
-totals[id]+=amount
 
 }
 
@@ -302,7 +289,7 @@ Object.entries(totals).forEach(([id,amt])=>{
 const tr=document.createElement("tr")
 
 const td1=document.createElement("td")
-td1.textContent=itemNames[id]
+td1.appendChild(createItemCell(id,itemNames[id]))
 
 const td2=document.createElement("td")
 td2.textContent=amt
@@ -316,61 +303,41 @@ tbody.appendChild(tr)
 
 }
 
-function renderTree(){
+function shareBuild(){
 
-const div=document.getElementById("craftTree")
+const encoded=btoa(JSON.stringify(queuedRecipes))
 
-let text="CRAFT TREE\\n\\n"
+const url=location.origin+location.pathname+"#"+encoded
 
-queuedRecipes.forEach(r=>{
+navigator.clipboard.writeText(url)
 
-text+=itemNames[r.id]+" x"+r.qty+"\\n"
-drawTree(r.id,r.qty,1)
-
-})
-
-div.textContent=text
+alert("Build URL copied to clipboard!")
 
 }
 
-function drawTree(id,qty,depth){
+function loadShared(){
 
-const item=itemsData[id]
+if(location.hash.length>1){
 
-if(!item?.data?.recipe_items) return
+try{
 
-item.data.recipe_items.forEach(req=>{
+queuedRecipes=JSON.parse(atob(location.hash.substring(1)))
 
-if(req.item_id===-1||req.amount<=0) return
+renderQueue()
 
-})
+}catch{}
+
+}
 
 }
 
 function clearPlanner(){
 
 queuedRecipes=[]
-document.getElementById("recipeQueue").innerHTML=""
+renderQueue()
 document.getElementById("totalsTable").innerHTML=""
-document.getElementById("craftTree").textContent=""
 
 }
-
-const themeSelector=document.getElementById("themeSelector")
-
-function applyTheme(theme){
-
-document.body.classList.forEach(c=>{
-if(c.startsWith("theme-")) document.body.classList.remove(c)
-})
-
-document.body.classList.add(theme)
-
-}
-
-themeSelector.addEventListener("change",e=>{
-applyTheme(e.target.value)
-})
 
 loadItems()
 
