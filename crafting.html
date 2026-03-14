@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MoC Crafting Planner</title>
+<title>MoC Craft Tree Planner</title>
 
 <style>
 :root{
@@ -25,10 +25,9 @@ margin:0;
 font-family:"Segoe UI",Arial,sans-serif;
 color:var(--text);
 background:radial-gradient(circle at 30% 30%, var(--bg1), var(--bg2) 70%);
-overflow-x:hidden;
 }
 
-/* smoke background */
+/* smoke */
 body::before{
 content:"";
 position:fixed;
@@ -110,12 +109,18 @@ border-bottom:1px solid rgba(255,255,255,.08);
 tbody tr:hover{
 background:rgba(255,215,0,.08);
 }
+
+.tree{
+white-space:pre;
+font-family:monospace;
+padding:15px;
+}
 </style>
 </head>
 
 <body class="theme-default">
 
-<h1>Mirage Online Classic Crafting Planner</h1>
+<h1>Mirage Online Classic Craft Tree Planner</h1>
 
 <div class="controls">
 
@@ -130,39 +135,52 @@ background:rgba(255,215,0,.08);
 
 <br>
 
-<label>Select Recipe:</label>
+<label>Recipe:</label>
 <select id="recipeSelect"></select>
 
-<label>Craft Quantity:</label>
-<input type="number" id="craftQty" value="1" min="1" style="width:80px;">
+<label>Qty:</label>
+<input type="number" id="recipeQty" value="1" min="1" style="width:80px;">
 
-<button onclick="calculateMaterials()">Calculate</button>
-<button onclick="clearTable()">Clear</button>
+<button onclick="addRecipe()">Add Recipe</button>
+<button onclick="calculate()">Calculate Materials</button>
+<button onclick="clearPlanner()">Clear</button>
 
 </div>
 
-<table id="materialsTable">
+<table>
+<thead>
+<tr>
+<th>Queued Recipes</th>
+</tr>
+</thead>
+<tbody id="recipeQueue"></tbody>
+</table>
+
+<table>
 <thead>
 <tr>
 <th>Material</th>
-<th>Total Required</th>
+<th>Total Needed</th>
 </tr>
 </thead>
-<tbody></tbody>
+<tbody id="totalsTable"></tbody>
 </table>
+
+<div class="tree" id="craftTree"></div>
 
 <script>
 
-let itemsData = []
-let itemNames = {}
+let itemsData=[]
+let itemNames={}
+let queuedRecipes=[]
 
 async function loadItems(){
 
-const response = await fetch("last.json")
-itemsData = await response.json()
+const res=await fetch("last.json")
+itemsData=await res.json()
 
 itemsData.forEach((item,index)=>{
-itemNames[index] = item.name
+itemNames[index]=item.name
 })
 
 populateRecipes()
@@ -171,17 +189,16 @@ populateRecipes()
 
 function populateRecipes(){
 
-const dropdown = document.getElementById("recipeSelect")
-dropdown.innerHTML=""
+const dropdown=document.getElementById("recipeSelect")
 
 itemsData.forEach((item,index)=>{
 
 if(item.name && item.name.toLowerCase().includes("recipe")){
 
-const option=document.createElement("option")
-option.value=index
-option.textContent=item.name
-dropdown.appendChild(option)
+const opt=document.createElement("option")
+opt.value=index
+opt.textContent=item.name
+dropdown.appendChild(opt)
 
 }
 
@@ -189,53 +206,162 @@ dropdown.appendChild(option)
 
 }
 
-function calculateMaterials(){
+function addRecipe(){
 
-const recipeID=document.getElementById("recipeSelect").value
-const qty=parseInt(document.getElementById("craftQty").value) || 1
+const id=parseInt(document.getElementById("recipeSelect").value)
+const qty=parseInt(document.getElementById("recipeQty").value)||1
 
-const recipe=itemsData[recipeID]
+queuedRecipes.push({id,qty})
 
-const table=document.querySelector("#materialsTable tbody")
-table.innerHTML=""
+renderQueue()
 
-if(!recipe.data?.recipe_items) return
+}
 
-recipe.data.recipe_items.forEach(req=>{
+function renderQueue(){
 
-if(req.item_id===-1 || req.amount<=0) return
+const tbody=document.getElementById("recipeQueue")
+tbody.innerHTML=""
+
+queuedRecipes.forEach(r=>{
+
+const tr=document.createElement("tr")
+const td=document.createElement("td")
+
+td.textContent=itemNames[r.id]+" x"+r.qty
+
+tr.appendChild(td)
+tbody.appendChild(tr)
+
+})
+
+}
+
+function calculate(){
+
+const totals={}
+let tree=""
+
+queuedRecipes.forEach(r=>{
+
+tree+=itemNames[r.id]+" x"+r.qty+"\\n"
+
+expandRecipe(r.id,r.qty,totals,1)
+
+})
+
+renderTotals(totals)
+renderTree()
+
+}
+
+function expandRecipe(id,qty,totals,depth){
+
+const item=itemsData[id]
+
+if(!item?.data?.recipe_items){
+addMaterial(id,qty,totals)
+return
+}
+
+item.data.recipe_items.forEach(req=>{
+
+if(req.item_id===-1||req.amount<=0) return
+
+const total=req.amount*qty
+
+const sub=itemsData[req.item_id]
+
+if(sub?.data?.recipe_items){
+
+expandRecipe(req.item_id,total,totals,depth+1)
+
+}else{
+
+addMaterial(req.item_id,total,totals)
+
+}
+
+})
+
+}
+
+function addMaterial(id,amount,totals){
+
+if(!totals[id]) totals[id]=0
+totals[id]+=amount
+
+}
+
+function renderTotals(totals){
+
+const tbody=document.getElementById("totalsTable")
+tbody.innerHTML=""
+
+Object.entries(totals).forEach(([id,amt])=>{
 
 const tr=document.createElement("tr")
 
-const name=itemNames[req.item_id] || ("Item ID "+req.item_id)
-
 const td1=document.createElement("td")
-td1.textContent=name
+td1.textContent=itemNames[id]
 
 const td2=document.createElement("td")
-td2.textContent=req.amount * qty
+td2.textContent=amt
 
 tr.appendChild(td1)
 tr.appendChild(td2)
 
-table.appendChild(tr)
+tbody.appendChild(tr)
 
 })
 
 }
 
-function clearTable(){
-document.querySelector("#materialsTable tbody").innerHTML=""
+function renderTree(){
+
+const div=document.getElementById("craftTree")
+
+let text="CRAFT TREE\\n\\n"
+
+queuedRecipes.forEach(r=>{
+
+text+=itemNames[r.id]+" x"+r.qty+"\\n"
+drawTree(r.id,r.qty,1)
+
+})
+
+div.textContent=text
+
 }
 
-/* theme switching */
+function drawTree(id,qty,depth){
+
+const item=itemsData[id]
+
+if(!item?.data?.recipe_items) return
+
+item.data.recipe_items.forEach(req=>{
+
+if(req.item_id===-1||req.amount<=0) return
+
+})
+
+}
+
+function clearPlanner(){
+
+queuedRecipes=[]
+document.getElementById("recipeQueue").innerHTML=""
+document.getElementById("totalsTable").innerHTML=""
+document.getElementById("craftTree").textContent=""
+
+}
 
 const themeSelector=document.getElementById("themeSelector")
 
 function applyTheme(theme){
 
-document.body.classList.forEach(cls=>{
-if(cls.startsWith("theme-")) document.body.classList.remove(cls)
+document.body.classList.forEach(c=>{
+if(c.startsWith("theme-")) document.body.classList.remove(c)
 })
 
 document.body.classList.add(theme)
