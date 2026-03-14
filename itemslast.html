@@ -87,14 +87,19 @@ border-radius:14px;
 overflow:hidden;
 }
 
-#itemTable th:nth-child(4),
-#itemTable td:nth-child(4){
-width:42%;
-}
-
 #itemTable th:nth-child(2),
 #itemTable td:nth-child(2){
 width:18%;
+}
+
+#itemTable th:nth-child(3),
+#itemTable td:nth-child(3){
+width:32%;
+}
+
+#itemTable th:nth-child(4),
+#itemTable td:nth-child(4){
+width:30%;
 }
 
 thead{
@@ -372,11 +377,6 @@ async function fetchItemData() {
     }
 }
 
-function isFavorite(name) {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    return favorites.includes(name);
-}
-
 function isFavorite(name){
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
     return favorites.includes(name);
@@ -629,8 +629,8 @@ favoriteCheckbox.checked = isFavorite(item.name);
 
 favoriteCheckbox.addEventListener("change", () => {
     toggleFavorite(item);
+    filterTable(); // refresh favorites filter instantly
 });
-
 favoriteCell.appendChild(favoriteCheckbox);
 row.appendChild(favoriteCell)
 
@@ -794,7 +794,8 @@ function filterTable() {
         const matchesRareFilter = !rareFilter || (nameCell && nameCell.textContent.includes('*')) || (descriptionCell && descriptionCell.textContent.includes('*'));
         const matchesSpellAmp = !spellAmpFilter || (statsCell && statsCell.textContent.toLowerCase().includes(spellAmpFilter));
         const matchesType = !typeFilterValue || (itemType && itemType.toString() === typeFilterValue);
-        const isFavoriteItem = isFavorite(nameCell.textContent);
+        const itemName = nameCell.childNodes[0]?.textContent.trim();
+const isFavoriteItem = isFavorite(itemName);
 
         row.style.display = (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && matchesType && (!favoritesFilter || isFavoriteItem)) ? '' : 'none';
     });
