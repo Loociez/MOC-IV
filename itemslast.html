@@ -153,6 +153,14 @@ padding:8px;
 border-bottom:1px solid #444;
 }
 
+.data{white-space:pre-line;}
+
+/* rarity borders */
+tr.rarity-common{border-left:4px solid #888;}
+tr.rarity-rare{border-left:4px solid #4aa3ff;}
+tr.rarity-epic{border-left:4px solid #b84aff;}
+tr.rarity-legendary{border-left:4px solid #ffb84a;}
+
 .sprite{
 display:inline-block;
 width:32px;
@@ -484,6 +492,14 @@ async function fetchAndDisplayItems() {
         items.forEach(item => {
             const row = document.createElement('tr');
 
+            // rarity detection
+            const nameLower = (item.name||"").toLowerCase();
+            if(nameLower.includes("legendary")) row.classList.add("rarity-legendary");
+            else if(nameLower.includes("epic")) row.classList.add("rarity-epic");
+            else if(nameLower.includes("rare")) row.classList.add("rarity-rare");
+            else row.classList.add("rarity-common");
+
+
             // Store item type directly on row
             row.dataset.itemType = item.type ?? '0';
 
@@ -621,6 +637,14 @@ function displayComparison(selectedItems) {
 
     const row = document.createElement('tr');
 
+            // rarity detection
+            const nameLower = (item.name||"").toLowerCase();
+            if(nameLower.includes("legendary")) row.classList.add("rarity-legendary");
+            else if(nameLower.includes("epic")) row.classList.add("rarity-epic");
+            else if(nameLower.includes("rare")) row.classList.add("rarity-rare");
+            else row.classList.add("rarity-common");
+
+
     const nameCell = document.createElement('td');
     nameCell.textContent = item1.name + " vs " + item2.name;
     row.appendChild(nameCell);
@@ -667,19 +691,36 @@ function displayComparison(selectedItems) {
     document.getElementById('comparisonModal').style.display = 'block';
 }
 
+
 function highlightStats(stats1, stats2, statsCell1, statsCell2) {
-    const stats1Entries = Object.entries(stats1);
-    const stats2Entries = Object.entries(stats2);
-    stats1Entries.forEach(([key, value], index) => {
-        if (!stats2Entries[index]) return;
-        const otherValue = stats2Entries[index][1];
-        if (value > otherValue) {
-            statsCell1.children[index].classList.add('higher');
-            statsCell2.children[index].classList.add('lower');
-        } else if (value < otherValue) {
-            statsCell1.children[index].classList.add('lower');
-            statsCell2.children[index].classList.add('higher');
+    const keys = new Set([...Object.keys(stats1), ...Object.keys(stats2)]);
+    statsCell1.innerHTML="";
+    statsCell2.innerHTML="";
+    keys.forEach(key=>{
+        const v1=stats1[key]??0;
+        const v2=stats2[key]??0;
+        const line1=document.createElement("div");
+        const line2=document.createElement("div");
+
+        if(v1>v2){
+            line1.style.color="#4aff7a";
+            line2.style.color="#ff6b6b";
+            line1.textContent=`${key}: ${v1} (+${v1-v2})`;
+            line2.textContent=`${key}: ${v2}`;
+        }else if(v2>v1){
+            line2.style.color="#4aff7a";
+            line1.style.color="#ff6b6b";
+            line2.textContent=`${key}: ${v2} (+${v2-v1})`;
+            line1.textContent=`${key}: ${v1}`;
+        }else{
+            line1.textContent=`${key}: ${v1}`;
+            line2.textContent=`${key}: ${v2}`;
         }
+
+        statsCell1.appendChild(line1);
+        statsCell2.appendChild(line2);
+    });
+}
     });
 }
 
