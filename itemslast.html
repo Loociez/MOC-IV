@@ -87,6 +87,16 @@ border-radius:14px;
 overflow:hidden;
 }
 
+#itemTable th:nth-child(4),
+#itemTable td:nth-child(4){
+width:42%;
+}
+
+#itemTable th:nth-child(2),
+#itemTable td:nth-child(2){
+width:18%;
+}
+
 thead{
 background:linear-gradient(90deg,var(--accent),var(--accent2));
 }
@@ -153,13 +163,11 @@ padding:8px;
 border-bottom:1px solid #444;
 }
 
-.data{white-space:pre-line;}
+.data{
+white-space:pre;
+font-size:13px;
+}
 
-/* rarity borders */
-tr.rarity-common{border-left:4px solid #888;}
-tr.rarity-rare{border-left:4px solid #4aa3ff;}
-tr.rarity-epic{border-left:4px solid #b84aff;}
-tr.rarity-legendary{border-left:4px solid #ffb84a;}
 
 .sprite{
 display:inline-block;
@@ -369,15 +377,21 @@ function isFavorite(name) {
     return favorites.includes(name);
 }
 
-function toggleFavorite(item) {
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    if (favorites.includes(item.name)) {
-        favorites = favorites.filter(name => name !== item.name);
-    } else {
+function isFavorite(name){
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    return favorites.includes(name);
+}
+
+function toggleFavorite(item){
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if(favorites.includes(item.name)){
+        favorites = favorites.filter(n => n !== item.name);
+    }else{
         favorites.push(item.name);
     }
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    filterTable(); // Reapply filter after favorite toggle
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
 }
 let itemNamesMap = {};
 // Spell Amp shortened display
@@ -462,6 +476,13 @@ function populateSpellAmpDropdown() {
         option.textContent = label;
 
         dropdown.appendChild(option);
+    });
+}
+function clearFavorites(){
+    localStorage.removeItem("favorites");
+    document.querySelectorAll('#itemTable tbody tr').forEach(row=>{
+        const favBox = row.querySelector('td:last-child input');
+        if(favBox) favBox.checked = false;
     });
 }
 async function fetchAndDisplayItems() {
@@ -600,7 +621,18 @@ async function fetchAndDisplayItems() {
             const usesCell = document.createElement('td'); usesCell.textContent = item.uses || 'No uses data'; row.appendChild(usesCell);
             const sellValueCell = document.createElement('td'); sellValueCell.textContent = item.recycle_value || 'No sell value'; row.appendChild(sellValueCell);
             const handednessCell = document.createElement('td'); handednessCell.textContent = item.data && item.data.two_handed ? 'Two Handed' : 'One Handed'; row.appendChild(handednessCell);
-            const favoriteCell = document.createElement('td'); const favoriteCheckbox = document.createElement('input'); favoriteCheckbox.type = 'checkbox'; favoriteCheckbox.checked = isFavorite(item.name); favoriteCheckbox.onclick = () => toggleFavorite(item); favoriteCell.appendChild(favoriteCheckbox); row.appendChild(favoriteCell);
+            const favoriteCell = document.createElement('td');
+
+const favoriteCheckbox = document.createElement('input');
+favoriteCheckbox.type = "checkbox";
+favoriteCheckbox.checked = isFavorite(item.name);
+
+favoriteCheckbox.addEventListener("change", () => {
+    toggleFavorite(item);
+});
+
+favoriteCell.appendChild(favoriteCheckbox);
+row.appendChild(favoriteCell)
 
             tableBody.appendChild(row);
         });
