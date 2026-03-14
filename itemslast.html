@@ -5,146 +5,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Item Table View</title>
   
+
 <style>
-body {
+:root{
+  --bg1:#3a0a5c;
+  --bg2:#140020;
+  --accent:#7a1fd1;
+  --accent2:#3e0c66;
+  --text:#f5d97b;
+}
+
+body.theme-default{--accent:#7a1fd1;--accent2:#3e0c66;--text:#f5d97b;}
+body.theme-dark{--accent:#444;--accent2:#222;--text:#e0e0e0;}
+body.theme-light{--accent:#ffd580;--accent2:#ffb347;--text:#222;}
+body.theme-ocean{--accent:#4a90e2;--accent2:#1b3a5a;--text:#d7e6f0;}
+body.theme-forest{--accent:#4a752c;--accent2:#2b441f;--text:#d6f2c2;}
+
+body{
   margin:0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color:#f5d97b;
-  background: radial-gradient(circle at 30% 30%, #3a0a5c, #140020 70%);
+  font-family:"Segoe UI",Arial,sans-serif;
+  color:var(--text);
+  background:radial-gradient(circle at 30% 30%, var(--bg1), var(--bg2) 70%);
   overflow-x:hidden;
 }
 
-/* animated smoke background */
+/* smoke */
 body::before{
   content:"";
   position:fixed;
   inset:0;
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%),
-    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.04), transparent 45%),
-    radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06), transparent 40%);
-  filter: blur(60px);
-  animation: smokeMove 30s infinite alternate ease-in-out;
+  radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%),
+  radial-gradient(circle at 80% 30%, rgba(255,255,255,0.04), transparent 45%),
+  radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06), transparent 40%);
+  filter:blur(60px);
+  animation:smokeMove 30s infinite alternate ease-in-out;
   pointer-events:none;
   z-index:-1;
 }
 
 @keyframes smokeMove{
-  0%{transform:translateY(0px) translateX(0px) scale(1);}
-  50%{transform:translateY(-40px) translateX(20px) scale(1.1);}
-  100%{transform:translateY(20px) translateX(-30px) scale(1.05);}
+0%{transform:translateY(0) translateX(0)}
+50%{transform:translateY(-40px) translateX(20px)}
+100%{transform:translateY(20px) translateX(-30px)}
 }
 
 h1{
-  text-align:center;
-  font-weight:600;
-  margin:30px 0 10px;
-  letter-spacing:1px;
-  text-shadow:0 0 10px rgba(255,215,0,0.5);
+text-align:center;
+margin:30px 0 10px;
+text-shadow:0 0 10px rgba(255,215,0,.4);
 }
 
-/* polished control panel */
 .controls{
-  width:95%;
-  margin:auto;
-  background:rgba(20,0,40,0.65);
-  border:1px solid rgba(255,215,0,0.3);
-  border-radius:14px;
-  padding:14px;
-  backdrop-filter: blur(10px);
-  box-shadow:0 0 20px rgba(0,0,0,0.6);
+width:95%;
+margin:auto;
+background:rgba(20,0,40,.65);
+border:1px solid rgba(255,215,0,.3);
+border-radius:14px;
+padding:14px;
+backdrop-filter:blur(10px);
 }
 
-/* search input */
 #searchBar{
-  width:100%;
-  margin:10px 0;
-  padding:10px 12px;
-  border-radius:8px;
-  border:1px solid rgba(255,215,0,0.4);
-  background:rgba(0,0,0,0.4);
-  color:#f5d97b;
+width:100%;
+margin:10px 0;
+padding:10px;
+border-radius:8px;
+border:1px solid rgba(255,215,0,.4);
+background:rgba(0,0,0,.4);
+color:var(--text);
 }
 
-/* professional table */
 table{
-  width:95%;
-  margin:25px auto;
-  border-collapse:separate;
-  border-spacing:0;
-  background:rgba(10,0,25,0.7);
-  backdrop-filter: blur(6px);
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 0 25px rgba(0,0,0,0.7);
+width:95%;
+margin:25px auto;
+border-collapse:separate;
+border-spacing:0;
+background:rgba(10,0,25,.7);
+backdrop-filter:blur(6px);
+border-radius:14px;
+overflow:hidden;
 }
 
 thead{
-  background:linear-gradient(90deg,#7a1fd1,#3e0c66);
+background:linear-gradient(90deg,var(--accent),var(--accent2));
 }
 
 th{
-  padding:12px;
-  font-weight:600;
-  text-align:left;
-  border-bottom:1px solid rgba(255,215,0,0.3);
+padding:12px;
+text-align:left;
 }
 
 td{
-  padding:10px;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-}
-
-tbody tr{
-  transition: background 0.2s, transform 0.15s;
-}
-
-tbody tr:nth-child(even){
-  background:rgba(255,255,255,0.02);
+padding:10px;
+border-bottom:1px solid rgba(255,255,255,.08);
 }
 
 tbody tr:hover{
-  background:rgba(255,215,0,0.08);
-  transform:scale(1.01);
-}
-
-.data{
-  font-size:0.9em;
-  color:#ddd;
-  white-space:pre-line;
+background:rgba(255,215,0,.08);
+transform:scale(1.01);
 }
 
 button{
-  background:#3b0c6e;
-  border:1px solid rgba(255,215,0,0.4);
-  color:#f5d97b;
-  padding:6px 10px;
-  border-radius:6px;
-  cursor:pointer;
-  margin:4px;
+background:var(--accent2);
+border:1px solid rgba(255,215,0,.4);
+color:var(--text);
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+margin:4px;
 }
 
-button:hover{
-  background:#5413a5;
-}
+button:hover{background:var(--accent);}
 
 select{
-  background:rgba(0,0,0,0.4);
-  color:#f5d97b;
-  border:1px solid rgba(255,215,0,0.4);
-  border-radius:6px;
-  padding:4px 6px;
+background:rgba(0,0,0,.4);
+color:var(--text);
+border:1px solid rgba(255,215,0,.4);
+border-radius:6px;
+padding:4px 6px;
+}
+
+/* comparison modal fix */
+#comparisonModal{
+position:fixed;
+top:10%;
+left:5%;
+width:90%;
+height:80%;
+background:rgba(0,0,0,.9);
+color:white;
+border:2px solid var(--accent);
+padding:20px;
+overflow:auto;
+z-index:1000;
+border-radius:10px;
+}
+
+#comparisonTable{
+width:100%;
+background:#111;
+border-collapse:collapse;
+}
+
+#comparisonTable th,#comparisonTable td{
+padding:8px;
+border-bottom:1px solid #444;
 }
 
 .sprite{
-  display:inline-block;
-  width:32px;
-  height:32px;
-  background-repeat:no-repeat;
-  image-rendering:pixelated;
-  margin-top:4px;
+display:inline-block;
+width:32px;
+height:32px;
+background-repeat:no-repeat;
+image-rendering:pixelated;
+margin-top:4px;
 }
 </style>
+
 
 </head>
 <body class="theme-default">
@@ -602,7 +620,7 @@ function displayComparison(selectedItems) {
     const excludedFields = ["brightness", "sprite", "sprite_rotation", "saturation", "hue", "alpha", "spin", "damage stat", "sprite rotation"];
 
     const row = document.createElement('tr');
-row.dataset.type = String(item.type ?? '0');
+
     const nameCell = document.createElement('td');
     nameCell.textContent = item1.name + " vs " + item2.name;
     row.appendChild(nameCell);
