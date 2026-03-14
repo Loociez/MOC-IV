@@ -637,14 +637,6 @@ function displayComparison(selectedItems) {
 
     const row = document.createElement('tr');
 
-            // rarity detection
-            const nameLower = (item.name||"").toLowerCase();
-            if(nameLower.includes("legendary")) row.classList.add("rarity-legendary");
-            else if(nameLower.includes("epic")) row.classList.add("rarity-epic");
-            else if(nameLower.includes("rare")) row.classList.add("rarity-rare");
-            else row.classList.add("rarity-common");
-
-
     const nameCell = document.createElement('td');
     nameCell.textContent = item1.name + " vs " + item2.name;
     row.appendChild(nameCell);
@@ -694,27 +686,37 @@ function displayComparison(selectedItems) {
 
 function highlightStats(stats1, stats2, statsCell1, statsCell2) {
     const keys = new Set([...Object.keys(stats1), ...Object.keys(stats2)]);
-    statsCell1.innerHTML="";
-    statsCell2.innerHTML="";
-    keys.forEach(key=>{
-        const v1=stats1[key]??0;
-        const v2=stats2[key]??0;
-        const line1=document.createElement("div");
-        const line2=document.createElement("div");
 
-        if(v1>v2){
-            line1.style.color="#4aff7a";
-            line2.style.color="#ff6b6b";
-            line1.textContent=`${key}: ${v1} (+${v1-v2})`;
-            line2.textContent=`${key}: ${v2}`;
-        }else if(v2>v1){
-            line2.style.color="#4aff7a";
-            line1.style.color="#ff6b6b";
-            line2.textContent=`${key}: ${v2} (+${v2-v1})`;
-            line1.textContent=`${key}: ${v1}`;
-        }else{
-            line1.textContent=`${key}: ${v1}`;
-            line2.textContent=`${key}: ${v2}`;
+    statsCell1.innerHTML = "";
+    statsCell2.innerHTML = "";
+
+    keys.forEach(key => {
+
+        if(key === "recipe_items") return;
+
+        const v1 = stats1[key] ?? 0;
+        const v2 = stats2[key] ?? 0;
+
+        const line1 = document.createElement("div");
+        const line2 = document.createElement("div");
+
+        const label = key.replace(/_/g," ");
+
+        if(v1 > v2){
+            line1.style.color = "#4aff7a";
+            line2.style.color = "#ff6b6b";
+            line1.textContent = `${label}: ${v1} (+${v1-v2})`;
+            line2.textContent = `${label}: ${v2}`;
+        }
+        else if(v2 > v1){
+            line2.style.color = "#4aff7a";
+            line1.style.color = "#ff6b6b";
+            line2.textContent = `${label}: ${v2} (+${v2-v1})`;
+            line1.textContent = `${label}: ${v1}`;
+        }
+        else{
+            line1.textContent = `${label}: ${v1}`;
+            line2.textContent = `${label}: ${v2}`;
         }
 
         statsCell1.appendChild(line1);
