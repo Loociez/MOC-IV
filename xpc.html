@@ -57,10 +57,6 @@ tr:hover{
     background:rgba(255,255,255,0.05);
 }
 
-.sprite{
-    image-rendering:pixelated;
-}
-
 .sort-asc::after{
     content:" ▲";
 }
@@ -107,9 +103,6 @@ Search NPC:
 </div>
 
 <script>
-const SPRITE_SIZE = 32;
-const SPRITES_PER_SHEET = 1024;
-const spritesPerRow = 32;
 const npcBuffMultiplier = 1.1; // 10% NPC XP bonus
 const levelPenalty = 0.018;
 
@@ -117,23 +110,6 @@ let npcData = [];
 let itemData = [];
 let filteredData = [];
 let currentSort = {key:null,asc:true};
-
-// Get sprite HTML
-function getSpriteHTML(npc){
-    if(typeof npc.sprite!=="number") return "";
-    const sheetIndex = Math.floor(npc.sprite/SPRITES_PER_SHEET);
-    const spriteIndex = npc.sprite%SPRITES_PER_ROW;
-    const x = (npc.sprite%spritesPerRow)*SPRITE_SIZE;
-    const y = Math.floor(npc.sprite/spritesPerRow)*SPRITE_SIZE;
-    const bg = `url('images/npcs${sheetIndex}.png')`;
-    return `<div class="sprite" style="
-        background-image:${bg};
-        background-position:-${x}px -${y}px;
-        width:${SPRITE_SIZE}px;
-        height:${SPRITE_SIZE}px;
-        display:inline-block;
-        margin-right:6px;"></div>`;
-}
 
 // Calc NPC stat using last.json for equipment if flagged
 function calcNPCStat(npc, stat, minmax){
@@ -198,7 +174,7 @@ function renderTable(){
 
         const row = document.createElement("tr");
         row.innerHTML = `
-        <td>${getSpriteHTML(npc)}${npc.name}</td>
+        <td>${npc.name}</td>
         <td>${hp}</td>
         <td>${atk}</td>
         <td>${def}</td>
@@ -270,7 +246,10 @@ document.querySelectorAll("#npcTable th").forEach(th=>{
 });
 
 // Load NPCs and item data
-Promise.all([fetch("npc.json").then(r=>r.json()), fetch("last.json").then(r=>r.json())])
+Promise.all([
+    fetch("npc.json").then(r=>r.json()),
+    fetch("last.json").then(r=>r.json())
+])
 .then(([npcs,items])=>{
     npcData=npcs;
     itemData=items;
