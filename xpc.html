@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mirage Online Classic - NPC XP Table</title>
+<title>Mirage Online Classic – NPC XP Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -24,6 +24,18 @@ h1{
     margin:auto;
 }
 
+.controls{
+    margin-bottom:15px;
+}
+
+input{
+    padding:6px;
+    border-radius:6px;
+    border:1px solid #666;
+    background:#111;
+    color:white;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
@@ -34,28 +46,14 @@ table{
 th,td{
     padding:8px;
     border-bottom:1px solid rgba(255,215,0,.25);
-    text-align:left;
 }
 
 th{
     background:#3e0c66;
-    cursor:pointer;
 }
 
 tr:hover{
     background:rgba(255,255,255,0.05);
-}
-
-.controls{
-    margin-bottom:10px;
-}
-
-input{
-    padding:6px;
-    border-radius:6px;
-    border:1px solid #777;
-    background:#111;
-    color:white;
 }
 
 .sprite{
@@ -67,30 +65,37 @@ input{
 
 <body>
 
-<h1>Mirage Online Classic – NPC Experience Table</h1>
+<h1>Mirage Online Classic – NPC XP Calculator</h1>
 
 <div class="container">
 
 <div class="controls">
+Player Level:
+<input id="playerLevel" type="number" value="83">
+
 Search NPC:
 <input id="searchBox" placeholder="Type NPC name...">
 </div>
 
 <table id="npcTable">
+
 <thead>
 <tr>
-<th>Name</th>
+<th>NPC</th>
 <th>HP</th>
 <th>ATK</th>
 <th>DEF</th>
 <th>RDF</th>
 <th>MDF</th>
-<th>Total Stats</th>
-<th>Estimated XP</th>
+<th>Est NPC Level</th>
+<th>Base XP</th>
+<th>Scaled XP</th>
 <th>XP / HP</th>
 </tr>
 </thead>
+
 <tbody></tbody>
+
 </table>
 
 </div>
@@ -102,8 +107,21 @@ const SPRITE_SIZE = 32;
 const SPRITES_PER_SHEET = 1024;
 const spritesPerRow = 32;
 
-// XP estimation formula
-function calculateXP(npc){
+// xp formula multiplier derived earlier
+const difficultyMultiplier = 0.95;
+
+// level scaling factor derived earlier (~1.8%)
+const levelPenalty = 0.018;
+
+let npcData = [];
+
+// estimate npc level from combat stats
+function estimateNPCLevel(totalStats){
+    return Math.round(totalStats / 10);
+}
+
+// calculate base xp
+function calculateBaseXP(npc){
 
     const hp = npc.vitals?.hp || 0;
     const atk = npc.stats?.atk || 0;
@@ -113,19 +131,27 @@ function calculateXP(npc){
 
     const totalStats = hp + atk + def + rdf + mdf;
 
-    const multiplier = 0.95;
-
-    return Math.round(totalStats * multiplier);
+    return Math.round(totalStats * difficultyMultiplier);
 }
 
-// load npc.json
-fetch("npc.json")
-.then(r=>r.json())
-.then(data=>{
+// apply player scaling
+function calculateScaledXP(baseXP,npcLevel,playerLevel){
 
-    const tableBody = document.querySelector("#npcTable tbody");
+    const levelDiff = playerLevel - npcLevel;
 
-    data.forEach(npc=>{
+    const modifier = Math.max(0.1, 1 - (levelDiff * levelPenalty));
+
+    return Math.round(baseXP * modifier);
+}
+
+function renderTable(){
+
+    const playerLevel = parseInt(document.getElementById("playerLevel").value) || 1;
+
+    const tbody = document.querySelector("#npcTable tbody");
+    tbody.innerHTML = "";
+
+    npcData.forEach(npc=>{
 
         const hp = npc.vitals?.hp || 0;
         const atk = npc.stats?.atk || 0;
@@ -135,14 +161,16 @@ fetch("npc.json")
 
         const totalStats = hp + atk + def + rdf + mdf;
 
-        const xp = calculateXP(npc);
+        const npcLevel = estimateNPCLevel(totalStats);
 
-        const xpPerHp = hp ? (xp/hp).toFixed(2) : 0;
+        const baseXP = calculateBaseXP(npc);
 
-        const row = document.createElement("tr");
+        const scaledXP = calculateScaledXP(baseXP,npcLevel,playerLevel);
 
-        // sprite rendering
+        const xpPerHp = hp ? (scaledXP/hp).toFixed(2) : 0;
+
         let spriteHTML = "";
+
         if(typeof npc.sprite === "number"){
 
             const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
@@ -153,34 +181,51 @@ fetch("npc.json")
 
             const bg = `url('images/npcs${sheetIndex}.png')`;
 
-            spriteHTML =
-            `<div class="sprite" style="
+            spriteHTML = `
+            <div class="sprite" style="
                 background-image:${bg};
                 background-position:-${x}px -${y}px;
                 width:${SPRITE_SIZE}px;
                 height:${SPRITE_SIZE}px;
                 display:inline-block;
-                margin-right:6px;
-            "></div>`;
+                margin-right:6px;">
+            </div>`;
         }
 
+        const row = document.createElement("tr");
+
         row.innerHTML = `
-            <td>${spriteHTML}${npc.name}</td>
-            <td>${hp}</td>
-            <td>${atk}</td>
-            <td>${def}</td>
-            <td>${rdf}</td>
-            <td>${mdf}</td>
-            <td>${totalStats}</td>
-            <td>${xp}</td>
-            <td>${xpPerHp}</td>
+        <td>${spriteHTML}${npc.name}</td>
+        <td>${hp}</td>
+        <td>${atk}</td>
+        <td>${def}</td>
+        <td>${rdf}</td>
+        <td>${mdf}</td>
+        <td>${npcLevel}</td>
+        <td>${baseXP}</td>
+        <td>${scaledXP}</td>
+        <td>${xpPerHp}</td>
         `;
 
-        tableBody.appendChild(row);
+        tbody.appendChild(row);
 
     });
 
+}
+
+// load npc.json
+fetch("npc.json")
+.then(r=>r.json())
+.then(data=>{
+
+    npcData = data;
+
+    renderTable();
+
 });
+
+// update when player level changes
+document.getElementById("playerLevel").addEventListener("input",renderTable);
 
 // search filter
 document.getElementById("searchBox").addEventListener("keyup",function(){
