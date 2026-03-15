@@ -112,25 +112,31 @@ const SPRITE_SIZE = 32;
 const SPRITES_PER_SHEET = 1024;
 const spritesPerRow = 32;
 
-const difficultyMultiplier = 0.95;
+const difficultyMultiplier = 1; // base multiplier is now actual sum
 const levelPenalty = 0.018;
 
 let npcData = [];
 let filteredData = [];
 let currentSort = {key:null,asc:true};
 
-function estimateNPCLevel(totalStats){
-    return Math.round(totalStats / 10);
+// Max of attacks and defenses as in calcNPCExperience
+function calculateBaseXP(npc){
+    const maxDamage = Math.max(
+        npc.stats?.atk||1,
+        npc.stats?.rat||1,
+        npc.stats?.mat||1
+    );
+    const maxProtection = Math.max(
+        npc.stats?.def||1,
+        npc.stats?.rdf||1,
+        npc.stats?.mdf||1
+    );
+    const hp = Math.max(1,npc.vitals?.hp||1);
+    return Math.floor(maxDamage + maxProtection + hp);
 }
 
-function calculateBaseXP(npc){
-    const hp = npc.vitals?.hp || 0;
-    const atk = npc.stats?.atk || 0;
-    const def = npc.stats?.def || 0;
-    const rdf = npc.stats?.rdf || 0;
-    const mdf = npc.stats?.mdf || 0;
-    const totalStats = hp + atk + def + rdf + mdf;
-    return Math.round(totalStats * difficultyMultiplier);
+function estimateNPCLevel(totalStats){
+    return Math.round(totalStats / 10);
 }
 
 function calculateScaledXP(baseXP,npcLevel,playerLevel){
@@ -167,8 +173,7 @@ function renderTable(){
         const def = npc.stats?.def||0;
         const rdf = npc.stats?.rdf||0;
         const mdf = npc.stats?.mdf||0;
-        const totalStats = hp+atk+def+rdf+mdf;
-        const npcLevel = estimateNPCLevel(totalStats);
+        const npcLevel = estimateNPCLevel(hp+atk+def+rdf+mdf);
         const baseXP = calculateBaseXP(npc);
         const scaledXP = calculateScaledXP(baseXP,npcLevel,playerLevel);
         const xpPerHp = hp ? (scaledXP/hp).toFixed(2) : 0;
@@ -199,7 +204,7 @@ function filterData(){
         filteredData = npcData.filter(npc=>npc.name.toLowerCase().includes(term));
         applySort();
         renderTable();
-    }, 200); // 200ms debounce
+    }, 200);
 }
 
 // sort function
@@ -215,8 +220,8 @@ function applySort(key){
     if(currentSort.key){
         filteredData.sort((a,b)=>{
             const playerLevel = parseInt(document.getElementById("playerLevel").value)||1;
-            const npcLevelA = estimateNPCLevel(a.vitals.hp + (a.stats.atk||0)+(a.stats.def||0)+(a.stats.rdf||0)+(a.stats.mdf||0));
-            const npcLevelB = estimateNPCLevel(b.vitals.hp + (b.stats.atk||0)+(b.stats.def||0)+(b.stats.rdf||0)+(b.stats.mdf||0));
+            const npcLevelA = estimateNPCLevel((a.vitals.hp||0) + (a.stats.atk||0)+(a.stats.def||0)+(a.stats.rdf||0)+(a.stats.mdf||0));
+            const npcLevelB = estimateNPCLevel((b.vitals.hp||0) + (b.stats.atk||0)+(b.stats.def||0)+(b.stats.rdf||0)+(b.stats.mdf||0));
             const baseA = calculateBaseXP(a);
             const baseB = calculateBaseXP(b);
             const scaledA = calculateScaledXP(baseA,npcLevelA,playerLevel);
