@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
 body{
     margin:0;
     font-family:Arial, sans-serif;
@@ -46,10 +45,12 @@ table{
 th,td{
     padding:8px;
     border-bottom:1px solid rgba(255,215,0,.25);
+    cursor:pointer;
 }
 
 th{
     background:#3e0c66;
+    user-select:none;
 }
 
 tr:hover{
@@ -60,6 +61,12 @@ tr:hover{
     image-rendering:pixelated;
 }
 
+.sort-asc::after{
+    content:" ▲";
+}
+.sort-desc::after{
+    content:" ▼";
+}
 </style>
 </head>
 
@@ -71,7 +78,7 @@ tr:hover{
 
 <div class="controls">
 Player Level:
-<input id="playerLevel" type="number" value="83">
+<input id="playerLevel" type="number" value="83" min="1">
 
 Search NPC:
 <input id="searchBox" placeholder="Type NPC name...">
@@ -81,16 +88,16 @@ Search NPC:
 
 <thead>
 <tr>
-<th>NPC</th>
-<th>HP</th>
-<th>ATK</th>
-<th>DEF</th>
-<th>RDF</th>
-<th>MDF</th>
-<th>Est NPC Level</th>
-<th>Base XP</th>
-<th>Scaled XP</th>
-<th>XP / HP</th>
+<th data-key="name">NPC</th>
+<th data-key="hp">HP</th>
+<th data-key="atk">ATK</th>
+<th data-key="def">DEF</th>
+<th data-key="rdf">RDF</th>
+<th data-key="mdf">MDF</th>
+<th data-key="npcLevel">Est NPC Level</th>
+<th data-key="baseXP">Base XP</th>
+<th data-key="scaledXP">Scaled XP</th>
+<th data-key="xpPerHp">XP / HP</th>
 </tr>
 </thead>
 
@@ -101,101 +108,74 @@ Search NPC:
 </div>
 
 <script>
-
-// sprite constants
 const SPRITE_SIZE = 32;
 const SPRITES_PER_SHEET = 1024;
 const spritesPerRow = 32;
 
-// xp formula multiplier derived earlier
 const difficultyMultiplier = 0.95;
-
-// level scaling factor derived earlier (~1.8%)
 const levelPenalty = 0.018;
 
 let npcData = [];
+let filteredData = [];
+let currentSort = {key:null,asc:true};
 
-// estimate npc level from combat stats
 function estimateNPCLevel(totalStats){
     return Math.round(totalStats / 10);
 }
 
-// calculate base xp
 function calculateBaseXP(npc){
-
     const hp = npc.vitals?.hp || 0;
     const atk = npc.stats?.atk || 0;
     const def = npc.stats?.def || 0;
     const rdf = npc.stats?.rdf || 0;
     const mdf = npc.stats?.mdf || 0;
-
     const totalStats = hp + atk + def + rdf + mdf;
-
     return Math.round(totalStats * difficultyMultiplier);
 }
 
-// apply player scaling
 function calculateScaledXP(baseXP,npcLevel,playerLevel){
-
     const levelDiff = playerLevel - npcLevel;
-
     const modifier = Math.max(0.1, 1 - (levelDiff * levelPenalty));
-
     return Math.round(baseXP * modifier);
 }
 
+function getSpriteHTML(npc){
+    if(typeof npc.sprite !== "number") return "";
+    const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
+    const spriteIndex = npc.sprite % SPRITES_PER_SHEET;
+    const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+    const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+    const bg = `url('images/npcs${sheetIndex}.png')`;
+    return `<div class="sprite" style="
+        background-image:${bg};
+        background-position:-${x}px -${y}px;
+        width:${SPRITE_SIZE}px;
+        height:${SPRITE_SIZE}px;
+        display:inline-block;
+        margin-right:6px;"></div>`;
+}
+
+// render table based on filteredData
 function renderTable(){
-
-    const playerLevel = parseInt(document.getElementById("playerLevel").value) || 1;
-
+    const playerLevel = parseInt(document.getElementById("playerLevel").value)||1;
     const tbody = document.querySelector("#npcTable tbody");
     tbody.innerHTML = "";
 
-    npcData.forEach(npc=>{
-
-        const hp = npc.vitals?.hp || 0;
-        const atk = npc.stats?.atk || 0;
-        const def = npc.stats?.def || 0;
-        const rdf = npc.stats?.rdf || 0;
-        const mdf = npc.stats?.mdf || 0;
-
-        const totalStats = hp + atk + def + rdf + mdf;
-
+    filteredData.forEach(npc=>{
+        const hp = npc.vitals?.hp||0;
+        const atk = npc.stats?.atk||0;
+        const def = npc.stats?.def||0;
+        const rdf = npc.stats?.rdf||0;
+        const mdf = npc.stats?.mdf||0;
+        const totalStats = hp+atk+def+rdf+mdf;
         const npcLevel = estimateNPCLevel(totalStats);
-
         const baseXP = calculateBaseXP(npc);
-
         const scaledXP = calculateScaledXP(baseXP,npcLevel,playerLevel);
-
         const xpPerHp = hp ? (scaledXP/hp).toFixed(2) : 0;
 
-        let spriteHTML = "";
-
-        if(typeof npc.sprite === "number"){
-
-            const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
-            const spriteIndex = npc.sprite % SPRITES_PER_SHEET;
-
-            const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
-            const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
-
-            const bg = `url('images/npcs${sheetIndex}.png')`;
-
-            spriteHTML = `
-            <div class="sprite" style="
-                background-image:${bg};
-                background-position:-${x}px -${y}px;
-                width:${SPRITE_SIZE}px;
-                height:${SPRITE_SIZE}px;
-                display:inline-block;
-                margin-right:6px;">
-            </div>`;
-        }
-
         const row = document.createElement("tr");
-
         row.innerHTML = `
-        <td>${spriteHTML}${npc.name}</td>
+        <td>${getSpriteHTML(npc)}${npc.name}</td>
         <td>${hp}</td>
         <td>${atk}</td>
         <td>${def}</td>
@@ -206,40 +186,84 @@ function renderTable(){
         <td>${scaledXP}</td>
         <td>${xpPerHp}</td>
         `;
-
         tbody.appendChild(row);
-
     });
-
 }
 
-// load npc.json
+// debounced search
+let searchTimeout;
+function filterData(){
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(()=>{
+        const term = document.getElementById("searchBox").value.toLowerCase();
+        filteredData = npcData.filter(npc=>npc.name.toLowerCase().includes(term));
+        applySort();
+        renderTable();
+    }, 200); // 200ms debounce
+}
+
+// sort function
+function applySort(key){
+    if(key){
+        if(currentSort.key===key){
+            currentSort.asc = !currentSort.asc;
+        }else{
+            currentSort.key = key;
+            currentSort.asc = true;
+        }
+    }
+    if(currentSort.key){
+        filteredData.sort((a,b)=>{
+            const playerLevel = parseInt(document.getElementById("playerLevel").value)||1;
+            const npcLevelA = estimateNPCLevel(a.vitals.hp + (a.stats.atk||0)+(a.stats.def||0)+(a.stats.rdf||0)+(a.stats.mdf||0));
+            const npcLevelB = estimateNPCLevel(b.vitals.hp + (b.stats.atk||0)+(b.stats.def||0)+(b.stats.rdf||0)+(b.stats.mdf||0));
+            const baseA = calculateBaseXP(a);
+            const baseB = calculateBaseXP(b);
+            const scaledA = calculateScaledXP(baseA,npcLevelA,playerLevel);
+            const scaledB = calculateScaledXP(baseB,npcLevelB,playerLevel);
+
+            let valA,valB;
+            switch(currentSort.key){
+                case "name": valA=a.name.toLowerCase(); valB=b.name.toLowerCase(); break;
+                case "hp": valA=a.vitals.hp; valB=b.vitals.hp; break;
+                case "atk": valA=a.stats.atk||0; valB=b.stats.atk||0; break;
+                case "def": valA=a.stats.def||0; valB=b.stats.def||0; break;
+                case "rdf": valA=a.stats.rdf||0; valB=b.stats.rdf||0; break;
+                case "mdf": valA=a.stats.mdf||0; valB=b.stats.mdf||0; break;
+                case "npcLevel": valA=npcLevelA; valB=npcLevelB; break;
+                case "baseXP": valA=baseA; valB=baseB; break;
+                case "scaledXP": valA=scaledA; valB=scaledB; break;
+                case "xpPerHp": valA=scaledA/(a.vitals.hp||1); valB=scaledB/(b.vitals.hp||1); break;
+                default: valA=0; valB=0;
+            }
+            if(valA<valB) return currentSort.asc? -1:1;
+            if(valA>valB) return currentSort.asc? 1:-1;
+            return 0;
+        });
+    }
+}
+
+document.getElementById("playerLevel").addEventListener("input",renderTable);
+document.getElementById("searchBox").addEventListener("input",filterData);
+
+document.querySelectorAll("#npcTable th").forEach(th=>{
+    th.addEventListener("click",()=>{
+        const key = th.dataset.key;
+        applySort(key);
+        renderTable();
+        document.querySelectorAll("#npcTable th").forEach(h=>h.classList.remove("sort-asc","sort-desc"));
+        th.classList.add(currentSort.asc?"sort-asc":"sort-desc");
+    });
+});
+
+// fetch npc.json
 fetch("npc.json")
 .then(r=>r.json())
 .then(data=>{
-
     npcData = data;
-
+    filteredData = [...npcData];
     renderTable();
-
 });
-
-// update when player level changes
-document.getElementById("playerLevel").addEventListener("input",renderTable);
-
-// search filter
-document.getElementById("searchBox").addEventListener("keyup",function(){
-
-    const val = this.value.toLowerCase();
-    const rows = document.querySelectorAll("#npcTable tbody tr");
-
-    rows.forEach(row=>{
-        row.style.display =
-        row.innerText.toLowerCase().includes(val) ? "" : "none";
-    });
-
-});
-
 </script>
 
 </body>
