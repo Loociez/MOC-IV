@@ -191,6 +191,8 @@ function populateRecipes(){
 
 const dropdown=document.getElementById("recipeSelect")
 
+/* Normal game recipes */
+
 itemsData.forEach((item,index)=>{
 
 if(item.name && item.name.toLowerCase().includes("recipe")){
@@ -204,7 +206,25 @@ dropdown.appendChild(opt)
 
 })
 
+/* Custom material recipes */
+
+Object.keys(materialRecipes).forEach(name=>{
+
+const id=nameToId[name]
+
+if(id !== undefined){
+
+const opt=document.createElement("option")
+opt.value=id
+opt.textContent=name + " [Material]"
+dropdown.appendChild(opt)
+
 }
+
+})
+
+}
+
 
 function getSpriteElement(id){
 
