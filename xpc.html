@@ -94,7 +94,6 @@ Search NPC:
 <th data-key="def">DEF</th>
 <th data-key="rdf">RDF</th>
 <th data-key="mdf">MDF</th>
-<th data-key="npcLevel">Est NPC Level</th>
 <th data-key="baseXP">Base XP</th>
 <th data-key="scaledXP">Scaled XP</th>
 <th data-key="xpPerHp">XP / HP</th>
@@ -111,46 +110,73 @@ Search NPC:
 const SPRITE_SIZE = 32;
 const SPRITES_PER_SHEET = 1024;
 const spritesPerRow = 32;
-
-const difficultyMultiplier = 1; // base multiplier is now actual sum
 const levelPenalty = 0.018;
+const npcBuffMultiplier = 1.1; // 10% bonus as in your server
 
 let npcData = [];
 let filteredData = [];
 let currentSort = {key:null,asc:true};
 
-// Max of attacks and defenses as in calcNPCExperience
+/* --------- STAT CALCULATION FUNCTION --------- */
+function calcNPCStat(npc, stat, minmax){
+    let min=0,max=0;
+    switch(stat){
+        case "atk": min=max=npc.stats.atk||0; break;
+        case "def": min=max=npc.stats.def||0; break;
+        case "rat": min=max=npc.stats.rat||0; break;
+        case "rdf": min=max=npc.stats.rdf||0; break;
+        case "mat": min=max=npc.stats.mat||0; break;
+        case "mdf": min=max=npc.stats.mdf||0; break;
+    }
+    if(npc.equip_drops){
+        if(npc.drop_items){
+            npc.drop_items.forEach(drop=>{
+                if(drop.item_data){
+                    if(minmax===undefined || minmax){
+                        min += drop.item_data[`min_${stat}`]||0;
+                    }
+                    if(minmax===undefined || !minmax){
+                        max += drop.item_data[`max_${stat}`]||0;
+                    }
+                }
+            });
+        }
+    }
+    if(minmax===undefined){
+        return Math.floor(min); // for simplicity, we can use min
+    }
+    return minmax? Math.floor(min):Math.floor(max);
+}
+
+/* --------- XP CALCULATION --------- */
 function calculateBaseXP(npc){
-    const maxDamage = Math.max(
-        npc.stats?.atk||1,
-        npc.stats?.rat||1,
-        npc.stats?.mat||1
+    const maxDmg = Math.max(
+        calcNPCStat(npc,"atk",false),
+        calcNPCStat(npc,"rat",false),
+        calcNPCStat(npc,"mat",false)
     );
-    const maxProtection = Math.max(
-        npc.stats?.def||1,
-        npc.stats?.rdf||1,
-        npc.stats?.mdf||1
+    const maxDef = Math.max(
+        calcNPCStat(npc,"def",false),
+        calcNPCStat(npc,"rdf",false),
+        calcNPCStat(npc,"mdf",false)
     );
-    const hp = Math.max(1,npc.vitals?.hp||1);
-    return Math.floor(maxDamage + maxProtection + hp);
+    const hp = Math.max(1,npc.vitals.hp||1);
+    return Math.floor((maxDmg+maxDef+hp)*npcBuffMultiplier);
 }
 
-function estimateNPCLevel(totalStats){
-    return Math.round(totalStats / 10);
+function calculateScaledXP(baseXP,playerLevel){
+    // simple scaling: penalize for lower level vs higher level
+    const modifier = Math.max(0.1, 1 - ((playerLevel-83)*levelPenalty)); // level 83 as reference
+    return Math.round(baseXP*modifier);
 }
 
-function calculateScaledXP(baseXP,npcLevel,playerLevel){
-    const levelDiff = playerLevel - npcLevel;
-    const modifier = Math.max(0.1, 1 - (levelDiff * levelPenalty));
-    return Math.round(baseXP * modifier);
-}
-
+/* --------- SPRITE RENDERING --------- */
 function getSpriteHTML(npc){
-    if(typeof npc.sprite !== "number") return "";
-    const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
-    const spriteIndex = npc.sprite % SPRITES_PER_SHEET;
-    const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
-    const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+    if(typeof npc.sprite!=="number") return "";
+    const sheetIndex = Math.floor(npc.sprite/SPRITES_PER_SHEET);
+    const spriteIndex = npc.sprite%SPRITES_PER_SHEET;
+    const x = (spriteIndex%spritesPerRow)*SPRITE_SIZE;
+    const y = Math.floor(spriteIndex/spritesPerRow)*SPRITE_SIZE;
     const bg = `url('images/npcs${sheetIndex}.png')`;
     return `<div class="sprite" style="
         background-image:${bg};
@@ -161,22 +187,21 @@ function getSpriteHTML(npc){
         margin-right:6px;"></div>`;
 }
 
-// render table based on filteredData
+/* --------- RENDER TABLE --------- */
 function renderTable(){
-    const playerLevel = parseInt(document.getElementById("playerLevel").value)||1;
+    const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
     const tbody = document.querySelector("#npcTable tbody");
     tbody.innerHTML = "";
 
     filteredData.forEach(npc=>{
         const hp = npc.vitals?.hp||0;
-        const atk = npc.stats?.atk||0;
-        const def = npc.stats?.def||0;
-        const rdf = npc.stats?.rdf||0;
-        const mdf = npc.stats?.mdf||0;
-        const npcLevel = estimateNPCLevel(hp+atk+def+rdf+mdf);
+        const atk = calcNPCStat(npc,"atk",false);
+        const def = calcNPCStat(npc,"def",false);
+        const rdf = calcNPCStat(npc,"rdf",false);
+        const mdf = calcNPCStat(npc,"mdf",false);
         const baseXP = calculateBaseXP(npc);
-        const scaledXP = calculateScaledXP(baseXP,npcLevel,playerLevel);
-        const xpPerHp = hp ? (scaledXP/hp).toFixed(2) : 0;
+        const scaledXP = calculateScaledXP(baseXP,playerLevel);
+        const xpPerHp = hp ? (scaledXP/hp).toFixed(2):0;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -186,7 +211,6 @@ function renderTable(){
         <td>${def}</td>
         <td>${rdf}</td>
         <td>${mdf}</td>
-        <td>${npcLevel}</td>
         <td>${baseXP}</td>
         <td>${scaledXP}</td>
         <td>${xpPerHp}</td>
@@ -195,59 +219,49 @@ function renderTable(){
     });
 }
 
-// debounced search
+/* --------- SEARCH WITH DEBOUNCE --------- */
 let searchTimeout;
 function filterData(){
     clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(()=>{
+    searchTimeout=setTimeout(()=>{
         const term = document.getElementById("searchBox").value.toLowerCase();
         filteredData = npcData.filter(npc=>npc.name.toLowerCase().includes(term));
         applySort();
         renderTable();
-    }, 200);
+    },200);
 }
 
-// sort function
+/* --------- SORTING --------- */
 function applySort(key){
     if(key){
-        if(currentSort.key===key){
-            currentSort.asc = !currentSort.asc;
-        }else{
-            currentSort.key = key;
-            currentSort.asc = true;
-        }
+        if(currentSort.key===key) currentSort.asc=!currentSort.asc;
+        else {currentSort.key=key; currentSort.asc=true;}
     }
     if(currentSort.key){
         filteredData.sort((a,b)=>{
-            const playerLevel = parseInt(document.getElementById("playerLevel").value)||1;
-            const npcLevelA = estimateNPCLevel((a.vitals.hp||0) + (a.stats.atk||0)+(a.stats.def||0)+(a.stats.rdf||0)+(a.stats.mdf||0));
-            const npcLevelB = estimateNPCLevel((b.vitals.hp||0) + (b.stats.atk||0)+(b.stats.def||0)+(b.stats.rdf||0)+(b.stats.mdf||0));
-            const baseA = calculateBaseXP(a);
-            const baseB = calculateBaseXP(b);
-            const scaledA = calculateScaledXP(baseA,npcLevelA,playerLevel);
-            const scaledB = calculateScaledXP(baseB,npcLevelB,playerLevel);
-
-            let valA,valB;
-            switch(currentSort.key){
-                case "name": valA=a.name.toLowerCase(); valB=b.name.toLowerCase(); break;
-                case "hp": valA=a.vitals.hp; valB=b.vitals.hp; break;
-                case "atk": valA=a.stats.atk||0; valB=b.stats.atk||0; break;
-                case "def": valA=a.stats.def||0; valB=b.stats.def||0; break;
-                case "rdf": valA=a.stats.rdf||0; valB=b.stats.rdf||0; break;
-                case "mdf": valA=a.stats.mdf||0; valB=b.stats.mdf||0; break;
-                case "npcLevel": valA=npcLevelA; valB=npcLevelB; break;
-                case "baseXP": valA=baseA; valB=baseB; break;
-                case "scaledXP": valA=scaledA; valB=scaledB; break;
-                case "xpPerHp": valA=scaledA/(a.vitals.hp||1); valB=scaledB/(b.vitals.hp||1); break;
-                default: valA=0; valB=0;
-            }
-            if(valA<valB) return currentSort.asc? -1:1;
-            if(valA>valB) return currentSort.asc? 1:-1;
-            return 0;
+            const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
+            const valA = currentSort.key==="name"?a.name.toLowerCase():getSortValue(a,currentSort.key,playerLevel);
+            const valB = currentSort.key==="name"?b.name.toLowerCase():getSortValue(b,currentSort.key,playerLevel);
+            return currentSort.asc? (valA>valB?1:valA<valB?-1:0):(valA>valB?-1:valA<valB?1:0);
         });
     }
 }
 
+function getSortValue(npc,key,playerLevel){
+    switch(key){
+        case "hp": return npc.vitals.hp||0;
+        case "atk": return calcNPCStat(npc,"atk",false);
+        case "def": return calcNPCStat(npc,"def",false);
+        case "rdf": return calcNPCStat(npc,"rdf",false);
+        case "mdf": return calcNPCStat(npc,"mdf",false);
+        case "baseXP": return calculateBaseXP(npc);
+        case "scaledXP": return calculateScaledXP(calculateBaseXP(npc),playerLevel);
+        case "xpPerHp": return (calculateScaledXP(calculateBaseXP(npc),playerLevel)/(npc.vitals.hp||1));
+        default: return 0;
+    }
+}
+
+/* --------- EVENTS --------- */
 document.getElementById("playerLevel").addEventListener("input",renderTable);
 document.getElementById("searchBox").addEventListener("input",filterData);
 
@@ -261,12 +275,12 @@ document.querySelectorAll("#npcTable th").forEach(th=>{
     });
 });
 
-// fetch npc.json
+/* --------- LOAD NPC DATA --------- */
 fetch("npc.json")
 .then(r=>r.json())
 .then(data=>{
-    npcData = data;
-    filteredData = [...npcData];
+    npcData=data;
+    filteredData=[...npcData];
     renderTable();
 });
 </script>
