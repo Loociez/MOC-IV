@@ -4,47 +4,128 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mirage Online Classic - Item & NPC Viewer</title>
+
 <style>
-    body {
-        background-image: url("images/serpdrag.png");
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-color: purple;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        color: white;
-    }
-    .container {
-        text-align: center;
-    }
-    .button, .bookmarklet {
-        background-color: #4CAF50;
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 10px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-    .button:hover, .bookmarklet:hover {
-        background-color: #45a049;
-    }
-    .bookmarklet {
-        background-color: #FF9800;
-    }
+:root{
+  --bg1:#3a0a5c;
+  --bg2:#140020;
+  --accent:#7a1fd1;
+  --accent2:#3e0c66;
+  --text:#f5d97b;
+}
+
+body.theme-default{--accent:#7a1fd1;--accent2:#3e0c66;--text:#f5d97b;}
+body.theme-dark{--accent:#444;--accent2:#222;--text:#e0e0e0;}
+body.theme-light{--accent:#ffd580;--accent2:#ffb347;--text:#222;}
+body.theme-ocean{--accent:#4a90e2;--accent2:#1b3a5a;--text:#d7e6f0;}
+body.theme-forest{--accent:#4a752c;--accent2:#2b441f;--text:#d6f2c2;}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  color:var(--text);
+  background:radial-gradient(circle at 30% 30%, var(--bg1), var(--bg2) 70%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* subtle smoke effect */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+  radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%),
+  radial-gradient(circle at 80% 30%, rgba(255,255,255,0.04), transparent 45%),
+  radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06), transparent 40%);
+  filter:blur(60px);
+  animation:smokeMove 30s infinite alternate ease-in-out;
+  pointer-events:none;
+  z-index:-1;
+}
+@keyframes smokeMove{
+0%{transform:translateY(0)}
+50%{transform:translateY(-40px)}
+100%{transform:translateY(20px)}
+}
+
+h1{
+  text-align:center;
+  margin:30px 0;
+  text-shadow:0 0 10px rgba(255,215,0,.4);
+}
+
+.controls, .container{
+  width:95%;
+  margin:20px auto;
+  background:rgba(20,0,40,.7);
+  border:1px solid rgba(255,215,0,.3);
+  border-radius:14px;
+  padding:20px;
+  backdrop-filter:blur(10px);
+  text-align:center;
+}
+
+select,input{
+  background:rgba(0,0,0,.4);
+  color:var(--text);
+  border:1px solid rgba(255,215,0,.4);
+  border-radius:6px;
+  padding:6px;
+  margin:6px;
+}
+
+.button, .bookmarklet{
+  display:inline-block;
+  background:var(--accent2);
+  color:var(--text);
+  border:1px solid rgba(255,215,0,.4);
+  padding:10px 18px;
+  margin:6px;
+  border-radius:8px;
+  cursor:pointer;
+  text-decoration:none;
+  font-weight:bold;
+}
+.button:hover, .bookmarklet:hover{
+  background:var(--accent);
+}
+
+.bookmarklet{background:#FF9800;}
+
+a.mirage-link{
+  background-color:black;
+  color:white;
+  padding:4px 8px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:bold;
+}
+a.mirage-link:hover{background:#222;}
+
+img.banner{
+  width:100%;
+  max-width:1100px;
+  height:auto;
+  display:block;
+  margin:0 auto 20px;
+}
+
+ol{ text-align:left; display:inline-block; margin:10px 0; }
+
+hr{
+  border:none;
+  border-top:1px solid rgba(255,255,255,.3);
+  margin:20px auto;
+  width:50%;
+}
 </style>
 </head>
-<body>
-<center>
-<p>
+<body class="theme-default">
+
+<h1>Mirage Online Classic</h1>
+
+<p style="text-align:center;">
   Check out 
   <a href="https://mirageonlineclassic.com" target="_blank" class="mirage-link">
     Mirage Online Classic
@@ -52,76 +133,63 @@
   – the greatest pixel MMORPG!
 </p>
 
-<style>
-  .mirage-link {
-    background-color: black;     /* solid background */
-    color: white;                /* text color */
-    padding: 4px 8px;            /* space around text */
-    border-radius: 6px;          /* rounded corners */
-    text-decoration: none;       /* remove underline */
-    font-weight: bold;           /* make it pop */
-  }
-  .mirage-link:hover {
-    background-color: #222;      /* subtle hover effect */
-  }
-</style>
-<img src="https://images.cooltext.com/5717547.png" width="1099" height="160" alt="Mirage Online Classic" />
+<img src="https://images.cooltext.com/5717547.png" alt="Mirage Online Classic" class="banner">
+
 <div class="container">
-    <p><strong>How to use the MoC Enhancement:</strong></p>
-    <ol style="text-align:left; display:inline-block;">
-        <li>Open <a href="https://play.consty.com" target="_blank">play.consty.com</a> and log in.</li>
-        <li>Drag the orange button below to your bookmarks bar.</li>
-        <li>After logging in, click the bookmarklet to activate TotalEnhance.</li>
-    </ol>
-	<br></br>
 
-    <a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/TotalEnhance.js';document.body.appendChild(s);})();">
-        TotalEnhance Bookmarklet
-    </a>
- <a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/Hotbar.js';document.body.appendChild(s);})();">
-        TotalHotbar Bookmarklet
-    </a>
-	<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/TotalWiki.js';document.body.appendChild(s);})();">
-        TotalWiki Bookmarklet
-    </a>
-	<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/TotalSkill.js';document.body.appendChild(s);})();">
-        TotalSkills Bookmarklet
-    </a>
-	<br>
-	<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/UImage.js';document.body.appendChild(s);})();">
-    UImage Bookmarklet
-</a>
-<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/2Uimage.js';document.body.appendChild(s);})();">
-    UImage-JRPG Bookmarklet
-</a>
+<p><strong>How to use the MoC Enhancement:</strong></p>
+<ol>
+<li>Open <a href="https://play.consty.com" target="_blank">play.consty.com</a> and log in.</li>
+<li>Drag the orange button below to your bookmarks bar.</li>
+<li>After logging in, click the bookmarklet to activate TotalEnhance.</li>
+</ol>
+
+<div>
+<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/TotalEnhance.js';document.body.appendChild(s);})();">TotalEnhance Bookmarklet</a>
+<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/Hotbar.js';document.body.appendChild(s);})();">TotalHotbar Bookmarklet</a>
+<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/TotalWiki.js';document.body.appendChild(s);})();">TotalWiki Bookmarklet</a>
+<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/TotalSkill.js';document.body.appendChild(s);})();">TotalSkills Bookmarklet</a>
 <br>
-<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/TotalEnhanced.user.js'">
-  Install TotalEnhance (TamperMonkey)
-</button>
-
-<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/TotalHotbar-.user.js'">
-  Install TotalHotbar (Tampermonkey)
-</button>
-
-<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/Uimage.user.js'">
-  Install UImage (Tampermonkey)
-</button>
-
-
-
-    <hr style="width:50%; margin:20px auto; border-color:white;">
-
-    <a href="itemslast.html" class="button">ITEM List / Last Updated - 03/10/26</a>
-    <a href="npclast.html" class="button">NPC List / Last Updated - 03/10/26</a>
-    <a href="leaderboards.html" class="button">MoC Leaderboards</a>
-    <a href="Best.html" class="button">Loocie's Build Helper</a>
-    <a href="Crafting.html" class="button">Crafting Planner</a>
-    <a href="https://loociez.github.io/MOC-IV/MirageEnhanced/" class="button">Basic Enhanced MoC (Web tool version no download)</a>
-    <a href="https://loociez.github.io/PT" class="button">Pixel Toolz</a>
-    <a href="MFighter.html" class="button">Game - Mirage Fighter V: 1.0</a>
-    <a href="https://loociez.github.io/Mogue" class="button">Game - Mogue V: 1.5.5</a>
-   
+<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/UImage.js';document.body.appendChild(s);})();">UImage Bookmarklet</a>
+<a class="bookmarklet" href="javascript:(function(){var s=document.createElement('script');s.src='https://loociez.github.io/MOC-IV/scripts/2Uimage.js';document.body.appendChild(s);})();">UImage-JRPG Bookmarklet</a>
 </div>
-</center>
+
+<div style="margin-top:20px;">
+<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/TotalEnhanced.user.js'">Install TotalEnhance (TamperMonkey)</button>
+<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/TotalHotbar-.user.js'">Install TotalHotbar (Tampermonkey)</button>
+<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/Uimage.user.js'">Install UImage (Tampermonkey)</button>
+</div>
+
+<hr>
+
+<div>
+<a href="itemslast.html" class="button">ITEM List / Last Updated - 03/10/26</a>
+<a href="npclast.html" class="button">NPC List / Last Updated - 03/10/26</a>
+<a href="leaderboards.html" class="button">MoC Leaderboards</a>
+<a href="Best.html" class="button">Loocie's Build Helper</a>
+<a href="Crafting.html" class="button">Crafting Planner</a>
+<a href="https://loociez.github.io/MOC-IV/MirageEnhanced/" class="button">Basic Enhanced MoC (Web tool)</a>
+<a href="https://loociez.github.io/PT" class="button">Pixel Toolz</a>
+<a href="MFighter.html" class="button">Game - Mirage Fighter V: 1.0</a>
+<a href="https://loociez.github.io/Mogue" class="button">Game - Mogue V: 1.5.5</a>
+</div>
+
+<script>
+const themeSelector = document.createElement('select');
+themeSelector.innerHTML = `
+<option value="theme-default">MoC Default</option>
+<option value="theme-dark">Dark</option>
+<option value="theme-light">Light</option>
+<option value="theme-ocean">Ocean</option>
+<option value="theme-forest">Forest</option>
+`;
+themeSelector.style.margin = '10px';
+themeSelector.addEventListener('change', e => {
+  document.body.classList.remove(...document.body.classList);
+  document.body.classList.add(e.target.value);
+});
+document.querySelector('.container').prepend(themeSelector);
+</script>
+
 </body>
 </html>
