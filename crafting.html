@@ -157,6 +157,17 @@ CUSTOM MATERIAL RECIPES
 --------------------------- */
 
 const materialRecipes={
+"Beginner's Axe":{"Wood Billet":1, "Metal Bars":2},
+"Spade":{"Metal Bars":60},
+"Hunter's Knife":{"Metal Bars":2000},
+"Hunter's Machete":{"Metal Bars":5000},
+"Hatchet":{"Wood Billet":2, "Metal Bars":10},
+"Specialized Edge":{"Wood Billet":6, "Metal Bars":40},
+"Double-Bitted Axe":{"Wood Billet":6, "Metal Bars":36},
+"Beginner's Pick":{"Wood Billet":1, "Metal Bars":2},
+"Mattock":{"Wood Billet":2, "Metal Bars":10},
+"Rock Smasher":{"Wood Billet":6, "Metal Bars":40},
+"Miner's Pick":{"Wood Billet":6, "Metal Bars":36},
 "Metal Bar":{"Ore":10},
 "Wood Billet":{"Timber":10},
 "Whittled Round":{"Timber":25},
@@ -192,53 +203,37 @@ function populateRecipes(){
 const dropdown=document.getElementById("recipeSelect")
 
 /* Normal game recipes */
-
 itemsData.forEach((item,index)=>{
-
 if(item.name && item.name.toLowerCase().includes("recipe")){
-
 const opt=document.createElement("option")
 opt.value=index
 opt.textContent=item.name
 dropdown.appendChild(opt)
-
 }
-
 })
 
 /* Custom material recipes */
-
 Object.keys(materialRecipes).forEach(name=>{
-
 const id=nameToId[name]
-
 if(id !== undefined){
-
 const opt=document.createElement("option")
 opt.value=id
-opt.textContent=name + " [Material]"
+opt.textContent=name + " [Crafter]"
 dropdown.appendChild(opt)
-
 }
-
 })
 
 }
 
-
 function getSpriteElement(id){
-
 const item = itemsData[id]
-
 if(typeof item.sprite !== "number") return null
 
 const SPRITE_SIZE = 32
 const SPRITES_PER_SHEET = 1024
 const spritesPerRow = 32
-
 const sheetIndex = Math.floor(item.sprite / SPRITES_PER_SHEET)
 const spriteIndex = item.sprite % SPRITES_PER_SHEET
-
 const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE
 const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE
 
@@ -248,11 +243,9 @@ div.style.backgroundImage = `url('images/items${sheetIndex}.png')`
 div.style.backgroundPosition = `-${x}px -${y}px`
 
 return div
-
 }
 
 function createItemCell(id,text){
-
 const wrapper=document.createElement("div")
 wrapper.className="item"
 
@@ -261,151 +254,100 @@ if(sprite) wrapper.appendChild(sprite)
 
 const span=document.createElement("span")
 span.textContent=text
-
 wrapper.appendChild(span)
 
 return wrapper
-
 }
 
 function addRecipe(){
-
 const id=parseInt(recipeSelect.value)
 const qty=parseInt(recipeQty.value)||1
-
 queuedRecipes.push({id,qty})
-
 renderQueue()
-
 }
 
 function renderQueue(){
-
 const tbody=document.getElementById("recipeQueue")
 tbody.innerHTML=""
-
 queuedRecipes.forEach(r=>{
-
 const tr=document.createElement("tr")
 const td=document.createElement("td")
-
 td.appendChild(createItemCell(r.id,itemNames[r.id]+" x"+r.qty))
-
 tr.appendChild(td)
 tbody.appendChild(tr)
-
 })
-
 }
 
 function calculate(){
-
 const totals={}
-
 queuedRecipes.forEach(r=>{
 expandRecipe(r.id,r.qty,totals)
 })
-
 renderTotals(totals)
-
 }
 
 function expandRecipe(id,qty,totals){
-
 const item=itemsData[id]
 const name=item.name
 
 /* CHECK CUSTOM MATERIAL RECIPES */
-
 if(materialRecipes[name]){
-
 for(const mat in materialRecipes[name]){
-
 const matId=nameToId[mat]
 const amount=materialRecipes[name][mat]
-
 expandRecipe(matId,amount*qty,totals)
-
 }
-
 return
 }
 
 /* NORMAL GAME RECIPES */
-
 if(item?.data?.recipe_items){
-
 item.data.recipe_items.forEach(req=>{
-
 if(req.item_id===-1 || req.amount<=0) return
-
 expandRecipe(req.item_id,req.amount*qty,totals)
-
 })
-
 return
 }
 
 /* BASE MATERIAL */
-
 totals[id]=(totals[id]||0)+qty
-
 }
 
 function renderTotals(totals){
-
 const tbody=document.getElementById("totalsTable")
 tbody.innerHTML=""
-
 Object.entries(totals).forEach(([id,amt])=>{
-
 const tr=document.createElement("tr")
-
 const td1=document.createElement("td")
 td1.appendChild(createItemCell(id,itemNames[id]))
-
 const td2=document.createElement("td")
 td2.textContent=amt
-
 tr.appendChild(td1)
 tr.appendChild(td2)
-
 tbody.appendChild(tr)
-
 })
-
 }
 
 function shareBuild(){
-
 const encoded=btoa(JSON.stringify(queuedRecipes))
 const url=location.origin+location.pathname+"#"+encoded
-
 navigator.clipboard.writeText(url)
-
 alert("Build URL copied to clipboard!")
-
 }
 
 function loadShared(){
-
 if(location.hash.length>1){
-
 try{
 queuedRecipes=JSON.parse(atob(location.hash.substring(1)))
 renderQueue()
 }catch{}
-
 }
-
 }
 
 function clearPlanner(){
-
 queuedRecipes=[]
 renderQueue()
 document.getElementById("totalsTable").innerHTML=""
-
 }
 
 loadItems()
