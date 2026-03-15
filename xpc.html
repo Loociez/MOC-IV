@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mirage Online Classic - NPC XP Table</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:radial-gradient(circle at top,#3a0a5c,#140020);
+    color:#f5d97b;
+}
+
+h1{
+    text-align:center;
+    padding:20px;
+}
+
+.container{
+    width:95%;
+    margin:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:rgba(20,0,40,.75);
+    backdrop-filter:blur(10px);
+}
+
+th,td{
+    padding:8px;
+    border-bottom:1px solid rgba(255,215,0,.25);
+    text-align:left;
+}
+
+th{
+    background:#3e0c66;
+    cursor:pointer;
+}
+
+tr:hover{
+    background:rgba(255,255,255,0.05);
+}
+
+.controls{
+    margin-bottom:10px;
+}
+
+input{
+    padding:6px;
+    border-radius:6px;
+    border:1px solid #777;
+    background:#111;
+    color:white;
+}
+
+.sprite{
+    image-rendering:pixelated;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Mirage Online Classic – NPC Experience Table</h1>
+
+<div class="container">
+
+<div class="controls">
+Search NPC:
+<input id="searchBox" placeholder="Type NPC name...">
+</div>
+
+<table id="npcTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>HP</th>
+<th>ATK</th>
+<th>DEF</th>
+<th>RDF</th>
+<th>MDF</th>
+<th>Total Stats</th>
+<th>Estimated XP</th>
+<th>XP / HP</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</div>
+
+<script>
+
+// sprite constants
+const SPRITE_SIZE = 32;
+const SPRITES_PER_SHEET = 1024;
+const spritesPerRow = 32;
+
+// XP estimation formula
+function calculateXP(npc){
+
+    const hp = npc.vitals?.hp || 0;
+    const atk = npc.stats?.atk || 0;
+    const def = npc.stats?.def || 0;
+    const rdf = npc.stats?.rdf || 0;
+    const mdf = npc.stats?.mdf || 0;
+
+    const totalStats = hp + atk + def + rdf + mdf;
+
+    const multiplier = 0.95;
+
+    return Math.round(totalStats * multiplier);
+}
+
+// load npc.json
+fetch("npc.json")
+.then(r=>r.json())
+.then(data=>{
+
+    const tableBody = document.querySelector("#npcTable tbody");
+
+    data.forEach(npc=>{
+
+        const hp = npc.vitals?.hp || 0;
+        const atk = npc.stats?.atk || 0;
+        const def = npc.stats?.def || 0;
+        const rdf = npc.stats?.rdf || 0;
+        const mdf = npc.stats?.mdf || 0;
+
+        const totalStats = hp + atk + def + rdf + mdf;
+
+        const xp = calculateXP(npc);
+
+        const xpPerHp = hp ? (xp/hp).toFixed(2) : 0;
+
+        const row = document.createElement("tr");
+
+        // sprite rendering
+        let spriteHTML = "";
+        if(typeof npc.sprite === "number"){
+
+            const sheetIndex = Math.floor(npc.sprite / SPRITES_PER_SHEET);
+            const spriteIndex = npc.sprite % SPRITES_PER_SHEET;
+
+            const x = (spriteIndex % spritesPerRow) * SPRITE_SIZE;
+            const y = Math.floor(spriteIndex / spritesPerRow) * SPRITE_SIZE;
+
+            const bg = `url('images/npcs${sheetIndex}.png')`;
+
+            spriteHTML =
+            `<div class="sprite" style="
+                background-image:${bg};
+                background-position:-${x}px -${y}px;
+                width:${SPRITE_SIZE}px;
+                height:${SPRITE_SIZE}px;
+                display:inline-block;
+                margin-right:6px;
+            "></div>`;
+        }
+
+        row.innerHTML = `
+            <td>${spriteHTML}${npc.name}</td>
+            <td>${hp}</td>
+            <td>${atk}</td>
+            <td>${def}</td>
+            <td>${rdf}</td>
+            <td>${mdf}</td>
+            <td>${totalStats}</td>
+            <td>${xp}</td>
+            <td>${xpPerHp}</td>
+        `;
+
+        tableBody.appendChild(row);
+
+    });
+
+});
+
+// search filter
+document.getElementById("searchBox").addEventListener("keyup",function(){
+
+    const val = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#npcTable tbody tr");
+
+    rows.forEach(row=>{
+        row.style.display =
+        row.innerText.toLowerCase().includes(val) ? "" : "none";
+    });
+
+});
+
+</script>
+
+</body>
+</html>
