@@ -33,6 +33,7 @@ input{
     border:1px solid #666;
     background:#111;
     color:white;
+    margin-right:10px;
 }
 
 table{
@@ -76,6 +77,9 @@ tr:hover{
 Player Level:
 <input id="playerLevel" type="number" value="83" min="1">
 
+Server Boost %:
+<input id="serverBoost" type="number" value="0" min="0">
+
 Search NPC:
 <input id="searchBox" placeholder="Type NPC name...">
 </div>
@@ -103,9 +107,9 @@ Search NPC:
 
 <script>
 // Constants
-const npcBuffMultiplier = 1.1; // 10% NPC XP bonus
+const npcBuffMultiplier = 1.1;
 const levelPenalty = 0.018;
-const MAX_ITEM_DROPS = 10; // as per config
+const MAX_ITEM_DROPS = 10;
 
 // Data
 let npcData = [];
@@ -132,7 +136,7 @@ function calcNPCStat(npc, stat) {
         });
     }
 
-    return Math.max(1, Math.floor(max)); // match official max
+    return Math.max(1, Math.floor(max));
 }
 
 // Simulate official calcNPCExperience
@@ -143,9 +147,11 @@ function calcNPCExperience(npc) {
     const physical_protection = calcNPCStat(npc,"def");
     const ranged_protection = calcNPCStat(npc,"rdf");
     const magical_protection = calcNPCStat(npc,"mdf");
+
     const max_damage = Math.max(1, physical_damage, ranged_damage, magical_damage);
     const max_protection = Math.max(1, physical_protection, ranged_protection, magical_protection);
     const max_hp = Math.max(1, npc.vitals.hp || 1);
+
     return Math.floor((max_damage + max_protection + max_hp) * npcBuffMultiplier);
 }
 
@@ -156,23 +162,34 @@ function scaleXP(baseXP, playerLevel, npcLevel=83){
     return Math.round(baseXP * modifier);
 }
 
+// Apply server boost
+function applyServerBoost(xp, boostPercent){
+    return Math.round(xp + (xp * (boostPercent/100)));
+}
+
 // Render table
 function renderTable(){
     const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
+    const serverBoost = parseFloat(document.getElementById("serverBoost").value)||0;
+
     const tbody = document.querySelector("#npcTable tbody");
     tbody.innerHTML = "";
 
     filteredData.forEach(npc=>{
         const hp = npc.vitals.hp||0;
+
         const atk = calcNPCStat(npc,"atk");
         const def = calcNPCStat(npc,"def");
         const rat = calcNPCStat(npc,"rat");
         const rdf = calcNPCStat(npc,"rdf");
         const mat = calcNPCStat(npc,"mat");
         const mdf = calcNPCStat(npc,"mdf");
+
         const baseXP = calcNPCExperience(npc);
         const scaledXP = scaleXP(baseXP,playerLevel);
-        const xpPerHp = hp? (scaledXP/hp).toFixed(2):0;
+        const finalXP = applyServerBoost(scaledXP,serverBoost);
+
+        const xpPerHp = hp? (finalXP/hp).toFixed(2):0;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -185,7 +202,7 @@ function renderTable(){
             <td>${mat}</td>
             <td>${mdf}</td>
             <td>${baseXP}</td>
-            <td>${scaledXP}</td>
+            <td>${finalXP}</td>
             <td>${xpPerHp}</td>
         `;
         tbody.appendChild(row);
@@ -210,40 +227,99 @@ function applySort(key){
         if(currentSort.key===key) currentSort.asc=!currentSort.asc;
         else {currentSort.key=key; currentSort.asc=true;}
     }
+
     if(currentSort.key){
         const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
+        const serverBoost = parseFloat(document.getElementById("serverBoost").value)||0;
+
         filteredData.sort((a,b)=>{
+
             let valA,valB;
+
             switch(currentSort.key){
-                case "name": valA=a.name.toLowerCase(); valB=b.name.toLowerCase(); break;
-                case "hp": valA=a.vitals.hp||0; valB=b.vitals.hp||0; break;
-                case "atk": valA=calcNPCStat(a,"atk"); valB=calcNPCStat(b,"atk"); break;
-                case "def": valA=calcNPCStat(a,"def"); valB=calcNPCStat(b,"def"); break;
-                case "rat": valA=calcNPCStat(a,"rat"); valB=calcNPCStat(b,"rat"); break;
-                case "rdf": valA=calcNPCStat(a,"rdf"); valB=calcNPCStat(b,"rdf"); break;
-                case "mat": valA=calcNPCStat(a,"mat"); valB=calcNPCStat(b,"mat"); break;
-                case "mdf": valA=calcNPCStat(a,"mdf"); valB=calcNPCStat(b,"mdf"); break;
-                case "baseXP": valA=calcNPCExperience(a); valB=calcNPCExperience(b); break;
-                case "scaledXP": valA=scaleXP(calcNPCExperience(a),playerLevel); valB=scaleXP(calcNPCExperience(b),playerLevel); break;
-                case "xpPerHp": valA=scaleXP(calcNPCExperience(a),playerLevel)/(a.vitals.hp||1); valB=scaleXP(calcNPCExperience(b),playerLevel)/(b.vitals.hp||1); break;
-                default: valA=0; valB=0;
+
+                case "name":
+                    valA=a.name.toLowerCase();
+                    valB=b.name.toLowerCase();
+                break;
+
+                case "hp":
+                    valA=a.vitals.hp||0;
+                    valB=b.vitals.hp||0;
+                break;
+
+                case "atk":
+                    valA=calcNPCStat(a,"atk");
+                    valB=calcNPCStat(b,"atk");
+                break;
+
+                case "def":
+                    valA=calcNPCStat(a,"def");
+                    valB=calcNPCStat(b,"def");
+                break;
+
+                case "rat":
+                    valA=calcNPCStat(a,"rat");
+                    valB=calcNPCStat(b,"rat");
+                break;
+
+                case "rdf":
+                    valA=calcNPCStat(a,"rdf");
+                    valB=calcNPCStat(b,"rdf");
+                break;
+
+                case "mat":
+                    valA=calcNPCStat(a,"mat");
+                    valB=calcNPCStat(b,"mat");
+                break;
+
+                case "mdf":
+                    valA=calcNPCStat(a,"mdf");
+                    valB=calcNPCStat(b,"mdf");
+                break;
+
+                case "baseXP":
+                    valA=calcNPCExperience(a);
+                    valB=calcNPCExperience(b);
+                break;
+
+                case "scaledXP":
+                    valA=applyServerBoost(scaleXP(calcNPCExperience(a),playerLevel),serverBoost);
+                    valB=applyServerBoost(scaleXP(calcNPCExperience(b),playerLevel),serverBoost);
+                break;
+
+                case "xpPerHp":
+                    valA=applyServerBoost(scaleXP(calcNPCExperience(a),playerLevel),serverBoost)/(a.vitals.hp||1);
+                    valB=applyServerBoost(scaleXP(calcNPCExperience(b),playerLevel),serverBoost)/(b.vitals.hp||1);
+                break;
+
+                default:
+                    valA=0;
+                    valB=0;
             }
+
             if(valA<valB) return currentSort.asc?-1:1;
             if(valA>valB) return currentSort.asc?1:-1;
             return 0;
+
         });
     }
 }
 
 // Event listeners
 document.getElementById("playerLevel").addEventListener("input",renderTable);
+document.getElementById("serverBoost").addEventListener("input",renderTable);
 document.getElementById("searchBox").addEventListener("input",filterData);
+
 document.querySelectorAll("#npcTable th").forEach(th=>{
     th.addEventListener("click",()=>{
         const key = th.dataset.key;
         applySort(key);
         renderTable();
-        document.querySelectorAll("#npcTable th").forEach(h=>h.classList.remove("sort-asc","sort-desc"));
+
+        document.querySelectorAll("#npcTable th")
+        .forEach(h=>h.classList.remove("sort-asc","sort-desc"));
+
         th.classList.add(currentSort.asc?"sort-asc":"sort-desc");
     });
 });
