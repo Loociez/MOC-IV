@@ -110,45 +110,56 @@ Search NPC:
 const SPRITE_SIZE = 32;
 const SPRITES_PER_SHEET = 1024;
 const spritesPerRow = 32;
+const npcBuffMultiplier = 1.1; // 10% NPC XP bonus
 const levelPenalty = 0.018;
-const npcBuffMultiplier = 1.1; // 10% bonus as in your server
 
 let npcData = [];
+let itemData = [];
 let filteredData = [];
 let currentSort = {key:null,asc:true};
 
-/* --------- STAT CALCULATION FUNCTION --------- */
-function calcNPCStat(npc, stat, minmax){
-    let min=0,max=0;
-    switch(stat){
-        case "atk": min=max=npc.stats.atk||0; break;
-        case "def": min=max=npc.stats.def||0; break;
-        case "rat": min=max=npc.stats.rat||0; break;
-        case "rdf": min=max=npc.stats.rdf||0; break;
-        case "mat": min=max=npc.stats.mat||0; break;
-        case "mdf": min=max=npc.stats.mdf||0; break;
-    }
-    if(npc.equip_drops){
-        if(npc.drop_items){
-            npc.drop_items.forEach(drop=>{
-                if(drop.item_data){
-                    if(minmax===undefined || minmax){
-                        min += drop.item_data[`min_${stat}`]||0;
-                    }
-                    if(minmax===undefined || !minmax){
-                        max += drop.item_data[`max_${stat}`]||0;
-                    }
-                }
-            });
-        }
-    }
-    if(minmax===undefined){
-        return Math.floor(min); // for simplicity, we can use min
-    }
-    return minmax? Math.floor(min):Math.floor(max);
+// Get sprite HTML
+function getSpriteHTML(npc){
+    if(typeof npc.sprite!=="number") return "";
+    const sheetIndex = Math.floor(npc.sprite/SPRITES_PER_SHEET);
+    const spriteIndex = npc.sprite%SPRITES_PER_ROW;
+    const x = (npc.sprite%spritesPerRow)*SPRITE_SIZE;
+    const y = Math.floor(npc.sprite/spritesPerRow)*SPRITE_SIZE;
+    const bg = `url('images/npcs${sheetIndex}.png')`;
+    return `<div class="sprite" style="
+        background-image:${bg};
+        background-position:-${x}px -${y}px;
+        width:${SPRITE_SIZE}px;
+        height:${SPRITE_SIZE}px;
+        display:inline-block;
+        margin-right:6px;"></div>`;
 }
 
-/* --------- XP CALCULATION --------- */
+// Calc NPC stat using last.json for equipment if flagged
+function calcNPCStat(npc, stat, minmax){
+    let base = npc.stats[stat] || 0;
+
+    if(npc.equip_drops && npc.drop_items && itemData.length){
+        npc.drop_items.forEach(drop=>{
+            if(drop.item_id>=0){
+                const item = itemData[drop.item_id];
+                if(item && item.data){
+                    const minKey = "min_" + stat;
+                    const maxKey = "max_" + stat;
+                    if(minmax===undefined || minmax){
+                        base += item.data[minKey] || 0;
+                    }
+                    if(minmax===undefined || !minmax){
+                        base += item.data[maxKey] || 0;
+                    }
+                }
+            }
+        });
+    }
+    return Math.floor(base);
+}
+
+// Calculate base XP exactly per your formula
 function calculateBaseXP(npc){
     const maxDmg = Math.max(
         calcNPCStat(npc,"atk",false),
@@ -160,48 +171,30 @@ function calculateBaseXP(npc){
         calcNPCStat(npc,"rdf",false),
         calcNPCStat(npc,"mdf",false)
     );
-    const hp = Math.max(1,npc.vitals.hp||1);
-    return Math.floor((maxDmg+maxDef+hp)*npcBuffMultiplier);
+    const maxHp = Math.max(1, npc.vitals.hp||1);
+    return Math.floor(maxDmg + maxDef + maxHp) * npcBuffMultiplier;
 }
 
-function calculateScaledXP(baseXP,playerLevel){
-    // simple scaling: penalize for lower level vs higher level
-    const modifier = Math.max(0.1, 1 - ((playerLevel-83)*levelPenalty)); // level 83 as reference
-    return Math.round(baseXP*modifier);
+// Scale XP to player level
+function calculateScaledXP(baseXP, playerLevel){
+    return Math.round(baseXP * Math.max(0.1, 1 - ((playerLevel-83)*levelPenalty))); // base ref 83
 }
 
-/* --------- SPRITE RENDERING --------- */
-function getSpriteHTML(npc){
-    if(typeof npc.sprite!=="number") return "";
-    const sheetIndex = Math.floor(npc.sprite/SPRITES_PER_SHEET);
-    const spriteIndex = npc.sprite%SPRITES_PER_SHEET;
-    const x = (spriteIndex%spritesPerRow)*SPRITE_SIZE;
-    const y = Math.floor(spriteIndex/spritesPerRow)*SPRITE_SIZE;
-    const bg = `url('images/npcs${sheetIndex}.png')`;
-    return `<div class="sprite" style="
-        background-image:${bg};
-        background-position:-${x}px -${y}px;
-        width:${SPRITE_SIZE}px;
-        height:${SPRITE_SIZE}px;
-        display:inline-block;
-        margin-right:6px;"></div>`;
-}
-
-/* --------- RENDER TABLE --------- */
+// Render table
 function renderTable(){
     const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
     const tbody = document.querySelector("#npcTable tbody");
     tbody.innerHTML = "";
 
     filteredData.forEach(npc=>{
-        const hp = npc.vitals?.hp||0;
+        const hp = npc.vitals.hp||0;
         const atk = calcNPCStat(npc,"atk",false);
         const def = calcNPCStat(npc,"def",false);
         const rdf = calcNPCStat(npc,"rdf",false);
         const mdf = calcNPCStat(npc,"mdf",false);
         const baseXP = calculateBaseXP(npc);
         const scaledXP = calculateScaledXP(baseXP,playerLevel);
-        const xpPerHp = hp ? (scaledXP/hp).toFixed(2):0;
+        const xpPerHp = hp ? (scaledXP/hp).toFixed(2) : 0;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -219,11 +212,11 @@ function renderTable(){
     });
 }
 
-/* --------- SEARCH WITH DEBOUNCE --------- */
+// Debounced search
 let searchTimeout;
 function filterData(){
     clearTimeout(searchTimeout);
-    searchTimeout=setTimeout(()=>{
+    searchTimeout = setTimeout(()=>{
         const term = document.getElementById("searchBox").value.toLowerCase();
         filteredData = npcData.filter(npc=>npc.name.toLowerCase().includes(term));
         applySort();
@@ -231,7 +224,7 @@ function filterData(){
     },200);
 }
 
-/* --------- SORTING --------- */
+// Sort columns
 function applySort(key){
     if(key){
         if(currentSort.key===key) currentSort.asc=!currentSort.asc;
@@ -240,8 +233,8 @@ function applySort(key){
     if(currentSort.key){
         filteredData.sort((a,b)=>{
             const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
-            const valA = currentSort.key==="name"?a.name.toLowerCase():getSortValue(a,currentSort.key,playerLevel);
-            const valB = currentSort.key==="name"?b.name.toLowerCase():getSortValue(b,currentSort.key,playerLevel);
+            const valA = getSortValue(a,currentSort.key,playerLevel);
+            const valB = getSortValue(b,currentSort.key,playerLevel);
             return currentSort.asc? (valA>valB?1:valA<valB?-1:0):(valA>valB?-1:valA<valB?1:0);
         });
     }
@@ -249,6 +242,7 @@ function applySort(key){
 
 function getSortValue(npc,key,playerLevel){
     switch(key){
+        case "name": return npc.name.toLowerCase();
         case "hp": return npc.vitals.hp||0;
         case "atk": return calcNPCStat(npc,"atk",false);
         case "def": return calcNPCStat(npc,"def",false);
@@ -256,12 +250,12 @@ function getSortValue(npc,key,playerLevel){
         case "mdf": return calcNPCStat(npc,"mdf",false);
         case "baseXP": return calculateBaseXP(npc);
         case "scaledXP": return calculateScaledXP(calculateBaseXP(npc),playerLevel);
-        case "xpPerHp": return (calculateScaledXP(calculateBaseXP(npc),playerLevel)/(npc.vitals.hp||1));
+        case "xpPerHp": return calculateScaledXP(calculateBaseXP(npc),playerLevel)/(npc.vitals.hp||1);
         default: return 0;
     }
 }
 
-/* --------- EVENTS --------- */
+/* Events */
 document.getElementById("playerLevel").addEventListener("input",renderTable);
 document.getElementById("searchBox").addEventListener("input",filterData);
 
@@ -275,11 +269,11 @@ document.querySelectorAll("#npcTable th").forEach(th=>{
     });
 });
 
-/* --------- LOAD NPC DATA --------- */
-fetch("npc.json")
-.then(r=>r.json())
-.then(data=>{
-    npcData=data;
+// Load NPCs and item data
+Promise.all([fetch("npc.json").then(r=>r.json()), fetch("last.json").then(r=>r.json())])
+.then(([npcs,items])=>{
+    npcData=npcs;
+    itemData=items;
     filteredData=[...npcData];
     renderTable();
 });
