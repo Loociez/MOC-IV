@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mirage Online Classic XP Calculator</title>
+<title>Mirage Online Classic – NPC XP Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
-    font-family:Arial;
-    background:#1b002b;
-    color:#ffd86b;
     margin:0;
+    font-family:Arial, sans-serif;
+    background:radial-gradient(circle at top,#3a0a5c,#140020);
+    color:#f5d97b;
 }
 
 h1{
     text-align:center;
-    padding:15px;
+    padding:20px;
 }
 
 .container{
@@ -28,8 +29,8 @@ h1{
 
 input{
     padding:6px;
-    border-radius:5px;
-    border:1px solid #555;
+    border-radius:6px;
+    border:1px solid #666;
     background:#111;
     color:white;
 }
@@ -37,20 +38,30 @@ input{
 table{
     width:100%;
     border-collapse:collapse;
-    background:#21003a;
+    background:rgba(20,0,40,.75);
+    backdrop-filter:blur(10px);
 }
 
 th,td{
     padding:8px;
-    border-bottom:1px solid rgba(255,255,255,0.1);
+    border-bottom:1px solid rgba(255,215,0,.25);
+    cursor:pointer;
 }
 
 th{
-    background:#3a0066;
+    background:#3e0c66;
+    user-select:none;
 }
 
 tr:hover{
     background:rgba(255,255,255,0.05);
+}
+
+.sort-asc::after{
+    content:" ▲";
+}
+.sort-desc::after{
+    content:" ▼";
 }
 </style>
 </head>
@@ -62,27 +73,27 @@ tr:hover{
 <div class="container">
 
 <div class="controls">
-Server Boost %
-<input id="serverBoost" type="number" value="0">
+Player Level:
+<input id="playerLevel" type="number" value="83" min="1">
 
-Search NPC
-<input id="searchBox">
+Search NPC:
+<input id="searchBox" placeholder="Type NPC name...">
 </div>
 
 <table id="npcTable">
 <thead>
 <tr>
-<th>NPC</th>
-<th>HP</th>
-<th>ATK</th>
-<th>DEF</th>
-<th>RAT</th>
-<th>RDF</th>
-<th>MAT</th>
-<th>MDF</th>
-<th>Base XP</th>
-<th>XP w/ Boost</th>
-<th>XP / HP</th>
+<th data-key="name">NPC</th>
+<th data-key="hp">HP</th>
+<th data-key="atk">ATK</th>
+<th data-key="def">DEF</th>
+<th data-key="rat">RAT</th>
+<th data-key="rdf">RDF</th>
+<th data-key="mat">MAT</th>
+<th data-key="mdf">MDF</th>
+<th data-key="baseXP">Base XP</th>
+<th data-key="scaledXP">Scaled XP</th>
+<th data-key="xpPerHp">XP / HP</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -91,183 +102,162 @@ Search NPC
 </div>
 
 <script>
+// Constants
+const npcBuffMultiplier = 1.1; // 10% NPC XP bonus
+const levelPenalty = 0.018;
+const MAX_ITEM_DROPS = 10; // as per config
 
-const MAX_ITEM_DROPS = 10
+// Data
+let npcData = [];
+let itemData = [];
+let filteredData = [];
+let currentSort = {key:null,asc:true};
 
-let npcData=[]
-let itemData=[]
-let mapsData=[]
-let spawnList=[]
+// Helper: Simulate calcNPCStat
+function calcNPCStat(npc, stat) {
+    let min = npc.stats[stat] || 0;
+    let max = npc.stats[stat] || 0;
 
-function calcNPCStat(map_npc,npc,stat){
-
-    let min = map_npc.stats?.[stat] || 0
-    let max = map_npc.stats?.[stat] || 0
-
-    const minKey = "min_"+stat
-    const maxKey = "max_"+stat
-
-    if(npc.equip_drops && npc.drop_items){
-
-        for(let i=0;i<MAX_ITEM_DROPS;i++){
-
-            const drop = npc.drop_items[i]
-            if(!drop) continue
-
-            const item = itemData[drop.item_id]
-            if(!item || !item.data) continue
-
-            if(minKey in item.data) min += Math.floor(item.data[minKey])
-            if(maxKey in item.data) max += Math.floor(item.data[maxKey])
-        }
+    if(npc.equip_drops && npc.drop_items && itemData.length){
+        npc.drop_items.slice(0,MAX_ITEM_DROPS).forEach(drop=>{
+            if(drop.item_id>=0){
+                const item = itemData[drop.item_id];
+                if(item && item.data){
+                    const minKey = "min_"+stat;
+                    const maxKey = "max_"+stat;
+                    min += item.data[minKey]||0;
+                    max += item.data[maxKey]||0;
+                }
+            }
+        });
     }
 
-    return Math.floor(max)
+    return Math.max(1, Math.floor(max)); // match official max
 }
 
-function calcNPCExperience(map_npc,npc){
-
-    const physical_damage = calcNPCStat(map_npc,npc,"atk")
-    const ranged_damage = calcNPCStat(map_npc,npc,"rat")
-    const magical_damage = calcNPCStat(map_npc,npc,"mat")
-
-    const physical_protection = calcNPCStat(map_npc,npc,"def")
-    const ranged_protection = calcNPCStat(map_npc,npc,"rdf")
-    const magical_protection = calcNPCStat(map_npc,npc,"mdf")
-
-    const max_damage = Math.max(1,physical_damage,ranged_damage,magical_damage)
-    const max_protection = Math.max(1,physical_protection,ranged_protection,magical_protection)
-    const max_hp = Math.max(1,npc.vitals?.hp||1)
-
-    return Math.floor(max_damage + max_protection + max_hp)
+// Simulate official calcNPCExperience
+function calcNPCExperience(npc) {
+    const physical_damage = calcNPCStat(npc,"atk");
+    const ranged_damage = calcNPCStat(npc,"rat");
+    const magical_damage = calcNPCStat(npc,"mat");
+    const physical_protection = calcNPCStat(npc,"def");
+    const ranged_protection = calcNPCStat(npc,"rdf");
+    const magical_protection = calcNPCStat(npc,"mdf");
+    const max_damage = Math.max(1, physical_damage, ranged_damage, magical_damage);
+    const max_protection = Math.max(1, physical_protection, ranged_protection, magical_protection);
+    const max_hp = Math.max(1, npc.vitals.hp || 1);
+    return Math.floor((max_damage + max_protection + max_hp) * npcBuffMultiplier);
 }
 
-function applyServerBoost(xp){
-
-    const boost=parseFloat(document.getElementById("serverBoost").value)||0
-    return Math.floor(xp+(xp*boost/100))
+// Scaled XP by player level
+function scaleXP(baseXP, playerLevel, npcLevel=83){
+    const levelDiff = playerLevel - npcLevel;
+    const modifier = Math.max(0.1, 1 - (levelDiff * levelPenalty));
+    return Math.round(baseXP * modifier);
 }
 
-function buildSpawnList(){
-
-    spawnList=[]
-
-    mapsData.forEach((map,map_id)=>{
-
-        if(!map.map_npcs) return
-
-        map.map_npcs.forEach((map_npc,slot_id)=>{
-
-            const npc=npcData[map_npc.npc_id]
-            if(!npc) return
-
-            spawnList.push({
-                name:npc.name,
-                npc:npc,
-                map_npc:map_npc,
-                map_id:map_id,
-                slot_id:slot_id
-            })
-
-        })
-
-    })
-
-}
-
+// Render table
 function renderTable(){
+    const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
+    const tbody = document.querySelector("#npcTable tbody");
+    tbody.innerHTML = "";
 
-    const tbody=document.querySelector("#npcTable tbody")
-    tbody.innerHTML=""
+    filteredData.forEach(npc=>{
+        const hp = npc.vitals.hp||0;
+        const atk = calcNPCStat(npc,"atk");
+        const def = calcNPCStat(npc,"def");
+        const rat = calcNPCStat(npc,"rat");
+        const rdf = calcNPCStat(npc,"rdf");
+        const mat = calcNPCStat(npc,"mat");
+        const mdf = calcNPCStat(npc,"mdf");
+        const baseXP = calcNPCExperience(npc);
+        const scaledXP = scaleXP(baseXP,playerLevel);
+        const xpPerHp = hp? (scaledXP/hp).toFixed(2):0;
 
-    spawnList.forEach(entry=>{
-
-        const npc=entry.npc
-        const map_npc=entry.map_npc
-
-        const hp=npc.vitals?.hp||0
-
-        const atk=calcNPCStat(map_npc,npc,"atk")
-        const def=calcNPCStat(map_npc,npc,"def")
-        const rat=calcNPCStat(map_npc,npc,"rat")
-        const rdf=calcNPCStat(map_npc,npc,"rdf")
-        const mat=calcNPCStat(map_npc,npc,"mat")
-        const mdf=calcNPCStat(map_npc,npc,"mdf")
-
-        const baseXP=calcNPCExperience(map_npc,npc)
-        const boostXP=applyServerBoost(baseXP)
-
-        const xpPerHp=hp?(boostXP/hp).toFixed(2):0
-
-        const row=document.createElement("tr")
-
-        row.innerHTML=`
-        <td>${npc.name}</td>
-        <td>${hp}</td>
-        <td>${atk}</td>
-        <td>${def}</td>
-        <td>${rat}</td>
-        <td>${rdf}</td>
-        <td>${mat}</td>
-        <td>${mdf}</td>
-        <td>${baseXP}</td>
-        <td>${boostXP}</td>
-        <td>${xpPerHp}</td>
-        `
-
-        tbody.appendChild(row)
-
-    })
-
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${npc.name}</td>
+            <td>${hp}</td>
+            <td>${atk}</td>
+            <td>${def}</td>
+            <td>${rat}</td>
+            <td>${rdf}</td>
+            <td>${mat}</td>
+            <td>${mdf}</td>
+            <td>${baseXP}</td>
+            <td>${scaledXP}</td>
+            <td>${xpPerHp}</td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-document.getElementById("searchBox").addEventListener("input",()=>{
+// Debounced search
+let searchTimeout;
+function filterData(){
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(()=>{
+        const term = document.getElementById("searchBox").value.toLowerCase();
+        filteredData = npcData.filter(npc=>npc.name.toLowerCase().includes(term));
+        applySort();
+        renderTable();
+    }, 200);
+}
 
-    const term=document.getElementById("searchBox").value.toLowerCase()
-
-    const rows=document.querySelectorAll("#npcTable tbody tr")
-
-    rows.forEach(row=>{
-        const name=row.children[0].innerText.toLowerCase()
-        row.style.display=name.includes(term)?"":"none"
-    })
-
-})
-
-document.getElementById("serverBoost").addEventListener("input",renderTable)
-
-async function loadData(){
-
-    try{
-
-        const npcRes = await fetch("npc.json")
-        const itemRes = await fetch("last.json")
-        const mapRes = await fetch("mapdump.json")
-
-        npcData = await npcRes.json()
-        itemData = await itemRes.json()
-        mapsData = await mapRes.json()
-
-        console.log("NPCs:",npcData.length)
-        console.log("Items:",itemData.length)
-        console.log("Maps:",mapsData.length)
-
-        buildSpawnList()
-
-        console.log("Spawns detected:",spawnList.length)
-
-        renderTable()
-
-    }catch(err){
-
-        console.error("Failed loading JSON:",err)
-
+// Sorting
+function applySort(key){
+    if(key){
+        if(currentSort.key===key) currentSort.asc=!currentSort.asc;
+        else {currentSort.key=key; currentSort.asc=true;}
     }
-
+    if(currentSort.key){
+        const playerLevel = parseInt(document.getElementById("playerLevel").value)||83;
+        filteredData.sort((a,b)=>{
+            let valA,valB;
+            switch(currentSort.key){
+                case "name": valA=a.name.toLowerCase(); valB=b.name.toLowerCase(); break;
+                case "hp": valA=a.vitals.hp||0; valB=b.vitals.hp||0; break;
+                case "atk": valA=calcNPCStat(a,"atk"); valB=calcNPCStat(b,"atk"); break;
+                case "def": valA=calcNPCStat(a,"def"); valB=calcNPCStat(b,"def"); break;
+                case "rat": valA=calcNPCStat(a,"rat"); valB=calcNPCStat(b,"rat"); break;
+                case "rdf": valA=calcNPCStat(a,"rdf"); valB=calcNPCStat(b,"rdf"); break;
+                case "mat": valA=calcNPCStat(a,"mat"); valB=calcNPCStat(b,"mat"); break;
+                case "mdf": valA=calcNPCStat(a,"mdf"); valB=calcNPCStat(b,"mdf"); break;
+                case "baseXP": valA=calcNPCExperience(a); valB=calcNPCExperience(b); break;
+                case "scaledXP": valA=scaleXP(calcNPCExperience(a),playerLevel); valB=scaleXP(calcNPCExperience(b),playerLevel); break;
+                case "xpPerHp": valA=scaleXP(calcNPCExperience(a),playerLevel)/(a.vitals.hp||1); valB=scaleXP(calcNPCExperience(b),playerLevel)/(b.vitals.hp||1); break;
+                default: valA=0; valB=0;
+            }
+            if(valA<valB) return currentSort.asc?-1:1;
+            if(valA>valB) return currentSort.asc?1:-1;
+            return 0;
+        });
+    }
 }
 
-loadData()
+// Event listeners
+document.getElementById("playerLevel").addEventListener("input",renderTable);
+document.getElementById("searchBox").addEventListener("input",filterData);
+document.querySelectorAll("#npcTable th").forEach(th=>{
+    th.addEventListener("click",()=>{
+        const key = th.dataset.key;
+        applySort(key);
+        renderTable();
+        document.querySelectorAll("#npcTable th").forEach(h=>h.classList.remove("sort-asc","sort-desc"));
+        th.classList.add(currentSort.asc?"sort-asc":"sort-desc");
+    });
+});
 
+// Load JSONs
+Promise.all([
+    fetch("npc.json").then(r=>r.json()),
+    fetch("last.json").then(r=>r.json())
+]).then(([npcs,items])=>{
+    npcData = npcs;
+    itemData = items;
+    filteredData = [...npcData];
+    renderTable();
+});
 </script>
 
 </body>
