@@ -40,7 +40,6 @@ table{
     width:100%;
     border-collapse:collapse;
     background:rgba(20,0,40,.75);
-    backdrop-filter:blur(10px);
 }
 
 th,td{
@@ -69,9 +68,6 @@ tr:hover{
 <div class="container">
 
 <div class="controls">
-Player Level:
-<input id="playerLevel" type="number" value="83">
-
 Server Boost %:
 <input id="serverBoost" type="number" value="0">
 
@@ -91,7 +87,7 @@ Search NPC:
 <th data-key="mat">MAT</th>
 <th data-key="mdf">MDF</th>
 <th data-key="baseXP">Base XP</th>
-<th data-key="scaledXP">Scaled XP</th>
+<th data-key="boostXP">XP w/ Boost</th>
 <th data-key="xpPerHp">XP / HP</th>
 </tr>
 </thead>
@@ -106,16 +102,18 @@ const MAX_ITEM_DROPS = 10;
 
 let npcData = [];
 let itemData = [];
+let mapsData = [];
+let spawnList = [];
 let filteredData = [];
 let currentSort = {key:null,asc:true};
 
-function calcNPCStat(npc, stat){
+function calcNPCStat(map_npc,npc,stat){
 
-    let min = npc.stats?.[stat] || 0;
-    let max = npc.stats?.[stat] || 0;
+    let min = map_npc.stats?.[stat] || 0;
+    let max = map_npc.stats?.[stat] || 0;
 
-    const minKey = "min_" + stat;
-    const maxKey = "max_" + stat;
+    const minKey = "min_"+stat;
+    const maxKey = "max_"+stat;
 
     if(npc.equip_drops && npc.drop_items){
 
@@ -135,54 +133,84 @@ function calcNPCStat(npc, stat){
     return Math.floor(max);
 }
 
-function calcNPCExperience(npc){
+function calcNPCExperience(map_npc,npc){
 
-    const physical_damage = calcNPCStat(npc,"atk");
-    const ranged_damage = calcNPCStat(npc,"rat");
-    const magical_damage = calcNPCStat(npc,"mat");
+    const physical_damage = calcNPCStat(map_npc,npc,"atk");
+    const ranged_damage = calcNPCStat(map_npc,npc,"rat");
+    const magical_damage = calcNPCStat(map_npc,npc,"mat");
 
-    const physical_protection = calcNPCStat(npc,"def");
-    const ranged_protection = calcNPCStat(npc,"rdf");
-    const magical_protection = calcNPCStat(npc,"mdf");
+    const physical_protection = calcNPCStat(map_npc,npc,"def");
+    const ranged_protection = calcNPCStat(map_npc,npc,"rdf");
+    const magical_protection = calcNPCStat(map_npc,npc,"mdf");
 
-    const max_damage = Math.max(1, physical_damage, ranged_damage, magical_damage);
-    const max_protection = Math.max(1, physical_protection, ranged_protection, magical_protection);
-    const max_hp = Math.max(1, npc.vitals?.hp || 1);
+    const max_damage = Math.max(1,physical_damage,ranged_damage,magical_damage);
+    const max_protection = Math.max(1,physical_protection,ranged_protection,magical_protection);
+    const max_hp = Math.max(1,npc.vitals?.hp||1);
 
     return Math.floor(max_damage + max_protection + max_hp);
 }
 
 function applyServerBoost(xp){
 
-    const boost = parseFloat(document.getElementById("serverBoost").value) || 0;
+    const boost = parseFloat(document.getElementById("serverBoost").value)||0;
 
-    return Math.floor(xp + (xp * boost / 100));
+    return Math.floor(xp + (xp*boost/100));
+}
+
+function buildSpawnList(){
+
+    spawnList=[];
+
+    mapsData.forEach((map,map_id)=>{
+
+        if(!map.map_npcs) return;
+
+        map.map_npcs.forEach((map_npc,slot_id)=>{
+
+            const npc = npcData[map_npc.npc_id];
+            if(!npc) return;
+
+            spawnList.push({
+                name:npc.name,
+                npc:npc,
+                map_npc:map_npc,
+                map_id:map_id,
+                slot_id:slot_id
+            });
+
+        });
+
+    });
+
 }
 
 function renderTable(){
 
-    const tbody = document.querySelector("#npcTable tbody");
-    tbody.innerHTML = "";
+    const tbody=document.querySelector("#npcTable tbody");
+    tbody.innerHTML="";
 
-    filteredData.forEach(npc=>{
+    filteredData.forEach(entry=>{
 
-        const hp = npc.vitals?.hp || 0;
+        const npc=entry.npc;
+        const map_npc=entry.map_npc;
 
-        const atk = calcNPCStat(npc,"atk");
-        const def = calcNPCStat(npc,"def");
-        const rat = calcNPCStat(npc,"rat");
-        const rdf = calcNPCStat(npc,"rdf");
-        const mat = calcNPCStat(npc,"mat");
-        const mdf = calcNPCStat(npc,"mdf");
+        const hp=npc.vitals?.hp||0;
 
-        const baseXP = calcNPCExperience(npc);
-        const scaledXP = applyServerBoost(baseXP);
+        const atk=calcNPCStat(map_npc,npc,"atk");
+        const def=calcNPCStat(map_npc,npc,"def");
+        const rat=calcNPCStat(map_npc,npc,"rat");
+        const rdf=calcNPCStat(map_npc,npc,"rdf");
+        const mat=calcNPCStat(map_npc,npc,"mat");
+        const mdf=calcNPCStat(map_npc,npc,"mdf");
 
-        const xpPerHp = hp ? (scaledXP / hp).toFixed(2) : 0;
+        const baseXP=calcNPCExperience(map_npc,npc);
+        const boostXP=applyServerBoost(baseXP);
 
-        const row = document.createElement("tr");
+        const xpPerHp=hp?(boostXP/hp).toFixed(2):0;
 
-        row.innerHTML = `
+        const row=document.createElement("tr");
+
+        row.innerHTML=`
         <td>${npc.name}</td>
         <td>${hp}</td>
         <td>${atk}</td>
@@ -192,12 +220,14 @@ function renderTable(){
         <td>${mat}</td>
         <td>${mdf}</td>
         <td>${baseXP}</td>
-        <td>${scaledXP}</td>
+        <td>${boostXP}</td>
         <td>${xpPerHp}</td>
         `;
 
         tbody.appendChild(row);
+
     });
+
 }
 
 let searchTimeout;
@@ -210,12 +240,13 @@ function filterData(){
 
         const term=document.getElementById("searchBox").value.toLowerCase();
 
-        filteredData=npcData.filter(npc=>npc.name.toLowerCase().includes(term));
+        filteredData=spawnList.filter(e=>e.name.toLowerCase().includes(term));
 
         applySort();
         renderTable();
 
     },200);
+
 }
 
 function applySort(key){
@@ -229,70 +260,78 @@ function applySort(key){
 
     filteredData.sort((a,b)=>{
 
+        const npcA=a.npc;
+        const npcB=b.npc;
+
+        const mapA=a.map_npc;
+        const mapB=b.map_npc;
+
         let valA,valB;
 
         switch(currentSort.key){
 
-            case "name":
-            valA=a.name.toLowerCase();
-            valB=b.name.toLowerCase();
+            case"name":
+            valA=npcA.name.toLowerCase();
+            valB=npcB.name.toLowerCase();
             break;
 
-            case "hp":
-            valA=a.vitals?.hp||0;
-            valB=b.vitals?.hp||0;
+            case"hp":
+            valA=npcA.vitals?.hp||0;
+            valB=npcB.vitals?.hp||0;
             break;
 
-            case "atk":
-            valA=calcNPCStat(a,"atk");
-            valB=calcNPCStat(b,"atk");
+            case"atk":
+            valA=calcNPCStat(mapA,npcA,"atk");
+            valB=calcNPCStat(mapB,npcB,"atk");
             break;
 
-            case "def":
-            valA=calcNPCStat(a,"def");
-            valB=calcNPCStat(b,"def");
+            case"def":
+            valA=calcNPCStat(mapA,npcA,"def");
+            valB=calcNPCStat(mapB,npcB,"def");
             break;
 
-            case "rat":
-            valA=calcNPCStat(a,"rat");
-            valB=calcNPCStat(b,"rat");
+            case"rat":
+            valA=calcNPCStat(mapA,npcA,"rat");
+            valB=calcNPCStat(mapB,npcB,"rat");
             break;
 
-            case "rdf":
-            valA=calcNPCStat(a,"rdf");
-            valB=calcNPCStat(b,"rdf");
+            case"rdf":
+            valA=calcNPCStat(mapA,npcA,"rdf");
+            valB=calcNPCStat(mapB,npcB,"rdf");
             break;
 
-            case "mat":
-            valA=calcNPCStat(a,"mat");
-            valB=calcNPCStat(b,"mat");
+            case"mat":
+            valA=calcNPCStat(mapA,npcA,"mat");
+            valB=calcNPCStat(mapB,npcB,"mat");
             break;
 
-            case "mdf":
-            valA=calcNPCStat(a,"mdf");
-            valB=calcNPCStat(b,"mdf");
+            case"mdf":
+            valA=calcNPCStat(mapA,npcA,"mdf");
+            valB=calcNPCStat(mapB,npcB,"mdf");
             break;
 
-            case "baseXP":
-            valA=calcNPCExperience(a);
-            valB=calcNPCExperience(b);
+            case"baseXP":
+            valA=calcNPCExperience(mapA,npcA);
+            valB=calcNPCExperience(mapB,npcB);
             break;
 
-            case "scaledXP":
-            valA=applyServerBoost(calcNPCExperience(a));
-            valB=applyServerBoost(calcNPCExperience(b));
+            case"boostXP":
+            valA=applyServerBoost(calcNPCExperience(mapA,npcA));
+            valB=applyServerBoost(calcNPCExperience(mapB,npcB));
             break;
 
-            case "xpPerHp":
-            valA=applyServerBoost(calcNPCExperience(a))/(a.vitals?.hp||1);
-            valB=applyServerBoost(calcNPCExperience(b))/(b.vitals?.hp||1);
+            case"xpPerHp":
+            valA=applyServerBoost(calcNPCExperience(mapA,npcA))/(npcA.vitals?.hp||1);
+            valB=applyServerBoost(calcNPCExperience(mapB,npcB))/(npcB.vitals?.hp||1);
             break;
         }
 
         if(valA<valB) return currentSort.asc?-1:1;
         if(valA>valB) return currentSort.asc?1:-1;
         return 0;
+
     });
+
 }
 
 document.getElementById("searchBox").addEventListener("input",filterData);
@@ -300,11 +339,11 @@ document.getElementById("serverBoost").addEventListener("input",renderTable);
 
 document.querySelectorAll("#npcTable th").forEach(th=>{
     th.addEventListener("click",()=>{
-
         applySort(th.dataset.key);
         renderTable();
 
-        document.querySelectorAll("#npcTable th").forEach(h=>h.classList.remove("sort-asc","sort-desc"));
+        document.querySelectorAll("#npcTable th")
+        .forEach(h=>h.classList.remove("sort-asc","sort-desc"));
 
         th.classList.add(currentSort.asc?"sort-asc":"sort-desc");
     });
@@ -312,14 +351,20 @@ document.querySelectorAll("#npcTable th").forEach(th=>{
 
 Promise.all([
 fetch("npc.json").then(r=>r.json()),
-fetch("last.json").then(r=>r.json())
-]).then(([npcs,items])=>{
+fetch("last.json").then(r=>r.json()),
+fetch("mapdump.json").then(r=>r.json())
+]).then(([npcs,items,maps])=>{
 
     npcData=npcs;
     itemData=items;
-    filteredData=[...npcData];
+    mapsData=maps;
+
+    buildSpawnList();
+
+    filteredData=[...spawnList];
 
     renderTable();
+
 });
 
 </script>
