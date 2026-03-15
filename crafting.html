@@ -149,7 +149,28 @@ background-repeat:no-repeat;
 
 let itemsData=[]
 let itemNames={}
+let nameToId={}
 let queuedRecipes=[]
+
+/* ---------------------------
+CUSTOM MATERIAL RECIPES
+--------------------------- */
+
+const materialRecipes={
+"Metal Bar":{"Ore":10},
+"Wood Billet":{"Timber":10},
+"Whittled Round":{"Timber":25},
+"War Club":{"Whittled Round":15,"Wood Billet":20},
+"War Bow":{"String":4,"Wood Billet":20},
+"Warshade":{"Whittled Round":75,"Wood Billet":100},
+"War Shot":{"String":20,"Wood Billet":100},
+"Beginner's Rod":{"Wood Billet":1,"String":1,"Rock":1},
+"Fishing Pole":{"Wood Billet":5,"String":5,"Rock":1},
+"Crappie-o-matic 5000":{"Wood Billet":10,"String":5,"Rock":5,"Scorpion Extract":1},
+"Angler's Reel":{"Wood Billet":15,"String":15,"Rock":1}
+}
+
+/* --------------------------- */
 
 async function loadItems(){
 
@@ -158,6 +179,7 @@ itemsData=await res.json()
 
 itemsData.forEach((item,index)=>{
 itemNames[index]=item.name
+nameToId[item.name]=index
 })
 
 populateRecipes()
@@ -215,7 +237,6 @@ const wrapper=document.createElement("div")
 wrapper.className="item"
 
 const sprite=getSpriteElement(id)
-
 if(sprite) wrapper.appendChild(sprite)
 
 const span=document.createElement("span")
@@ -272,11 +293,27 @@ renderTotals(totals)
 function expandRecipe(id,qty,totals){
 
 const item=itemsData[id]
+const name=item.name
 
-if(!item?.data?.recipe_items){
-totals[id]=(totals[id]||0)+qty
+/* CHECK CUSTOM MATERIAL RECIPES */
+
+if(materialRecipes[name]){
+
+for(const mat in materialRecipes[name]){
+
+const matId=nameToId[mat]
+const amount=materialRecipes[name][mat]
+
+expandRecipe(matId,amount*qty,totals)
+
+}
+
 return
 }
+
+/* NORMAL GAME RECIPES */
+
+if(item?.data?.recipe_items){
 
 item.data.recipe_items.forEach(req=>{
 
@@ -285,6 +322,13 @@ if(req.item_id===-1 || req.amount<=0) return
 expandRecipe(req.item_id,req.amount*qty,totals)
 
 })
+
+return
+}
+
+/* BASE MATERIAL */
+
+totals[id]=(totals[id]||0)+qty
 
 }
 
@@ -315,7 +359,6 @@ tbody.appendChild(tr)
 function shareBuild(){
 
 const encoded=btoa(JSON.stringify(queuedRecipes))
-
 const url=location.origin+location.pathname+"#"+encoded
 
 navigator.clipboard.writeText(url)
@@ -329,11 +372,8 @@ function loadShared(){
 if(location.hash.length>1){
 
 try{
-
 queuedRecipes=JSON.parse(atob(location.hash.substring(1)))
-
 renderQueue()
-
 }catch{}
 
 }
