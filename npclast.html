@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mirage Online Classic – NPC List</title>
+<title>NPC Comparison</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
     background:radial-gradient(circle at top,#3a0a5c,#140020);
     color:#f5d97b;
 }
@@ -22,25 +22,35 @@ h1{
     margin:auto;
 }
 
-.controls{
-    margin-bottom:15px;
-    text-align:center;
-}
-
-input,button{
-    padding:8px;
+#searchBar{
+    display:block;
+    width:90%;
+    margin:0 auto 20px;
+    padding:10px;
     border-radius:6px;
     border:1px solid #666;
     background:#111;
     color:white;
-    margin:5px;
+}
+
+#searchBar::placeholder{
+    color:#aaa;
 }
 
 button{
-    cursor:pointer;
+    margin:10px auto;
+    display:block;
+    padding:10px 20px;
     background:#ffd700;
     color:#2a003f;
     font-weight:bold;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#ffe34d;
 }
 
 table{
@@ -62,39 +72,80 @@ tr:hover{
     background:rgba(255,255,255,0.05);
 }
 
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1;
+    left:0;top:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.7);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:#1a0030;
+    color:#fff;
+    padding:20px;
+    width:90%;
+    max-height:80vh;
+    overflow-y:auto;
+    border-radius:10px;
+}
+
+.close{
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.higher{
+    background:green;
+    color:white;
+}
+
+.lower{
+    background:red;
+    color:white;
+}
+
 .sprite{
     width:32px;
     height:32px;
+    background-size:1024px 1024px;
+    background-repeat:no-repeat;
     image-rendering:pixelated;
+    margin-top:5px;
 }
 
 .tooltip{
     position:absolute;
+    display:none;
     background:#111;
     color:#fff;
     border:1px solid #555;
     padding:6px;
     font-size:12px;
-    display:none;
-    z-index:100;
+    z-index:1000;
+    max-width:200px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Mirage Online Classic – NPC List</h1>
+<h1>NPC List 03/10/26</h1>
+<center><h5>* Hover over the NPC Sprite for drops and rate</h5></center>
+
+<button id="itemDropBtn">Show Item Drop List</button>
+
+<input type="text" id="searchBar" placeholder="Search for an NPC...">
 
 <div class="container">
-
-<div class="controls">
-<input id="searchBox" placeholder="Search NPC...">
-<button id="itemDropBtn">Item Drop List</button>
-</div>
-
 <table id="npcTable">
 <thead>
 <tr>
+<th>Select</th>
 <th>Name</th>
 <th>Description</th>
 <th>Stats</th>
@@ -102,206 +153,269 @@ tr:hover{
 </thead>
 <tbody></tbody>
 </table>
-
 </div>
 
-<div id="tooltip" class="tooltip"></div>
+<div id="comparisonModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeModal()">&times;</span>
+<h2>NPC Comparison</h2>
+<table id="comparisonTable">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>NPC 1</th>
+<th>NPC 2</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+
+<div id="itemDropModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="document.getElementById('itemDropModal').style.display='none'">&times;</span>
+<h2>Item Drop List</h2>
+<input type="text" id="itemSearch" placeholder="Search for an item..." style="width:100%; padding:8px; margin-bottom:10px;">
+<table style="width:100%;">
+<thead>
+<tr>
+<th>Item Name</th>
+<th>Dropped By</th>
+</tr>
+</thead>
+<tbody id="itemDropTable"></tbody>
+</table>
+</div>
+</div>
 
 <script>
-
-let npcData=[]
+let allNPCs=[]
+let selectedNPCs=[]
 let itemData=[]
-let itemIDMap=[]
-let filteredData=[]
+let itemIDMap={}
 
-/* ---------------- LOAD ---------------- */
+async function loadNPCs(){
+  const itemResponse=await fetch('last.json')
+  itemData=await itemResponse.json()
 
-async function loadData(){
+  const idResponse=await fetch('itemids.json')
+  itemIDMap=await idResponse.json()
 
-    try{
-        const [npcs,items,ids] = await Promise.all([
-            fetch("npc.json").then(r=>r.json()),
-            fetch("last.json").then(r=>r.json()),
-            fetch("itemids.json").then(r=>r.json())
-        ])
-
-        npcData=npcs
-        itemData=items
-        itemIDMap=ids
-
-        filteredData=[...npcData]
-
-        renderTable()
-
-    }catch(err){
-        console.error("Load failed:",err)
-    }
+  const response=await fetch('npc.json')
+  const npcs=await response.json()
+  allNPCs=npcs
+  displayNPCs(allNPCs)
 }
 
-/* ---------------- RENDER ---------------- */
+function displayNPCs(npcs){
+  const tbody=document.querySelector('#npcTable tbody')
+  tbody.innerHTML=''
 
-function renderTable(){
+  npcs.forEach(npc=>{
+    const row=document.createElement('tr')
 
-    const tbody=document.querySelector("#npcTable tbody")
-    tbody.innerHTML=""
+    const selectCell=document.createElement('td')
+    const checkbox=document.createElement('input')
+    checkbox.type='checkbox'
+    checkbox.onclick=()=>handleSelection(npc,checkbox)
+    selectCell.appendChild(checkbox)
+    row.appendChild(selectCell)
 
-    filteredData.forEach(npc=>{
+    const nameCell=document.createElement('td')
+    const nameDiv=document.createElement('div')
+    nameDiv.textContent=npc.name
 
-        const row=document.createElement("tr")
+    if(typeof npc.sprite==='number'){
+      const SPRITE_SIZE=32
+      const FRAMES=12
+      const PER_ROW=32
+      const SHEET_SIZE=1024
 
-        row.appendChild(buildNameCell(npc))
-        row.appendChild(buildDescCell(npc))
-        row.appendChild(buildStatsCell(npc))
+      const start=npc.sprite*FRAMES
+      const sheet=Math.floor(start/SHEET_SIZE)
+      const frame=start%SHEET_SIZE
 
-        tbody.appendChild(row)
+      const x=(frame%PER_ROW)*SPRITE_SIZE
+      const y=Math.floor(frame/PER_ROW)*SPRITE_SIZE
 
-    })
-}
+      const spriteDiv=document.createElement('div')
+      spriteDiv.className='sprite'
+      spriteDiv.style.backgroundImage=`url(images/sprites${sheet}.png)`
+      spriteDiv.style.backgroundPosition=`-${x}px -${y}px`
 
-/* ---------------- CELLS ---------------- */
+      let f=0,interval
 
-function buildNameCell(npc){
-
-    const td=document.createElement("td")
-
-    const name=document.createElement("div")
-    name.textContent=npc.name
-
-    td.appendChild(name)
-
-    if(typeof npc.sprite==="number"){
-        td.appendChild(buildSprite(npc))
-    }
-
-    return td
-}
-
-function buildDescCell(npc){
-
-    const td=document.createElement("td")
-    td.textContent=npc.desc || "—"
-    return td
-}
-
-function buildStatsCell(npc){
-
-    const td=document.createElement("td")
-
-    let lines=[]
-
-    if(npc.stats){
-        for(const [k,v] of Object.entries(npc.stats)){
-            lines.push(`${k}: ${v}`)
-        }
-    }
-
-    if(npc.vitals?.hp) lines.push(`HP: ${npc.vitals.hp}`)
-    if(npc.vitals?.mp) lines.push(`MP: ${npc.vitals.mp}`)
-    if(npc.vitals?.sp) lines.push(`SP: ${npc.vitals.sp}`)
-
-    if(npc.sight_range!==undefined) lines.push(`Sight: ${npc.sight_range}`)
-    if(npc.spawn_delay!==undefined) lines.push(`Respawn: ${npc.spawn_delay}`)
-    if(npc.spawn_day!==undefined) lines.push(`Day Spawn: ${npc.spawn_day ? "Yes":"No"}`)
-    if(npc.spawn_night!==undefined) lines.push(`Night Spawn: ${npc.spawn_night ? "Yes":"No"}`)
-
-    td.textContent = lines.join("\n")
-    td.style.whiteSpace="pre-line"
-
-    return td
-}
-
-/* ---------------- SPRITES ---------------- */
-
-function buildSprite(npc){
-
-    const SPRITE_SIZE=32
-    const FRAMES=12
-    const SHEET_SIZE=1024
-    const PER_ROW=32
-
-    const start=npc.sprite*FRAMES
-    const sheet=Math.floor(start/SHEET_SIZE)
-    const frame=start%SHEET_SIZE
-
-    const x=(frame%PER_ROW)*SPRITE_SIZE
-    const y=Math.floor(frame/PER_ROW)*SPRITE_SIZE
-
-    const div=document.createElement("div")
-    div.className="sprite"
-
-    div.style.backgroundImage=`url(images/sprites${sheet}.png)`
-    div.style.backgroundPosition=`-${x}px -${y}px`
-
-    let f=0,interval
-
-    div.onmouseenter=()=>{
+      spriteDiv.onmouseenter=()=>{
         interval=setInterval(()=>{
-            const idx=start+f
-            const fx=(idx%PER_ROW)*SPRITE_SIZE
-            const fy=Math.floor(idx/PER_ROW)*SPRITE_SIZE
-            div.style.backgroundPosition=`-${fx}px -${fy}px`
-            f=(f+1)%FRAMES
+          const idx=start+f
+          const fx=(idx%PER_ROW)*SPRITE_SIZE
+          const fy=Math.floor(idx/PER_ROW)*SPRITE_SIZE
+          spriteDiv.style.backgroundPosition=`-${fx}px -${fy}px`
+          f=(f+1)%FRAMES
         },100)
 
-        showTooltip(npc,div)
-    }
+        showTooltip(npc,spriteDiv)
+      }
 
-    div.onmouseleave=()=>{
+      spriteDiv.onmouseleave=()=>{
         clearInterval(interval)
         f=0
-        div.style.backgroundPosition=`-${x}px -${y}px`
+        spriteDiv.style.backgroundPosition=`-${x}px -${y}px`
         hideTooltip()
+      }
+
+      nameDiv.appendChild(document.createElement('br'))
+      nameDiv.appendChild(spriteDiv)
     }
 
-    return div
+    nameCell.appendChild(nameDiv)
+    row.appendChild(nameCell)
+
+    const descCell=document.createElement('td')
+    descCell.textContent=npc.desc||'No description'
+    row.appendChild(descCell)
+
+    const statsCell=document.createElement('td')
+    let statsText=''
+
+    if(npc.stats){
+      statsText=Object.entries(npc.stats)
+        .map(([k,v])=>`${k}: ${v}`)
+        .join('\n')
+    }
+
+    if(npc.vitals){
+      const {hp,mp,sp}=npc.vitals
+      statsText+=(statsText?'\n':'')+`HP: ${hp}`
+      if(mp) statsText+=`\nMP: ${mp}`
+      if(sp) statsText+=`\nSP: ${sp}`
+    }
+
+    if(npc.sight_range!==undefined) statsText+=`\nSight Range: ${npc.sight_range}`
+    if(npc.spawn_delay!==undefined) statsText+=`\nRespawn time: ${npc.spawn_delay}`
+    if(npc.spawn_day!==undefined) statsText+=`\nSpawn Daytime: ${npc.spawn_day?'Yes':'No'}`
+    if(npc.spawn_night!==undefined) statsText+=`\nSpawn Night: ${npc.spawn_night?'Yes':'No'}`
+
+    statsCell.textContent=statsText||'No stats'
+    statsCell.style.whiteSpace='pre-line'
+    row.appendChild(statsCell)
+
+    tbody.appendChild(row)
+  })
 }
 
-/* ---------------- TOOLTIP ---------------- */
-
 function showTooltip(npc,el){
+  if(!npc.drop_items?.length) return
 
-    if(!npc.drop_items?.length) return
+  let tooltip=document.getElementById("tooltip")
+  if(!tooltip){
+    tooltip=document.createElement("div")
+    tooltip.id="tooltip"
+    tooltip.className="tooltip"
+    document.body.appendChild(tooltip)
+  }
 
-    const tooltip=document.getElementById("tooltip")
+  tooltip.innerHTML=npc.drop_items.map(d=>{
+    const name=itemIDMap[d.item_id]
+    if(!name||name==="(not dropped)") return null
+    return `${name} x${d.amount}<br><span style="font-size:10px;color:#ccc">${d.chance}%</span>`
+  }).filter(Boolean).join("<br>")
 
-    tooltip.innerHTML = npc.drop_items
-        .map(d=>{
-            const name=itemIDMap[d.item_id]
-            if(!name || name==="(not dropped)") return null
-            return `${name} x${d.amount} (${d.chance}%)`
-        })
-        .filter(Boolean)
-        .join("<br>")
-
-    const rect=el.getBoundingClientRect()
-
-    tooltip.style.left = rect.right + 5 + "px"
-    tooltip.style.top = rect.top + window.scrollY + "px"
-    tooltip.style.display="block"
+  const rect=el.getBoundingClientRect()
+  tooltip.style.left=rect.right+5+"px"
+  tooltip.style.top=rect.top+window.scrollY+"px"
+  tooltip.style.display="block"
 }
 
 function hideTooltip(){
-    document.getElementById("tooltip").style.display="none"
+  const tooltip=document.getElementById("tooltip")
+  if(tooltip) tooltip.style.display="none"
 }
 
-/* ---------------- SEARCH ---------------- */
+function handleSelection(npc,checkbox){
+  if(checkbox.checked) selectedNPCs.push(npc)
+  else selectedNPCs=selectedNPCs.filter(n=>n!==npc)
 
-document.getElementById("searchBox").addEventListener("input",()=>{
+  if(selectedNPCs.length===2){
+    showComparison(selectedNPCs[0],selectedNPCs[1])
+  }
+}
 
-    const term=document.getElementById("searchBox").value.toLowerCase()
+function showComparison(npc1,npc2){
+  const table=document.querySelector('#comparisonTable tbody')
+  table.innerHTML=''
 
-    filteredData = npcData.filter(n=>
-        n.name.toLowerCase().includes(term) ||
-        (n.desc && n.desc.toLowerCase().includes(term))
-    )
+  const stats1={...npc1.stats}
+  const stats2={...npc2.stats}
 
-    renderTable()
+  if(npc1.vitals?.hp!==undefined) stats1.HP=npc1.vitals.hp
+  if(npc2.vitals?.hp!==undefined) stats2.HP=npc2.vitals.hp
+
+  const keys=new Set([...Object.keys(stats1),...Object.keys(stats2)])
+
+  keys.forEach(key=>{
+    const row=document.createElement('tr')
+
+    const v1=stats1[key]??'—'
+    const v2=stats2[key]??'—'
+
+    row.innerHTML=`<td>${key}</td><td>${v1}</td><td>${v2}</td>`
+
+    table.appendChild(row)
+  })
+
+  document.getElementById('comparisonModal').style.display='flex'
+}
+
+function closeModal(){
+  document.getElementById('comparisonModal').style.display='none'
+}
+
+document.getElementById('searchBar').addEventListener('input',()=>{
+  const term=document.getElementById('searchBar').value.toLowerCase()
+  const filtered=allNPCs.filter(npc=>
+    npc.name.toLowerCase().includes(term)||
+    (npc.desc&&npc.desc.toLowerCase().includes(term))
+  )
+  displayNPCs(filtered)
 })
 
-/* ---------------- INIT ---------------- */
+function populateItemDropList(){
+  const search=document.getElementById('itemSearch').value.toLowerCase()
+  const table=document.getElementById('itemDropTable')
+  table.innerHTML=''
 
-loadData()
+  const map={}
 
+  for(const npc of allNPCs){
+    if(!npc.drop_items) continue
+    for(const drop of npc.drop_items){
+      const name=itemIDMap[drop.item_id]
+      if(!name||name==="(not dropped)") continue
+      if(!map[name]) map[name]=[]
+      map[name].push(npc.name)
+    }
+  }
+
+  Object.entries(map).forEach(([name,mobs])=>{
+    if(!name.toLowerCase().includes(search)) return
+    const row=document.createElement('tr')
+    row.innerHTML=`<td>${name}</td><td>${[...new Set(mobs)].join(', ')}</td>`
+    table.appendChild(row)
+  })
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadNPCs()
+
+  document.getElementById('itemDropBtn').onclick=()=>{
+    document.getElementById('itemDropModal').style.display='flex'
+    populateItemDropList()
+  }
+
+  document.getElementById('itemSearch').oninput=populateItemDropList
+})
 </script>
 
 </body>
