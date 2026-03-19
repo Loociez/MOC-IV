@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Loocie's Build Helper</title>
 <style>
+:root {
+  --bg-main: #0f172a;
+  --bg-panel: #111827;
+  --bg-soft: #1f2937;
+  --accent: #3b82f6;
+  --text-main: #e5e7eb;
+  --border: #374151;
+}
   body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #f9fafb;
@@ -220,7 +228,16 @@ button:disabled {
 
 <div class="controls" role="region" aria-label="Class and stat selection">
   <div><label for="classSelect">Select Class:</label><select id="classSelect" disabled aria-required="true" aria-describedby="classHelp"><option value="">-- Loading classes... --</option></select></div>
+  
   <div><label for="statSelect">Select Stat to Maximize:</label><select id="statSelect" disabled aria-required="true" aria-describedby="statHelp"><option value="">-- Loading stats... --</option></select></div>
+
+  <div>
+    <label for="spellAmpSelect">Spell Amp Focus:</label>
+    <select id="spellAmpSelect">
+      <option value="">-- None --</option>
+    </select>
+  </div>
+
   <div><button id="generateBtn" disabled aria-label="Generate Build Options">Generate Build Options</button></div>
 </div>
 
@@ -354,6 +371,7 @@ let items = [];
 let filteredItemsByClass = [];
 let selectedClass = "";
 let selectedStat = "";
+let selectedSpellAmp = "";
 
 /* -------------------------
    Helpers: parse min-max and manual inputs
@@ -438,6 +456,20 @@ function populateStatDropdown() {
     statSelect.appendChild(option);
   });
   statSelect.disabled = false;
+}
+
+function populateSpellAmpDropdown() {
+  const select = document.getElementById('spellAmpSelect');
+  if (!select) return;
+
+  select.innerHTML = '<option value="">-- None --</option>';
+
+  Object.entries(spellAmpLabels).forEach(([key, label]) => {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = label;
+    select.appendChild(opt);
+  });
 }
 
 function filterItemsByClass(cls) {
@@ -661,13 +693,23 @@ function createSlotDropdown(slotKey) {
 
   let slotItems = getItemsForSlot(slotKey);
   slotItems.sort((a,b) => {
-    if (selectedStat) {
-      const aVal = getCombinedStatValue(a, selectedStat);
-      const bVal = getCombinedStatValue(b, selectedStat);
-      return bVal - aVal;
-    }
-    return (a.name || "").localeCompare(b.name || "");
-  });
+
+  // 🔥 NEW: Spell amp priority
+  if (selectedSpellAmp) {
+    const aVal = Number(a?.data?.[selectedSpellAmp] || 0);
+    const bVal = Number(b?.data?.[selectedSpellAmp] || 0);
+    return bVal - aVal;
+  }
+
+  // ✅ ORIGINAL BEHAVIOUR (unchanged)
+  if (selectedStat) {
+    const aVal = getCombinedStatValue(a, selectedStat);
+    const bVal = getCombinedStatValue(b, selectedStat);
+    return bVal - aVal;
+  }
+
+  return (a.name || "").localeCompare(b.name || "");
+});
 
   const noneOpt = document.createElement('option');
   noneOpt.value = '__NONE__'; noneOpt.textContent = '-- None --';
@@ -809,15 +851,22 @@ function loadItems() {
     .then(data => {
       items = data;
       populateClassDropdown();
-      populateStatDropdown();
-      enableUI();
+populateStatDropdown();
+populateSpellAmpDropdown();
+enableUI();;
       document.getElementById('buildOutput').textContent = "Items loaded! Select class and stat, then click Generate.";
     })
     .catch(err => {
       alert("Failed to load items JSON: " + err.message);
     });
 }
+document.getElementById('spellAmpSelect').addEventListener('change', (e) => {
+  selectedSpellAmp = e.target.value;
 
+  if (selectedClass && selectedStat) {
+    generateBuildUI();
+  }
+});
 document.getElementById('generateBtn').addEventListener('click', () => {
   selectedClass = document.getElementById('classSelect').value;
   selectedStat = document.getElementById('statSelect').value;
