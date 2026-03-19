@@ -4,127 +4,123 @@
 <meta charset="UTF-8">
 <title>Mirage Online Classic Map Builder</title>
 <style>
-  body { background: #222; color: #fff; font-family: sans-serif; text-align: center; }
-  canvas { border: 1px solid #555; image-rendering: pixelated; }
-  #controls { margin-bottom: 10px; }
-  button { margin: 2px; padding: 5px 10px; }
+    body { font-family: sans-serif; background: #222; color: #eee; text-align: center; }
+    canvas { background: #000; margin-top: 10px; border: 1px solid #555; }
+    input, button, select { margin: 5px; }
 </style>
 </head>
 <body>
-<h1>Mirage Online Classic Map Builder</h1>
 
-<div id="controls">
-  <label for="layerSelect">Layer:</label>
-  <select id="layerSelect"></select>
-  <button onclick="drawMap()">Draw</button>
-  <button onclick="zoomIn()">Zoom +</button>
-  <button onclick="zoomOut()">Zoom -</button>
-</div>
+<h1>Mirage Online Classic Map Viewer</h1>
 
+<input type="file" id="fileInput" accept=".json">
+<label>Zoom: <input type="number" id="zoomInput" value="2" min="1" max="8"></label>
+<button id="drawBtn">Draw Map</button>
+
+<br>
 <canvas id="mapCanvas"></canvas>
 
 <script>
+const canvas = document.getElementById('mapCanvas');
+const ctx = canvas.getContext('2d');
 const TILE_SIZE = 32;
-const TILESHEET_COUNT = 19; // tiles0.png → tiles18.png
-const tilesheets = [];
-let mapData;
-let zoom = 1;
-let canvas, ctx;
+
+let currentMap = null;
+let tilesheets = [];
+let tileCache = {};
 
 async function loadTilesheets() {
-    for (let i = 0; i < TILESHEET_COUNT; i++) {
+    tilesheets = [];
+    tileCache = {};
+    for (let i=0; i<=18; i++) {
         const img = new Image();
         img.src = `map/tiles${i}.png`;
         await new Promise(res => { img.onload = res; });
-        tilesheets.push({img, width: img.width / TILE_SIZE, height: img.height / TILE_SIZE});
+        tilesheets.push(img);
     }
 }
 
-async function loadMapData() {
-    const res = await fetch('mapdump.json');
-    mapData = await res.json();
+// Calculate which tilesheet and coordinates for a tile number
+function getTileSprite(tileNum) {
+    if (tileCache[tileNum]) return tileCache[tileNum];
 
-    const layerSelect = document.getElementById('layerSelect');
-    mapData.tiles.forEach((layer, idx) => {
-        const option = document.createElement('option');
-        option.value = idx;
-        option.textContent = `Layer ${idx}`;
-        layerSelect.appendChild(option);
-    });
-}
+    let tilesPerSheetX = Math.floor(tilesheets[0].width / TILE_SIZE);
+    let tilesPerSheetY = Math.floor(tilesheets[0].height / TILE_SIZE);
+    let tilesPerSheet = tilesPerSheetX * tilesPerSheetY;
 
-function getTileSprite(tileNumber) {
-    if (tileNumber < 0) return null;
-    let sheetIndex = 0;
-    let count = 0;
-    while (sheetIndex < tilesheets.length) {
-        const sheet = tilesheets[sheetIndex];
-        const total = sheet.width * sheet.height;
-        if (tileNumber < count + total) {
-            const localIndex = tileNumber - count;
-            const x = (localIndex % sheet.width) * TILE_SIZE;
-            const y = Math.floor(localIndex / sheet.width) * TILE_SIZE;
-            return {sheet: sheet.img, sx: x, sy: y};
-        }
-        count += sheet.width * sheet.height;
-        sheetIndex++;
-    }
-    return null;
+    let sheetIndex = Math.floor(tileNum / tilesPerSheet);
+    let indexInSheet = tileNum % tilesPerSheet;
+    let sx = (indexInSheet % tilesPerSheetX) * TILE_SIZE;
+    let sy = Math.floor(indexInSheet / tilesPerSheetX) * TILE_SIZE;
+
+    let tile = {
+        sheet: tilesheets[sheetIndex],
+        sx, sy
+    };
+    tileCache[tileNum] = tile;
+    return tile;
 }
 
 function drawMap() {
-    const layerIndex = parseInt(document.getElementById('layerSelect').value);
-    const layer = mapData.tiles[layerIndex];
+    if (!currentMap || !currentMap.tiles) return;
 
-    const rows = layer.length;
-    const cols = layer[0].length;
+    const zoom = parseInt(document.getElementById('zoomInput').value) || 1;
+    const rows = 33;  // fixed map height
+    const cols = 24;  // fixed map width
 
     canvas.width = cols * TILE_SIZE * zoom;
     canvas.height = rows * TILE_SIZE * zoom;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-            const tileStack = layer[y][x];
-            if (!tileStack) continue;
-            for (let tileNum of tileStack) {
-                if (tileNum === -1) continue;
-                const tile = getTileSprite(tileNum);
-                if (tile) {
-                    ctx.drawImage(
-                        tile.sheet,
-                        tile.sx, tile.sy, TILE_SIZE, TILE_SIZE,
-                        x * TILE_SIZE * zoom,
-                        y * TILE_SIZE * zoom,
-                        TILE_SIZE * zoom,
-                        TILE_SIZE * zoom
-                    );
+    // Draw all layers from bottom to top
+    for (let layerIndex=0; layerIndex<currentMap.tiles.length; layerIndex++) {
+        const layer = currentMap.tiles[layerIndex];
+        if (!layer) continue;
+
+        for (let y=0; y<layer.length; y++) {
+            for (let x=0; x<layer[y].length; x++) {
+                let tileStack = layer[y][x];
+                if (tileStack == null) continue;
+                if (!Array.isArray(tileStack)) tileStack = [tileStack];
+
+                for (let tileNum of tileStack) {
+                    if (tileNum === -1) continue;
+                    const tile = getTileSprite(tileNum);
+                    if (tile) {
+                        ctx.drawImage(
+                            tile.sheet,
+                            tile.sx, tile.sy, TILE_SIZE, TILE_SIZE,
+                            x * TILE_SIZE * zoom,
+                            y * TILE_SIZE * zoom,
+                            TILE_SIZE * zoom,
+                            TILE_SIZE * zoom
+                        );
+                    }
                 }
             }
         }
     }
 }
 
-function zoomIn() {
-    zoom *= 1.5;
-    drawMap();
-}
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+        currentMap = JSON.parse(text);
+        console.log("Map loaded!", currentMap.tiles.length + " layers");
+    } catch(err) {
+        alert("Failed to parse JSON: " + err);
+    }
+});
 
-function zoomOut() {
-    zoom /= 1.5;
+document.getElementById('drawBtn').addEventListener('click', () => {
     drawMap();
-}
+});
 
-async function init() {
-    canvas = document.getElementById('mapCanvas');
-    ctx = canvas.getContext('2d');
-    await loadTilesheets();
-    await loadMapData();
-    drawMap();
-}
-
-init();
+loadTilesheets();  // preload all tiles
 </script>
+
 </body>
 </html>
