@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mirage Online Classic Map Builder</title>
+<style>
+  body { background: #222; color: #fff; font-family: sans-serif; text-align: center; }
+  canvas { border: 1px solid #555; image-rendering: pixelated; }
+  #controls { margin-bottom: 10px; }
+  button { margin: 2px; padding: 5px 10px; }
+</style>
+</head>
+<body>
+<h1>Mirage Online Classic Map Builder</h1>
+
+<div id="controls">
+  <label for="layerSelect">Layer:</label>
+  <select id="layerSelect"></select>
+  <button onclick="drawMap()">Draw</button>
+  <button onclick="zoomIn()">Zoom +</button>
+  <button onclick="zoomOut()">Zoom -</button>
+</div>
+
+<canvas id="mapCanvas"></canvas>
+
+<script>
+const TILE_SIZE = 32;
+const TILESHEET_COUNT = 19; // tiles0.png → tiles18.png
+const tilesheets = [];
+let mapData;
+let zoom = 1;
+let canvas, ctx;
+
+async function loadTilesheets() {
+    for (let i = 0; i < TILESHEET_COUNT; i++) {
+        const img = new Image();
+        img.src = `map/tiles${i}.png`;
+        await new Promise(res => { img.onload = res; });
+        tilesheets.push({img, width: img.width / TILE_SIZE, height: img.height / TILE_SIZE});
+    }
+}
+
+async function loadMapData() {
+    const res = await fetch('mapdump.json');
+    mapData = await res.json();
+
+    const layerSelect = document.getElementById('layerSelect');
+    mapData.tiles.forEach((layer, idx) => {
+        const option = document.createElement('option');
+        option.value = idx;
+        option.textContent = `Layer ${idx}`;
+        layerSelect.appendChild(option);
+    });
+}
+
+function getTileSprite(tileNumber) {
+    if (tileNumber < 0) return null;
+    let sheetIndex = 0;
+    let count = 0;
+    while (sheetIndex < tilesheets.length) {
+        const sheet = tilesheets[sheetIndex];
+        const total = sheet.width * sheet.height;
+        if (tileNumber < count + total) {
+            const localIndex = tileNumber - count;
+            const x = (localIndex % sheet.width) * TILE_SIZE;
+            const y = Math.floor(localIndex / sheet.width) * TILE_SIZE;
+            return {sheet: sheet.img, sx: x, sy: y};
+        }
+        count += sheet.width * sheet.height;
+        sheetIndex++;
+    }
+    return null;
+}
+
+function drawMap() {
+    const layerIndex = parseInt(document.getElementById('layerSelect').value);
+    const layer = mapData.tiles[layerIndex];
+
+    const rows = layer.length;
+    const cols = layer[0].length;
+
+    canvas.width = cols * TILE_SIZE * zoom;
+    canvas.height = rows * TILE_SIZE * zoom;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+            const tileStack = layer[y][x];
+            if (!tileStack) continue;
+            for (let tileNum of tileStack) {
+                if (tileNum === -1) continue;
+                const tile = getTileSprite(tileNum);
+                if (tile) {
+                    ctx.drawImage(
+                        tile.sheet,
+                        tile.sx, tile.sy, TILE_SIZE, TILE_SIZE,
+                        x * TILE_SIZE * zoom,
+                        y * TILE_SIZE * zoom,
+                        TILE_SIZE * zoom,
+                        TILE_SIZE * zoom
+                    );
+                }
+            }
+        }
+    }
+}
+
+function zoomIn() {
+    zoom *= 1.5;
+    drawMap();
+}
+
+function zoomOut() {
+    zoom /= 1.5;
+    drawMap();
+}
+
+async function init() {
+    canvas = document.getElementById('mapCanvas');
+    ctx = canvas.getContext('2d');
+    await loadTilesheets();
+    await loadMapData();
+    drawMap();
+}
+
+init();
+</script>
+</body>
+</html>
