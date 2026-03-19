@@ -6,71 +6,89 @@
 <title>Loocie's Build Helper</title>
 <style>
 :root {
-  --bg-main: #0f172a;
-  --bg-panel: #111827;
-  --bg-soft: #1f2937;
-  --accent: #3b82f6;
-  --text-main: #e5e7eb;
-  --border: #374151;
+  --bg-main: #0f0a1f;
+  --bg-panel: #1a1333;
+  --bg-soft: #241a47;
+  --accent: #8b5cf6;
+  --accent-strong: #7c3aed;
+  --text-main: #ede9fe;
+  --text-dim: #a78bfa;
+  --border: #3b2f5e;
 }
-  body {
+
+/* Base */
+body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f9fafb;
+  background: var(--bg-main);
   margin: 0;
   padding: 20px;
-  color: #222;
+  color: var(--text-main);
   line-height: 1.4;
 }
+
 h1 { 
   margin-bottom: 12px; 
   font-weight: 700; 
-  color: #0f2137; 
+  color: var(--text-main); 
   user-select: none; 
 }
 h2 { 
   margin-top: 0; 
   font-weight: 600; 
-  color: #0f2137; 
+  color: var(--text-main); 
 }
 label { 
   font-weight: 600; 
-  color: #1e2a38; 
+  color: var(--text-dim); 
   user-select: none; 
 }
+
+/* Panels */
 .manual-stats { 
-  background: #ffffff; 
-  border: 1px solid #d1d5db; 
+  background: var(--bg-panel); 
+  border: 1px solid var(--border); 
   border-radius: 6px; 
   padding: 12px 16px; 
   margin-bottom: 18px; 
   max-width: 800px; 
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); 
 }
+
+/* Grid */
 .manual-stats-grid { 
   display: grid; 
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
   gap: 10px 18px; 
 }
+
 .manual-stats-row { 
   display: flex; 
   flex-direction: column; 
 }
+
 .manual-stats-row label { 
   margin-bottom: 4px; 
   font-size: 0.9rem; 
 }
+
+/* Inputs */
 .manual-stats-row input { 
   padding: 6px 8px; 
   font-size: 1rem; 
-  border: 1px solid #cbd5e1; 
+  border: 1px solid var(--border); 
   border-radius: 4px; 
-  transition: border-color 0.2s ease-in-out; 
+  background: var(--bg-soft);
+  color: var(--text-main);
+  transition: all 0.2s ease-in-out; 
 }
+
 .manual-stats-row input:focus { 
   outline: none; 
-  border-color: #3b82f6; 
-  box-shadow: 0 0 3px #3b82f6aa; 
+  border-color: var(--accent); 
+  box-shadow: 0 0 6px var(--accent); 
 }
+
+/* Controls */
 .controls { 
   display: flex; 
   flex-wrap: wrap; 
@@ -79,98 +97,133 @@ label {
   align-items: flex-end; 
   margin-bottom: 16px; 
 }
+
 .controls > div { 
   flex: 1 1 180px; 
   display: flex; 
   flex-direction: column; 
 }
+
+/* Select + Button */
 select, button { 
   font-size: 1rem; 
   padding: 8px 10px; 
   border-radius: 5px; 
-  border: 1px solid #cbd5e1; 
-  transition: border-color 0.2s ease-in-out; 
+  border: 1px solid var(--border); 
+  background: var(--bg-soft);
+  color: var(--text-main);
   cursor: pointer; 
-  background: #fff; 
+  transition: all 0.2s ease-in-out; 
 }
+
 select:focus, button:focus { 
   outline: none; 
-  border-color: #2563eb; 
-  box-shadow: 0 0 6px #2563ebaa; 
+  border-color: var(--accent); 
+  box-shadow: 0 0 8px var(--accent); 
 }
+
+/* Buttons */
+button {
+  background: var(--accent);
+  color: white;
+}
+
+button:hover {
+  background: var(--accent-strong);
+}
+
 button:disabled { 
   cursor: not-allowed; 
-  background: #e5e7eb; 
-  border-color: #d1d5db; 
-  color: #9ca3af; 
+  background: #2a2440; 
+  border-color: var(--border); 
+  color: #6b7280; 
 }
+
+/* Slots container */
 #slotsContainer { 
   max-width: 800px; 
-  background: #fff; 
+  background: var(--bg-panel); 
   padding: 14px 18px; 
   border-radius: 6px; 
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1); 
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5); 
   display: flex; 
   flex-wrap: wrap; 
   gap: 16px; 
   margin-bottom: 18px; 
 }
+
 .slot-container { 
   flex: 1 1 45%; 
-  min-width: 350px; /* increased from 280px */
+  min-width: 350px; 
 }
+
 .slot-container label { 
   font-weight: 700; 
   margin-bottom: 6px; 
   display: block; 
 }
+
 .slot-controls { 
   display:flex; 
   gap:8px; 
   align-items:center; 
   margin-top:6px; 
 }
+
+/* Dropdowns */
 .slot-container select,
 .enchantSelect {
   width: 100%;
   box-sizing: border-box;
 }
+
 .enchantSelect { 
-  margin-left: 12px; /* slightly increased */
+  margin-left: 12px; 
 }
+
+/* Output */
 #buildOutput { 
   max-width: 800px; 
-  background: #fff; 
+  background: var(--bg-panel); 
   padding: 16px 22px; 
   border-radius: 6px; 
-  box-shadow: 0 1px 6px rgba(0,0,0,0.12); 
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6); 
   font-size: 0.95rem; 
 }
+
+/* Tables */
 #buildOutput table { 
   width: 100%; 
   border-collapse: collapse; 
   margin-bottom: 12px; 
 }
+
 #buildOutput th, #buildOutput td { 
-  border: 1px solid #e2e8f0; 
+  border: 1px solid var(--border); 
   padding: 8px 10px; 
   text-align: left; 
 }
+
 #buildOutput th { 
-  background: #f3f4f6; 
+  background: var(--bg-soft); 
   font-weight: 600; 
-  color: #374151; 
+  color: var(--text-dim); 
 }
+
+/* Lists */
 #buildOutput ul { 
   margin: 0; 
   padding-left: 20px; 
-  color: #374151; 
+  color: var(--text-dim); 
 }
+
 #buildOutput h3 { 
   margin: 12px 0 6px 0; 
   font-weight: 600; 
-  color: #1e293b; 
+  color: var(--text-main); 
 }
+
+/* Mobile */
 @media (max-width: 600px) {
   #slotsContainer { 
     flex-direction: column; 
@@ -187,7 +240,6 @@ button:disabled {
     flex: 1 1 100%; 
   }
 }
-
 </style>
 </head>
 <body>
