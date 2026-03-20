@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MOC Gold Calculator</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 20px;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+  }
+
+  input {
+    padding: 10px;
+    width: 300px;
+    margin-bottom: 15px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    border-radius: 6px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    background: #161b22;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background: #21262d;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  th:hover {
+    background: #30363d;
+  }
+
+  tr:nth-child(even) {
+    background: #0d1117;
+  }
+
+  tr:hover {
+    background: #1f2933;
+  }
+
+  .sort-indicator {
+    margin-left: 5px;
+    font-size: 12px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Mirage Online Classic - Gold Calculator</h1>
+
+<input type="text" id="search" placeholder="Search NPC...">
+
+<table id="npcTable">
+  <thead>
+    <tr>
+      <th data-key="name">Name</th>
+      <th data-key="hp">HP</th>
+      <th data-key="atk">ATK</th>
+      <th data-key="def">DEF</th>
+      <th data-key="gold">Estimated Gold</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+let npcData = [];
+let currentSort = { key: null, asc: true };
+
+function calculateGold(npc) {
+  const hp = npc.vitals?.hp || 0;
+  const atk = npc.stats?.atk || 0;
+  const def = npc.stats?.def || 0;
+
+  return Math.floor((hp + atk * 2 + def * 2) / 200);
+}
+
+async function loadNPCs() {
+  const res = await fetch('./npc.json');
+  const data = await res.json();
+
+  npcData = data.map(npc => ({
+    name: npc.name,
+    hp: npc.vitals?.hp || 0,
+    atk: npc.stats?.atk || 0,
+    def: npc.stats?.def || 0,
+    gold: calculateGold(npc)
+  }));
+
+  renderTable(npcData);
+}
+
+function renderTable(data) {
+  const tbody = document.querySelector('#npcTable tbody');
+  tbody.innerHTML = '';
+
+  data.forEach(npc => {
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+      <td>${npc.name}</td>
+      <td>${npc.hp}</td>
+      <td>${npc.atk}</td>
+      <td>${npc.def}</td>
+      <td>${npc.gold}</td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
+
+function sortTable(key) {
+  const asc = currentSort.key === key ? !currentSort.asc : true;
+  currentSort = { key, asc };
+
+  npcData.sort((a, b) => {
+    if (typeof a[key] === 'string') {
+      return asc
+        ? a[key].localeCompare(b[key])
+        : b[key].localeCompare(a[key]);
+    }
+    return asc ? a[key] - b[key] : b[key] - a[key];
+  });
+
+  renderTable(npcData);
+}
+
+function setupSorting() {
+  document.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      sortTable(th.dataset.key);
+    });
+  });
+}
+
+function setupSearch() {
+  const input = document.getElementById('search');
+
+  input.addEventListener('input', () => {
+    const value = input.value.toLowerCase();
+
+    const filtered = npcData.filter(npc =>
+      npc.name.toLowerCase().includes(value)
+    );
+
+    renderTable(filtered);
+  });
+}
+
+loadNPCs();
+setupSorting();
+setupSearch();
+</script>
+
+</body>
+</html>
