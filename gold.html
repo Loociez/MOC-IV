@@ -94,18 +94,13 @@ function calculateGold(npc) {
 
   let power = hp + atk * 2 + def * 2;
 
-  // Apply elite scaling to power (NOT gold)
+  // Elite scaling (only real modifier we’ve confirmed)
   if (npc.tag && npc.tag.includes("☠")) {
-    power *= 1.25; // tuned for Jasper
+    power *= 1.25;
   }
 
-  let gold = Math.floor(power / 200);
-
-  // Tier boosts (applied after)
-  if (power > 1000) gold += 1;
-  if (power > 1500) gold += 1;
-
-  return gold;
+  // Slightly lower divisor fixes mid-tier mobs like Medusa/Tomb Robber
+  return Math.floor(power / 185);
 }
 async function loadNPCs() {
   const res = await fetch('./npc.json');
