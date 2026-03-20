@@ -96,13 +96,11 @@ function calculateGold(npc) {
 
   let gold = Math.floor(power / 200);
 
-  // Mid-tier boost (fixes Undead Crusader)
-  if (power > 900) gold += 1;
+  // Tier boosts
+  if (power > 1000) gold += 1;
+  if (power > 1500) gold += 1;
 
-  // High-tier boost (fixes stronger mobs)
-  if (power > 1400) gold += 1;
-
-  // Elite mobs (☠)
+  // Elite mobs
   if (npc.tag && npc.tag.includes("☠")) {
     gold += Math.floor(gold * 0.3);
   }
