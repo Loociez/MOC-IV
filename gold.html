@@ -16,6 +16,14 @@
     margin-bottom: 10px;
   }
 
+  .notice {
+    background: #21262d;
+    padding: 12px 15px;
+    border-left: 4px solid #58a6ff;
+    margin-bottom: 15px;
+    border-radius: 6px;
+  }
+
   input {
     padding: 10px;
     width: 300px;
@@ -68,6 +76,10 @@
 
 <h1>Mirage Online Classic - Gold Calculator</h1>
 
+<div class="notice">
+  <strong>Note:</strong> Estimated gold values are approximate. Weak mobs may be off by ±1 gold (~20–25%), elite/boss mobs (☠) may vary slightly more. Use as a general guide.
+</div>
+
 <input type="text" id="search" placeholder="Search NPC...">
 
 <table id="npcTable">
@@ -94,14 +106,15 @@ function calculateGold(npc) {
 
   let power = hp + atk * 2 + def * 2;
 
-  // Elite scaling (only real modifier we’ve confirmed)
+  // Elite scaling (☠)
   if (npc.tag && npc.tag.includes("☠")) {
     power *= 1.25;
   }
 
-  // Slightly lower divisor fixes mid-tier mobs like Medusa/Tomb Robber
+  // Base divisor
   return Math.floor(power / 185);
 }
+
 async function loadNPCs() {
   const res = await fetch('./npc.json');
   const data = await res.json();
