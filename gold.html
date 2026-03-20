@@ -92,14 +92,15 @@ function calculateGold(npc) {
   const atk = npc.stats?.atk || 0;
   const def = npc.stats?.def || 0;
 
-  let power = hp + atk * 1.8 + def * 2.2;
+  let power = hp + atk * 2 + def * 2;
 
-  // Elite mobs (☠)
+  // Elite scaling (only real modifier we’ve confirmed)
   if (npc.tag && npc.tag.includes("☠")) {
     power *= 1.25;
   }
 
-  return Math.floor(power / 200);
+  // Slightly lower divisor fixes mid-tier mobs like Medusa/Tomb Robber
+  return Math.floor(power / 185);
 }
 async function loadNPCs() {
   const res = await fetch('./npc.json');
