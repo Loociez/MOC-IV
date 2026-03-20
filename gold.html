@@ -5,7 +5,7 @@
 <title>MOC Gold Calculator</title>
 
 <style>
-  :root{
+:root{
   --bg1:#3a0a5c;
   --bg2:#140020;
   --accent:#7a1fd1;
@@ -26,6 +26,7 @@ body{
   background:radial-gradient(circle at 30% 30%, var(--bg1), var(--bg2) 70%);
   min-height:100vh;
   overflow-x:hidden;
+  padding:20px;
 }
 
 /* subtle smoke effect */
@@ -54,69 +55,74 @@ h1{
   text-shadow:0 0 10px rgba(255,215,0,.4);
 }
 
-.controls, .container{
-  width:95%;
-  margin:20px auto;
+.notice{
   background:rgba(20,0,40,.7);
   border:1px solid rgba(255,215,0,.3);
-  border-radius:14px;
-  padding:20px;
-  backdrop-filter:blur(10px);
+  border-left:4px solid var(--accent);
+  border-radius:12px;
+  padding:15px;
+  width:95%;
+  margin:0 auto 20px auto;
   text-align:center;
+  backdrop-filter:blur(10px);
 }
 
-select,input{
+input{
   background:rgba(0,0,0,.4);
   color:var(--text);
   border:1px solid rgba(255,215,0,.4);
   border-radius:6px;
-  padding:6px;
-  margin:6px;
-}
-
-.button, .bookmarklet{
-  display:inline-block;
-  background:var(--accent2);
-  color:var(--text);
-  border:1px solid rgba(255,215,0,.4);
-  padding:10px 18px;
-  margin:6px;
-  border-radius:8px;
-  cursor:pointer;
-  text-decoration:none;
-  font-weight:bold;
-}
-.button:hover, .bookmarklet:hover{
-  background:var(--accent);
-}
-
-.bookmarklet{background:#FF9800;}
-
-a.mirage-link{
-  background-color:black;
-  color:white;
-  padding:4px 8px;
-  border-radius:6px;
-  text-decoration:none;
-  font-weight:bold;
-}
-a.mirage-link:hover{background:#222;}
-
-img.banner{
-  width:100%;
-  max-width:1100px;
-  height:auto;
+  padding:8px;
+  margin-bottom:15px;
+  width:300px;
   display:block;
-  margin:0 auto 20px;
+  margin-left:auto;
+  margin-right:auto;
 }
 
-ol{ text-align:left; display:inline-block; margin:10px 0; }
+table{
+  border-collapse:collapse;
+  width:95%;
+  margin:0 auto 20px auto;
+  background:rgba(20,0,40,.7);
+  border-radius:12px;
+  overflow:hidden;
+  backdrop-filter:blur(10px);
+}
 
-hr{
-  border:none;
-  border-top:1px solid rgba(255,255,255,.3);
-  margin:20px auto;
-  width:50%;
+th, td{
+  padding:10px;
+  text-align:left;
+  border-bottom:1px solid rgba(255,215,0,.2);
+}
+
+th{
+  background:rgba(0,0,0,.4);
+  cursor:pointer;
+  user-select:none;
+  position:relative;
+}
+
+th:hover{
+  background:var(--accent2);
+}
+
+tr:nth-child(even){
+  background:rgba(0,0,0,.3);
+}
+
+tr:hover{
+  background:rgba(255,255,255,.05);
+}
+
+.sort-indicator{
+  margin-left:5px;
+  font-size:12px;
+}
+
+.elite{
+  color:#FF6B6B;
+  font-weight:bold;
 }
 </style>
 </head>
@@ -155,12 +161,10 @@ function calculateGold(npc) {
 
   let power = hp + atk * 2 + def * 2;
 
-  // Elite scaling (☠)
   if (npc.tag && npc.tag.includes("☠")) {
     power *= 1.25;
   }
 
-  // Base divisor
   return Math.floor(power / 185);
 }
 
@@ -173,7 +177,8 @@ async function loadNPCs() {
     hp: npc.vitals?.hp || 0,
     atk: npc.stats?.atk || 0,
     def: npc.stats?.def || 0,
-    gold: calculateGold(npc)
+    gold: calculateGold(npc),
+    elite: npc.tag && npc.tag.includes("☠")
   }));
 
   renderTable(npcData);
@@ -185,15 +190,13 @@ function renderTable(data) {
 
   data.forEach(npc => {
     const row = document.createElement('tr');
-
     row.innerHTML = `
-      <td>${npc.name}</td>
+      <td class="${npc.elite ? 'elite' : ''}">${npc.name}${npc.elite ? ' ☠' : ''}</td>
       <td>${npc.hp}</td>
       <td>${npc.atk}</td>
       <td>${npc.def}</td>
       <td>${npc.gold}</td>
     `;
-
     tbody.appendChild(row);
   });
 }
@@ -224,14 +227,11 @@ function setupSorting() {
 
 function setupSearch() {
   const input = document.getElementById('search');
-
   input.addEventListener('input', () => {
     const value = input.value.toLowerCase();
-
     const filtered = npcData.filter(npc =>
       npc.name.toLowerCase().includes(value)
     );
-
     renderTable(filtered);
   });
 }
