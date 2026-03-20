@@ -94,16 +94,16 @@ function calculateGold(npc) {
 
   let power = hp + atk * 2 + def * 2;
 
+  // Apply elite scaling to power (NOT gold)
+  if (npc.tag && npc.tag.includes("☠")) {
+    power *= 1.25; // tuned for Jasper
+  }
+
   let gold = Math.floor(power / 200);
 
-  // Tier boosts
+  // Tier boosts (applied after)
   if (power > 1000) gold += 1;
   if (power > 1500) gold += 1;
-
-  // Elite mobs
-  if (npc.tag && npc.tag.includes("☠")) {
-    gold += Math.floor(gold * 0.3);
-  }
 
   return gold;
 }
