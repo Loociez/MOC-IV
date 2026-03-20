@@ -92,16 +92,23 @@ function calculateGold(npc) {
   const atk = npc.stats?.atk || 0;
   const def = npc.stats?.def || 0;
 
-  let gold = (hp + atk * 2 + def * 2) / 180;
+  let power = hp + atk * 2 + def * 2;
 
-  // Elite scaling
+  let gold = Math.floor(power / 200);
+
+  // Mid-tier boost (fixes Undead Crusader)
+  if (power > 900) gold += 1;
+
+  // High-tier boost (fixes stronger mobs)
+  if (power > 1400) gold += 1;
+
+  // Elite mobs (☠)
   if (npc.tag && npc.tag.includes("☠")) {
-    gold *= 1.15;
+    gold += Math.floor(gold * 0.3);
   }
 
-  return Math.round(gold);
+  return gold;
 }
-
 async function loadNPCs() {
   const res = await fetch('./npc.json');
   const data = await res.json();
