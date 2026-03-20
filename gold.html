@@ -92,14 +92,14 @@ function calculateGold(npc) {
   const atk = npc.stats?.atk || 0;
   const def = npc.stats?.def || 0;
 
-  let gold = (hp + atk * 2 + def * 2) / 200;
+  let gold = (hp + atk * 2 + def * 2) / 180;
 
-  // Elite / boss multiplier
+  // Elite scaling
   if (npc.tag && npc.tag.includes("☠")) {
-    gold *= 1.3;
+    gold *= 1.15;
   }
 
-  return Math.floor(gold);
+  return Math.round(gold);
 }
 
 async function loadNPCs() {
