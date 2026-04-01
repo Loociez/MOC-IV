@@ -19645,7 +19645,7 @@
   },
   {
     "name": "Specter's Blade",
-    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minion damage & HP. 5% Break chance upon repair",
+    "desc": "A rare weapon for the Necromancer from Hall of Heros. Increases Minon damage & HP. 5% Break chance upon repair",
     "revision": 1,
     "sprite": 1186,
     "sprite_color": {
