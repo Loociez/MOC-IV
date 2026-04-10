@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html class="theme-default">
+<head>
+  <meta charset="UTF-8">
+  <title>Poison Damage Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Poison Damage Calculator</h1>
+
+<div style="max-width:400px; margin: 0 auto; text-align:center;">
+
+  <label>Level:</label><br>
+  <input type="number" id="level" value="1"><br><br>
+
+  <label>Base Damage:</label><br>
+  <input type="number" id="damage" value="100"><br><br>
+
+  <label>Poison Ticks:</label><br>
+  <input type="number" id="ticks" value="5"><br><br>
+
+  <label>Item % Bonus:</label><br>
+  <input type="number" id="itemPercent" value="0"><br><br>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <h3 id="result"></h3>
+
+</div>
+
+<script>
+function calculate() {
+    const level = parseInt(document.getElementById("level").value);
+    const damage = parseFloat(document.getElementById("damage").value);
+    const poisonTicks = parseInt(document.getElementById("ticks").value);
+    const itemPercent = parseFloat(document.getElementById("itemPercent").value);
+
+    const poisonMod = 0.33 + (Math.floor(level / 10) * 0.03);
+    const itemMod = 1 + (itemPercent / 100);
+
+    const finalDamage = Math.floor((damage * poisonMod * itemMod) / poisonTicks);
+    const totalPoison = finalDamage * poisonTicks;
+
+    document.getElementById("result").innerText =
+        `Poison Mod: ${(poisonMod * 100).toFixed(1)}% | ` +
+        `Item Bonus: ${itemPercent.toFixed(1)}% | ` +
+        `Damage per Tick: ${finalDamage} | Total Poison: ${totalPoison}`;
+}
+</script>
+
+</body>
+</html>
