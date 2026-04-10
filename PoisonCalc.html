@@ -15,8 +15,11 @@
   <label>Level:</label><br>
   <input type="number" id="level" value="1"><br><br>
 
-  <label>Base Damage:</label><br>
-  <input type="number" id="damage" value="100"><br><br>
+  <label>Min Damage:</label><br>
+  <input type="number" id="minDamage" value="100"><br><br>
+
+  <label>Max Damage:</label><br>
+  <input type="number" id="maxDamage" value="200"><br><br>
 
   <label>Poison Ticks:</label><br>
   <input type="number" id="ticks" value="5"><br><br>
@@ -33,22 +36,64 @@
 <script>
 function calculate() {
     const level = parseInt(document.getElementById("level").value);
-    const damage = parseFloat(document.getElementById("damage").value);
+    const minDamage = parseFloat(document.getElementById("minDamage").value);
+    const maxDamage = parseFloat(document.getElementById("maxDamage").value);
     const poisonTicks = parseInt(document.getElementById("ticks").value);
     const itemPercent = parseFloat(document.getElementById("itemPercent").value);
 
     const poisonMod = 0.33 + (Math.floor(level / 10) * 0.03);
     const itemMod = 1 + (itemPercent / 100);
 
-    const finalDamage = Math.floor((damage * poisonMod * itemMod) / poisonTicks);
-    const totalPoison = finalDamage * poisonTicks;
+    const variance = 0.12;
+
+    // =========================
+    // BASE (NO VARIANCE)
+    // =========================
+    const baseLowTick = Math.round((minDamage * poisonMod * itemMod) / poisonTicks);
+    const baseHighTick = Math.round((maxDamage * poisonMod * itemMod) / poisonTicks);
+
+    const baseLowTotal = baseLowTick * poisonTicks;
+    const baseHighTotal = baseHighTick * poisonTicks;
+
+    // =========================
+    // FULL VARIANCE BOUNDS (NO RNG)
+    // =========================
+
+    // LOWEST POSSIBLE HIT
+    const minVarLow = minDamage * poisonMod * itemMod * (1 - variance);
+    const minVarHigh = maxDamage * poisonMod * itemMod * (1 - variance);
+
+    const varLowTick = Math.floor(minVarLow / poisonTicks);
+    const varLowTickHigh = Math.floor(minVarHigh / poisonTicks);
+
+    // HIGHEST POSSIBLE HIT
+    const maxVarLow = minDamage * poisonMod * itemMod * (1 + variance);
+    const maxVarHigh = maxDamage * poisonMod * itemMod * (1 + variance);
+
+    const varHighTick = Math.ceil(maxVarLow / poisonTicks);
+    const varHighTickHigh = Math.ceil(maxVarHigh / poisonTicks);
+
+    // TRUE GLOBAL MIN/MAX
+    const finalMinTick = Math.min(varLowTick, varLowTickHigh);
+    const finalMaxTick = Math.max(varHighTick, varHighTickHigh);
+
+    const finalMinTotal = finalMinTick * poisonTicks;
+    const finalMaxTotal = finalMaxTick * poisonTicks;
 
     document.getElementById("result").innerText =
-        `Poison Mod: ${(poisonMod * 100).toFixed(1)}% | ` +
-        `Item Bonus: ${itemPercent.toFixed(1)}% | ` +
-        `Damage per Tick: ${finalDamage} | Total Poison: ${totalPoison}`;
+        `Poison: ${(poisonMod * 100).toFixed(1)}% | ` +
+        `Item Bonus: ${itemPercent.toFixed(1)}%\n\n` +
+
+        `BASE RANGE (no variance):\n` +
+        `${baseLowTick} - ${baseHighTick} per tick\n` +
+        `${baseLowTotal} - ${baseHighTotal} total\n\n` +
+
+        `FULL VARIANCE RANGE (true possible bounds):\n` +
+        `Tick: ${finalMinTick} - ${finalMaxTick}\n` +
+        `Total: ${finalMinTotal} - ${finalMaxTotal}`;
 }
 </script>
+
 
 </body>
 </html>
