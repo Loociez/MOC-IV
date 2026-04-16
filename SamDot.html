@@ -61,17 +61,14 @@ function calculate() {
     const totalMaxDef = physDef + magicMax + rangeMax;
 
     // =========================
-    // APPLY ITEM % (THIS IS YOUR DAMAGE)
+    // DAMAGE PER TICK (NOT SPLIT)
     // =========================
-    const totalMinDamage = totalMinDef * itemMod;
-    const totalMaxDamage = totalMaxDef * itemMod;
+    const minTick = Math.floor(totalMinDef * itemMod);
+    const maxTick = Math.ceil(totalMaxDef * itemMod);
 
     // =========================
-    // PER TICK
+    // TOTAL DAMAGE
     // =========================
-    const minTick = Math.floor(totalMinDamage / ticks);
-    const maxTick = Math.ceil(totalMaxDamage / ticks);
-
     const minTotal = minTick * ticks;
     const maxTotal = maxTick * ticks;
 
@@ -79,12 +76,11 @@ function calculate() {
         `Total DEF: ${totalMinDef} - ${totalMaxDef}\n` +
         `Item Bonus: ${itemPercent.toFixed(1)}%\n\n` +
 
-        `TOTAL DAMAGE:\n` +
-        `${Math.round(totalMinDamage)} - ${Math.round(totalMaxDamage)}\n\n` +
+        `DAMAGE PER TICK:\n` +
+        `${minTick} - ${maxTick}\n\n` +
 
-        `DAMAGE OVER TIME:\n` +
-        `${minTick} - ${maxTick} per tick\n` +
-        `${minTotal} - ${maxTotal} total over ${ticks} ticks`;
+        `TOTAL DAMAGE OVER TIME:\n` +
+        `${minTotal} - ${maxTotal} over ${ticks} ticks`;
 }
 </script>
 
