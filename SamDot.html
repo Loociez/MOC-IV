@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html class="theme-default">
+<head>
+  <meta charset="UTF-8">
+  <title>Samurai DoT Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Samurai DoT Calculator</h1>
+
+<div style="max-width:400px; margin: 0 auto; text-align:center;">
+
+  <label>Physical DEF:</label><br>
+  <input type="number" id="physDef" value="76"><br><br>
+
+  <label>Magic DEF (Min):</label><br>
+  <input type="number" id="magicMin" value="83"><br><br>
+
+  <label>Magic DEF (Max):</label><br>
+  <input type="number" id="magicMax" value="91"><br><br>
+
+  <label>Range DEF (Min):</label><br>
+  <input type="number" id="rangeMin" value="83"><br><br>
+
+  <label>Range DEF (Max):</label><br>
+  <input type="number" id="rangeMax" value="91"><br><br>
+
+  <label>Ticks:</label><br>
+  <input type="number" id="ticks" value="5"><br><br>
+
+  <label>Item % Bonus:</label><br>
+  <input type="number" id="itemPercent" value="25"><br><br>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <h3 id="result"></h3>
+
+</div>
+
+<script>
+function calculate() {
+    const physDef = parseFloat(document.getElementById("physDef").value);
+
+    const magicMin = parseFloat(document.getElementById("magicMin").value);
+    const magicMax = parseFloat(document.getElementById("magicMax").value);
+
+    const rangeMin = parseFloat(document.getElementById("rangeMin").value);
+    const rangeMax = parseFloat(document.getElementById("rangeMax").value);
+
+    const ticks = parseInt(document.getElementById("ticks").value);
+    const itemPercent = parseFloat(document.getElementById("itemPercent").value);
+
+    const itemMod = itemPercent / 100;
+
+    // =========================
+    // TOTAL DEF RANGE
+    // =========================
+    const totalMinDef = physDef + magicMin + rangeMin;
+    const totalMaxDef = physDef + magicMax + rangeMax;
+
+    // =========================
+    // APPLY ITEM % (THIS IS YOUR DAMAGE)
+    // =========================
+    const totalMinDamage = totalMinDef * itemMod;
+    const totalMaxDamage = totalMaxDef * itemMod;
+
+    // =========================
+    // PER TICK
+    // =========================
+    const minTick = Math.floor(totalMinDamage / ticks);
+    const maxTick = Math.ceil(totalMaxDamage / ticks);
+
+    const minTotal = minTick * ticks;
+    const maxTotal = maxTick * ticks;
+
+    document.getElementById("result").innerText =
+        `Total DEF: ${totalMinDef} - ${totalMaxDef}\n` +
+        `Item Bonus: ${itemPercent.toFixed(1)}%\n\n` +
+
+        `TOTAL DAMAGE:\n` +
+        `${Math.round(totalMinDamage)} - ${Math.round(totalMaxDamage)}\n\n` +
+
+        `DAMAGE OVER TIME:\n` +
+        `${minTick} - ${maxTick} per tick\n` +
+        `${minTotal} - ${maxTotal} total over ${ticks} ticks`;
+}
+</script>
+
+</body>
+</html>
