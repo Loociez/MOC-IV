@@ -594,16 +594,19 @@ async function fetchAndDisplayItems() {
                 }
             });
             let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
-                if (typeof value === 'object') {
-                    const min = value.min;
-                    const max = value.max;
-                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
-                    else if (min !== undefined) return `${key} (min): ${min}`;
-                    else if (max !== undefined) return `${key} (max): ${max}`;
-                    else return `${key}: ?`;
-                }
-                return `${key.replace(/_/g, ' ')}: ${value}`;
-            });
+    if (typeof value === 'object') {
+        const min = value.min;
+        const max = value.max;
+        if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+        else if (min !== undefined) return `${key} (min): ${min}`;
+        else if (max !== undefined) return `${key} (max): ${max}`;
+        else return `${key}: ?`;
+    }
+    return `${key.replace(/_/g, ' ')}: ${value}`;
+});
+
+formattedLines.push("");
+formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
             const spellAmpEntries = Object.entries(spellAmpLabels)
                 .filter(([key]) => item.data?.[key] !== undefined)
                 .map(([key, label]) => `${label}: ${item.data[key]}`);
