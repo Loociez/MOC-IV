@@ -18,57 +18,67 @@ export class Fighter {
     this.attackHasHit = false;
     this.ready = false;
     this.isOnGround = true;
-    this.justHit = false;
-    this.lastAttackWasProjectile = false;
+
+    // 🔥 SYSTEMS
+    this.hitStop = 0;
+    this.comboStep = 0;
+    this.comboTimer = 0;
+
+    // ✨ VISUAL FX
+    this.hitSparks = [];
+    this.auraPulse = 0;
 
     const index = Math.max(1, Math.min(spriteSheetIndex, 6));
     this.spriteSheet = new Image();
     this.spriteSheet.src = `./sprites/sprites${index}.png`;
-    this.spriteSheet.onload = () => {
-      this.ready = true;
-    };
+    this.spriteSheet.onload = () => { this.ready = true; };
 
     this.floatingText = null;
     this.projectiles = [];
     this.isShootingProjectile = false;
-    this.specialUsed = false;
-    this.specialEffectTimer = 0;
 
-    // Random taunt
-    const taunts = [
-      "You're going down!", "Let's make this quick!", "Is that all you've got?",
-      "Time to end this!", "This won't take long!", "EZ."
-    ];
-    this.taunt = taunts[Math.floor(Math.random() * taunts.length)];
-    this.tauntTimer = 120;
-
-    // Random name
+    // 👤 NAME RESTORED
     const names = ["Raze", "Vex", "Shade", "Nyx", "Zero", "Nova", "Flint", "Kai", "Blitz"];
     this.name = names[Math.floor(Math.random() * names.length)];
 
-    // --- NEW: Rarity system ---
+    // rarity
     const rarityRoll = Math.random();
     if (rarityRoll < 0.6) {
       this.rarity = 'Common';
-      this.hp = 90 + Math.floor(Math.random() * 11); // 90–100
-      this.attackRange = 75 + Math.floor(Math.random() * 6); // 75–80
+      this.hp = 95;
+      this.attackRange = 75;
+      this.glow = 'rgba(255,255,255,0.2)';
     } else if (rarityRoll < 0.85) {
       this.rarity = 'Rare';
-      this.hp = 100 + Math.floor(Math.random() * 11); // 100–110
-      this.attackRange = 80 + Math.floor(Math.random() * 6); // 80–85
+      this.hp = 105;
+      this.attackRange = 80;
+      this.glow = 'rgba(0,150,255,0.4)';
     } else if (rarityRoll < 0.97) {
       this.rarity = 'Epic';
-      this.hp = 110 + Math.floor(Math.random() * 11); // 110–120
-      this.attackRange = 85 + Math.floor(Math.random() * 6); // 85–90
+      this.hp = 115;
+      this.attackRange = 85;
+      this.glow = 'rgba(180,0,255,0.5)';
     } else {
       this.rarity = 'Legendary';
-      this.hp = 125 + Math.floor(Math.random() * 6); // 125–130
-      this.attackRange = 90 + Math.floor(Math.random() * 6); // 90–95
+      this.hp = 130;
+      this.attackRange = 90;
+      this.glow = 'rgba(255,200,0,0.6)';
     }
-    this.maxHp = this.hp;
 
-    // --- NEW: Track wins per fighter in-session ---
-    this.wins = 0;
+    this.maxHp = this.hp;
+  }
+
+  createHitSparks(x, y, color = 'orange') {
+    for (let i = 0; i < 6; i++) {
+      this.hitSparks.push({
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 4,
+        vy: (Math.random() - 0.5) * 4,
+        life: 20,
+        color
+      });
+    }
   }
 
   shootProjectile(targetX, targetY) {
@@ -76,34 +86,42 @@ export class Fighter {
     this.isShootingProjectile = true;
     setTimeout(() => { this.isShootingProjectile = false; }, 250);
 
-    const startX = this.x + this.width;
-    const startY = this.y + this.height / 2;
-
     const projectile = {
-      x: startX,
-      y: startY,
+      x: this.x + this.width,
+      y: this.y + this.height / 2,
+      trail: [],
       targetX,
       targetY,
       speed: 8,
-      radius: 4,
       active: true,
 
       update() {
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 5) this.trail.shift();
+
         const dx = this.targetX - this.x;
         const dy = this.targetY - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < this.speed) {
-          this.active = false;
-        } else {
+
+        if (dist < this.speed) this.active = false;
+        else {
           this.x += (dx / dist) * this.speed;
           this.y += (dy / dist) * this.speed;
         }
       },
 
       draw(ctx) {
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
+          ctx.fillStyle = `rgba(255,255,0,${i / this.trail.length})`;
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
         ctx.fillStyle = 'yellow';
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
         ctx.fill();
       }
     };
@@ -113,185 +131,180 @@ export class Fighter {
 
   update(opponent) {
     if (!this.ready) return;
+
+    if (this.hitStop > 0) {
+      this.hitStop--;
+      return;
+    }
+
     if (this.cooldown > 0) this.cooldown--;
 
+    if (this.comboTimer > 0) this.comboTimer--;
+    else this.comboStep = 0;
+
+    this.auraPulse += 0.05;
+
+    // bot AI
     if (!['attack', 'hurt', 'special'].includes(this.action)) {
       const action = this.botLogic(this, opponent);
       this.handleAction(action, opponent);
     }
 
+    // =========================
+    // 🧠 SAFE PHYSICS FIX (IMPORTANT)
+    // =========================
+
+    // gravity always applies unless grounded
     if (!this.isOnGround) {
       this.vy += 0.5;
       this.y += this.vy;
-      if (this.y >= 395) {
-        this.y = 395;
-        this.vy = 0;
-        this.isOnGround = true;
-      }
     }
 
+    // HARD GROUND CLAMP (prevents infinite hover bug)
+    if (this.y >= 395) {
+      this.y = 395;
+      this.vy = 0;
+      this.isOnGround = true;
+    }
+
+    // movement
     this.x += this.vx;
     this.vx = 0;
 
-    const minDist = 45;
     const distX = opponent.x - this.x;
-    if (Math.abs(distX) < minDist) {
-      const push = (minDist - Math.abs(distX)) / 2;
-      if (distX > 0) {
-        this.x -= push;
-        opponent.x += push;
-      } else {
-        this.x += push;
-        opponent.x -= push;
-      }
+    if (Math.abs(distX) < 45) {
+      const push = (45 - Math.abs(distX)) / 2;
+      this.x -= push * Math.sign(distX);
+      opponent.x += push * Math.sign(distX);
     }
 
-    this.facing = this.x + this.width / 2 < opponent.x + opponent.width / 2 ? 'right' : 'left';
+    this.facing = this.x < opponent.x ? 'right' : 'left';
 
+    // animation
     this.frameTimer++;
     if (this.frameTimer >= 10) {
       this.frameTimer = 0;
 
       if (this.action === 'run') {
         this.frame = (this.frame + 1) % 2;
-      } else if (['attack', 'hurt', 'special'].includes(this.action)) {
+      } else if (this.action === 'attack') {
         this.frame++;
-        const maxFrame = this.action === 'special' ? 2 : 1;
-        if (this.frame > maxFrame) {
+        if (this.frame > 1) {
           this.action = 'idle';
           this.frame = 0;
           this.attackHasHit = false;
-          if (this.action !== 'special') this.specialEffectTimer = 0;
         }
-      } else {
-        this.frame = 0;
       }
     }
 
+    // attack
     if (this.action === 'attack' && this.frame === 1 && !this.attackHasHit) {
-      const dist = Math.abs(this.x + this.width - (opponent.x + opponent.width));
+      const dist = Math.abs(this.x - opponent.x);
+
       if (dist <= this.attackRange) {
-        const hitChance = 0.75;
-        if (Math.random() <= hitChance) {
-          let damage = Math.floor(Math.random() * 8) + 3;
-          if (Math.random() < 0.15) {
+        if (Math.random() <= 0.75) {
+
+          if (this.comboTimer > 0) this.comboStep++;
+          else this.comboStep = 1;
+
+          this.comboTimer = 40;
+
+          let damage = Math.floor(Math.random() * 6) + 3 + this.comboStep;
+
+          const isCrit = Math.random() < 0.15;
+
+          if (isCrit) {
             damage *= 2;
-            opponent.showDamage(`CRIT ${damage}`);
+            opponent.showDamage(`CRIT ${damage}`, 'yellow');
+            this.createHitSparks(opponent.x, opponent.y, 'yellow');
           } else {
-            opponent.showDamage(damage);
+            opponent.showDamage(damage, 'red');
+            this.createHitSparks(opponent.x, opponent.y, 'orange');
           }
+
           opponent.takeDamage(damage);
+
+          opponent.hitStop = 5;
+          this.hitStop = 3;
+
+          this.x += this.facing === 'right' ? 5 : -5;
+
         } else {
           opponent.showMiss();
         }
       }
+
       this.attackHasHit = true;
     }
 
-    if (this.action === 'special' && this.frame === 1 && !this.attackHasHit) {
-      const dist = Math.abs(this.x + this.width - (opponent.x + opponent.width));
-      if (dist <= 100) {
-        const hitChance = 0.9;
-        if (Math.random() <= hitChance) {
-          const damage = Math.floor(opponent.hp * 0.35);
-          opponent.takeDamage(damage);
-          opponent.showDamage(damage);
-        } else {
-          opponent.showMiss();
-        }
-      } else {
-        opponent.showMiss();
-      }
-      this.attackHasHit = true;
-      this.specialUsed = true;
-      this.specialEffectTimer = 30;
-    }
-
+    // projectiles
     this.projectiles = this.projectiles.filter(p => p.active);
     this.projectiles.forEach(p => p.update());
 
-    this.projectiles.forEach(p => {
-      if (p.active) {
-        const distX = Math.abs(p.x - (opponent.x + opponent.width / 2));
-        const distY = Math.abs(p.y - (opponent.y + opponent.height / 2));
-        if (distX < 20 && distY < 20) {
-          p.active = false;
-          const damage = Math.floor(Math.random() * 5) + 2;
-          opponent.takeDamage(damage);
-          opponent.showDamage(damage);
-        }
-      }
+    // sparks
+    this.hitSparks.forEach(s => {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.life--;
     });
+    this.hitSparks = this.hitSparks.filter(s => s.life > 0);
 
     if (this.floatingText) {
       this.floatingText.timer--;
       this.floatingText.yOffset += 0.5;
       if (this.floatingText.timer <= 0) this.floatingText = null;
     }
-
-    if (this.specialEffectTimer > 0) this.specialEffectTimer--;
   }
 
   handleAction(action, opponent) {
     switch (action) {
-      case 'moveLeft': this.vx = -2; this.action = 'run'; this.facing = 'left'; break;
-      case 'moveRight': this.vx = 2; this.action = 'run'; this.facing = 'right'; break;
-      case 'jump':
-        if (this.isOnGround) {
-          this.vy = -10;
-          this.isOnGround = false;
-        } break;
+      case 'moveLeft': this.vx = -2; this.action = 'run'; break;
+      case 'moveRight': this.vx = 2; this.action = 'run'; break;
+
       case 'attack':
         if (this.cooldown === 0) {
           this.action = 'attack';
           this.frame = 0;
-          this.cooldown = 30;
+          this.cooldown = 35;
           this.attackHasHit = false;
-        } break;
+        }
+      break;
+
       case 'shoot':
         if (!this.isShootingProjectile && this.cooldown === 0) {
-          this.shootProjectile(opponent.x + opponent.width / 2, opponent.y + opponent.height / 2);
+          this.shootProjectile(opponent.x, opponent.y);
           this.cooldown = 60;
-        } break;
-      case 'special':
-        if (!this.specialUsed && this.cooldown === 0) {
-          this.action = 'special';
-          this.frame = 0;
-          this.cooldown = 90;
-          this.attackHasHit = false;
-        } break;
-      default:
-        if (!['attack', 'hurt', 'special'].includes(this.action)) {
-          this.action = 'idle';
-          this.frame = 0;
         }
+      break;
+
+      case 'jump':
+        if (this.isOnGround) {
+          this.vy = -10;
+          this.isOnGround = false;
+        }
+      break;
+
+      default:
+        this.action = 'idle';
         this.vx = 0;
-        break;
+      break;
     }
   }
 
   draw(ctx) {
     if (!this.ready) return;
 
-    let frameIndex;
-    switch (this.facing) {
-      case 'left': frameIndex = this.action === 'run' ? 6 + this.frame : (this.action === 'attack' ? 8 : (this.action === 'special' ? 10 : 6)); break;
-      case 'right':
-      default: frameIndex = this.action === 'run' ? 9 + this.frame : (this.action === 'attack' ? 11 : (this.action === 'special' ? 13 : 9)); break;
-    }
+    ctx.save();
 
-    const characterRow = this.character || 0;
+    ctx.shadowColor = this.glow;
+    ctx.shadowBlur = 20 + Math.sin(this.auraPulse) * 10;
+
+    let frameIndex = this.facing === 'left'
+      ? (this.action === 'run' ? 6 + this.frame : 6)
+      : (this.action === 'run' ? 9 + this.frame : 9);
+
     const sx = frameIndex * 32;
-    const sy = characterRow * 32;
-
-    if (this.specialEffectTimer > 0) {
-      ctx.save();
-      ctx.shadowColor = 'cyan';
-      ctx.shadowBlur = 30;
-      ctx.fillStyle = `rgba(0, 255, 255, ${this.specialEffectTimer / 30})`;
-      ctx.fillRect(this.x - 6, this.y - (this.height * 2) - 6, this.width * 2 + 12, this.height * 2 + 12);
-      ctx.restore();
-    }
+    const sy = (this.character || 0) * 32;
 
     ctx.drawImage(
       this.spriteSheet,
@@ -301,41 +314,21 @@ export class Fighter {
       this.width * 2, this.height * 2
     );
 
-    ctx.shadowColor = 'lime';
-    ctx.shadowBlur = 8;
+    ctx.restore();
+
+    this.hitSparks.forEach(s => {
+      ctx.fillStyle = s.color;
+      ctx.fillRect(s.x, s.y, 2, 2);
+    });
+
     ctx.fillStyle = '#440000';
-    ctx.fillRect(this.x, this.y - (this.height * 2) - 12, this.width * 2, 6);
+    ctx.fillRect(this.x, this.y - 70, this.width * 2, 6);
     ctx.fillStyle = 'red';
-    ctx.fillRect(this.x, this.y - (this.height * 2) - 12, (this.hp / this.maxHp) * this.width * 2, 6);
-    ctx.shadowBlur = 0;
+    ctx.fillRect(this.x, this.y - 70, (this.hp / this.maxHp) * this.width * 2, 6);
 
     if (this.floatingText) {
-      ctx.save();
-      ctx.font = 'bold 12px Verdana, Geneva, sans-serif';
       ctx.fillStyle = this.floatingText.color;
-      ctx.shadowColor = 'black';
-      ctx.shadowBlur = 8;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText(
-        this.floatingText.text,
-        this.x + this.width,
-        this.y - (this.height * 2) - 20 - this.floatingText.yOffset
-      );
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      ctx.restore();
-    }
-
-    if (this.tauntTimer > 0) {
-      ctx.font = 'bold 16px Verdana, Geneva, Tahoma, sans-serif';
-      ctx.shadowColor = 'rgba(0, 255, 0, 0.7)';
-      ctx.shadowBlur = 5;
-      ctx.fillStyle = 'White';
-      ctx.fillText(this.taunt, this.x, this.y - (this.height * 2) - 35);
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      this.tauntTimer--;
+      ctx.fillText(this.floatingText.text, this.x + this.width, this.y - 80);
     }
 
     this.projectiles.forEach(p => p.draw(ctx));
@@ -346,8 +339,8 @@ export class Fighter {
     if (this.hp < 0) this.hp = 0;
   }
 
-  showDamage(dmg) {
-    this.floatingText = { text: `-${dmg}`, color: 'red', timer: 30, yOffset: 0 };
+  showDamage(dmg, color = 'red') {
+    this.floatingText = { text: `-${dmg}`, color, timer: 30, yOffset: 0 };
   }
 
   showMiss() {

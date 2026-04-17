@@ -2,152 +2,269 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Mirage Fighter.</title>
+  <title>Mirage Fighter</title>
+
   <style>
+    :root {
+      --bg: #0b0b0f;
+      --panel: #15151d;
+      --panel2: #1c1c26;
+      --border: #2c2c3a;
+      --text: #eaeaf2;
+      --muted: #9a9aa8;
+      --accent: #6c5ce7;
+      --win: #2ecc71;
+      --lose: #e74c3c;
+    }
+
     body {
+      margin: 0;
+      background: radial-gradient(circle at top, #151522, var(--bg));
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      overflow: hidden; /* 👈 prevents page scroll */
+    }
+
+    h1 {
+      margin: 10px 0;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    #resetMoneyBtn {
+      display: block;
+      margin: 0 auto 10px;
+      padding: 8px 14px;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #roundDisplay {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* =========================
+       MAIN LAYOUT (FIXED ROW)
+    ========================== */
+
+    .layout {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 0 10px;
+    }
+
+    canvas {
       background: #111;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+
+    /* =========================
+       BETTING PANEL (LEFT)
+    ========================== */
+
+    #betting {
+      width: 260px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    button {
+      width: 100%;
+      margin: 4px 0;
+      padding: 10px;
+      background: #222235;
+      color: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--accent);
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      background: #111;
+      border: 1px solid var(--border);
       color: white;
       text-align: center;
-      font-family: Arial, sans-serif;
-      margin-top: 20px;
+      border-radius: 6px;
     }
-    canvas {
-      background: #222;
-      display: block;
-      margin: 0 auto;
-      border: 2px solid #555;
-    }
-    #betting {
-      margin-top: 15px;
-      font-size: 18px;
-    }
-    #betting button {
-      background: #333;
-      border: 1px solid #555;
-      color: white;
-      padding: 8px 16px;
-      margin: 0 10px;
-      cursor: pointer;
-      font-size: 16px;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-    }
-    #betting button:hover {
-      background: #555;
-    }
-    #result {
-      margin-top: 10px;
-      font-weight: bold;
-      font-size: 20px;
-      min-height: 24px;
-    }
+
     #playerMoneyDisplay {
       margin-top: 10px;
-      font-size: 20px;
       font-weight: bold;
     }
-    #bettingControls {
-      margin-top: 10px;
-      font-size: 18px;
+
+    #currentBet {
+      font-size: 13px;
+      color: var(--muted);
     }
-    #bettingControls label {
-      margin-left: 20px;
-      margin-right: 8px;
-      font-weight: normal;
+
+    #result {
+      margin-top: 8px;
+      font-weight: bold;
+      min-height: 20px;
     }
-    #bettingControls input[type=number] {
-      width: 80px;
-      padding: 4px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: 1px solid #555;
-      background: #222;
-      color: white;
+
+    .win { color: #2ecc71; }
+    .lose { color: #e74c3c; }
+
+    /* =========================
+       FIGHT FEED (RIGHT SIDE)
+    ========================== */
+
+    #fightFeed {
+      width: 260px;
+      height: 400px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
     }
+
+    #fightFeedHeader {
+      padding: 8px;
+      background: var(--panel2);
+      border-bottom: 1px solid var(--border);
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #fightFeedLog {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .log {
+      margin-bottom: 5px;
+    }
+
+    .crit { color: #ffd166; }
+    .hit { color: #ff4d4d; }
+    .miss { color: #aaa; }
+    .system { color: #66ccff; }
+    .ko { color: #ff006e; font-weight: bold; }
   </style>
 </head>
-<body>
-  <h1>MFB - Mirage Fighter Bot</h1>
-  <button id="resetMoneyBtn">Reset Money to 1000</button>
-  <div id="roundDisplay" style="font-weight: bold; font-size: 18px; margin-top: 10px;">Fight: 1</div>
-  <canvas id="gameCanvas" width="800" height="400"></canvas>
 
+<body>
+
+<h1>MFB - Mirage Fighter Bot</h1>
+<button id="resetMoneyBtn">Reset Money to 1000</button>
+<div id="roundDisplay">Fight: 1</div>
+
+<div class="layout">
+
+  <!-- LEFT -->
   <div id="betting">
-    <div id="bettingControls">
-      <button id="betBlue">Bet on Blue Fighter</button>
-      <button id="betRed">Bet on Red Fighter</button>
-      <label for="betAmountInput">Bet Amount:</label>
-      <input type="number" id="betAmountInput" min="1" max="10000" value="100" />
-    </div>
+    <button id="betBlue">Bet Blue</button>
+    <button id="betRed">Bet Red</button>
+
+    <input type="number" id="betAmountInput" value="100" />
+
     <div id="playerMoneyDisplay">Money: $1000</div>
     <div id="currentBet">Current bet: None</div>
     <div id="result"></div>
   </div>
 
-  <script type="module" src="./game.js"></script>
+  <!-- CENTER -->
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
 
-  <script>
-    // Money display and storage logic:
-    const moneyDisplay = document.getElementById('playerMoneyDisplay');
-    let playerMoney = parseInt(localStorage.getItem('playerMoney')) || 1000;
+  <!-- RIGHT -->
+  <div id="fightFeed">
+    <div id="fightFeedHeader">LIVE FEED</div>
+    <div id="fightFeedLog"></div>
+  </div>
 
-    function updateMoneyDisplay() {
-      moneyDisplay.textContent = `Money: $${playerMoney}`;
+</div>
+
+<script type="module" src="./game.js"></script>
+
+<script>
+  let money = parseInt(localStorage.getItem('playerMoney')) || 1000;
+
+  const moneyDisplay = document.getElementById("playerMoneyDisplay");
+  const feed = document.getElementById("fightFeedLog");
+
+  function updateMoney() {
+    moneyDisplay.textContent = "Money: $" + money;
+  }
+  updateMoney();
+
+  function placeBet(amount) {
+    if (amount > money) return false;
+    money -= amount;
+    localStorage.setItem("playerMoney", money);
+    updateMoney();
+    return true;
+  }
+
+  function payout(amount) {
+    money += amount;
+    localStorage.setItem("playerMoney", money);
+    updateMoney();
+  }
+
+  function log(msg, type="system") {
+    const d = document.createElement("div");
+    d.className = "log " + type;
+    d.textContent = msg;
+    feed.appendChild(d);
+    feed.scrollTop = feed.scrollHeight;
+  }
+
+  window.pushFightLog = log;
+
+  log("Arena loaded...", "system");
+
+  // betting (unchanged logic style)
+  document.getElementById("betBlue").onclick = () => {
+    const amt = +document.getElementById("betAmountInput").value;
+    if (!placeBet(amt)) return;
+
+    const win = Math.random() < 0.5;
+
+    if (win) {
+      payout(amt * 2);
+      log("Blue wins bet!", "system");
+    } else {
+      log("Blue lost bet!", "miss");
     }
-    updateMoneyDisplay();
+  };
 
-    // Example functions to modify money (replace these with your game logic):
-    function placeBet(amount) {
-      if (amount > playerMoney) {
-        alert("You don't have enough money!");
-        return false;
-      }
-      playerMoney -= amount;
-      localStorage.setItem('playerMoney', playerMoney);
-      updateMoneyDisplay();
-      return true;
+  document.getElementById("betRed").onclick = () => {
+    const amt = +document.getElementById("betAmountInput").value;
+    if (!placeBet(amt)) return;
+
+    const win = Math.random() < 0.5;
+
+    if (win) {
+      payout(amt * 2);
+      log("Red wins bet!", "system");
+    } else {
+      log("Red lost bet!", "miss");
     }
+  };
+</script>
 
-    function payout(amount) {
-      playerMoney += amount;
-      localStorage.setItem('playerMoney', playerMoney);
-      updateMoneyDisplay();
-    }
-
-    // Hooking up buttons as an example (replace with your existing betting code)
-    const betAmountInput = document.getElementById('betAmountInput');
-    const betBlue = document.getElementById('betBlue');
-    const betRed = document.getElementById('betRed');
-    const resultDisplay = document.getElementById('result');
-    const currentBet = document.getElementById('currentBet');
-
-    betBlue.addEventListener('click', () => {
-      const amount = parseInt(betAmountInput.value);
-      if (!placeBet(amount)) return;
-      currentBet.textContent = `Current bet: Blue Fighter, $${amount}`;
-      // Simulate fight outcome:
-      const winner = Math.random() < 0.5 ? 'blue' : 'red';
-      if (winner === 'blue') {
-        payout(amount * 2); // win doubles bet
-        resultDisplay.textContent = `You won $${amount}! Blue Fighter wins!`;
-      } else {
-        resultDisplay.textContent = `You lost $${amount}. Red Fighter wins.`;
-      }
-    });
-
-    betRed.addEventListener('click', () => {
-      const amount = parseInt(betAmountInput.value);
-      if (!placeBet(amount)) return;
-      currentBet.textContent = `Current bet: Red Fighter, $${amount}`;
-      // Simulate fight outcome:
-      const winner = Math.random() < 0.5 ? 'blue' : 'red';
-      if (winner === 'red') {
-        payout(amount * 2); // win doubles bet
-        resultDisplay.textContent = `You won $${amount}! Red Fighter wins!`;
-      } else {
-        resultDisplay.textContent = `You lost $${amount}. Blue Fighter wins.`;
-      }
-    });
-  </script>
 </body>
 </html>
