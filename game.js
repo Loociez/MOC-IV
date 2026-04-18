@@ -4,6 +4,15 @@ function getRandomCharacterIndex() {
   return Math.floor(Math.random() * 32);
 }
 
+/* =========================
+   CONFIG (NEW)
+========================= */
+const BETTING_TIME = 5;      // seconds before fight starts
+const NEXT_FIGHT_TIME = 15;  // seconds between fights
+
+/* =========================
+   BACKGROUND
+========================= */
 const backgroundImages = [
   './background1.jpg',
   './background2.jpg',
@@ -11,287 +20,322 @@ const backgroundImages = [
 ];
 
 let background = new Image();
+
+/* =========================
+   CANVAS
+========================= */
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 800;
+
+canvas.width = 825;
 canvas.height = 400;
 
+/* =========================
+   ARENA FEED HOOK
+========================= */
+function log(msg, type = "system") {
+  if (window.pushFightLog) {
+    window.pushFightLog(msg, type);
+  }
+}
+
+/* =========================
+   GAME STATE
+========================= */
 let playerMoney = parseInt(localStorage.getItem('playerMoney')) || 1000;
 let currentBet = null;
 let betAmount = 0;
-const bettingTime = 15;
+
 let bettingActive = true;
-let bettingCountdown = bettingTime;
 let fightActive = false;
 let fightEnded = false;
+
 let roundNumber = 1;
 
-const stageLeftBound = 50;
-const stageRightBound = 750;
+/* =========================
+   TIME SYSTEM (FIXED)
+========================= */
+let stateStartTime = performance.now();
+let stateDuration = BETTING_TIME * 1000;
 
-let shakeTimer = 0;
-const shakeDuration = 15;
-const shakeIntensity = 5;
+/* =========================
+   BETWEEN FIGHTS
+========================= */
+let waitingForNextFight = false;
 
-let specialFlashDuration = 0;
-const specialFlashMaxDuration = 15;
+/* =========================
+   BOUNDS
+========================= */
+const bounds = {
+  left: 50,
+  right: 750
+};
 
-function triggerSpecialEffect() {
-  shakeTimer = 0;
-  specialFlashDuration = specialFlashMaxDuration;
+/* =========================
+   AI SYSTEM (UNCHANGED)
+========================= */
+const AI_FILES = [
+  './ai/aggressive.js',
+  './ai/counteraggressive.js',
+  './ai/kitemaster.js',
+  './ai/temporal.js',
+  './ai/trickster.js',
+  './ai/burst.js',
+  './ai/tactical.js'
+];
+
+const AI_REGISTRY = [];
+
+function normalizeAI(mod) {
+  if (!mod) return null;
+
+  if (typeof mod === 'function') {
+    return { name: mod.name || 'Unnamed AI', logic: mod };
+  }
+
+  if (typeof mod.logic === 'function') {
+    return { name: mod.name || 'Unnamed AI', logic: mod.logic };
+  }
+
+  return null;
 }
 
-function aggressiveBotLogic(self, opponent) {
-  const dist = opponent.x - self.x;
-  if (self.action === 'attack' || self.action === 'hurt') return 'idle';
-  if (self.x <= stageLeftBound) return 'moveRight';
-  if (self.x >= stageRightBound) return 'moveLeft';
-  if (Math.abs(dist) > 100) return dist > 0 ? 'moveRight' : 'moveLeft';
-  if (Math.abs(dist) < 70 && Math.random() < 0.2) return dist > 0 ? 'moveLeft' : 'moveRight';
-  if (Math.random() < 0.4 && Math.abs(dist) <= 100) return 'moveLeft';
-  if (self.cooldown === 0 && Math.abs(dist) <= 150 && Math.random() < 0.4) return 'shoot';
-  if (self.cooldown === 0 && Math.random() < 0.6) return 'attack';
-  if (Math.random() < 0.1) return 'jump';
-  return 'moveRight';
+async function loadAI(path) {
+  try {
+    const mod = await import(path);
+    return normalizeAI(mod.default || mod);
+  } catch (e) {
+    console.warn(`AI failed to load: ${path}`, e);
+    return null;
+  }
 }
 
-function tacticalBotLogic(self, opponent) {
-  const dist = opponent.x - self.x;
-  if (self.action === 'attack' || self.action === 'hurt') return 'idle';
-  if (self.x <= stageLeftBound) return 'moveRight';
-  if (self.x >= stageRightBound) return 'moveLeft';
-  if (Math.abs(dist) < 50 && Math.random() < 0.5) return dist > 0 ? 'moveLeft' : 'moveRight';
-  if (Math.abs(dist) >= 50 && Math.abs(dist) <= 120 && Math.random() < 0.3) return dist > 0 ? 'moveRight' : 'moveLeft';
-  if (Math.abs(dist) > 120) return dist > 0 ? 'moveRight' : 'moveLeft';
-  if (self.cooldown === 0 && Math.abs(dist) <= 150 && Math.random() < 0.3) return 'shoot';
-  if (self.cooldown === 0 && Math.abs(dist) <= 90 && Math.random() < 0.5) return 'attack';
-  if (Math.random() < 0.15) return 'jump';
-  return 'moveLeft';
+async function loadAllAIs() {
+  for (const path of AI_FILES) {
+    const ai = await loadAI(path);
+    if (ai) AI_REGISTRY.push(ai);
+  }
+  console.log(`Loaded AI: ${AI_REGISTRY.length}`);
 }
 
-let fighter1 = new Fighter(150, 'blue', aggressiveBotLogic, getRandomCharacterIndex());
-let fighter2 = new Fighter(600, 'red', tacticalBotLogic, getRandomCharacterIndex());
+function getRandomAI() {
+  if (AI_REGISTRY.length === 0) return fallbackAI;
+  return AI_REGISTRY[Math.floor(Math.random() * AI_REGISTRY.length)];
+}
 
+/* =========================
+   FALLBACK AI
+========================= */
+const fallbackAI = {
+  name: "Fallback AI",
+  logic(self, opponent, bounds) {
+    const dist = opponent.x - self.x;
+
+    if (self.x <= bounds.left) return 'moveRight';
+    if (self.x >= bounds.right) return 'moveLeft';
+
+    if (Math.abs(dist) > 120) return dist > 0 ? 'moveRight' : 'moveLeft';
+
+    if (self.cooldown === 0 && Math.random() < 0.3) return 'attack';
+
+    return Math.random() < 0.5 ? 'moveLeft' : 'moveRight';
+  }
+};
+
+/* =========================
+   FIGHTERS
+========================= */
+let fighter1;
+let fighter2;
+
+/* =========================
+   UI
+========================= */
 const betBlueBtn = document.getElementById('betBlue');
 const betRedBtn = document.getElementById('betRed');
 const currentBetDisplay = document.getElementById('currentBet');
 const resultDisplay = document.getElementById('result');
 const playerMoneyDisplay = document.getElementById('playerMoneyDisplay');
 const betAmountInput = document.getElementById('betAmountInput');
-const resetMoneyBtn = document.getElementById('resetMoneyBtn');
-const roundDisplay = document.getElementById('roundDisplay'); // NEW
+
+const roundDisplay = document.getElementById('roundDisplay');
 
 function updateMoneyDisplay() {
-  if (playerMoneyDisplay) {
-    playerMoneyDisplay.textContent = `Money: $${playerMoney}`;
-  }
+  playerMoneyDisplay.textContent = `Money: $${playerMoney}`;
 }
 
-if (resetMoneyBtn) {
-  resetMoneyBtn.addEventListener('click', () => {
-    playerMoney = 1000;
-    localStorage.setItem('playerMoney', playerMoney);
-    updateMoneyDisplay();
-  });
-}
+/* =========================
+   RESET FIGHT
+========================= */
+async function resetFight() {
+  const ai1 = getRandomAI();
+  const ai2 = getRandomAI();
 
-function placeBet(color) {
-  if (!bettingActive) return;
-  if (!betAmountInput) {
-    alert('Bet amount input not found!');
-    return;
-  }
-  let amount = parseInt(betAmountInput.value, 10);
-  if (isNaN(amount) || amount <= 0) {
-    alert('Please enter a valid bet amount greater than 0');
-    return;
-  }
-  if (playerMoney < amount) {
-    alert("You don't have enough money to bet!");
-    return;
-  }
-  playerMoney -= amount;
-  localStorage.setItem('playerMoney', playerMoney);
-  updateMoneyDisplay();
+  fighter1 = new Fighter(
+    150,
+    'blue',
+    (self, opponent) => ai1.logic(self, opponent, bounds),
+    getRandomCharacterIndex()
+  );
 
-  currentBet = color;
-  betAmount = amount;
-  if (currentBetDisplay) {
-    currentBetDisplay.textContent = `Current bet: ${color.charAt(0).toUpperCase() + color.slice(1)} Fighter ($${betAmount})`;
-  }
-  if (resultDisplay) resultDisplay.textContent = '';
+  fighter2 = new Fighter(
+    600,
+    'red',
+    (self, opponent) => ai2.logic(self, opponent, bounds),
+    getRandomCharacterIndex()
+  );
 
-  if (betBlueBtn) betBlueBtn.disabled = true;
-  if (betRedBtn) betRedBtn.disabled = true;
-  if (betAmountInput) betAmountInput.disabled = true;
-}
+  fighter1.aiName = ai1.name;
+  fighter2.aiName = ai2.name;
 
-if (betBlueBtn) betBlueBtn.addEventListener('click', () => placeBet('blue'));
-if (betRedBtn) betRedBtn.addEventListener('click', () => placeBet('red'));
+  background.src =
+    backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
-function selectRandomBackground() {
-  const index = Math.floor(Math.random() * backgroundImages.length);
-  background.src = backgroundImages[index];
-}
-
-function resetFight() {
-  fighter1 = new Fighter(150, 'blue', aggressiveBotLogic, getRandomCharacterIndex());
-  fighter2 = new Fighter(600, 'red', tacticalBotLogic, getRandomCharacterIndex());
-  selectRandomBackground();
-
-  fightEnded = false;
-  fightActive = false;
   bettingActive = true;
-  bettingCountdown = bettingTime;
+  fightActive = false;
+  fightEnded = false;
+
   currentBet = null;
   betAmount = 0;
 
-  if (currentBetDisplay) currentBetDisplay.textContent = 'Current bet: None';
-  if (resultDisplay) resultDisplay.textContent = '';
-  if (roundDisplay) roundDisplay.textContent = `Round: ${roundNumber}`;
+  currentBetDisplay.textContent = 'Current bet: None';
+  resultDisplay.textContent = '';
 
-  if (betBlueBtn) betBlueBtn.disabled = false;
-  if (betRedBtn) betRedBtn.disabled = false;
-  if (betAmountInput) {
-    betAmountInput.disabled = false;
-    betAmountInput.value = '';
-  }
+  roundDisplay.textContent = `Round: ${roundNumber}`;
+
+  betBlueBtn.disabled = false;
+  betRedBtn.disabled = false;
+  betAmountInput.disabled = false;
+
+  /* reset timer */
+  stateStartTime = performance.now();
+  stateDuration = BETTING_TIME * 1000;
+
+  log(`🆕 Round ${roundNumber} starting...`, "system");
 }
 
-function drawHPBar(fighter, x, y) {
-  const width = 150;
-  const height = 15;
-  const hpPercent = Math.max(0, fighter.hp) / fighter.maxHp;
+/* =========================
+   COUNTDOWN (FIXED)
+========================= */
+function getCountdownSeconds() {
+  const elapsed = performance.now() - stateStartTime;
+  return Math.max(0, Math.ceil((stateDuration - elapsed) / 1000));
+}
 
-  ctx.fillStyle = 'gray';
-  ctx.fillRect(x, y, width, height);
+/* =========================
+   HP BAR
+========================= */
+function drawHPBar(fighter, x, y) {
+  const width = 160;
+  const hpPercent = fighter.hp / fighter.maxHp;
+
+  ctx.fillStyle = '#333';
+  ctx.fillRect(x, y, width, 16);
 
   ctx.fillStyle = fighter.color;
-  ctx.fillRect(x, y, width * hpPercent, height);
+  ctx.fillRect(x, y, width * hpPercent, 16);
 
-  ctx.strokeStyle = 'black';
-  ctx.strokeRect(x, y, width, height);
+  ctx.strokeStyle = '#000';
+  ctx.strokeRect(x, y, width, 16);
 
-  ctx.font = 'bold 11px Arial';
   ctx.fillStyle = 'white';
+  ctx.font = '11px Arial';
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(`${fighter.name} (${fighter.rarity})`, x + width / 2, y + height / 2 - 7);
-  ctx.font = '10px Arial';
-  ctx.fillText(`${fighter.hp} / ${fighter.maxHp} HP`, x + width / 2, y + height / 2 + 5);
+
+  ctx.fillText(
+    `${fighter.name} | ${fighter.aiName}`,
+    x + width / 2,
+    y - 8
+  );
+
+  ctx.fillText(
+    `${Math.floor(fighter.hp)} / ${fighter.maxHp}`,
+    x + width / 2,
+    y + 30
+  );
 }
 
-let frameCount = 0;
-
+/* =========================
+   GAME LOOP
+========================= */
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
 
-  if (shakeTimer < shakeDuration) {
-    const dx = (Math.random() * 2 - 1) * shakeIntensity;
-    const dy = (Math.random() * 2 - 1) * shakeIntensity;
-    shakeTimer++;
-    ctx.translate(dx, dy);
-  }
-
-  if (background.complete && background.naturalWidth !== 0) {
+  if (background.complete) {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-  } else {
-    ctx.fillStyle = 'lightgray';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  ctx.restore();
+  fighter1?.draw(ctx);
+  fighter2?.draw(ctx);
 
-  if (specialFlashDuration > 0) {
-    ctx.fillStyle = `rgba(255, 255, 255, ${specialFlashDuration / specialFlashMaxDuration})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    specialFlashDuration--;
+  if (fighter1 && fighter2) {
+    drawHPBar(fighter1, 50, 20);
+    drawHPBar(fighter2, 580, 20);
   }
 
-  fighter1.draw(ctx);
-  fighter2.draw(ctx);
+  /* =========================
+     CENTER COUNTDOWN (FIXED)
+  ========================= */
+  const countdown = getCountdownSeconds();
 
-  drawHPBar(fighter1, 50, 10);
-  drawHPBar(fighter2, 600, 10);
+  if (countdown > 0) {
+    ctx.save();
+    ctx.fillStyle = 'red';
+    ctx.font = 'bold 64px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-  if (bettingActive) {
-    if (bettingCountdown > 0) {
-      if (currentBetDisplay) {
-        const betText = currentBet
-          ? `Betting on: ${currentBet.charAt(0).toUpperCase() + currentBet.slice(1)} Fighter ($${betAmount})`
-          : 'No bet placed yet';
-        currentBetDisplay.textContent = `Place your bet! Time left: ${bettingCountdown}s | ${betText}`;
-      }
-      if (frameCount % 60 === 0) bettingCountdown--;
-    } else {
-      bettingActive = false;
-      fightActive = true;
-      if (currentBetDisplay) currentBetDisplay.textContent = 'Fight started!';
-    }
+    ctx.fillText(countdown, canvas.width / 2, canvas.height / 2);
+    ctx.restore();
   }
 
- ctx.fillStyle = 'white';
-ctx.font = '10px Arial';
-ctx.shadowColor = 'black';
-ctx.shadowBlur = 2;
-ctx.shadowOffsetX = 1;
-ctx.shadowOffsetY = 1;
+  /* =========================
+     STATE TRANSITION (FIXED)
+  ========================= */
+  const elapsed = performance.now() - stateStartTime;
 
-ctx.fillText(`Blue cooldown: ${fighter1.cooldown}`, 50, canvas.height - 360);
-ctx.fillText(`Red cooldown: ${fighter2.cooldown}`, 620, canvas.height - 360);
+  if (bettingActive && elapsed >= stateDuration) {
+    bettingActive = false;
+    fightActive = true;
 
-// Reset shadow to avoid affecting other drawings
-ctx.shadowColor = 'transparent';
-
+    log("⚔️ Fight Started!", "system");
+  }
 
   if (fightActive) {
-    fighter1.update(fighter2);
-    fighter2.update(fighter1);
+    fighter1.update(fighter2, bounds);
+    fighter2.update(fighter1, bounds);
 
     if (fighter1.hp <= 0 || fighter2.hp <= 0) {
       fightActive = false;
       fightEnded = true;
 
-      let winnerColor = fighter1.hp > 0 ? 'blue' : 'red';
-      let winner = winnerColor === 'blue' ? fighter1 : fighter2;
-      winner.wins = (winner.wins || 0) + 1;
+      const winner = fighter1.hp > 0 ? 'blue' : 'red';
 
-      if (resultDisplay) {
-        resultDisplay.textContent = `Fight ended! Winner: ${winnerColor.charAt(0).toUpperCase() + winnerColor.slice(1)} Fighter (${winner.name})\nWins — Blue: ${fighter1.wins || 0}, Red: ${fighter2.wins || 0}`;
-      }
+      log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
 
-      if (currentBet === winnerColor) {
-        playerMoney += betAmount * 2;
-        if (resultDisplay) resultDisplay.textContent += ' - You won the bet!';
-      } else if (currentBet) {
-        if (resultDisplay) resultDisplay.textContent += ' - You lost the bet.';
-      } else {
-        if (resultDisplay) resultDisplay.textContent += ' - You did not place a bet.';
-      }
+      waitingForNextFight = true;
 
-      localStorage.setItem('playerMoney', playerMoney);
-      updateMoneyDisplay();
+      stateStartTime = performance.now();
+      stateDuration = NEXT_FIGHT_TIME * 1000;
+
       roundNumber++;
-
-      if (betBlueBtn) betBlueBtn.disabled = true;
-      if (betRedBtn) betRedBtn.disabled = true;
-      if (betAmountInput) betAmountInput.disabled = true;
-
-      setTimeout(() => {
-        resetFight();
-        if (betBlueBtn) betBlueBtn.disabled = false;
-        if (betRedBtn) betRedBtn.disabled = false;
-        if (betAmountInput) betAmountInput.disabled = false;
-      }, 5000);
     }
   }
 
-  frameCount++;
+  if (waitingForNextFight && elapsed >= stateDuration) {
+    waitingForNextFight = false;
+    resetFight();
+  }
+
   requestAnimationFrame(gameLoop);
 }
 
-selectRandomBackground();
-updateMoneyDisplay();
-resetFight();
-gameLoop();
+/* =========================
+   START
+========================= */
+(async () => {
+  await loadAllAIs();
+  updateMoneyDisplay();
+  await resetFight();
+  gameLoop();
+})();

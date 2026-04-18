@@ -22,7 +22,7 @@
       background: radial-gradient(circle at top, #151522, var(--bg));
       color: var(--text);
       font-family: Arial, sans-serif;
-      overflow: hidden; /* 👈 prevents page scroll */
+      overflow: hidden;
     }
 
     h1 {
@@ -48,10 +48,6 @@
       margin-bottom: 10px;
     }
 
-    /* =========================
-       MAIN LAYOUT (FIXED ROW)
-    ========================== */
-
     .layout {
       display: flex;
       justify-content: center;
@@ -66,10 +62,6 @@
       border-radius: 8px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
-
-    /* =========================
-       BETTING PANEL (LEFT)
-    ========================== */
 
     #betting {
       width: 260px;
@@ -124,10 +116,6 @@
     .win { color: #2ecc71; }
     .lose { color: #e74c3c; }
 
-    /* =========================
-       FIGHT FEED (RIGHT SIDE)
-    ========================== */
-
     #fightFeed {
       width: 260px;
       height: 400px;
@@ -154,10 +142,7 @@
       text-align: left;
     }
 
-    .log {
-      margin-bottom: 5px;
-    }
-
+    .log { margin-bottom: 5px; }
     .crit { color: #ffd166; }
     .hit { color: #ff4d4d; }
     .miss { color: #aaa; }
@@ -174,7 +159,6 @@
 
 <div class="layout">
 
-  <!-- LEFT -->
   <div id="betting">
     <button id="betBlue">Bet Blue</button>
     <button id="betRed">Bet Red</button>
@@ -186,10 +170,8 @@
     <div id="result"></div>
   </div>
 
-  <!-- CENTER -->
   <canvas id="gameCanvas" width="800" height="400"></canvas>
 
-  <!-- RIGHT -->
   <div id="fightFeed">
     <div id="fightFeedHeader">LIVE FEED</div>
     <div id="fightFeedLog"></div>
@@ -205,16 +187,27 @@
   const moneyDisplay = document.getElementById("playerMoneyDisplay");
   const feed = document.getElementById("fightFeedLog");
 
+  let betLocked = false;
+  let currentBet = null;
+  let betAmount = 0;
+
   function updateMoney() {
     moneyDisplay.textContent = "Money: $" + money;
   }
   updateMoney();
 
-  function placeBet(amount) {
+  function placeBet(amount, color) {
+    if (betLocked) return false;
     if (amount > money) return false;
+
     money -= amount;
     localStorage.setItem("playerMoney", money);
     updateMoney();
+
+    betLocked = true;
+    currentBet = color;
+    betAmount = amount;
+
     return true;
   }
 
@@ -236,32 +229,36 @@
 
   log("Arena loaded...", "system");
 
-  // betting (unchanged logic style)
   document.getElementById("betBlue").onclick = () => {
     const amt = +document.getElementById("betAmountInput").value;
-    if (!placeBet(amt)) return;
+    if (!placeBet(amt, "blue")) return;
 
-    const win = Math.random() < 0.5;
-
-    if (win) {
-      payout(amt * 2);
-      log("Blue wins bet!", "system");
-    } else {
-      log("Blue lost bet!", "miss");
-    }
+    log("💙 Bet placed on BLUE", "system");
   };
 
   document.getElementById("betRed").onclick = () => {
     const amt = +document.getElementById("betAmountInput").value;
-    if (!placeBet(amt)) return;
+    if (!placeBet(amt, "red")) return;
 
-    const win = Math.random() < 0.5;
+    log("❤️ Bet placed on RED", "system");
+  };
 
-    if (win) {
-      payout(amt * 2);
-      log("Red wins bet!", "system");
-    } else {
-      log("Red lost bet!", "miss");
+  document.getElementById("resetMoneyBtn").onclick = () => {
+    money = 1000;
+    localStorage.setItem("playerMoney", money);
+    updateMoney();
+
+    log("💰 Money reset to $1000", "system");
+  };
+
+  /* expose for game.js if needed */
+  window.betSystem = {
+    getBet: () => currentBet,
+    getAmount: () => betAmount,
+    resetBet: () => {
+      betLocked = false;
+      currentBet = null;
+      betAmount = 0;
     }
   };
 </script>
