@@ -41,7 +41,7 @@ export default function berserker(self, opponent) {
       if (r < 0.4 + mem.rage * 0.3) return 'attack';
       if (r < 0.6) return 'groundSlam';
       if (r < 0.75) return 'dash';
-      if (r < 0.9) return 'special';
+      if (r < 0.9) return 'rageMode';
     }
 
     if (Math.random() < 0.3) return 'teleport';
@@ -53,7 +53,7 @@ export default function berserker(self, opponent) {
   if (absDist < 200) {
     if (self.cooldown === 0) {
       if (Math.random() < 0.5) return 'dash';
-      if (Math.random() < 0.7) return 'energyWave';
+      if (Math.random() < 0.7) return 'rageMode';
       return 'shoot';
     }
 

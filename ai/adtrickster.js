@@ -11,7 +11,7 @@ function getMem(self) {
   return memory.get(self);
 }
 
-export default function trickster(self, opponent) {
+export default function ADtrickster(self, opponent) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);
 
@@ -36,7 +36,7 @@ export default function trickster(self, opponent) {
       if (r < 0.3) return 'attack';
       if (r < 0.5) return 'groundSlam';
       if (r < 0.7) return 'special';
-      if (r < 0.85) return 'dash';
+      if (r < 0.85) return 'shadowStep';
     }
 
     if (Math.random() < 0.4) return 'teleport';
@@ -59,7 +59,7 @@ export default function trickster(self, opponent) {
   }
 
   // LONG RANGE = FAST REPOSITION
-  if (self.cooldown === 0 && Math.random() < 0.4) return 'dash';
+  if (self.cooldown === 0 && Math.random() < 0.4) return 'shadowStep';
   if (Math.random() < 0.5) return 'teleport';
 
   return dist > 0 ? 'moveRight' : 'moveLeft';

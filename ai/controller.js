@@ -48,7 +48,7 @@ export default function controller(self, opponent) {
       const r = Math.random();
 
       if (r < 0.4) return 'shoot';
-      if (r < 0.7) return 'energyWave';
+      if (r < 0.7) return 'fireNova';
       if (r < 0.85) return 'shield';
     }
 
@@ -57,7 +57,7 @@ export default function controller(self, opponent) {
 
   // LONG RANGE = KEEP DISTANCE
   if (absDist > 200) {
-    if (self.cooldown === 0 && Math.random() < 0.5) return 'energyWave';
+    if (self.cooldown === 0 && Math.random() < 0.5) return 'fireNova';
     if (Math.random() < 0.3) return 'teleport';
 
     return dist > 0 ? 'moveRight' : 'moveLeft';
