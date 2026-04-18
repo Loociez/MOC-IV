@@ -85,12 +85,15 @@ pre {
 
 <body>
 
-<h1>⚔️ AI Fighter Builder (Abilities Edition)</h1>
+<h1>⚔️ AI Fighter Builder (Full Abilities)</h1>
 
 <div class="container">
 
-  <label>AI Name</label>
+  <label>AI Display Name</label>
   <input id="aiName" value="Custom Fighter AI" />
+
+  <label>Function Name (export default function ___)</label>
+  <input id="functionName" value="customAI" />
 
   <label>Style</label>
   <select id="style">
@@ -112,18 +115,27 @@ pre {
   <label>Abilities (select multiple)</label>
   <div class="abilities">
 
+    <!-- BASIC -->
     <label class="ability"><input type="checkbox" value="attack"> Attack</label>
     <label class="ability"><input type="checkbox" value="shoot"> Shoot</label>
     <label class="ability"><input type="checkbox" value="dash"> Dash</label>
     <label class="ability"><input type="checkbox" value="block"> Block</label>
     <label class="ability"><input type="checkbox" value="jump"> Jump</label>
 
+    <!-- ORIGINAL -->
     <label class="ability"><input type="checkbox" value="teleport"> Teleport</label>
     <label class="ability"><input type="checkbox" value="groundSlam"> Ground Slam</label>
     <label class="ability"><input type="checkbox" value="healPulse"> Heal Pulse</label>
     <label class="ability"><input type="checkbox" value="shield"> Shield</label>
     <label class="ability"><input type="checkbox" value="energyWave"> Energy Wave</label>
     <label class="ability"><input type="checkbox" value="special"> Special</label>
+
+    <!-- NEW ONES YOU ADDED -->
+    <label class="ability"><input type="checkbox" value="blinkStrike"> Blink Strike</label>
+    <label class="ability"><input type="checkbox" value="gravityWell"> Gravity Well</label>
+    <label class="ability"><input type="checkbox" value="fireAura"> Fire Aura</label>
+    <label class="ability"><input type="checkbox" value="iceTrap"> Ice Trap</label>
+    <label class="ability"><input type="checkbox" value="shockwaveBurst"> Shockwave Burst</label>
 
   </div>
 
@@ -136,19 +148,17 @@ pre {
 <script>
 let generated = "";
 
-/* collect abilities */
 function getAbilities() {
   return [...document.querySelectorAll("input[type=checkbox]:checked")]
     .map(x => x.value);
 }
 
-/* generate AI logic with ability filtering */
-function buildLogic(abilities, a, d, r) {
+function buildLogic(abilities, a, d, r, fnName) {
 
   const has = (ab) => abilities.includes(ab);
 
   return `
-export default function(self, opponent, bounds) {
+export default function ${fnName}(self, opponent, bounds) {
 
   const dist = opponent.x - self.x;
   const abs = Math.abs(dist);
@@ -160,60 +170,47 @@ export default function(self, opponent, bounds) {
   if (self.x < bounds.left) return 'moveRight';
   if (self.x > bounds.right) return 'moveLeft';
 
-  // =========================
   // CLOSE RANGE
-  // =========================
   if (abs < 80) {
 
-    if (${has("attack")}) {
-      if (self.cooldown === 0 && Math.random() < ${a/100}) return 'attack';
-    }
-
-    if (${has("groundSlam")}) {
-      if (self.cooldown === 0 && Math.random() < 0.3) return 'groundSlam';
-    }
-
-    if (${has("dash")}) return 'dash';
+    if (${has("attack")} && self.cooldown === 0 && Math.random() < ${a/100}) return 'attack';
+    if (${has("groundSlam")} && self.cooldown === 0 && Math.random() < 0.3) return 'groundSlam';
+    if (${has("blinkStrike")} && self.cooldown === 0 && Math.random() < 0.25) return 'blinkStrike';
+    if (${has("shockwaveBurst")} && self.cooldown === 0 && Math.random() < 0.25) return 'shockwaveBurst';
 
     if (${has("block")}) return 'block';
+    if (${has("dash")}) return 'dash';
 
     return 'moveLeft';
   }
 
-  // =========================
   // MID RANGE
-  // =========================
   if (abs < 180) {
 
-    if (${has("shoot")}) {
-      if (self.cooldown === 0 && Math.random() < 0.5) return 'shoot';
-    }
+    if (${has("shoot")} && self.cooldown === 0 && Math.random() < 0.5) return 'shoot';
+    if (${has("energyWave")} && self.cooldown === 0 && Math.random() < 0.4) return 'energyWave';
+    if (${has("gravityWell")} && self.cooldown === 0 && Math.random() < 0.25) return 'gravityWell';
 
-    if (${has("energyWave")}) {
-      if (self.cooldown === 0 && Math.random() < 0.4) return 'energyWave';
-    }
-
-    if (${has("teleport")}) {
-      if (Math.random() < 0.2) return 'teleport';
-    }
+    if (${has("teleport")} && Math.random() < 0.2) return 'teleport';
 
     return dist > 0 ? 'moveRight' : 'moveLeft';
   }
 
-  // =========================
   // LONG RANGE
-  // =========================
   if (abs >= 180) {
 
-    if (${has("dash")}) {
-      if (self.cooldown === 0 && Math.random() < 0.4) return 'dash';
-    }
-
-    if (${has("special")}) {
-      if (self.cooldown === 0 && Math.random() < 0.25) return 'special';
-    }
+    if (${has("fireAura")} && self.cooldown === 0 && Math.random() < 0.3) return 'fireAura';
+    if (${has("iceTrap")} && self.cooldown === 0 && Math.random() < 0.3) return 'iceTrap';
+    if (${has("special")} && self.cooldown === 0 && Math.random() < 0.25) return 'special';
+    if (${has("dash")} && self.cooldown === 0 && Math.random() < 0.4) return 'dash';
 
     return dist > 0 ? 'moveRight' : 'moveLeft';
+  }
+
+  // LOW HP SURVIVAL
+  if (lowHp) {
+    if (${has("healPulse")} && self.cooldown === 0) return 'healPulse';
+    if (${has("shield")}) return 'shield';
   }
 
   return 'idle';
@@ -223,7 +220,7 @@ export default function(self, opponent, bounds) {
 
 function generate() {
   const name = document.getElementById("aiName").value;
-  const style = document.getElementById("style").value;
+  const fnName = document.getElementById("functionName").value;
 
   const a = +document.getElementById("aggression").value;
   const d = +document.getElementById("defense").value;
@@ -233,8 +230,7 @@ function generate() {
 
   generated = `
 export const name = "${name}";
-
-${buildLogic(abilities, a, d, r)}
+${buildLogic(abilities, a, d, r, fnName)}
 `;
 
   document.getElementById("output").textContent = generated;

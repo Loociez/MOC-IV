@@ -373,115 +373,179 @@ export class Fighter {
 
   /* =========================
      ACTIONS
-  ========================= */
+========================= */
 
-  handleAction(action, opponent) {
-    if (this.hitstun > 0) return;
+handleAction(action, opponent) {
+  if (this.hitstun > 0) return;
 
-    switch (action) {
+  switch (action) {
 
-      case 'moveLeft':
-        this.vx = -2;
-        this.action = 'run';
-        this.isBlocking = false;
-        break;
+    case 'moveLeft':
+      this.vx = -2;
+      this.action = 'run';
+      this.isBlocking = false;
+      break;
 
-      case 'moveRight':
-        this.vx = 2;
-        this.action = 'run';
-        this.isBlocking = false;
-        break;
+    case 'moveRight':
+      this.vx = 2;
+      this.action = 'run';
+      this.isBlocking = false;
+      break;
 
-      case 'attack':
-        if (this.cooldown === 0) {
-          this.action = 'attack';
-          this.frame = 0;
-          this.cooldown = 30;
-          this.attackHasHit = false;
-        }
-        break;
-
-      case 'shoot':
-        if (this.cooldown === 0) {
-          this.shootProjectile(opponent.x, opponent.y);
-          this.cooldown = 50;
-        }
-        break;
-
-      case 'jump':
-        if (this.isOnGround) {
-          this.vy = -10;
-          this.isOnGround = false;
-        }
-        break;
-
-      case 'block':
-        this.action = 'idle';
-        this.isBlocking = true;
-        this.vx = 0;
-        break;
-
-      case 'dash':
-        this.vx = this.facing === 'right' ? 6 : -6;
-        this.action = 'run';
-
-        this.dashTrail.push({ x: this.x, y: this.y, life: 10 });
-        break;
-
-      /* =========================
-         NEW ABILITIES
-      ========================= */
-
-      case 'teleport':
-        this.x += this.facing === 'right' ? 80 : -80;
-        this.teleportFX.push({ x: this.x, y: this.y, life: 10 });
-        break;
-
-      case 'groundSlam':
-        this.slamWaves.push({ x: this.x, y: this.y, life: 15 });
-        opponent.hitstun = 10;
-        opponent.vy = -6;
-        break;
-
-      case 'healPulse':
-        this.hp = Math.min(this.maxHp, this.hp + 10);
-        this.healFX.push({ x: this.x, y: this.y - 20, life: 20 });
-        break;
-
-      case 'shield':
-        this.shieldTimer = 60;
-        break;
-
-      case 'energyWave':
-        this.energyWaves.push({
-          x: this.x,
-          y: this.y,
-          speed: 6,
-          life: 60,
-          active: true
-        });
-        break;
-
-      case 'special':
+    case 'attack':
+      if (this.cooldown === 0) {
         this.action = 'attack';
-        this.cooldown = 70;
+        this.frame = 0;
+        this.cooldown = 30;
+        this.attackHasHit = false;
+      }
+      break;
+
+    case 'shoot':
+      if (this.cooldown === 0) {
         this.shootProjectile(opponent.x, opponent.y);
+        this.cooldown = 50;
+      }
+      break;
 
-        this.beamEffects.push({
-          x: this.x,
-          y: this.y - 20,
-          tx: opponent.x,
-          ty: opponent.y,
-          life: 10
-        });
-        break;
+    case 'jump':
+      if (this.isOnGround) {
+        this.vy = -10;
+        this.isOnGround = false;
+      }
+      break;
 
-      default:
-        this.action = 'idle';
-        this.vx = 0;
-        this.isBlocking = false;
-    }
+    case 'block':
+      this.action = 'idle';
+      this.isBlocking = true;
+      this.vx = 0;
+      break;
+
+    case 'dash':
+      this.vx = this.facing === 'right' ? 6 : -6;
+      this.action = 'run';
+      this.dashTrail.push({ x: this.x, y: this.y, life: 10 });
+      break;
+
+    /* =========================
+       EXISTING ABILITIES
+    ========================= */
+
+    case 'teleport':
+      this.x += this.facing === 'right' ? 80 : -80;
+      this.teleportFX.push({ x: this.x, y: this.y, life: 10 });
+      break;
+
+    case 'groundSlam':
+      this.slamWaves.push({ x: this.x, y: this.y, life: 15 });
+      opponent.hitstun = 10;
+      opponent.vy = -6;
+      break;
+
+    case 'healPulse':
+      this.hp = Math.min(this.maxHp, this.hp + 10);
+      this.healFX.push({ x: this.x, y: this.y - 20, life: 20 });
+      break;
+
+    case 'shield':
+      this.shieldTimer = 60;
+      break;
+
+    case 'energyWave':
+      this.energyWaves.push({
+        x: this.x,
+        y: this.y,
+        speed: 6,
+        life: 60,
+        active: true
+      });
+      break;
+
+    case 'special':
+      this.action = 'attack';
+      this.cooldown = 70;
+      this.shootProjectile(opponent.x, opponent.y);
+
+      this.beamEffects.push({
+        x: this.x,
+        y: this.y - 20,
+        tx: opponent.x,
+        ty: opponent.y,
+        life: 10
+      });
+      break;
+
+    /* =========================
+       NEW ABILITIES (ADDED)
+    ========================= */
+
+    case 'uppercut':
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 40;
+
+        opponent.hitstun = 15;
+        opponent.vy = -10;
+
+        this.hitEffects.push({ x: opponent.x, y: opponent.y - 20, life: 10 });
+      }
+      break;
+
+    case 'fireNova':
+      if (this.cooldown === 0) {
+        this.cooldown = 80;
+
+        this.novaFX = this.novaFX || [];
+        this.novaFX.push({ x: this.x, y: this.y, radius: 0, life: 20 });
+
+        const dist = Math.abs(opponent.x - this.x);
+        if (dist < 120) {
+          opponent.hitstun = 12;
+          opponent.hp -= 8;
+        }
+      }
+      break;
+
+    case 'iceTrap':
+      if (this.cooldown === 0) {
+        this.cooldown = 60;
+
+        this.iceFX = this.iceFX || [];
+        this.iceFX.push({ x: opponent.x, y: opponent.y, life: 30 });
+
+        opponent.hitstun = 20;
+        opponent.vx *= 0.3; // slow effect
+      }
+      break;
+
+    case 'shadowStep':
+      if (this.cooldown === 0) {
+        this.cooldown = 35;
+
+        // teleport behind opponent
+        this.x = opponent.x + (this.facing === 'right' ? -40 : 40);
+
+        this.teleportFX.push({ x: this.x, y: this.y, life: 12 });
+      }
+      break;
+
+    case 'rageMode':
+      if (this.cooldown === 0) {
+        this.cooldown = 120;
+
+        this.rageTimer = 120; // you can use this in update()
+        
+        this.rageFX = this.rageFX || [];
+        this.rageFX.push({ x: this.x, y: this.y, life: 60 });
+      }
+      break;
+
+    default:
+      this.action = 'idle';
+      this.vx = 0;
+      this.isBlocking = false;
   }
+}
 
   /* =========================
      DRAW
