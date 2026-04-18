@@ -1,6 +1,6 @@
 export const name = "Burst";
 
-export default function burstAI(self, opponent) {
+export default function burst(self, opponent) {
   const dist = Math.abs(opponent.x - self.x);
 
   const opponentAttacking = opponent.action === 'attack';

@@ -5,6 +5,21 @@ function getRandomCharacterIndex() {
 }
 
 /* =========================
+   MUSIC PLAYLIST (NEW)
+========================= */
+const MUSIC_PLAYLIST = [
+  { name: "Psychronic - Binary battle", src: "./music/song1.mp3" },
+  { name: "the_mountain - Sport", src: "./music/song2.mp3" },
+  { name: "Coma-media - Rock it", src: "./music/song3.mp3" },
+  { name: "Nastelbom - Epic cinematic", src: "./music/song4.mp3" },
+  { name: "Sapan4 - EDM gaming", src: "./music/song5.mp3" }
+];
+
+let musicIndex = 0;
+let currentMusic = new Audio();
+currentMusic.volume = 0.5;
+
+/* =========================
    CONFIG (NEW)
 ========================= */
 const BETTING_TIME = 5;      // seconds before fight starts
@@ -81,6 +96,7 @@ const AI_FILES = [
   './ai/temporal.js',
   './ai/trickster.js',
   './ai/burst.js',
+  './ai/adaptive.js',
   './ai/tactical.js'
 ];
 
@@ -121,6 +137,27 @@ async function loadAllAIs() {
 function getRandomAI() {
   if (AI_REGISTRY.length === 0) return fallbackAI;
   return AI_REGISTRY[Math.floor(Math.random() * AI_REGISTRY.length)];
+}
+
+/* =========================
+   MUSIC CONTROL (NEW)
+========================= */
+function playFightMusic() {
+  if (MUSIC_PLAYLIST.length === 0) return;
+
+  currentMusic.pause();
+  currentMusic.currentTime = 0;
+
+  const song = MUSIC_PLAYLIST[musicIndex];
+  currentMusic.src = song.src;
+
+  currentMusic.play().catch(() => {
+    // autoplay restrictions safe fail
+  });
+
+  musicIndex = (musicIndex + 1) % MUSIC_PLAYLIST.length;
+
+  return song.name;
 }
 
 /* =========================
@@ -207,6 +244,10 @@ async function resetFight() {
   betRedBtn.disabled = false;
   betAmountInput.disabled = false;
 
+  /* stop music between fights */
+  currentMusic.pause();
+  currentMusic.currentTime = 0;
+
   /* reset timer */
   stateStartTime = performance.now();
   stateDuration = BETTING_TIME * 1000;
@@ -286,6 +327,12 @@ function gameLoop() {
     ctx.textBaseline = 'middle';
 
     ctx.fillText(countdown, canvas.width / 2, canvas.height / 2);
+
+    /* show current song */
+    const song = MUSIC_PLAYLIST[(musicIndex - 1 + MUSIC_PLAYLIST.length) % MUSIC_PLAYLIST.length];
+    ctx.font = '16px Arial';
+    ctx.fillText(song ? song.name : '', canvas.width / 2, canvas.height / 2 + 60);
+
     ctx.restore();
   }
 
@@ -298,7 +345,10 @@ function gameLoop() {
     bettingActive = false;
     fightActive = true;
 
+    const songName = playFightMusic();
+
     log("⚔️ Fight Started!", "system");
+    log(`🎵 Now Playing: ${songName}`, "system");
   }
 
   if (fightActive) {

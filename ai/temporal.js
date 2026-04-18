@@ -1,6 +1,6 @@
 export const name = "Temporal";
 
-export default function temporalAI(self, opponent) {
+export default function temporal(self, opponent) {
   const dist = Math.abs(opponent.x - self.x);
 
   const opponentAttacking = opponent.action === 'attack';

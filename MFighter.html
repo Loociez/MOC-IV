@@ -148,6 +148,39 @@
     .miss { color: #aaa; }
     .system { color: #66ccff; }
     .ko { color: #ff006e; font-weight: bold; }
+
+    /* =========================
+       MUSIC UI (NEW)
+    ========================= */
+    #musicPanel {
+      width: 260px;
+      margin-top: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    #musicTitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    #muteMusicBtn {
+      width: 100%;
+      padding: 8px;
+      background: #222235;
+      color: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #muteMusicBtn:hover {
+      background: var(--accent);
+    }
   </style>
 </head>
 
@@ -159,15 +192,25 @@
 
 <div class="layout">
 
-  <div id="betting">
-    <button id="betBlue">Bet Blue</button>
-    <button id="betRed">Bet Red</button>
+  <div>
 
-    <input type="number" id="betAmountInput" value="100" />
+    <div id="betting">
+      <button id="betBlue">Bet Blue</button>
+      <button id="betRed">Bet Red</button>
 
-    <div id="playerMoneyDisplay">Money: $1000</div>
-    <div id="currentBet">Current bet: None</div>
-    <div id="result"></div>
+      <input type="number" id="betAmountInput" value="100" />
+
+      <div id="playerMoneyDisplay">Money: $1000</div>
+      <div id="currentBet">Current bet: None</div>
+      <div id="result"></div>
+    </div>
+
+    <!-- MUSIC PANEL (NEW) -->
+    <div id="musicPanel">
+      <div id="musicTitle">Music: Ready</div>
+      <button id="muteMusicBtn">Mute Music</button>
+    </div>
+
   </div>
 
   <canvas id="gameCanvas" width="800" height="400"></canvas>
@@ -186,6 +229,8 @@
 
   const moneyDisplay = document.getElementById("playerMoneyDisplay");
   const feed = document.getElementById("fightFeedLog");
+  const musicTitle = document.getElementById("musicTitle");
+  const muteBtn = document.getElementById("muteMusicBtn");
 
   let betLocked = false;
   let currentBet = null;
@@ -249,6 +294,22 @@
     updateMoney();
 
     log("💰 Money reset to $1000", "system");
+  };
+
+  /* =========================
+     MUSIC MUTE TOGGLE (NEW)
+  ========================= */
+  let muted = false;
+
+  muteBtn.onclick = () => {
+    muted = !muted;
+
+    if (window.__gameMusic) {
+      window.__gameMusic.muted = muted;
+    }
+
+    muteBtn.textContent = muted ? "Unmute Music" : "Mute Music";
+    log(muted ? "🔇 Music muted" : "🔊 Music unmuted", "system");
   };
 
   /* expose for game.js if needed */

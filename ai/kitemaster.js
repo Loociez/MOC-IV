@@ -1,6 +1,6 @@
 export const name = "Kite";
 
-export default function kiteMaster(self, opponent) {
+export default function kitemaster(self, opponent) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);
 

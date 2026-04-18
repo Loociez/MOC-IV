@@ -1,6 +1,6 @@
 export const name = "Trickster";
 
-export default function tricksterAI(self, opponent) {
+export default function trickster(self, opponent) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);
 

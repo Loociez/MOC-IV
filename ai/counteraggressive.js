@@ -1,6 +1,6 @@
 export const name = "Counter";
 
-export default function counterAggressive(self, opponent) {
+export default function counter(self, opponent) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);
 
