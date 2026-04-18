@@ -5,7 +5,7 @@ function getRandomCharacterIndex() {
 }
 
 /* =========================
-   MUSIC PLAYLIST (NEW)
+   MUSIC PLAYLIST (FIXED SYNC)
 ========================= */
 const MUSIC_PLAYLIST = [
   { name: "Psychronic - Binary battle", src: "./music/song1.mp3" },
@@ -18,6 +18,8 @@ const MUSIC_PLAYLIST = [
 let musicIndex = 0;
 let currentMusic = new Audio();
 currentMusic.volume = 0.5;
+
+let activeSong = null;
 
 /* =========================
    CONFIG (NEW)
@@ -97,6 +99,8 @@ const AI_FILES = [
   './ai/trickster.js',
   './ai/burst.js',
   './ai/adaptive.js',
+  './ai/hyper.js',
+  './ai/customAI.js',
   './ai/tactical.js'
 ];
 
@@ -140,24 +144,26 @@ function getRandomAI() {
 }
 
 /* =========================
-   MUSIC CONTROL (NEW)
+   MUSIC CONTROL (FIXED)
 ========================= */
 function playFightMusic() {
-  if (MUSIC_PLAYLIST.length === 0) return;
+  if (MUSIC_PLAYLIST.length === 0) return null;
+
+  const song = MUSIC_PLAYLIST[musicIndex];
 
   currentMusic.pause();
   currentMusic.currentTime = 0;
-
-  const song = MUSIC_PLAYLIST[musicIndex];
   currentMusic.src = song.src;
 
   currentMusic.play().catch(() => {
-    // autoplay restrictions safe fail
+    // autoplay restriction safe fail
   });
+
+  activeSong = song;
 
   musicIndex = (musicIndex + 1) % MUSIC_PLAYLIST.length;
 
-  return song.name;
+  return song;
 }
 
 /* =========================
@@ -247,8 +253,8 @@ async function resetFight() {
   /* stop music between fights */
   currentMusic.pause();
   currentMusic.currentTime = 0;
+  activeSong = null;
 
-  /* reset timer */
   stateStartTime = performance.now();
   stateDuration = BETTING_TIME * 1000;
 
@@ -270,30 +276,55 @@ function drawHPBar(fighter, x, y) {
   const width = 160;
   const hpPercent = fighter.hp / fighter.maxHp;
 
+  // background bar
   ctx.fillStyle = '#333';
   ctx.fillRect(x, y, width, 16);
 
+  // hp fill
   ctx.fillStyle = fighter.color;
   ctx.fillRect(x, y, width * hpPercent, 16);
 
   ctx.strokeStyle = '#000';
   ctx.strokeRect(x, y, width, 16);
 
-  ctx.fillStyle = 'white';
-  ctx.font = '11px Arial';
+  // =========================
+  // NAME (IMPROVED VISIBILITY)
+  // =========================
+  ctx.font = 'bold 12px Arial';
   ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
-  ctx.fillText(
-    `${fighter.name} | ${fighter.aiName}`,
-    x + width / 2,
-    y - 8
-  );
+  const nameText = `${fighter.name} | ${fighter.aiName}`;
+  const nameX = x + width / 2;
+  const nameY = y - 10;
 
-  ctx.fillText(
-    `${Math.floor(fighter.hp)} / ${fighter.maxHp}`,
-    x + width / 2,
-    y + 30
-  );
+  // strong outline (multiple passes = readable on ANY background)
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+  ctx.strokeText(nameText, nameX, nameY);
+
+  // inner glow for separation
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.strokeText(nameText, nameX, nameY);
+
+  // main text (bright but not pure white)
+  ctx.fillStyle = '#ffd166'; // warm gold = always readable
+  ctx.fillText(nameText, nameX, nameY);
+
+  // =========================
+  // HP TEXT (also improved slightly)
+  // =========================
+  const hpText = `${Math.floor(fighter.hp)} / ${fighter.maxHp}`;
+
+  ctx.font = '11px Arial';
+
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+  ctx.strokeText(hpText, nameX, y + 30);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(hpText, nameX, y + 30);
 }
 
 /* =========================
@@ -328,10 +359,10 @@ function gameLoop() {
 
     ctx.fillText(countdown, canvas.width / 2, canvas.height / 2);
 
-    /* show current song */
-    const song = MUSIC_PLAYLIST[(musicIndex - 1 + MUSIC_PLAYLIST.length) % MUSIC_PLAYLIST.length];
-    ctx.font = '16px Arial';
-    ctx.fillText(song ? song.name : '', canvas.width / 2, canvas.height / 2 + 60);
+    if (activeSong) {
+      ctx.font = '16px Arial';
+      ctx.fillText(activeSong.name, canvas.width / 2, canvas.height / 2 + 60);
+    }
 
     ctx.restore();
   }
@@ -345,10 +376,10 @@ function gameLoop() {
     bettingActive = false;
     fightActive = true;
 
-    const songName = playFightMusic();
+    const song = playFightMusic();
 
     log("⚔️ Fight Started!", "system");
-    log(`🎵 Now Playing: ${songName}`, "system");
+    log(`🎵 Now Playing: ${song?.name}`, "system");
   }
 
   if (fightActive) {

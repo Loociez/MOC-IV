@@ -63,7 +63,7 @@ export class Fighter {
     this.spriteSheet.onload = () => (this.ready = true);
 
     // ===== NAME =====
-    const names = ["Raze","Vex","Shade","Nyx","Zero","Nova","Flint","Kai","Blitz"];
+    const names = ["Camcard","rhYno","Coconut","Pomni","Arz","ThePhork","Tammy","Corcoran","Athena","Harley","Madam","JesusCon","Rich","Consty","Diabolic","Fidks","Hyrul","Tameshi","Volk","Beastly7","UFO"];
     this.name = names[Math.floor(Math.random() * names.length)];
 
     // ===== STATS =====
