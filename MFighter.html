@@ -143,15 +143,9 @@
     }
 
     .log { margin-bottom: 5px; }
-    .crit { color: #ffd166; }
-    .hit { color: #ff4d4d; }
-    .miss { color: #aaa; }
     .system { color: #66ccff; }
     .ko { color: #ff006e; font-weight: bold; }
 
-    /* =========================
-       MUSIC UI (NEW)
-    ========================= */
     #musicPanel {
       width: 260px;
       margin-top: 10px;
@@ -166,20 +160,6 @@
       color: var(--muted);
       margin-bottom: 6px;
       text-align: center;
-    }
-
-    #muteMusicBtn {
-      width: 100%;
-      padding: 8px;
-      background: #222235;
-      color: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #muteMusicBtn:hover {
-      background: var(--accent);
     }
   </style>
 </head>
@@ -205,10 +185,8 @@
       <div id="result"></div>
     </div>
 
-    <!-- MUSIC PANEL (NEW) -->
     <div id="musicPanel">
       <div id="musicTitle">Music: Ready</div>
-      <button id="muteMusicBtn">Mute Music</button>
     </div>
 
   </div>
@@ -228,9 +206,9 @@
   let money = parseInt(localStorage.getItem('playerMoney')) || 1000;
 
   const moneyDisplay = document.getElementById("playerMoneyDisplay");
+  const currentBetDisplay = document.getElementById("currentBet");
+  const resultDisplay = document.getElementById("result");
   const feed = document.getElementById("fightFeedLog");
-  const musicTitle = document.getElementById("musicTitle");
-  const muteBtn = document.getElementById("muteMusicBtn");
 
   let betLocked = false;
   let currentBet = null;
@@ -243,6 +221,7 @@
 
   function placeBet(amount, color) {
     if (betLocked) return false;
+    if (amount <= 0) return false;
     if (amount > money) return false;
 
     money -= amount;
@@ -253,13 +232,34 @@
     currentBet = color;
     betAmount = amount;
 
+    currentBetDisplay.textContent = `Current bet: ${color.toUpperCase()} ($${amount})`;
+    resultDisplay.textContent = "";
+
     return true;
   }
 
-  function payout(amount) {
-    money += amount;
+  function resolveFight(winner) {
+    if (!currentBet) return;
+
+    if (winner === currentBet) {
+      const winnings = betAmount * 2;
+      money += winnings;
+      resultDisplay.textContent = `WIN +$${winnings}`;
+      resultDisplay.className = "win";
+    } else {
+      resultDisplay.textContent = `LOSS -$${betAmount}`;
+      resultDisplay.className = "lose";
+    }
+
     localStorage.setItem("playerMoney", money);
     updateMoney();
+  }
+
+  function resetBet() {
+    betLocked = false;
+    currentBet = null;
+    betAmount = 0;
+    currentBetDisplay.textContent = "Current bet: None";
   }
 
   function log(msg, type="system") {
@@ -272,19 +272,15 @@
 
   window.pushFightLog = log;
 
-  log("Arena loaded...", "system");
-
   document.getElementById("betBlue").onclick = () => {
     const amt = +document.getElementById("betAmountInput").value;
     if (!placeBet(amt, "blue")) return;
-
     log("💙 Bet placed on BLUE", "system");
   };
 
   document.getElementById("betRed").onclick = () => {
     const amt = +document.getElementById("betAmountInput").value;
     if (!placeBet(amt, "red")) return;
-
     log("❤️ Bet placed on RED", "system");
   };
 
@@ -292,35 +288,15 @@
     money = 1000;
     localStorage.setItem("playerMoney", money);
     updateMoney();
-
     log("💰 Money reset to $1000", "system");
   };
 
-  /* =========================
-     MUSIC MUTE TOGGLE (NEW)
-  ========================= */
-  let muted = false;
-
-  muteBtn.onclick = () => {
-    muted = !muted;
-
-    if (window.__gameMusic) {
-      window.__gameMusic.muted = muted;
-    }
-
-    muteBtn.textContent = muted ? "Unmute Music" : "Mute Music";
-    log(muted ? "🔇 Music muted" : "🔊 Music unmuted", "system");
-  };
-
-  /* expose for game.js if needed */
+  /* expose to game.js */
   window.betSystem = {
     getBet: () => currentBet,
     getAmount: () => betAmount,
-    resetBet: () => {
-      betLocked = false;
-      currentBet = null;
-      betAmount = 0;
-    }
+    resolveFight,
+    resetBet
   };
 </script>
 

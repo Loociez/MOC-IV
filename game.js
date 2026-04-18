@@ -383,25 +383,33 @@ function gameLoop() {
   }
 
   if (fightActive) {
-    fighter1.update(fighter2, bounds);
-    fighter2.update(fighter1, bounds);
+  fighter1.update(fighter2, bounds);
+  fighter2.update(fighter1, bounds);
 
-    if (fighter1.hp <= 0 || fighter2.hp <= 0) {
-      fightActive = false;
-      fightEnded = true;
+  if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+    fightActive = false;
+    fightEnded = true;
 
-      const winner = fighter1.hp > 0 ? 'blue' : 'red';
+    const winner = fighter1.hp > 0 ? 'blue' : 'red';
 
-      log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
+    log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
 
-      waitingForNextFight = true;
-
-      stateStartTime = performance.now();
-      stateDuration = NEXT_FIGHT_TIME * 1000;
-
-      roundNumber++;
+    /* =========================
+       ✅ BET RESOLUTION (FIX)
+    ========================= */
+    if (window.betSystem) {
+      window.betSystem.resolveFight(winner); // pay or lose
+      window.betSystem.resetBet();           // unlock next round
     }
+
+    waitingForNextFight = true;
+
+    stateStartTime = performance.now();
+    stateDuration = NEXT_FIGHT_TIME * 1000;
+
+    roundNumber++;
   }
+}
 
   if (waitingForNextFight && elapsed >= stateDuration) {
     waitingForNextFight = false;
