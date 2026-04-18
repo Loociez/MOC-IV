@@ -63,6 +63,17 @@
       box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
 
+    /* FULLSCREEN MODE */
+    canvas.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 9999;
+      border-radius: 0;
+    }
+
     #betting {
       width: 260px;
       background: var(--panel);
@@ -187,6 +198,8 @@
 
     <div id="musicPanel">
       <div id="musicTitle">Music: Ready</div>
+      <button id="muteBtn">🔊 Mute Music</button>
+      <button id="fullscreenBtn">🖥️ Fullscreen Arena</button>
     </div>
 
   </div>
@@ -209,6 +222,10 @@
   const currentBetDisplay = document.getElementById("currentBet");
   const resultDisplay = document.getElementById("result");
   const feed = document.getElementById("fightFeedLog");
+
+  const muteBtn = document.getElementById("muteBtn");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+  const canvas = document.getElementById("gameCanvas");
 
   let betLocked = false;
   let currentBet = null;
@@ -289,6 +306,36 @@
     localStorage.setItem("playerMoney", money);
     updateMoney();
     log("💰 Money reset to $1000", "system");
+  };
+
+  /* =========================
+     MUSIC MUTE SYSTEM
+  ========================= */
+  let muted = false;
+
+  muteBtn.onclick = () => {
+    muted = !muted;
+
+    if (window.__gameMusic) {
+      window.__gameMusic.muted = muted;
+    }
+
+    muteBtn.textContent = muted ? "🔇 Unmute Music" : "🔊 Mute Music";
+  };
+
+  /* =========================
+     FULLSCREEN CANVAS
+  ========================= */
+  let fullscreen = false;
+
+  fullscreenBtn.onclick = () => {
+    fullscreen = !fullscreen;
+
+    canvas.classList.toggle("fullscreen");
+
+    fullscreenBtn.textContent = fullscreen
+      ? "🡼 Exit Fullscreen"
+      : "🖥️ Fullscreen Arena";
   };
 
   /* expose to game.js */
