@@ -1,5 +1,6 @@
 import { Fighter } from './fighter.js';
-import { recordResult, getOdds, getAIStats } from './rankingSystem.js';
+import { recordResult, getOdds, getAIStats, renderLeaderboardUI } from './rankingSystem.js';
+
 
 function getRandomCharacterIndex() {
   return Math.floor(Math.random() * 32);
@@ -516,19 +517,22 @@ roundNumber++;
 window.setBettingAllowed?.(true);
     }
 
-    if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+        if (fighter1.hp <= 0 || fighter2.hp <= 0) {
       fightActive = false;
       fightEnded = true;
 
-      const winner = fighter1.hp > 0 ? 'blue' : 'red';
-	  
-	  recordResult(
-  fighter1.aiName,
-  fighter2.aiName,
-  winner === 'blue' ? fighter1.aiName : fighter2.aiName
-);
+      const winnerSide = fighter1.hp > 0 ? 'blue' : 'red';
+      const winnerName = (winnerSide === 'blue') ? fighter1.aiName : fighter2.aiName;
 
-      log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
+      // 1. Record the result in localStorage (Elo & Win/Loss)
+      recordResult(fighter1.aiName, fighter2.aiName, winnerName);
+
+      // 2. Refresh the leaderboard UI immediately
+      renderLeaderboardUI('leaderboardList');
+
+      // 3. Log to the feed
+      log(`🏆 ${winnerSide.toUpperCase()} (${winnerName}) wins the fight!`, "ko");
+
 
 // 🎬 END FX
 window.effects?.endRound();
@@ -581,6 +585,10 @@ setTimeout(() => {
 ========================= */
 (async () => {
   await loadAllAIs();
+  
+  // ✅ Initialize the leaderboard UI on startup
+  renderLeaderboardUI('leaderboardList');
+  
   updateMoneyDisplay();
   await resetFight();
   gameLoop();
