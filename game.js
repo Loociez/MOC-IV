@@ -125,6 +125,7 @@ const AI_FILES = [
   './ai/mageblade.js',
   './ai/vectorknight.js',
   './ai/chronopredator.js',
+  './ai/ghostdash.js',
   './ai/tactical.js'
 ];
 
