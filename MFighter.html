@@ -295,12 +295,22 @@
   let bettingAllowed = true;
 
   function setBettingAllowed(state) {
-    bettingAllowed = state;
+  bettingAllowed = state;
 
-    document.getElementById("betBlue").disabled = !state;
-    document.getElementById("betRed").disabled = !state;
-    document.getElementById("betAmountInput").disabled = !state;
+  document.getElementById("betBlue").disabled = !state;
+  document.getElementById("betRed").disabled = !state;
+  document.getElementById("betAmountInput").disabled = !state;
+
+  // 🔥 FIX: if betting opens, ALWAYS reset lock state
+  if (state) {
+    betLocked = false;
+    currentBet = null;
+    betAmount = 0;
+
+    currentBetDisplay.textContent = "Current bet: None";
+    resultDisplay.textContent = "";
   }
+}
 
   window.setBettingAllowed = setBettingAllowed;
 
