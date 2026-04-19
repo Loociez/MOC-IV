@@ -104,6 +104,7 @@ const AI_FILES = [
   './ai/controller.js',
   './ai/berserker.js',
   './ai/adtrickster.js',
+  './ai/omni.js',
   './ai/tactical.js'
 ];
 
