@@ -107,6 +107,7 @@ const AI_FILES = [
   './ai/omni.js',
   './ai/godspeed.js',
   './ai/hyperblitz.js',
+  './ai/mageblade.js',
   './ai/tactical.js'
 ];
 
