@@ -517,21 +517,23 @@ roundNumber++;
 window.setBettingAllowed?.(true);
     }
 
-        if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+            if (fighter1.hp <= 0 || fighter2.hp <= 0) {
       fightActive = false;
       fightEnded = true;
 
-      const winnerSide = fighter1.hp > 0 ? 'blue' : 'red';
-      const winnerName = (winnerSide === 'blue') ? fighter1.aiName : fighter2.aiName;
+      // ✅ Use 'winner' here to match the rest of your code
+      const winner = fighter1.hp > 0 ? 'blue' : 'red';
+      const winnerAIName = (winner === 'blue') ? fighter1.aiName : fighter2.aiName;
 
-      // 1. Record the result in localStorage (Elo & Win/Loss)
-      recordResult(fighter1.aiName, fighter2.aiName, winnerName);
+      // 1. Record the result using the AI's actual name
+      recordResult(fighter1.aiName, fighter2.aiName, winnerAIName);
 
-      // 2. Refresh the leaderboard UI immediately
+      // 2. Refresh the leaderboard
       renderLeaderboardUI('leaderboardList');
 
-      // 3. Log to the feed
-      log(`🏆 ${winnerSide.toUpperCase()} (${winnerName}) wins the fight!`, "ko");
+      // 3. Log to the feed (using the 'winner' variable your code expects)
+      log(`🏆 ${winner.toUpperCase()} (${winnerAIName}) wins the fight!`, "ko");
+
 
 
 // 🎬 END FX
