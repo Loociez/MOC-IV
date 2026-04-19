@@ -83,23 +83,27 @@ this.fxPalette = {
 
     // ===== STATS =====
     const rarityRoll = Math.random();
-    if (rarityRoll < 0.6) {
-      this.rarity = 'Common'; this.hp = 95;
-      this.attackRange = 75;
-      this.glow = 'rgba(255,255,255,0.2)';
-    } else if (rarityRoll < 0.85) {
-      this.rarity = 'Rare'; this.hp = 105;
-      this.attackRange = 80;
-      this.glow = 'rgba(0,150,255,0.4)';
-    } else if (rarityRoll < 0.97) {
-      this.rarity = 'Epic'; this.hp = 115;
-      this.attackRange = 85;
-      this.glow = 'rgba(180,0,255,0.5)';
-    } else {
-      this.rarity = 'Legendary'; this.hp = 130;
-      this.attackRange = 90;
-      this.glow = 'rgba(255,200,0,0.6)';
-    }
+if (rarityRoll < 0.6) {
+this.rarity = 'Common';
+this.hp = 295;
+this.attackRange = 75;
+this.glow = 'rgba(220, 240, 255, 0.5)';
+} else if (rarityRoll < 0.85) {
+this.rarity = 'Rare';
+this.hp = 305;
+this.attackRange = 75;
+this.glow = 'rgba(0, 220, 255, 0.8)';
+} else if (rarityRoll < 0.97) {
+this.rarity = 'Epic';
+this.hp = 355;
+this.attackRange = 75;
+this.glow = 'rgba(230, 50, 255, 0.9)';
+} else {
+this.rarity = 'Legendary';
+this.hp = 430;
+this.attackRange = 75;
+this.glow = 'rgba(255, 255, 0, 1.0)';
+}
 
     this.maxHp = this.hp;
   }

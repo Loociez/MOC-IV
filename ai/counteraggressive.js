@@ -1,4 +1,6 @@
 export const name = "Counter";
+export const characterIndex = 20;     // 👈 specific character slot
+export const spriteSheetIndex = 3;   // 👈 specific sheet (optional)
 
 export default function counter(self, opponent) {
   const dist = opponent.x - self.x;

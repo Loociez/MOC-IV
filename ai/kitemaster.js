@@ -1,4 +1,6 @@
 export const name = "Kite";
+export const characterIndex = 2;     // 👈 specific character slot
+export const spriteSheetIndex = 2;   // 👈 specific sheet (optional)
 
 export default function kitemaster(self, opponent) {
   const dist = opponent.x - self.x;

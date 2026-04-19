@@ -1,4 +1,6 @@
 export const name = "Burst";
+export const characterIndex = 15;     // 👈 specific character slot
+export const spriteSheetIndex = 3;   // 👈 specific sheet (optional)
 
 export default function burst(self, opponent) {
   const dist = Math.abs(opponent.x - self.x);

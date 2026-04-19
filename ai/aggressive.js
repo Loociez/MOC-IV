@@ -1,4 +1,6 @@
 export const name = "Aggressive";
+export const characterIndex = 5;     // 👈 specific character slot
+export const spriteSheetIndex = 6;   // 👈 specific sheet (optional)
 
 export default function aggressive(self, opponent) {
   const dist = opponent.x - self.x;

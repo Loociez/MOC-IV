@@ -1,4 +1,6 @@
 export const name = "Trickster";
+export const characterIndex = 11;     // 👈 specific character slot
+export const spriteSheetIndex = 1;   // 👈 specific sheet (optional)
 
 export default function trickster(self, opponent) {
   const dist = opponent.x - self.x;

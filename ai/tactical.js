@@ -1,3 +1,6 @@
+export const characterIndex = 5;     // 👈 specific character slot
+export const spriteSheetIndex = 6;   // 👈 specific sheet (optional)
+
 export default function tactical(self, opponent) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);

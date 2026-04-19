@@ -12,6 +12,10 @@ const MUSIC_PLAYLIST = [
   { name: "the_mountain - Sport", src: "./music/song2.mp3" },
   { name: "Coma-media - Rock it", src: "./music/song3.mp3" },
   { name: "Nastelbom - Epic cinematic", src: "./music/song4.mp3" },
+  { name: "Warriyo, Rameses B - Mortals (Rameses B Remix)", src: "./music/song6.mp3" },
+  { name: "Barren Gates, Taylor Ravenna - Slip Thru", src: "./music/song7.mp3" },
+  { name: "Lost Sky, Shiah Maisel - Lost pt. IIc", src: "./music/song8.mp3" },
+  { name: "TANTRON, More Plastic - CERBERUS", src: "./music/song9.mp3" },
   { name: "Sapan4 - EDM gaming", src: "./music/song5.mp3" }
 ];
 
@@ -37,6 +41,9 @@ const backgroundImages = [
   './background1.jpg',
   './background2.jpg',
   './background3.jpg',
+  './background4.jpg',
+  './background5.jpg',
+  './background6.jpg'
 ];
 
 let background = new Image();

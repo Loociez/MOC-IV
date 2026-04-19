@@ -1,4 +1,6 @@
 export const name = "Temporal";
+export const characterIndex = 11;     // 👈 specific character slot
+export const spriteSheetIndex = 6;   // 👈 specific sheet (optional)
 
 export default function temporal(self, opponent) {
   const dist = Math.abs(opponent.x - self.x);
