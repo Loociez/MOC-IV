@@ -5,102 +5,163 @@
   <title>Mirage Fighter</title>
 
   <style>
-    :root {
-      --bg: #0b0b0f;
-      --panel: #15151d;
-      --panel2: #1c1c26;
-      --border: #2c2c3a;
-      --text: #eaeaf2;
-      --muted: #9a9aa8;
-      --accent: #6c5ce7;
-      --win: #2ecc71;
-      --lose: #e74c3c;
-    }
+:root {
+  --bg: #0b0b0f;
+  --panel: #15151d;
+  --panel2: #1c1c26;
+  --border: #2c2c3a;
+  --text: #eaeaf2;
+  --muted: #9a9aa8;
+  --accent: #6c5ce7;
+  --win: #2ecc71;
+  --lose: #e74c3c;
+}
 
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top, #151522, var(--bg));
-      color: var(--text);
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
+/* =========================
+   🟣 BACKGROUND UPGRADE
+========================= */
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  overflow: hidden;
 
-    h1 {
-      margin: 10px 0;
-      text-align: center;
-      font-size: 24px;
-    }
+  /* layered dark background */
+  background:
+    radial-gradient(circle at 20% 10%, rgba(108,92,231,0.15), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(255,0,110,0.10), transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(0,200,255,0.08), transparent 50%),
+    linear-gradient(180deg, #0a0a12, #050509);
 
-    #resetMoneyBtn {
-      display: block;
-      margin: 0 auto 10px;
-      padding: 8px 14px;
-      background: var(--panel);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-    }
+  background-attachment: fixed;
+}
 
-    #roundDisplay {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
+/* subtle animated glow */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 70%);
+  animation: ambientGlow 6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
 
-    .layout {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 0 10px;
-    }
+@keyframes ambientGlow {
+  from { opacity: 0.2; }
+  to { opacity: 0.5; }
+}
+.version-title {
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: orange;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+/* =========================
+   🟣 BANNER HEADER
+========================= */
+h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 1px;
 
-    canvas {
-      background: #111;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-      transition: transform 0.05s linear;
-    }
+  padding: 14px 0;
 
-    canvas.fullscreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 9999;
-      border-radius: 0;
-    }
+  /* banner background image */
+  background: 
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url('./banner.png'); /* 🔁 replace with your image */
 
-    /* =========================
-       🟢 CAMERA SHAKE EFFECT
-    ========================= */
-    .shake {
-      animation: shake 0.25s linear;
-    }
+  background-size: cover;
+  background-position: center;
 
-    @keyframes shake {
-      0% { transform: translate(0,0); }
-      20% { transform: translate(-4px,2px); }
-      40% { transform: translate(4px,-2px); }
-      60% { transform: translate(-3px,2px); }
-      80% { transform: translate(3px,-1px); }
-      100% { transform: translate(0,0); }
-    }
+  border-bottom: 1px solid var(--border);
 
-    /* =========================
-       🟢 SCREEN FLASH EFFECT
-    ========================= */
-    #flash {
+  text-shadow:
+    0 0 10px rgba(0,0,0,0.9),
+    0 0 20px rgba(108,92,231,0.4);
+}
+
+/* =========================
+   UI
+========================= */
+#resetMoneyBtn {
+  display: block;
+  margin: 10px auto;
+  padding: 8px 14px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#roundDisplay {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+/* =========================
+   CANVAS
+========================= */
+canvas {
+  background: #111;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  transition: transform 0.05s linear;
+}
+
+canvas.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999;
+  border-radius: 0;
+}
+
+/* =========================
+   🟢 CAMERA SHAKE
+========================= */
+.shake {
+  animation: shake 0.25s linear;
+}
+
+@keyframes shake {
+  0% { transform: translate(0,0); }
+  20% { transform: translate(-4px,2px); }
+  40% { transform: translate(4px,-2px); }
+  60% { transform: translate(-3px,2px); }
+  80% { transform: translate(3px,-1px); }
+  100% { transform: translate(0,0); }
+}
+
+/* =========================
+   🟢 FLASH EFFECT (SOFT)
+========================= */
+#flash {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
 
-  background: rgba(255, 80, 80, 0.25); /* softer red */
+  background: rgba(255, 80, 80, 0.2);
   opacity: 0;
 
   pointer-events: none;
@@ -109,129 +170,149 @@
   transition: opacity 0.15s ease-out;
 }
 
-    /* =========================
-       🟢 CENTER TEXT
-    ========================= */
-    #centerText {
-      position: fixed;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 40px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 10px black;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 99998;
-      transition: opacity 0.2s ease;
-    }
+/* =========================
+   CENTER TEXT
+========================= */
+#centerText {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 12px black;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99998;
+  transition: opacity 0.2s ease;
+}
 
-    #betting {
-      width: 260px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-    }
+/* =========================
+   PANELS
+========================= */
+#betting,
+#fightFeed,
+#musicPanel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
 
-    button {
-      width: 100%;
-      margin: 4px 0;
-      padding: 10px;
-      background: #222235;
-      color: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-    }
+/* betting panel */
+#betting {
+  width: 260px;
+  padding: 10px;
+}
 
-    button:hover {
-      background: var(--accent);
-    }
+/* fight feed */
+#fightFeed {
+  width: 260px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
 
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 6px;
-      background: #111;
-      border: 1px solid var(--border);
-      color: white;
-      text-align: center;
-      border-radius: 6px;
-    }
+#fightFeedHeader {
+  padding: 8px;
+  background: var(--panel2);
+  border-bottom: 1px solid var(--border);
+  font-weight: bold;
+  text-align: center;
+}
 
-    #playerMoneyDisplay {
-      margin-top: 10px;
-      font-weight: bold;
-    }
+#fightFeedLog {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  font-size: 12px;
+}
 
-    #currentBet {
-      font-size: 13px;
-      color: var(--muted);
-    }
+/* =========================
+   BUTTONS
+========================= */
+button {
+  width: 100%;
+  margin: 4px 0;
+  padding: 10px;
+  background: #222235;
+  color: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.15s;
+}
 
-    #result {
-      margin-top: 8px;
-      font-weight: bold;
-      min-height: 20px;
-    }
+button:hover {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(108,92,231,0.4);
+}
 
-    .win { color: #2ecc71; }
-    .lose { color: #e74c3c; }
+/* =========================
+   INPUT
+========================= */
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  background: #111;
+  border: 1px solid var(--border);
+  color: white;
+  text-align: center;
+  border-radius: 6px;
+}
 
-    #fightFeed {
-      width: 260px;
-      height: 400px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-    }
+/* =========================
+   TEXT / LOG
+========================= */
+#playerMoneyDisplay {
+  margin-top: 10px;
+  font-weight: bold;
+}
 
-    #fightFeedHeader {
-      padding: 8px;
-      background: var(--panel2);
-      border-bottom: 1px solid var(--border);
-      font-weight: bold;
-      text-align: center;
-    }
+#currentBet {
+  font-size: 13px;
+  color: var(--muted);
+}
 
-    #fightFeedLog {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px;
-      font-size: 12px;
-      text-align: left;
-    }
+#result {
+  margin-top: 8px;
+  font-weight: bold;
+  min-height: 20px;
+}
 
-    .log { margin-bottom: 5px; }
-    .system { color: #66ccff; }
-    .ko { color: #ff006e; font-weight: bold; }
+.win { color: var(--win); }
+.lose { color: var(--lose); }
 
-    #musicPanel {
-      width: 260px;
-      margin-top: 10px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-    }
+.log { margin-bottom: 5px; }
+.system { color: #66ccff; }
+.ko { color: #ff006e; font-weight: bold; }
 
-    #musicTitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      text-align: center;
-    }
+/* =========================
+   MUSIC PANEL
+========================= */
+#musicPanel {
+  width: 260px;
+  margin-top: 10px;
+  padding: 10px;
+}
 
-    button:disabled,
-    input:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-  </style>
+#musicTitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* =========================
+   DISABLED
+========================= */
+button:disabled,
+input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+</style>
 </head>
 
 <body>
@@ -239,7 +320,14 @@
 <div id="flash"></div>
 <div id="centerText"></div>
 
-<h1>MFB - Mirage Fighter Bot</h1>
+<div id="banner" style="display: flex; justify-content: center; width: 100%; overflow: hidden;">
+    <img src="./banner.png" alt="Mirage Fighter Bot" 
+         style="width: 100%; max-width: 1200px; height: 150px; object-fit: cover; object-position: center;">
+</div>
+
+
+</div>
+<div class="version-title">Version 1.2Beta</div>
 <button id="resetMoneyBtn">Reset Money to 1000</button>
 <div id="roundDisplay">Fight: 1</div>
 
