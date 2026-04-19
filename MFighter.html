@@ -301,14 +301,15 @@
   document.getElementById("betRed").disabled = !state;
   document.getElementById("betAmountInput").disabled = !state;
 
-  // 🔥 FIX: if betting opens, ALWAYS reset lock state
   if (state) {
-    betLocked = false;
-    currentBet = null;
-    betAmount = 0;
+    // ONLY reset if round is truly over AND no active bet is locked
+    if (!betLocked) {
+      currentBet = null;
+      betAmount = 0;
 
-    currentBetDisplay.textContent = "Current bet: None";
-    resultDisplay.textContent = "";
+      currentBetDisplay.textContent = "Current bet: None";
+      resultDisplay.textContent = "";
+    }
   }
 }
 
@@ -340,24 +341,28 @@
   }
 
   function resolveFight(winner) {
-    if (!currentBet) return;
+  if (!currentBet) return;
 
-    if (winner === currentBet) {
-      const winnings = betAmount * 2;
-      money += winnings;
-      resultDisplay.textContent = `WIN +$${winnings}`;
-      resultDisplay.className = "win";
-    } else {
-      resultDisplay.textContent = `LOSS -$${betAmount}`;
-      resultDisplay.className = "lose";
-    }
-
-    localStorage.setItem("playerMoney", money);
-    updateMoney();
-
-    // 🔥 FIX: RESET BET STATE AFTER FIGHT
-    resetBet();
+  if (winner === currentBet) {
+    const winnings = betAmount * 2;
+    money += winnings;
+    resultDisplay.textContent = `WIN +$${winnings}`;
+    resultDisplay.className = "win";
+  } else {
+    resultDisplay.textContent = `LOSS -$${betAmount}`;
+    resultDisplay.className = "lose";
   }
+
+  localStorage.setItem("playerMoney", money);
+  updateMoney();
+
+  // IMPORTANT: only reset bet, NOT betting system
+  betLocked = false;
+  currentBet = null;
+  betAmount = 0;
+
+  currentBetDisplay.textContent = "Current bet: None";
+}
 
   function resetBet() {
     betLocked = false;
@@ -395,10 +400,19 @@
     },
 
     startRound() {
-      setBettingAllowed(false);
-      resetBet(); // 🔥 FIX: always clear old bets
-      this.text("FIGHT!", 800);
-    },
+  // lock betting FIRST
+  setBettingAllowed(false);
+
+  // hard reset before fight begins
+  betLocked = false;
+  currentBet = null;
+  betAmount = 0;
+
+  currentBetDisplay.textContent = "Current bet: None";
+  resultDisplay.textContent = "";
+
+  this.text("FIGHT!", 800);
+},
 
     endRound() {
       setBettingAllowed(true);

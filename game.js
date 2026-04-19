@@ -272,8 +272,9 @@ fighter2 = new Fighter(
     backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
   bettingActive = true;
-  fightActive = false;
-  fightEnded = false;
+fightActive = false;
+fightEnded = false;
+waitingForNextFight = false;
 
   currentBet = null;
   betAmount = 0;
@@ -357,7 +358,10 @@ function drawHPBar(fighter, x, y) {
 ========================= */
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+if (!fightActive && !waitingForNextFight) {
+  bettingActive = true;
+  window.setBettingAllowed?.(true);
+}
   if (background.complete) {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   }
@@ -463,9 +467,22 @@ window.setBettingAllowed?.(true);
   }
 
   if (waitingForNextFight && elapsed >= stateDuration) {
-    waitingForNextFight = false;
+  waitingForNextFight = false;
+
+  log("🔄 Preparing next fight...", "system");
+
+  // FORCE CLEAN STATE RESET
+  bettingActive = false;
+  fightActive = false;
+  fightEnded = false;
+
+  window.setBettingAllowed?.(false);
+
+  setTimeout(() => {
     resetFight();
-  }
+    window.setBettingAllowed?.(true);
+  }, 300);
+}
 
   requestAnimationFrame(gameLoop);
 }
