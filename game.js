@@ -517,23 +517,20 @@ roundNumber++;
 window.setBettingAllowed?.(true);
     }
 
-            if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+                if (fighter1.hp <= 0 || fighter2.hp <= 0) {
       fightActive = false;
       fightEnded = true;
 
-      // ✅ Use 'winner' here to match the rest of your code
+      // 1. Define 'winner' clearly so the rest of gameLoop can use it
       const winner = fighter1.hp > 0 ? 'blue' : 'red';
       const winnerAIName = (winner === 'blue') ? fighter1.aiName : fighter2.aiName;
 
-      // 1. Record the result using the AI's actual name
+      // 2. Record the result and update the leaderboard
       recordResult(fighter1.aiName, fighter2.aiName, winnerAIName);
-
-      // 2. Refresh the leaderboard
       renderLeaderboardUI('leaderboardList');
 
-      // 3. Log to the feed (using the 'winner' variable your code expects)
+      // 3. Log the victory
       log(`🏆 ${winner.toUpperCase()} (${winnerAIName}) wins the fight!`, "ko");
-
 
 
 // 🎬 END FX
