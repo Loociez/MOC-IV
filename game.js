@@ -251,6 +251,24 @@ function updateMoneyDisplay() {
 }
 
 /* =========================
+   MUTE LOGIC
+========================= */
+const muteBtn = document.getElementById("muteBtn");
+
+muteBtn.addEventListener("click", () => {
+  // Toggle the muted property on your currentMusic object
+  currentMusic.muted = !currentMusic.muted;
+
+  // Update the button text to show the current state
+  if (currentMusic.muted) {
+    muteBtn.innerText = "🔇 Unmute Music";
+  } else {
+    muteBtn.innerText = "🔊 Mute Music";
+  }
+});
+
+
+/* =========================
    RESET FIGHT
 ========================= */
 async function resetFight() {
