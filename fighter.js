@@ -371,8 +371,8 @@ export class Fighter {
     this.energyWaves = this.energyWaves.filter(e => --e.life > 0);
   }
 
-  /* =========================
-     ACTIONS
+/* =========================
+   ACTIONS
 ========================= */
 
 handleAction(action, opponent) {
@@ -424,6 +424,8 @@ handleAction(action, opponent) {
     case 'dash':
       this.vx = this.facing === 'right' ? 6 : -6;
       this.action = 'run';
+
+      this.dashTrail = this.dashTrail || [];
       this.dashTrail.push({ x: this.x, y: this.y, life: 10 });
       break;
 
@@ -433,17 +435,23 @@ handleAction(action, opponent) {
 
     case 'teleport':
       this.x += this.facing === 'right' ? 80 : -80;
+
+      this.teleportFX = this.teleportFX || [];
       this.teleportFX.push({ x: this.x, y: this.y, life: 10 });
       break;
 
     case 'groundSlam':
+      this.slamWaves = this.slamWaves || [];
       this.slamWaves.push({ x: this.x, y: this.y, life: 15 });
+
       opponent.hitstun = 10;
       opponent.vy = -6;
       break;
 
     case 'healPulse':
       this.hp = Math.min(this.maxHp, this.hp + 10);
+
+      this.healFX = this.healFX || [];
       this.healFX.push({ x: this.x, y: this.y - 20, life: 20 });
       break;
 
@@ -452,6 +460,7 @@ handleAction(action, opponent) {
       break;
 
     case 'energyWave':
+      this.energyWaves = this.energyWaves || [];
       this.energyWaves.push({
         x: this.x,
         y: this.y,
@@ -466,6 +475,7 @@ handleAction(action, opponent) {
       this.cooldown = 70;
       this.shootProjectile(opponent.x, opponent.y);
 
+      this.beamEffects = this.beamEffects || [];
       this.beamEffects.push({
         x: this.x,
         y: this.y - 20,
@@ -476,7 +486,7 @@ handleAction(action, opponent) {
       break;
 
     /* =========================
-       NEW ABILITIES (ADDED)
+       NEW ABILITIES (FIXED)
     ========================= */
 
     case 'uppercut':
@@ -487,6 +497,7 @@ handleAction(action, opponent) {
         opponent.hitstun = 15;
         opponent.vy = -10;
 
+        this.hitEffects = this.hitEffects || [];
         this.hitEffects.push({ x: opponent.x, y: opponent.y - 20, life: 10 });
       }
       break;
@@ -514,7 +525,7 @@ handleAction(action, opponent) {
         this.iceFX.push({ x: opponent.x, y: opponent.y, life: 30 });
 
         opponent.hitstun = 20;
-        opponent.vx *= 0.3; // slow effect
+        opponent.vx *= 0.3;
       }
       break;
 
@@ -522,9 +533,9 @@ handleAction(action, opponent) {
       if (this.cooldown === 0) {
         this.cooldown = 35;
 
-        // teleport behind opponent
         this.x = opponent.x + (this.facing === 'right' ? -40 : 40);
 
+        this.teleportFX = this.teleportFX || [];
         this.teleportFX.push({ x: this.x, y: this.y, life: 12 });
       }
       break;
@@ -533,8 +544,8 @@ handleAction(action, opponent) {
       if (this.cooldown === 0) {
         this.cooldown = 120;
 
-        this.rageTimer = 120; // you can use this in update()
-        
+        this.rageTimer = 120;
+
         this.rageFX = this.rageFX || [];
         this.rageFX.push({ x: this.x, y: this.y, life: 60 });
       }
