@@ -58,7 +58,7 @@ export class Fighter {
 	
 	// ===== UNIQUE ABILITY FX PALETTES =====
 this.fxPalette = {
-  uppercut: 'white',
+  uppercut: 'purple',
   fireNova: 'orange',
   iceTrap: 'cyan',
   shadowStep: 'rgba(0,255,255,0.6)',
@@ -526,7 +526,7 @@ handleAction(action, opponent) {
 
       this.beamEffects = this.beamEffects || [];
       this.beamEffects.push({
-        x: this.x - 5,
+        x: this.x - 0,
         y: this.y - 0,
         tx: opponent.x,
         ty: opponent.y,
