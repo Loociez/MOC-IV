@@ -34,36 +34,42 @@ export class Fighter {
     this.comboCounter = 0;
     this.juggleCount = 0;
 
-// ===== FX SYSTEM =====
-this.hitSparks = [];
-this.floatingText = null;
-this.auraPulse = 0;
+    // ===== FX SYSTEM =====
+    this.hitSparks = [];
+    this.floatingText = null;
+    this.auraPulse = 0;
 
-// ===== BLOCK SYSTEM =====
-this.isBlocking = false;
+    // ===== BLOCK SYSTEM =====
+    this.isBlocking = false;
 
-// ===== PROJECTILES =====
-this.isShootingProjectile = false;
-this.projectiles = [];
+    this.isShootingProjectile = false;
+    this.projectiles = [];
 
-// ===== VISUAL FX =====
-this.dashTrail = [];
-this.beamEffects = [];
+    // ===== VISUAL FX (ADDED) =====
+    this.dashTrail = [];
+    this.beamEffects = [];
 
-// ===== ABILITY FX (NORMALIZED) =====
-this.teleportFX = [];
-this.slamWaves = [];
-this.healFX = [];
-this.energyWaves = [];
-
-// ===== NEW CLEAN FX (ADDED) =====
-this.fireFX = [];
-this.iceFX = [];
-this.shadowFX = [];
-this.rageFX = [];
-this.impactFX = [];
-this.novaFX = [];
-this.shieldFX = [];
+    // ===== NEW ABILITY FX (ADDED) =====
+    this.teleportFX = [];
+    this.slamWaves = [];
+    this.healFX = [];
+    this.shieldTimer = 0;
+    this.energyWaves = [];
+	
+	// ===== UNIQUE ABILITY FX PALETTES =====
+this.fxPalette = {
+  uppercut: 'white',
+  fireNova: 'orange',
+  iceTrap: 'cyan',
+  shadowStep: 'rgba(0,255,255,0.6)',
+  rageMode: 'rgba(255,0,0,0.4)',
+  healPulse: 'rgba(0,255,100,0.5)',
+  shield: 'rgba(0,150,255,0.4)',
+  teleport: 'rgba(180,0,255,0.4)',
+  groundSlam: 'orange',
+  energyWave: 'rgba(0,200,255,0.6)',
+  special: 'yellow'
+};
 
     // ===== SPRITE =====
     const index = Math.max(1, Math.min(spriteSheetIndex, 6));
@@ -166,76 +172,7 @@ this.shieldFX = [];
       yOffset: 0
     };
   }
-/* =========================
-   NEW FX VISUALS
-========================= */
 
-// 🔥 FIRE NOVA (EXPANDING RING)
-this.novaFX.forEach(n => {
-  ctx.strokeStyle = `rgba(255,80,0,${n.life / 25})`;
-  ctx.beginPath();
-  ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-  ctx.stroke();
-
-  n.radius += 4;
-  n.life--;
-});
-
-// 🔥 FIRE BURST
-this.fireFX.forEach(f => {
-  ctx.fillStyle = `rgba(255,120,0,${f.life / 20})`;
-  ctx.fillRect(f.x - 10, f.y - 10, 20, 20);
-  f.life--;
-});
-
-// ❄️ ICE TRAP
-this.iceFX.forEach(i => {
-  ctx.fillStyle = `rgba(0,220,255,${i.life / 40})`;
-  ctx.fillRect(i.x - 15, i.y - 15, 30, 30);
-  i.life--;
-});
-
-// 🕶 SHADOW STEP CLONE
-this.shadowFX.forEach(s => {
-  ctx.fillStyle = `rgba(0,0,0,${s.life / 15})`;
-  ctx.fillRect(s.x, s.y - 64, 64, 64);
-  s.life--;
-});
-
-// ⚡ TELEPORT DISTORTION
-this.teleportFX.forEach(t => {
-  ctx.strokeStyle = `rgba(0,255,255,${t.life / 12})`;
-  ctx.strokeRect(t.x, t.y - 64, 64, 64);
-  t.life--;
-});
-
-// 💥 UPPERCUT IMPACT SPIKE
-this.impactFX.forEach(i => {
-  ctx.strokeStyle = `rgba(255,255,255,${i.life / 12})`;
-  ctx.beginPath();
-  ctx.moveTo(i.x, i.y);
-  ctx.lineTo(i.x, i.y - 40);
-  ctx.stroke();
-  i.life--;
-});
-
-// 🌋 RAGE AURA
-this.rageFX.forEach(r => {
-  ctx.strokeStyle = `rgba(255,0,80,${r.life / 60})`;
-  ctx.beginPath();
-  ctx.arc(r.x, r.y, 60 + Math.sin(this.auraPulse) * 10, 0, Math.PI * 2);
-  ctx.stroke();
-  r.life--;
-});
-
-// 🛡 SHIELD FIELD
-this.shieldFX.forEach(s => {
-  ctx.strokeStyle = `rgba(0,200,255,${s.life / 60})`;
-  ctx.beginPath();
-  ctx.arc(s.x, s.y, 40, 0, Math.PI * 2);
-  ctx.stroke();
-  s.life--;
-});
   /* =========================
      PROJECTILES
   ========================= */
@@ -527,11 +464,24 @@ handleAction(action, opponent) {
       break;
 
     case 'healPulse':
-      this.hp = Math.min(this.maxHp, this.hp + 10);
+  this.healFX = this.healFX || [];
 
-      this.healFX = this.healFX || [];
-      this.healFX.push({ x: this.x, y: this.y - 20, life: 20 });
-      break;
+  this.healFX.push({
+    x: this.x,
+    y: this.y,
+    life: 40,
+    radius: 5
+  });
+
+  this.hitSparks.push({
+    x: this.x,
+    y: this.y,
+    vx: 0,
+    vy: -2,
+    life: 20,
+    color: 'lime'
+  });
+  break;
 
     case 'shield':
       this.shieldTimer = 60;
@@ -563,104 +513,121 @@ handleAction(action, opponent) {
       });
       break;
 
-   /* =========================
-   NEW ABILITIES (VISUAL OVERHAUL)
-========================= */
+    /* =========================
+       NEW ABILITIES (FIXED)
+    ========================= */
 
-case 'uppercut':
-  if (this.cooldown === 0) {
-    this.action = 'attack';
-    this.cooldown = 40;
+    case 'uppercut':
+  this.hitEffects = this.hitEffects || [];
+  this.hitEffects.push({
+    x: opponent.x,
+    y: opponent.y,
+    life: 12,
+    type: 'uppercut'
+  });
 
-    opponent.hitstun = 15;
-    opponent.vy = -11;
+  this.hitSparks.push({
+    x: opponent.x,
+    y: opponent.y,
+    vx: 0,
+    vy: -4,
+    life: 15,
+    color: 'white'
+  });
+  break;
 
-    // ⚡ vertical impact spike
-    this.impactFX.push({
+    case 'fireNova':
+  this.novaFX = this.novaFX || [];
+  this.novaFX.push({
+    x: this.x,
+    y: this.y,
+    radius: 0,
+    life: 25,
+    pulse: 0
+  });
+
+  this.hitSparks.push({
+    x: this.x,
+    y: this.y,
+    vx: 0,
+    vy: 0,
+    life: 20,
+    color: 'orange'
+  });
+  break;
+
+    case 'iceTrap':
+  this.iceFX = this.iceFX || [];
+  this.iceFX.push({
+    x: opponent.x,
+    y: opponent.y,
+    life: 40
+  });
+
+  // frozen shard burst
+  for (let i = 0; i < 6; i++) {
+    this.hitSparks.push({
       x: opponent.x,
       y: opponent.y,
-      life: 12,
-      type: 'uppercut'
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      life: 25,
+      color: 'cyan'
     });
   }
   break;
 
-case 'fireNova':
-  if (this.cooldown === 0) {
-    this.cooldown = 80;
+    case 'shadowStep':
+  this.teleportFX = this.teleportFX || [];
 
-    this.novaFX.push({
+  // start fade burst
+  this.teleportFX.push({
+    x: this.x,
+    y: this.y,
+    life: 12,
+    type: 'fadeOut'
+  });
+
+  // end burst
+  this.teleportFX.push({
+    x: opponent.x,
+    y: opponent.y,
+    life: 12,
+    type: 'fadeIn'
+  });
+
+  // distortion sparks
+  for (let i = 0; i < 8; i++) {
+    this.hitSparks.push({
       x: this.x,
       y: this.y,
-      radius: 0,
-      life: 25
-    });
-
-    this.fireFX.push({
-      x: this.x,
-      y: this.y,
-      life: 20
-    });
-
-    const dist = Math.abs(opponent.x - this.x);
-    if (dist < 120) {
-      opponent.hitstun = 12;
-      opponent.hp -= 8;
-    }
-  }
-  break;
-
-case 'iceTrap':
-  if (this.cooldown === 0) {
-    this.cooldown = 60;
-
-    this.iceFX.push({
-      x: opponent.x,
-      y: opponent.y,
-      life: 40
-    });
-
-    opponent.hitstun = 20;
-    opponent.vx *= 0.25;
-  }
-  break;
-
-case 'shadowStep':
-  if (this.cooldown === 0) {
-    this.cooldown = 35;
-
-    // shadow clone effect BEFORE teleport
-    this.shadowFX.push({
-      x: this.x,
-      y: this.y,
-      life: 15
-    });
-
-    this.x = opponent.x + (this.facing === 'right' ? -40 : 40);
-
-    this.teleportFX.push({
-      x: this.x,
-      y: this.y,
-      life: 12
+      vx: (Math.random() - 0.5) * 6,
+      vy: (Math.random() - 0.5) * 6,
+      life: 10,
+      color: 'rgba(0,255,255,0.5)'
     });
   }
   break;
 
-case 'rageMode':
-  if (this.cooldown === 0) {
-    this.cooldown = 120;
-    this.rageTimer = 120;
+    case 'rageMode':
+  this.rageFX = this.rageFX || [];
 
-    this.rageFX.push({
+  this.rageFX.push({
+    x: this.x,
+    y: this.y,
+    life: 80,
+    pulse: 0
+  });
+
+  // explosion aura burst
+  for (let i = 0; i < 12; i++) {
+    this.hitSparks.push({
       x: this.x,
       y: this.y,
-      life: 60
-    });
-
-    this.shieldFX.push({
-      x: this.x,
-      y: this.y,
-      life: 60
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8,
+      life: 30,
+      color: 'red'
     });
   }
   break;
