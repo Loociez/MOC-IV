@@ -100,7 +100,7 @@ export function getLeaderboard() {
 
 export function renderLeaderboardUI(containerId) {
   const container = document.getElementById(containerId);
-  const topAIs = getLeaderboard().slice(0, 5); // Get top 5
+  const topAIs = getLeaderboard().slice(0, 10); // Get top 10
 
   container.innerHTML = topAIs.map((ai, index) => `
     <div style="display: flex; justify-content: space-between; margin-bottom: 4px; padding: 2px 4px; ${index === 0 ? 'color: orange; font-weight: bold;' : ''}">
