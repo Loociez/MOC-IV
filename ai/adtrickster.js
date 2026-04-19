@@ -1,4 +1,6 @@
 export const name = "Adaptive Trickster";
+export const characterIndex = 4;     // 👈 specific character slot
+export const spriteSheetIndex = 4;   // 👈 specific sheet (optional)
 
 const memory = new WeakMap();
 

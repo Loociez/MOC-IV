@@ -1,8 +1,8 @@
 
-export const name = "CustomTest";
+export const name = "Builder";
 
 
-export default function CustomTestAI(self, opponent, bounds) {
+export default function BuilderAI(self, opponent, bounds) {
 
   const dist = opponent.x - self.x;
   const abs = Math.abs(dist);

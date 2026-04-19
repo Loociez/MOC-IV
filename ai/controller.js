@@ -1,4 +1,6 @@
 export const name = "Adaptive Controller";
+export const characterIndex = 8;     // 👈 specific character slot
+export const spriteSheetIndex = 1;   // 👈 specific sheet (optional)
 
 const memory = new WeakMap();
 

@@ -1,4 +1,6 @@
 export const name = "Godspeed Instinct";
+export const characterIndex = 4;     // 👈 specific character slot
+export const spriteSheetIndex = 1;   // 👈 specific sheet (optional)
 
 const memory = new WeakMap();
 

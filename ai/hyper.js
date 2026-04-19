@@ -1,4 +1,6 @@
 export const name = "Adaptive Aggressive v2";
+export const characterIndex = 8;     // 👈 specific character slot
+export const spriteSheetIndex = 6;   // 👈 specific sheet (optional)
 
 /* lightweight memory store per fighter instance */
 const memory = new WeakMap();

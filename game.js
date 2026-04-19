@@ -24,8 +24,11 @@ let activeSong = null;
 /* =========================
    CONFIG (NEW)
 ========================= */
-const BETTING_TIME = 5;      // seconds before fight starts
-const NEXT_FIGHT_TIME = 15;  // seconds between fights
+const BETTING_TIME = 5;
+const NEXT_FIGHT_TIME = 10;
+
+/* ✅ ADDED */
+const FIGHT_TIME = 120;
 
 /* =========================
    BACKGROUND
@@ -75,6 +78,9 @@ let roundNumber = 1;
 let stateStartTime = performance.now();
 let stateDuration = BETTING_TIME * 1000;
 
+/* ✅ ADDED */
+let fightStartTime = 0;
+
 /* =========================
    BETWEEN FIGHTS
 ========================= */
@@ -108,6 +114,8 @@ const AI_FILES = [
   './ai/godspeed.js',
   './ai/hyperblitz.js',
   './ai/mageblade.js',
+  './ai/vectorknigt.js',
+  './ai/chronopredator.js',
   './ai/tactical.js'
 ];
 
@@ -116,12 +124,34 @@ const AI_REGISTRY = [];
 function normalizeAI(mod) {
   if (!mod) return null;
 
+  // function-style export
   if (typeof mod === 'function') {
-    return { name: mod.name || 'Unnamed AI', logic: mod };
+    return { 
+      name: mod.name || 'Unnamed AI', 
+      logic: mod,
+      characterIndex: mod.characterIndex ?? null,
+      spriteSheetIndex: mod.spriteSheetIndex ?? null
+    };
   }
 
+  // object-style export (YOUR CASE)
+  if (typeof mod.default === 'function') {
+    return {
+      name: mod.name || 'Unnamed AI',
+      logic: mod.default,
+      characterIndex: mod.characterIndex ?? null,
+      spriteSheetIndex: mod.spriteSheetIndex ?? null
+    };
+  }
+
+  // fallback
   if (typeof mod.logic === 'function') {
-    return { name: mod.name || 'Unnamed AI', logic: mod.logic };
+    return { 
+      name: mod.name || 'Unnamed AI', 
+      logic: mod.logic,
+      characterIndex: mod.characterIndex ?? null,
+      spriteSheetIndex: mod.spriteSheetIndex ?? null
+    };
   }
 
   return null;
@@ -130,7 +160,7 @@ function normalizeAI(mod) {
 async function loadAI(path) {
   try {
     const mod = await import(path);
-    return normalizeAI(mod.default || mod);
+    return normalizeAI(mod); // ✅ PASS FULL MODULE
   } catch (e) {
     console.warn(`AI failed to load: ${path}`, e);
     return null;
@@ -162,9 +192,7 @@ function playFightMusic() {
   currentMusic.currentTime = 0;
   currentMusic.src = song.src;
 
-  currentMusic.play().catch(() => {
-    // autoplay restriction safe fail
-  });
+  currentMusic.play().catch(() => {});
 
   activeSong = song;
 
@@ -222,18 +250,20 @@ async function resetFight() {
   const ai2 = getRandomAI();
 
   fighter1 = new Fighter(
-    150,
-    'blue',
-    (self, opponent) => ai1.logic(self, opponent, bounds),
-    getRandomCharacterIndex()
-  );
+  150,
+  'blue',
+  (self, opponent) => ai1.logic(self, opponent, bounds),
+  ai1.characterIndex ?? getRandomCharacterIndex(),
+  ai1.spriteSheetIndex ?? 1
+);
 
-  fighter2 = new Fighter(
-    600,
-    'red',
-    (self, opponent) => ai2.logic(self, opponent, bounds),
-    getRandomCharacterIndex()
-  );
+fighter2 = new Fighter(
+  600,
+  'red',
+  (self, opponent) => ai2.logic(self, opponent, bounds),
+  ai2.characterIndex ?? getRandomCharacterIndex(),
+  ai2.spriteSheetIndex ?? 1
+);
 
   fighter1.aiName = ai1.name;
   fighter2.aiName = ai2.name;
@@ -257,7 +287,6 @@ async function resetFight() {
   betRedBtn.disabled = false;
   betAmountInput.disabled = false;
 
-  /* stop music between fights */
   currentMusic.pause();
   currentMusic.currentTime = 0;
   activeSong = null;
@@ -283,20 +312,15 @@ function drawHPBar(fighter, x, y) {
   const width = 160;
   const hpPercent = fighter.hp / fighter.maxHp;
 
-  // background bar
   ctx.fillStyle = '#333';
   ctx.fillRect(x, y, width, 16);
 
-  // hp fill
   ctx.fillStyle = fighter.color;
   ctx.fillRect(x, y, width * hpPercent, 16);
 
   ctx.strokeStyle = '#000';
   ctx.strokeRect(x, y, width, 16);
 
-  // =========================
-  // NAME (IMPROVED VISIBILITY)
-  // =========================
   ctx.font = 'bold 12px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -305,23 +329,17 @@ function drawHPBar(fighter, x, y) {
   const nameX = x + width / 2;
   const nameY = y - 10;
 
-  // strong outline (multiple passes = readable on ANY background)
   ctx.lineWidth = 4;
   ctx.strokeStyle = 'rgba(0,0,0,0.9)';
   ctx.strokeText(nameText, nameX, nameY);
 
-  // inner glow for separation
   ctx.lineWidth = 2;
   ctx.strokeStyle = 'rgba(255,255,255,0.25)';
   ctx.strokeText(nameText, nameX, nameY);
 
-  // main text (bright but not pure white)
-  ctx.fillStyle = '#ffd166'; // warm gold = always readable
+  ctx.fillStyle = '#ffd166';
   ctx.fillText(nameText, nameX, nameY);
 
-  // =========================
-  // HP TEXT (also improved slightly)
-  // =========================
   const hpText = `${Math.floor(fighter.hp)} / ${fighter.maxHp}`;
 
   ctx.font = '11px Arial';
@@ -352,9 +370,6 @@ function gameLoop() {
     drawHPBar(fighter2, 580, 20);
   }
 
-  /* =========================
-     CENTER COUNTDOWN (FIXED)
-  ========================= */
   const countdown = getCountdownSeconds();
 
   if (countdown > 0) {
@@ -374,49 +389,78 @@ function gameLoop() {
     ctx.restore();
   }
 
-  /* =========================
-     STATE TRANSITION (FIXED)
-  ========================= */
   const elapsed = performance.now() - stateStartTime;
 
   if (bettingActive && elapsed >= stateDuration) {
     bettingActive = false;
     fightActive = true;
+	
+	window.setBettingAllowed?.(false);
 
     const song = playFightMusic();
+
+    /* ✅ START TIMER */
+    fightStartTime = performance.now();
 
     log("⚔️ Fight Started!", "system");
     log(`🎵 Now Playing: ${song?.name}`, "system");
   }
 
   if (fightActive) {
-  fighter1.update(fighter2, bounds);
-  fighter2.update(fighter1, bounds);
+    fighter1.update(fighter2, bounds);
+    fighter2.update(fighter1, bounds);
 
-  if (fighter1.hp <= 0 || fighter2.hp <= 0) {
-    fightActive = false;
-    fightEnded = true;
+    /* ✅ TIMER CHECK */
+    const fightElapsed = (performance.now() - fightStartTime) / 1000;
 
-    const winner = fighter1.hp > 0 ? 'blue' : 'red';
+    if (fightElapsed >= FIGHT_TIME) {
+      fightActive = false;
+      fightEnded = true;
 
-    log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
+      let winner = null;
+      if (fighter1.hp > fighter2.hp) winner = 'blue';
+      else if (fighter2.hp > fighter1.hp) winner = 'red';
 
-    /* =========================
-       ✅ BET RESOLUTION (FIX)
-    ========================= */
-    if (window.betSystem) {
-      window.betSystem.resolveFight(winner); // pay or lose
-      window.betSystem.resetBet();           // unlock next round
+      if (winner) {
+        log(`⏰ TIME UP! ${winner.toUpperCase()} wins by HP!`, "ko");
+      } else {
+        log(`⏰ TIME UP! DRAW!`, "ko");
+      }
+
+      if (window.betSystem && winner) {
+        window.betSystem.resolveFight(winner);
+        window.betSystem.resetBet();
+      }
+
+      waitingForNextFight = true;
+stateStartTime = performance.now();
+stateDuration = NEXT_FIGHT_TIME * 1000;
+roundNumber++;
+
+window.setBettingAllowed?.(true);
     }
 
-    waitingForNextFight = true;
+    if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+      fightActive = false;
+      fightEnded = true;
 
-    stateStartTime = performance.now();
-    stateDuration = NEXT_FIGHT_TIME * 1000;
+      const winner = fighter1.hp > 0 ? 'blue' : 'red';
 
-    roundNumber++;
+      log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
+
+      if (window.betSystem) {
+        window.betSystem.resolveFight(winner);
+        window.betSystem.resetBet();
+      }
+
+      waitingForNextFight = true;
+
+      stateStartTime = performance.now();
+      stateDuration = NEXT_FIGHT_TIME * 1000;
+
+      roundNumber++;
+    }
   }
-}
 
   if (waitingForNextFight && elapsed >= stateDuration) {
     waitingForNextFight = false;

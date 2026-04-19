@@ -1,4 +1,6 @@
 export const name = "Hyper Blitz Omega";
+export const characterIndex = 4;     // 👈 specific character slot
+export const spriteSheetIndex = 6;   // 👈 specific sheet (optional)
 
 const memory = new WeakMap();
 

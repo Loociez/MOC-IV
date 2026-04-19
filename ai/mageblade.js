@@ -1,5 +1,6 @@
-
 export const name = "MageBlade";
+export const characterIndex = 4;     // 👈 specific character slot
+export const spriteSheetIndex = 2;   // 👈 specific sheet (optional)
 
 export default function MageBlade(self, opponent, bounds) {
 
@@ -58,4 +59,3 @@ export default function MageBlade(self, opponent, bounds) {
 
   return 'idle';
 }
-

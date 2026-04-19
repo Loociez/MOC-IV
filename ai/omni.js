@@ -1,4 +1,6 @@
 export const name = "Omni Adaptive Prime";
+export const characterIndex = 3;     // 👈 specific character slot
+export const spriteSheetIndex = 1;   // 👈 specific sheet (optional)
 
 /* persistent memory per fighter */
 const memory = new WeakMap();

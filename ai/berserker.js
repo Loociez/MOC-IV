@@ -1,4 +1,6 @@
 export const name = "Adaptive Berserker";
+export const characterIndex = 6;     // 👈 specific character slot
+export const spriteSheetIndex = 3;   // 👈 specific sheet (optional)
 
 const memory = new WeakMap();
 
