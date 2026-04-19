@@ -292,6 +292,18 @@
   let currentBet = null;
   let betAmount = 0;
 
+  let bettingAllowed = true;
+
+  function setBettingAllowed(state) {
+    bettingAllowed = state;
+
+    document.getElementById("betBlue").disabled = !state;
+    document.getElementById("betRed").disabled = !state;
+    document.getElementById("betAmountInput").disabled = !state;
+  }
+
+  window.setBettingAllowed = setBettingAllowed;
+
   function updateMoney() {
     moneyDisplay.textContent = "Money: $" + money;
   }
@@ -332,6 +344,9 @@
 
     localStorage.setItem("playerMoney", money);
     updateMoney();
+
+    // 🔥 FIX: RESET BET STATE AFTER FIGHT
+    resetBet();
   }
 
   function resetBet() {
@@ -350,10 +365,6 @@
   }
 
   window.pushFightLog = log;
-
-  /* =========================
-     🟢 EFFECT SYSTEM
-  ========================= */
 
   window.effects = {
 
@@ -375,6 +386,7 @@
 
     startRound() {
       setBettingAllowed(false);
+      resetBet(); // 🔥 FIX: always clear old bets
       this.text("FIGHT!", 800);
     },
 
@@ -383,25 +395,6 @@
       this.text("ROUND OVER", 1200);
     }
   };
-
-  /* =========================
-     BET LOCK SYSTEM
-  ========================= */
-  let bettingAllowed = true;
-
-  function setBettingAllowed(state) {
-    bettingAllowed = state;
-
-    document.getElementById("betBlue").disabled = !state;
-    document.getElementById("betRed").disabled = !state;
-    document.getElementById("betAmountInput").disabled = !state;
-  }
-
-  window.setBettingAllowed = setBettingAllowed;
-
-  /* =========================
-     BUTTONS
-  ========================= */
 
   document.getElementById("betBlue").onclick = () => {
     const amt = +document.getElementById("betAmountInput").value;
@@ -422,10 +415,6 @@
     log("💰 Money reset to $1000", "system");
   };
 
-  /* =========================
-     MUSIC
-  ========================= */
-
   let muted = false;
 
   muteBtn.onclick = () => {
@@ -433,10 +422,6 @@
     if (window.__gameMusic) window.__gameMusic.muted = muted;
     muteBtn.textContent = muted ? "🔇 Unmute Music" : "🔊 Mute Music";
   };
-
-  /* =========================
-     FULLSCREEN
-  ========================= */
 
   let fullscreen = false;
 
