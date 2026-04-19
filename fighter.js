@@ -498,15 +498,15 @@ handleAction(action, opponent) {
       });
       break;
 
-    case 'special':
+     case 'special':
       this.action = 'attack';
       this.cooldown = 70;
       this.shootProjectile(opponent.x, opponent.y);
 
       this.beamEffects = this.beamEffects || [];
       this.beamEffects.push({
-        x: this.x,
-        y: this.y - 20,
+        x: this.x - 5,
+        y: this.y - 0,
         tx: opponent.x,
         ty: opponent.y,
         life: 10
@@ -664,13 +664,13 @@ handleAction(action, opponent) {
     ctx.restore();
 
     this.dashTrail.forEach(t => {
-      ctx.fillStyle = 'rgba(0,150,255,0.3)';
-      ctx.fillRect(t.x, t.y - 64, 64, 64);
-    });
+ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+ctx.fillRect(t.x, t.y - 64, 64, 64);
+});
 
     this.beamEffects.forEach(b => {
       ctx.strokeStyle = 'rgba(0,150,255,0.8)';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 5;
       ctx.beginPath();
       ctx.moveTo(b.x, b.y);
       ctx.lineTo(b.tx, b.ty);
@@ -678,9 +678,20 @@ handleAction(action, opponent) {
     });
 
     this.teleportFX.forEach(t => {
-      ctx.fillStyle = 'rgba(0,255,255,0.4)';
-      ctx.fillRect(t.x, t.y - 64, 64, 64);
-    });
+ctx.globalCompositeOperation = 'lighter';
+ctx.fillStyle = 'rgba(0, 100, 255, 0.6)';
+ctx.fillRect(t.x + 16, t.y - 48, 32, 32);
+ctx.fillStyle = 'rgba(200, 240, 255, 0.8)';
+ctx.fillRect(t.x + 20, t.y - 44, 24, 24);
+for (let i = 0; i < 4; i++) {
+let px = t.x + 24 + (Math.random() * 16);
+let py = (t.y - 48) + (Math.random() * 32);
+let size = Math.random() * 2 + 1;
+ctx.fillStyle = 'rgba(0, 200, 255, 0.9)';
+ctx.fillRect(px, py, size, size);
+}
+ctx.globalCompositeOperation = 'source-over';
+});
 
     this.slamWaves.forEach(s => {
       ctx.strokeStyle = 'orange';
@@ -690,9 +701,20 @@ handleAction(action, opponent) {
     });
 
     this.healFX.forEach(h => {
-      ctx.fillStyle = 'rgba(0,255,0,0.4)';
-      ctx.fillRect(h.x, h.y, 20, 20);
-    });
+ctx.globalCompositeOperation = 'lighter';
+ctx.fillStyle = 'rgba(0, 255, 100, 0.4)';
+ctx.fillRect(h.x + 12, h.y - 40, 40, 40);
+ctx.fillStyle = 'rgba(150, 255, 150, 0.6)';
+ctx.fillRect(h.x + 20, h.y - 32, 24, 24);
+for (let i = 0; i < 6; i++) {
+let px = h.x + 10 + (Math.random() * 44);
+let py = (h.y - 50) + (Math.random() * 50);
+let size = Math.random() * 3 + 1;
+ctx.fillStyle = i % 2 === 0 ? 'rgba(50, 255, 50, 0.8)' : 'rgba(200, 255, 200, 0.9)';
+ctx.fillRect(px, py, size, size);
+}
+ctx.globalCompositeOperation = 'source-over';
+});
 
     this.energyWaves.forEach(e => {
       ctx.fillStyle = 'rgba(0,200,255,0.6)';
