@@ -1,4 +1,5 @@
 import { Fighter } from './fighter.js';
+import { recordResult, getOdds, getAIStats } from './rankingSystem.js';
 
 function getRandomCharacterIndex() {
   return Math.floor(Math.random() * 32);
@@ -359,6 +360,37 @@ function drawHPBar(fighter, x, y) {
   ctx.fillStyle = '#ffffff';
   ctx.fillText(hpText, nameX, y + 30);
 }
+function drawFightTimer() {
+  if (!fightActive) return;
+
+  const elapsed = (performance.now() - fightStartTime) / 1000;
+  const timeLeft = Math.max(0, Math.ceil(FIGHT_TIME - elapsed));
+
+  const x = canvas.width / 2;
+  const y = 40;
+
+  ctx.save();
+
+  ctx.font = 'bold 28px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // 🔥 outline (thick black)
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+  ctx.strokeText(timeLeft, x, y);
+
+  // ✨ inner glow outline
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.strokeText(timeLeft, x, y);
+
+  // 🎯 main text
+  ctx.fillStyle = timeLeft <= 10 ? '#ff3b3b' : '#ffd166'; // red when low
+  ctx.fillText(timeLeft, x, y);
+
+  ctx.restore();
+}
 
 /* =========================
    GAME LOOP
@@ -377,9 +409,12 @@ if (!fightActive && !waitingForNextFight) {
   fighter2?.draw(ctx);
 
   if (fighter1 && fighter2) {
-    drawHPBar(fighter1, 50, 20);
-    drawHPBar(fighter2, 580, 20);
-  }
+  drawHPBar(fighter1, 50, 20);
+  drawHPBar(fighter2, 580, 20);
+
+  // 🕒 ROUND TIMER
+  drawFightTimer();
+}
 
   const countdown = getCountdownSeconds();
 
@@ -403,19 +438,31 @@ if (!fightActive && !waitingForNextFight) {
   const elapsed = performance.now() - stateStartTime;
 
   if (bettingActive && elapsed >= stateDuration) {
-    bettingActive = false;
-    fightActive = true;
-	
-	window.setBettingAllowed?.(false);
+  bettingActive = false;
+  fightActive = true;
 
-    const song = playFightMusic();
+  window.setBettingAllowed?.(false);
 
-    /* ✅ START TIMER */
-    fightStartTime = performance.now();
+  const song = playFightMusic();
 
-    log("⚔️ Fight Started!", "system");
-    log(`🎵 Now Playing: ${song?.name}`, "system");
-  }
+  fightStartTime = performance.now();
+
+  // 🎬 DRAMATIC START
+  window.effects?.startRound();
+
+  // 🎥 ZOOM IN
+  canvas.style.transform = "scale(1.2)";
+  setTimeout(() => {
+    canvas.style.transform = "scale(1)";
+  }, 400);
+
+  const odds = getOdds(fighter1.aiName, fighter2.aiName);
+
+log("⚔️ Fight Started!", "system");
+log(`📊 ${fighter1.aiName} odds: x${odds[fighter1.aiName]}`, "system");
+log(`📊 ${fighter2.aiName} odds: x${odds[fighter2.aiName]}`, "system");
+  log(`🎵 Now Playing: ${song?.name}`, "system");
+}
 
   if (fightActive) {
     fighter1.update(fighter2, bounds);
@@ -456,8 +503,25 @@ window.setBettingAllowed?.(true);
       fightEnded = true;
 
       const winner = fighter1.hp > 0 ? 'blue' : 'red';
+	  
+	  recordResult(
+  fighter1.aiName,
+  fighter2.aiName,
+  winner === 'blue' ? fighter1.aiName : fighter2.aiName
+);
 
       log(`🏆 ${winner.toUpperCase()} wins the fight!`, "ko");
+
+// 🎬 END FX
+window.effects?.endRound();
+window.effects?.flash();
+window.effects?.shake();
+
+// 🎥 DRAMATIC ZOOM OUT
+canvas.style.transform = "scale(0.9)";
+setTimeout(() => {
+  canvas.style.transform = "scale(1)";
+}, 500);
 
       if (window.betSystem) {
         window.betSystem.resolveFight(winner);

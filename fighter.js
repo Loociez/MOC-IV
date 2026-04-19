@@ -223,6 +223,14 @@ this.glow = 'rgba(255, 255, 0, 1.0)';
 
           enemy.takeDamage(finalDmg);
 
+// 💥 IMPACT FX
+window.effects?.shake();
+window.effects?.flash();
+
+if (finalDmg >= 8) {
+  window.effects?.text("CRITICAL!", 400);
+}
+
           enemy.hitstun = enemy.isBlocking ? 5 : 15;
           enemy.vx = this.x < enemy.x ? 3 : -3;
           enemy.vy = -4;
@@ -345,6 +353,15 @@ this.glow = 'rgba(255, 255, 0, 1.0)';
         const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
 
         opponent.takeDamage(finalDmg);
+
+// 💥 IMPACT FX
+window.effects?.shake();
+window.effects?.flash();
+
+// 🎯 CRITICAL HIT FEEL
+if (finalDmg >= 8) {
+  window.effects?.text("CRITICAL!", 400);
+}
 
         opponent.hitstun = opponent.isBlocking ? 8 : 20;
         opponent.vx = this.x < opponent.x ? 4 : -4;
@@ -750,5 +767,10 @@ ctx.globalCompositeOperation = 'source-over';
   takeDamage(dmg) {
     const final = this.shieldTimer > 0 ? Math.floor(dmg * 0.5) : dmg;
     this.hp = Math.max(0, this.hp - final);
+
+// 🎬 BIG HIT FREEZE
+if (final >= 10) {
+  this.hitStop = 6;
+}
   }
 }

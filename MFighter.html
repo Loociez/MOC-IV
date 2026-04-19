@@ -94,16 +94,20 @@
        🟢 SCREEN FLASH EFFECT
     ========================= */
     #flash {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: red;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 99999;
-    }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(255, 80, 80, 0.25); /* softer red */
+  opacity: 0;
+
+  pointer-events: none;
+  z-index: 99999;
+
+  transition: opacity 0.15s ease-out;
+}
 
     /* =========================
        🟢 CENTER TEXT
@@ -389,9 +393,13 @@
     },
 
     flash() {
-      flash.style.opacity = 0.6;
-      setTimeout(() => flash.style.opacity = 0, 120);
-    },
+  flash.style.background = 'rgba(255, 80, 80, 0.25)'; // softer red
+  flash.style.opacity = 1;
+
+  setTimeout(() => {
+    flash.style.opacity = 0;
+  }, 100);
+},
 
     text(msg, time=1000) {
       centerText.textContent = msg;
