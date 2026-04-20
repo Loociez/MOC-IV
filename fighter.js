@@ -287,39 +287,93 @@ if (finalDmg >= 8) {
 
     this.auraPulse += 0.05;
 
-    if (this.hitstun === 0 && !['attack', 'special', 'dash'].includes(this.action)) {
-      const action = this.botLogic(this, opponent);
-      this.handleAction(action, opponent);
-    }
+    if (
+  this.hitstun === 0 &&
+  this.juggleCount < 4 && // STOP AIR LOCK COMBOS
+  !['attack', 'special', 'dash'].includes(this.action)
+) {
+  const action = this.botLogic(this, opponent);
+  this.handleAction(action, opponent);
+}
 
-    // physics
-    this.x += this.vx;
-    this.y += this.vy;
+  // =========================
+// PHYSICS (SAFE ARENA CONTAINMENT FIX)
+// =========================
 
-    this.vx *= 0.85;
+this.x += this.vx;
+this.y += this.vy;
 
-    if (this.y >= 395) {
-      this.y = 395;
-      this.vy = 0;
-      this.isOnGround = true;
-      this.juggleCount = 0;
-    } else {
-      this.isOnGround = false;
-      this.vy += 0.5;
-    }
+// =========================
+// GLOBAL DAMPING
+// =========================
+this.vx *= 0.85;
 
-    const stageLeft = 40;
-    const stageRight = 760;
+// =========================
+// HARD VELOCITY LIMITS (NEW)
+// prevents being launched out of map
+// =========================
+const MAX_VX = 10;
+const MAX_VY = 12;
 
-    if (this.x <= stageLeft) {
-      this.x = stageLeft;
-      this.vx = Math.abs(this.vx) * 0.3;
-    }
+this.vx = Math.max(-MAX_VX, Math.min(MAX_VX, this.vx));
+this.vy = Math.max(-MAX_VY, Math.min(MAX_VY, this.vy));
 
-    if (this.x >= stageRight) {
-      this.x = stageRight;
-      this.vx = -Math.abs(this.vx) * 0.3;
-    }
+// -------------------------
+// CONSTANTS
+// -------------------------
+const ground = 395;
+const ceiling = 0;
+const stageLeft = 40;
+const stageRight = 760;
+
+// -------------------------
+// FLOOR (GROUND LOCK)
+// -------------------------
+if (this.y >= ground) {
+  this.y = ground;
+  this.vy = 0;
+  this.isOnGround = true;
+  this.juggleCount = 0;
+} else {
+  this.isOnGround = false;
+  this.vy += 0.5; // gravity always applies when airborne
+}
+
+// -------------------------
+// CEILING (IMPORTANT FIX)
+// prevents infinite launch / soft-lock above arena
+// -------------------------
+if (this.y <= ceiling) {
+  this.y = ceiling;
+
+  // stop upward momentum
+  this.vy = Math.max(0, this.vy);
+
+  // BREAK AIR COMBOS WHEN HIT CEILING
+  this.juggleCount = Math.max(this.juggleCount, 2);
+
+  // force re-entry into gravity loop
+  this.isOnGround = false;
+}
+
+// -------------------------
+// LEFT WALL
+// -------------------------
+if (this.x <= stageLeft) {
+  this.x = stageLeft;
+
+  // bounce back instead of sticking
+  if (this.vx < 0) this.vx = Math.abs(this.vx) * 0.3;
+}
+
+// -------------------------
+// RIGHT WALL
+// -------------------------
+if (this.x >= stageRight) {
+  this.x = stageRight;
+
+  if (this.vx > 0) this.vx = -Math.abs(this.vx) * 0.3;
+}
 
     // ALWAYS FACE OPPONENT
     this.facing = this.x < opponent.x ? 'right' : 'left';
@@ -363,17 +417,62 @@ if (finalDmg >= 8) {
   window.effects?.text("CRITICAL!", 400);
 }
 
-        opponent.hitstun = opponent.isBlocking ? 8 : 20;
-        opponent.vx = this.x < opponent.x ? 4 : -4;
-        opponent.vy = -5;
+opponent.hitstun = opponent.isBlocking ? 8 : 20;
 
-        opponent.createHitSparks(opponent.x, opponent.y - 30, this.color);
-        opponent.showDamage(finalDmg);
+// =========================
+// SAFE KNOCKBACK SYSTEM (FIXED ANTI-INFINITE JUGGLE)
+// =========================
 
-        opponent.hitStop = 4;
-        this.hitStop = 2;
+const MAX_AIR_JUGGLE = 3;
 
-        this.attackHasHit = true;
+// horizontal knockback (safe + capped)
+opponent.vx = this.x < opponent.x ? 3 : -3;
+
+// vertical knockback (CONTROLLED LAUNCH SYSTEM)
+if (opponent.isOnGround) {
+  // normal grounded hit launch
+  opponent.vy = -5;
+} else {
+  // air hit = weak pop only (prevents infinite stacking upward)
+  opponent.vy = Math.max(opponent.vy, -2);
+}
+
+// juggle counter
+opponent.juggleCount = (opponent.juggleCount || 0) + 1;
+
+// HARD RESET if over juggle limit
+if (opponent.juggleCount > MAX_AIR_JUGGLE) {
+  opponent.vy = Math.min(opponent.vy, 2);   // force downward drift
+  opponent.hitstun = 10;
+}
+
+// =========================
+// 🧱 HARD ANTI-CEILING STALL FIX (IMPORTANT ADDITION)
+// =========================
+
+// if opponent is already high in air and still being launched upward,
+// force gravity correction immediately
+if (opponent.y < 80) {
+  opponent.vy = Math.max(opponent.vy, 2);   // push downward
+  opponent.hitstun = Math.max(opponent.hitstun, 6);
+}
+
+// if velocity is still going upward too long, cancel it
+if (opponent.vy < -10 && !opponent.isOnGround) {
+  opponent.vy = -2;
+}
+
+// =========================
+// FINAL HIT RESPONSE
+// =========================
+
+opponent.createHitSparks(opponent.x, opponent.y - 30, this.color);
+opponent.showDamage(finalDmg);
+
+opponent.hitStop = 4;
+this.hitStop = 2;
+
+this.attackHasHit = true;
       }
     }
 
@@ -381,31 +480,67 @@ if (finalDmg >= 8) {
        PROJECTILES
     ========================= */
 
-    this.projectiles.forEach(p => p.update(opponent, this));
-    this.projectiles = this.projectiles.filter(p => p.active);
+    /* =========================
+   PROJECTILES
+========================= */
+
+
+// VOID WALL BLOCK CHECK
+if (this.voidWallActive) {
+  this.projectiles.forEach(p => {
+    if (
+      p.x > this.voidWall.x &&
+      p.x < this.voidWall.x + this.voidWall.width &&
+      p.y > this.voidWall.y &&
+      p.y < this.voidWall.y + this.voidWall.height
+    ) {
+      p.active = false;
+    }
+  });
+}
+
+this.projectiles.forEach(p => p.update(opponent, this));
+this.projectiles = this.projectiles.filter(p => p.active);
 
     /* =========================
        FX UPDATE
     ========================= */
 
     this.hitSparks = this.hitSparks.filter(s => {
-      s.x += s.vx;
-      s.y += s.vy;
-      return --s.life > 0;
-    });
+  s.x += s.vx;
+  s.y += s.vy;
+  return --s.life > 0;
+});
 
-    if (this.floatingText) {
-      this.floatingText.timer--;
-      if (this.floatingText.timer <= 0) this.floatingText = null;
-    }
+if (this.floatingText) {
+  this.floatingText.timer--;
+  if (this.floatingText.timer <= 0) this.floatingText = null;
+}
 
-    this.dashTrail = this.dashTrail.filter(t => --t.life > 0);
-    this.beamEffects = this.beamEffects.filter(b => --b.life > 0);
-    this.teleportFX = this.teleportFX.filter(t => --t.life > 0);
-    this.slamWaves = this.slamWaves.filter(s => --s.life > 0);
-    this.healFX = this.healFX.filter(h => --h.life > 0);
-    this.energyWaves = this.energyWaves.filter(e => --e.life > 0);
+this.dashTrail = this.dashTrail.filter(t => --t.life > 0);
+this.beamEffects = this.beamEffects.filter(b => --b.life > 0);
+this.teleportFX = this.teleportFX.filter(t => --t.life > 0);
+this.slamWaves = this.slamWaves.filter(s => --s.life > 0);
+this.healFX = this.healFX.filter(h => --h.life > 0);
+this.energyWaves = this.energyWaves.filter(e => --e.life > 0);
+
+// NEW FX CLEANUP
+this.voidWallFX = this.voidWallFX?.filter(v => --v.life > 0) || [];
+this.lightningFX = this.lightningFX?.filter(l => --l.life > 0) || [];
+this.windFX = this.windFX?.filter(w => --w.life > 0) || [];
+this.poisonFX = this.poisonFX?.filter(p => --p.life > 0) || [];
+this.bladeFX = this.bladeFX?.filter(b => --b.life > 0) || [];
+this.timeFX = this.timeFX?.filter(t => --t.life > 0) || [];
+
+// VOID WALL TIMER
+if (this.voidWallActive) {
+  this.voidWallTimer--;
+  if (this.voidWallTimer <= 0) {
+    this.voidWallActive = false;
   }
+}
+
+}
 
 /* =========================
    ACTIONS
@@ -598,10 +733,15 @@ handleAction(action, opponent) {
   }
   break;
 
-    case 'shadowStep':
+   case 'shadowStep':
+
+  // ONLY allow teleport if grounded or low juggle
+  if (!this.isOnGround && this.juggleCount > 2) {
+    break;
+  }
+
   this.teleportFX = this.teleportFX || [];
 
-  // start fade burst
   this.teleportFX.push({
     x: this.x,
     y: this.y,
@@ -609,25 +749,21 @@ handleAction(action, opponent) {
     type: 'fadeOut'
   });
 
-  // end burst
+  const newX = opponent.x + (this.facing === 'right' ? -60 : 60);
+
+  this.x = Math.max(40, Math.min(760, newX));
+
   this.teleportFX.push({
-    x: opponent.x,
-    y: opponent.y,
+    x: this.x,
+    y: this.y,
     life: 12,
     type: 'fadeIn'
   });
 
-  // distortion sparks
-  for (let i = 0; i < 8; i++) {
-    this.hitSparks.push({
-      x: this.x,
-      y: this.y,
-      vx: (Math.random() - 0.5) * 6,
-      vy: (Math.random() - 0.5) * 6,
-      life: 10,
-      color: 'rgba(0,255,255,0.5)'
-    });
-  }
+  // IMPORTANT: prevents mid-air reset abuse
+  this.vy *= 0.5;
+  this.juggleCount = Math.min(this.juggleCount + 1, 3);
+
   break;
 
     case 'rageMode':
@@ -652,6 +788,80 @@ handleAction(action, opponent) {
     });
   }
   break;
+  
+  case 'voidWall':
+      this.voidWallActive = true;
+      this.voidWallTimer = 60;
+
+      const offset = this.facing === 'right' ? 40 : -40;
+
+      this.voidWall = {
+        x: this.x + offset,
+        y: this.y - 60,
+        width: 20,
+        height: 60
+      };
+
+      this.voidWallFX = this.voidWallFX || [];
+      this.voidWallFX.push({
+        ...this.voidWall,
+        life: 60
+      });
+      break;
+
+    case 'lightningStrike':
+      this.lightningFX = this.lightningFX || [];
+      this.lightningFX.push({
+        x: opponent.x,
+        y: opponent.y - 80,
+        life: 10
+      });
+
+      opponent.hitstun = 8;
+      break;
+
+    case 'windPush':
+      this.windFX = this.windFX || [];
+      this.windFX.push({
+        x: this.x,
+        y: this.y,
+        life: 20
+      });
+
+      opponent.vx += this.facing === 'right' ? 5 : -5;
+      opponent.hitstun = 5;
+      break;
+
+    case 'poisonCloud':
+      this.poisonFX = this.poisonFX || [];
+      this.poisonFX.push({
+        x: opponent.x,
+        y: opponent.y,
+        life: 80
+      });
+      break;
+
+    case 'bladeDance':
+      this.bladeFX = this.bladeFX || [];
+      for (let i = 0; i < 3; i++) {
+        this.bladeFX.push({
+          x: opponent.x + (Math.random() * 20 - 10),
+          y: opponent.y + (Math.random() * 20 - 10),
+          life: 10
+        });
+      }
+      opponent.hitstun = 6;
+      break;
+
+    case 'timeSlow':
+      this.timeFX = this.timeFX || [];
+      this.timeFX.push({
+        x: this.x,
+        y: this.y,
+        life: 60
+      });
+      opponent.slowTimer = 60;
+      break;
 
     default:
       this.action = 'idle';
@@ -752,25 +962,96 @@ ctx.globalCompositeOperation = 'source-over';
     ctx.fillRect(this.x, this.y - 70, (this.hp / this.maxHp) * 64, 6);
 
     this.hitSparks.forEach(s => {
-      ctx.fillStyle = s.color;
-      ctx.fillRect(s.x, s.y, 2, 2);
-    });
+  ctx.fillStyle = s.color;
+  ctx.fillRect(s.x, s.y, 2, 2);
+});
 
-    if (this.floatingText) {
-      ctx.fillStyle = this.floatingText.color;
-      ctx.fillText(this.floatingText.text, this.x + 20, this.y - 80);
-    }
+if (this.floatingText) {
+  ctx.fillStyle = this.floatingText.color;
+  ctx.fillText(this.floatingText.text, this.x + 20, this.y - 80);
+}
+
+/* =========================
+   NEW FX DRAW (PUT HERE)
+========================= */
+
+// VOID WALL
+this.voidWallFX?.forEach(v => {
+  ctx.fillStyle = 'rgba(100, 0, 150, 0.5)';
+  ctx.fillRect(v.x, v.y, v.width, v.height);
+});
+
+// LIGHTNING
+this.lightningFX?.forEach(l => {
+  ctx.strokeStyle = 'yellow';
+  ctx.beginPath();
+  ctx.moveTo(l.x, l.y);
+  ctx.lineTo(l.x, l.y + 80);
+  ctx.stroke();
+});
+
+// WIND
+this.windFX?.forEach(w => {
+  ctx.fillStyle = 'rgba(200,200,255,0.3)';
+  ctx.fillRect(w.x, w.y - 40, 50, 40);
+});
+
+// POISON
+this.poisonFX?.forEach(p => {
+  ctx.fillStyle = 'rgba(0,255,100,0.2)';
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, 30, 0, Math.PI * 2);
+  ctx.fill();
+});
+
+// BLADES
+this.bladeFX?.forEach(b => {
+  ctx.fillStyle = 'white';
+  ctx.fillRect(b.x, b.y, 6, 2);
+});
+
+// TIME SLOW
+this.timeFX?.forEach(t => {
+  ctx.strokeStyle = 'cyan';
+  ctx.beginPath();
+  ctx.arc(t.x, t.y, 40, 0, Math.PI * 2);
+  ctx.stroke();
+});
+
+this.projectiles.forEach(p => p.draw(ctx));
 
     this.projectiles.forEach(p => p.draw(ctx));
   }
 
   takeDamage(dmg) {
-    const final = this.shieldTimer > 0 ? Math.floor(dmg * 0.5) : dmg;
-    this.hp = Math.max(0, this.hp - final);
+  const final = this.shieldTimer > 0 ? Math.floor(dmg * 0.5) : dmg;
+  this.hp = Math.max(0, this.hp - final);
 
-// 🎬 BIG HIT FREEZE
-if (final >= 10) {
-  this.hitStop = 6;
-}
+  // =========================
+  // JUGGLE LIMIT SYSTEM (NEW)
+  // =========================
+  this.juggleCount = (this.juggleCount || 0) + 1;
+
+  // HARD LIMIT: prevents infinite air combo
+  const MAX_JUGGLE = 4;
+
+  if (this.juggleCount > MAX_JUGGLE) {
+    this.hitstun = 8;
+    this.vy = Math.min(this.vy, 2); // force downward drift
   }
+
+  // =========================
+  // HIT RESPONSE
+  // =========================
+  if (final >= 10) {
+    this.hitStop = 6;
+  }
+
+  // =========================
+  // AIR CONTROL BREAK (CRITICAL FIX)
+  // =========================
+  if (!this.isOnGround) {
+    this.vx *= 0.6; // reduce launch carry
+  }
+}
 }

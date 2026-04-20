@@ -13,7 +13,7 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 980px;
   margin: auto;
   background: #1a1a24;
   padding: 20px;
@@ -25,7 +25,7 @@ h1 { text-align: center; }
 
 label {
   display: block;
-  margin-top: 10px;
+  margin-top: 12px;
   color: #bbb;
   font-size: 14px;
 }
@@ -40,13 +40,49 @@ input, select {
   border-radius: 5px;
 }
 
-.slider {
-  width: 100%;
+.sliderWrap {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
 }
+
+.slider { width: 100%; }
+
+/* =========================
+   SPRITE PREVIEW
+========================= */
+.previewGrid {
+  display: flex;
+  gap: 20px;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.canvasBox {
+  background: #0b0b10;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+canvas {
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+  border: 1px solid #444;
+}
+
+.previewText {
+  font-size: 13px;
+  color: #aaa;
+}
+
+/* ========================= */
 
 .abilities {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   margin-top: 10px;
 }
@@ -85,17 +121,17 @@ pre {
 
 <body>
 
-<h1>⚔️ AI Fighter Builder (Full Abilities)</h1>
+<h1>⚔️ AI Fighter Builder (Sprite Edition)</h1>
 
 <div class="container">
 
-  <label>AI Display Name</label>
+  <label>AI Name</label>
   <input id="aiName" value="Custom Fighter AI" />
 
-  <label>Function Name (export default function ___)</label>
+  <label>Function Name</label>
   <input id="functionName" value="customAI" />
 
-  <label>Style</label>
+  <label>Personality Style</label>
   <select id="style">
     <option value="aggressive">Aggressive</option>
     <option value="tactical">Tactical</option>
@@ -103,39 +139,73 @@ pre {
     <option value="adaptive">Adaptive</option>
   </select>
 
+  <!-- =========================
+       SPRITE SELECTOR
+  ========================= -->
+
+  <label>Sprite Sheet (1–6)</label>
+  <input type="range" id="spriteSheet" min="1" max="6" value="1" oninput="updatePreview()">
+  <div class="sliderWrap"><span>Sheet 1</span><span id="sheetVal">1</span><span>Sheet 6</span></div>
+
+  <label>Character Index (0–31)</label>
+  <input type="range" id="characterIndex" min="0" max="31" value="0" oninput="updatePreview()">
+  <div class="sliderWrap"><span>Char 0</span><span id="charVal">0</span><span>Char 31</span></div>
+
+  <div class="previewGrid">
+    <div class="canvasBox">
+      <canvas id="spritePreview" width="32" height="32"></canvas>
+    </div>
+
+    <div class="previewText" id="previewText">
+      Sprite Preview: Sheet 1 / Character 0
+    </div>
+  </div>
+
+  <!-- =========================
+       STATS
+  ========================= -->
+
   <label>Aggression</label>
-  <input type="range" id="aggression" min="0" max="100" value="60" class="slider">
+  <div class="sliderWrap"><span>Passive</span><span id="aggVal">60</span><span>Aggressive</span></div>
+  <input type="range" id="aggression" min="0" max="100" value="60" oninput="aggVal.textContent=this.value">
 
   <label>Defense</label>
-  <input type="range" id="defense" min="0" max="100" value="40" class="slider">
+  <div class="sliderWrap"><span>Fragile</span><span id="defVal">40</span><span>Tank</span></div>
+  <input type="range" id="defense" min="0" max="100" value="40" oninput="defVal.textContent=this.value">
 
   <label>Preferred Range</label>
-  <input type="range" id="rangePref" min="0" max="100" value="50" class="slider">
+  <div class="sliderWrap"><span>Close</span><span id="rngVal">50</span><span>Long</span></div>
+  <input type="range" id="rangePref" min="0" max="100" value="50" oninput="rngVal.textContent=this.value">
 
-  <label>Abilities (select multiple)</label>
+  <label>Intelligence</label>
+  <div class="sliderWrap"><span>Basic</span><span id="intelVal">50</span><span>Advanced</span></div>
+  <input type="range" id="intelligence" min="0" max="100" value="50" oninput="intelVal.textContent=this.value">
+
+  <!-- =========================
+       ABILITIES
+  ========================= -->
+
+  <label>Abilities</label>
   <div class="abilities">
 
-    <!-- BASIC -->
     <label class="ability"><input type="checkbox" value="attack"> Attack</label>
     <label class="ability"><input type="checkbox" value="shoot"> Shoot</label>
     <label class="ability"><input type="checkbox" value="dash"> Dash</label>
     <label class="ability"><input type="checkbox" value="block"> Block</label>
     <label class="ability"><input type="checkbox" value="jump"> Jump</label>
 
-    <!-- ORIGINAL -->
     <label class="ability"><input type="checkbox" value="teleport"> Teleport</label>
-    <label class="ability"><input type="checkbox" value="groundSlam"> Ground Slam</label>
-    <label class="ability"><input type="checkbox" value="healPulse"> Heal Pulse</label>
+    <label class="ability"><input type="checkbox" value="groundSlam"> Slam</label>
+    <label class="ability"><input type="checkbox" value="healPulse"> Heal</label>
     <label class="ability"><input type="checkbox" value="shield"> Shield</label>
-    <label class="ability"><input type="checkbox" value="energyWave"> Energy Wave</label>
+    <label class="ability"><input type="checkbox" value="energyWave"> Energy</label>
     <label class="ability"><input type="checkbox" value="special"> Special</label>
 
-    <!-- NEW ONES YOU ADDED -->
-    <label class="ability"><input type="checkbox" value="blinkStrike"> Blink Strike</label>
-    <label class="ability"><input type="checkbox" value="gravityWell"> Gravity Well</label>
-    <label class="ability"><input type="checkbox" value="fireAura"> Fire Aura</label>
-    <label class="ability"><input type="checkbox" value="iceTrap"> Ice Trap</label>
-    <label class="ability"><input type="checkbox" value="shockwaveBurst"> Shockwave Burst</label>
+    <label class="ability"><input type="checkbox" value="blinkStrike"> Blink</label>
+    <label class="ability"><input type="checkbox" value="gravityWell"> Gravity</label>
+    <label class="ability"><input type="checkbox" value="fireAura"> Fire</label>
+    <label class="ability"><input type="checkbox" value="iceTrap"> Ice</label>
+    <label class="ability"><input type="checkbox" value="shockwaveBurst"> Shock</label>
 
   </div>
 
@@ -148,72 +218,97 @@ pre {
 <script>
 let generated = "";
 
+/* =========================
+   SPRITE SHEET CONFIG
+========================= */
+const SPRITE_SIZE = 32;
+const SHEET_WIDTH = 32; 
+const FRAMES_PER_CHARACTER = 12;
+
+const sheetImages = {};
+
+function getSheetPath(n) {
+  return `./sprites/sprites${n}.png`;
+}
+
+function loadSheet(n) {
+  if (sheetImages[n]) return sheetImages[n];
+
+  const img = new Image();
+  img.src = getSheetPath(n);
+  sheetImages[n] = img;
+  return img;
+}
+
+function updatePreview() {
+  const sheet = +document.getElementById("spriteSheet").value;
+  const character = +document.getElementById("characterIndex").value;
+
+  const frameIndex = character * FRAMES_PER_CHARACTER; 
+  // 👆 THIS is the key fix
+
+  document.getElementById("sheetVal").textContent = sheet;
+  document.getElementById("charVal").textContent = character;
+
+  document.getElementById("previewText").textContent =
+    `Sprite Preview: Sheet ${sheet} | Character ${character} (Frame 0/12)`;
+
+  const canvas = document.getElementById("spritePreview");
+  const ctx = canvas.getContext("2d");
+
+  const img = loadSheet(sheet);
+
+  const sx = (frameIndex % SHEET_WIDTH) * SPRITE_SIZE;
+  const sy = Math.floor(frameIndex / SHEET_WIDTH) * SPRITE_SIZE;
+
+  ctx.clearRect(0, 0, 32, 32);
+
+  if (img.complete) {
+    ctx.drawImage(img, sx, sy, 32, 32, 0, 0, 32, 32);
+  } else {
+    img.onload = () => {
+      ctx.drawImage(img, sx, sy, 32, 32, 0, 0, 32, 32);
+    };
+  }
+}
+
 function getAbilities() {
   return [...document.querySelectorAll("input[type=checkbox]:checked")]
     .map(x => x.value);
 }
 
-function buildLogic(abilities, a, d, r, fnName) {
+function buildLogic(abilities, a, d, r, intel, fnName) {
 
-  const has = (ab) => abilities.includes(ab);
-
-  return `
+return `
 export default function ${fnName}(self, opponent, bounds) {
 
   const dist = opponent.x - self.x;
   const abs = Math.abs(dist);
 
-  const lowHp = self.hp < self.maxHp * 0.35;
+  const has = (ab) => ${JSON.stringify(abilities)}.includes(ab);
 
-  if (self.hitstun > 0 || self.action === 'hurt') return 'idle';
+  const aggression = ${a} / 100;
+  const defense = ${d} / 100;
+  const intel = ${intel} / 100;
+
+  if (self.hitstun > 0) return 'idle';
 
   if (self.x < bounds.left) return 'moveRight';
   if (self.x > bounds.right) return 'moveLeft';
 
-  // CLOSE RANGE
-  if (abs < 80) {
-
-    if (${has("attack")} && self.cooldown === 0 && Math.random() < ${a/100}) return 'attack';
-    if (${has("groundSlam")} && self.cooldown === 0 && Math.random() < 0.3) return 'groundSlam';
-    if (${has("blinkStrike")} && self.cooldown === 0 && Math.random() < 0.25) return 'blinkStrike';
-    if (${has("shockwaveBurst")} && self.cooldown === 0 && Math.random() < 0.25) return 'shockwaveBurst';
-
-    if (${has("block")}) return 'block';
-    if (${has("dash")}) return 'dash';
-
-    return 'moveLeft';
+  if (abs < 90) {
+    if (has("attack") && Math.random() < aggression) return 'attack';
+    if (has("dash") && Math.random() < 0.3) return 'dash';
+    return 'block';
   }
 
-  // MID RANGE
-  if (abs < 180) {
-
-    if (${has("shoot")} && self.cooldown === 0 && Math.random() < 0.5) return 'shoot';
-    if (${has("energyWave")} && self.cooldown === 0 && Math.random() < 0.4) return 'energyWave';
-    if (${has("gravityWell")} && self.cooldown === 0 && Math.random() < 0.25) return 'gravityWell';
-
-    if (${has("teleport")} && Math.random() < 0.2) return 'teleport';
-
+  if (abs < 200) {
+    if (has("shoot") && Math.random() < 0.5) return 'shoot';
+    if (has("energyWave") && Math.random() < intel) return 'energyWave';
     return dist > 0 ? 'moveRight' : 'moveLeft';
   }
 
-  // LONG RANGE
-  if (abs >= 180) {
-
-    if (${has("fireAura")} && self.cooldown === 0 && Math.random() < 0.3) return 'fireAura';
-    if (${has("iceTrap")} && self.cooldown === 0 && Math.random() < 0.3) return 'iceTrap';
-    if (${has("special")} && self.cooldown === 0 && Math.random() < 0.25) return 'special';
-    if (${has("dash")} && self.cooldown === 0 && Math.random() < 0.4) return 'dash';
-
-    return dist > 0 ? 'moveRight' : 'moveLeft';
-  }
-
-  // LOW HP SURVIVAL
-  if (lowHp) {
-    if (${has("healPulse")} && self.cooldown === 0) return 'healPulse';
-    if (${has("shield")}) return 'shield';
-  }
-
-  return 'idle';
+  return dist > 0 ? 'moveRight' : 'moveLeft';
 }
 `;
 }
@@ -225,12 +320,19 @@ function generate() {
   const a = +document.getElementById("aggression").value;
   const d = +document.getElementById("defense").value;
   const r = +document.getElementById("rangePref").value;
+  const intel = +document.getElementById("intelligence").value;
+
+  const sheet = +document.getElementById("spriteSheet").value;
+  const char = +document.getElementById("characterIndex").value;
 
   const abilities = getAbilities();
 
-  generated = `
-export const name = "${name}";
-${buildLogic(abilities, a, d, r, fnName)}
+  generated =
+`export const name = "${name}";
+export const characterIndex = ${char};
+export const spriteSheetIndex = ${sheet};
+
+${buildLogic(abilities, a, d, r, intel, fnName)}
 `;
 
   document.getElementById("output").textContent = generated;
@@ -249,6 +351,9 @@ function download() {
 
   URL.revokeObjectURL(url);
 }
+
+/* init */
+updatePreview();
 </script>
 
 </body>

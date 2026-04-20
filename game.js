@@ -130,6 +130,8 @@ const AI_FILES = [
   './ai/novaberserker.js',
   './ai/voidstalker.js',
   './ai/vkzenith.js',
+  './ai/voidtact.js',
+  './ai/chronobers.js',
   './ai/tactical.js'
 ];
 
