@@ -1,0 +1,112 @@
+// ==UserScript==
+// @name         Odyssey Bank Exact Quantities - Loocie
+// @namespace    odyssey.qol.bankfix
+// @version      1.1
+// @description  Compact numbers (floor), color tiers, and auto-fit to slot
+// @match        https://playodyssey.app/*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    function parseExact(val, title) {
+        if (title) {
+            const cleaned = title.replace(/,/g, '').trim();
+            const num = parseInt(cleaned, 10);
+            if (!isNaN(num)) return num;
+        }
+
+        if (!val) return null;
+
+        const str = val.trim().toUpperCase();
+
+        let multiplier = 1;
+        if (str.includes('K')) multiplier = 1000;
+        if (str.includes('M')) multiplier = 1000000;
+        if (str.includes('B')) multiplier = 1000000000;
+
+        const num = parseFloat(str.replace(/[^\d.]/g, ''));
+        if (isNaN(num)) return null;
+
+        return Math.floor(num * multiplier);
+    }
+
+    // 🔥 FLOOR BASED COMPACT (NO ROUNDING UP EVER)
+    function formatCompact(num) {
+        if (num >= 1000000000) {
+            const val = Math.floor(num / 100000000) / 10; // 1 decimal floor
+            return val + "B";
+        }
+        if (num >= 1000000) {
+            const val = Math.floor(num / 100000) / 10;
+            return val + "M";
+        }
+        if (num >= 100000) {
+            const val = Math.floor(num / 100) / 10;
+            return val + "K";
+        }
+        return num.toLocaleString('en-US');
+    }
+
+    function applyColor(el, num) {
+        el.style.color = "";
+
+        if (num >= 1000000000) {
+            el.style.color = "#FFD700"; // gold
+        } else if (num >= 1000000) {
+            el.style.color = "#4da6ff"; // blue
+        } else if (num >= 100000) {
+            el.style.color = "#cccccc"; // grey
+        }
+    }
+
+    function autoFit(el) {
+        const parent = el.parentElement;
+        if (!parent) return;
+
+        let size = 12;
+        el.style.fontSize = size + "px";
+
+        // shrink until it fits
+        while (el.scrollWidth > parent.clientWidth && size > 7) {
+            size -= 1;
+            el.style.fontSize = size + "px";
+        }
+    }
+
+    function fitText(el, num) {
+        const full = num.toLocaleString('en-US');
+        const compact = formatCompact(num);
+
+        el.textContent = compact;
+        el.title = full;
+
+        el.style.whiteSpace = "nowrap";
+        el.style.display = "block";
+        el.style.textAlign = "center";
+
+        applyColor(el, num);
+
+ 
+        autoFit(el);
+    }
+
+    function updateBank() {
+        const qtyEls = document.querySelectorAll('.bank-qty');
+
+        qtyEls.forEach(el => {
+            const title = el.getAttribute('title');
+            const current = el.textContent;
+
+            const exact = parseExact(current, title);
+
+            if (exact !== null) {
+                fitText(el, exact);
+            }
+        });
+    }
+
+    setInterval(updateBank, 300);
+
+})();
