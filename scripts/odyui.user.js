@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Odyssey QoL - Loocie
 // @namespace    odyssey.qol
-// @version      1.2B
+// @version      1.3B
 // @description  Safe chat tabs + full themes + run toggle + vitals fix
 // @match        https://playodyssey.app/*
 // @grant        none
@@ -507,7 +507,16 @@ const obs = new MutationObserver(() => {
             m.classList.add('social');
         }
     });
+const isTofEvent =
+    text.includes("tof run is now open") ||
+    text.includes("type /tof") ||
+    text.includes("tof run is now closed");
 
+// ToF
+if (isTofEvent) {
+    m.classList.remove('system');
+    m.classList.add('chat');
+}
     // notification logic
     if (mode !== "system") {
         if (notifyMode !== "off") {
@@ -899,4 +908,4 @@ setTimeout(initShiftClickItemInspect, 1000);
     injectNotificationOption();
 }, 1500);
 initQuickDrop();
-})();e
+})();
