@@ -1,0 +1,902 @@
+// ==UserScript==
+// @name         Odyssey QoL - Loocie
+// @namespace    odyssey.qol
+// @version      1.2B
+// @description  Safe chat tabs + full themes + run toggle + vitals fix
+// @match        https://playodyssey.app/*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+
+    let chatMode = "chat";
+
+    // =========================================================
+    // SHADOW UI
+    // =========================================================
+    const host = document.createElement('div');
+    host.style.position = 'fixed';
+    host.style.left = '10px';
+    host.style.top = '50%';
+    host.style.transform = 'translateY(-50%)';
+    host.style.zIndex = '999999';
+    host.style.pointerEvents = 'none';
+
+    document.body.appendChild(host);
+    const shadow = host.attachShadow({ mode: 'open' });
+
+    shadow.innerHTML = `
+        <style>
+            .panel {
+                display:flex;
+                flex-direction:column;
+                gap:8px;
+                pointer-events:none;
+            }
+
+            button {
+                pointer-events:auto;
+                padding:8px 12px;
+                border-radius:8px;
+                border:1px solid rgba(255,255,255,0.2);
+                cursor:pointer;
+                font-weight:600;
+                background: rgba(20,20,20,0.7);
+                color:white;
+                backdrop-filter: blur(6px);
+                transition: all 0.2s ease;
+                position: relative;
+            }
+
+            button:hover {
+                transform: translateX(2px);
+                filter: brightness(1.2);
+            }
+
+            .badge {
+                position:absolute;
+                top:-6px;
+                right:-6px;
+                background:red;
+                color:white;
+                font-size:11px;
+                padding:2px 6px;
+                border-radius:999px;
+                display:none;
+                font-weight:bold;
+            }
+
+            .pulse {
+                animation: pulse 0.6s ease;
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); filter: brightness(1.5); }
+                100% { transform: scale(1); }
+            }
+        </style>
+
+        <div class="panel">
+
+            <button id="skin">Theme: Purple</button>
+        </div>
+    `;
+
+    const skinBtn = shadow.getElementById('skin');
+
+
+    // =========================================================
+    // THEMES
+    // =========================================================
+    const themes = ['purple', 'red', 'glass', 'neon', 'retro'];
+    let current = 0;
+
+    function applyTheme() {
+        document.body.classList.remove(...themes.map(t => 'theme-' + t));
+        document.body.classList.add('theme-' + themes[current]);
+
+        skinBtn.textContent = "Theme: " + themes[current];
+        applyThemeCSS(themes[current]);
+    }
+
+    skinBtn.onclick = () => {
+        current = (current + 1) % themes.length;
+        applyTheme();
+    };
+
+  function applyThemeCSS(theme) {
+
+    let css = `
+    :root {
+        --panel-alt: rgba(0,0,0,0.4);
+        --border: rgba(255,255,255,0.1);
+        --text: white;
+    }
+
+    #options-content,
+    .options-tab-panel,
+    #chat-panel,
+    #sidebar,
+    #game-menu {
+        transition: all 0.3s ease;
+    }
+
+    button {
+        transition: all 0.2s ease;
+        border-radius: 6px;
+    }
+
+    #chat-messages {
+        border-radius: 6px;
+    }
+
+    .chat-msg.system {
+        opacity: 0.75;
+        color: #a8ffb0;
+    }
+
+    .chat-msg.social {
+        color: #7CFF9A !important;
+        opacity: 0.9;
+    }
+
+    .qol-chat-tab button {
+        background: rgba(20,20,20,0.6);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .qol-chat-tab .badge {
+        position:absolute;
+        top:-6px;
+        right:-6px;
+        background:red;
+        color:white;
+        font-size:11px;
+        padding:2px 6px;
+        border-radius:999px;
+        display:none;
+    }
+    `;
+
+    // ============================
+    // GLASS
+    // ============================
+    if (theme === 'glass') {
+        css += `
+        #sidebar, #chat-panel, #game-menu {
+            backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.05) !important;
+            border-radius: 12px;
+        }
+
+        button {
+            background: rgba(255,255,255,0.08) !important;
+            border-radius: 12px;
+        }
+        `;
+    }
+
+    // ============================
+    // NEON
+    // ============================
+    if (theme === 'neon') {
+        css += `
+        #sidebar, #chat-panel {
+            border: 1px solid #00f7ff;
+            box-shadow: 0 0 20px #00f7ff inset;
+        }
+
+        button {
+            background: #0a0a0a !important;
+            border: 1px solid #00f7ff !important;
+            box-shadow: 0 0 10px #00f7ff;
+            border-radius: 2px;
+        }
+
+        .chat-msg {
+            text-shadow: 0 0 6px rgba(0,255,255,0.7);
+        }
+        `;
+    }
+
+    // ============================
+    // RETRO
+    // ============================
+    if (theme === 'retro') {
+        css += `
+        * {
+            image-rendering: pixelated;
+        }
+
+        button {
+            background: #1a1200 !important;
+            border: 2px solid #ffb000 !important;
+            border-radius: 0px;
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        #chat-messages {
+            font-family: monospace;
+        }
+        `;
+    }
+
+    // ============================
+    // RED
+    // ============================
+    if (theme === 'red') {
+        css += `
+        #sidebar, #chat-panel {
+            background: rgba(40,0,0,0.6) !important;
+            border: 1px solid #ff4d4d;
+        }
+
+        button {
+            background: #2a1010 !important;
+            border: 1px solid #ff4d4d !important;
+            box-shadow: 0 0 8px rgba(255,0,0,0.5);
+        }
+        `;
+    }
+
+    // ============================
+    // PURPLE
+    // ============================
+    if (theme === 'purple') {
+        css += `
+        #sidebar, #chat-panel {
+            background: rgba(20,10,40,0.6) !important;
+            border: 1px solid #7b68ee;
+        }
+
+        button {
+            background: #1a1028 !important;
+            border: 1px solid #7b68ee !important;
+            border-radius: 10px;
+        }
+        `;
+    }
+
+    let old = document.getElementById('qol-theme');
+    if (old) old.remove();
+
+    const style = document.createElement('style');
+    style.id = 'qol-theme';
+    style.innerHTML = css;
+    document.head.appendChild(style);
+}
+// =========================================================
+// ADD NOTIFICATION DROPDOWN TO OPTIONS MENU
+// =========================================================
+function injectNotificationOption() {
+    const chatColumn = document.querySelector('#options-tab-display .options-column:nth-child(2)');
+    if (!chatColumn) return;
+
+    if (document.getElementById("qol-notify-mode")) return;
+
+    const wrapper = document.createElement("label");
+    wrapper.className = "options-sfx-row";
+    wrapper.innerHTML = `
+        Chat Notifications:
+        <select id="qol-notify-mode" style="margin-left:6px;">
+            <option value="off" selected>Off</option>
+            <option value="number">Number</option>
+        </select>
+    `;
+
+    chatColumn.appendChild(wrapper);
+}
+// =========================================================
+// CHAT TABS + NOTIFICATION MODES + AUTO SCROLL
+// =========================================================
+function initChatTabs() {
+    const chat = document.querySelector('#chat-messages');
+    if (!chat) return;
+
+    const wrapper = chat.parentElement;
+
+    const tabWrap = document.createElement('div');
+    tabWrap.className = "qol-chat-tab";
+    tabWrap.style.cssText = `
+        display:flex;
+        gap:6px;
+        margin-bottom:6px;
+    `;
+
+    const chatBtn = document.createElement('button');
+    const sysBtn = document.createElement('button');
+
+    chatBtn.textContent = "Chat";
+    sysBtn.textContent = "System";
+
+    chatBtn.style.flex = sysBtn.style.flex = "1";
+    sysBtn.style.position = "relative";
+
+    // number badge (used only in number mode)
+    const badge = document.createElement('span');
+    badge.style.cssText = `
+        position:absolute;
+        top:-6px;
+        right:-6px;
+        background:red;
+        color:white;
+        font-size:11px;
+        padding:2px 6px;
+        border-radius:999px;
+        display:none;
+    `;
+    sysBtn.appendChild(badge);
+
+    tabWrap.appendChild(chatBtn);
+    tabWrap.appendChild(sysBtn);
+    wrapper.insertBefore(tabWrap, chat);
+
+    let mode = "chat";
+    let unread = 0;
+    let notifyMode = "off";
+
+    function scrollToBottom() {
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function applyFilter() {
+        const msgs = chat.querySelectorAll('.chat-msg');
+
+        msgs.forEach(m => {
+            const isSystem = m.classList.contains('system');
+
+            m.style.display =
+                (mode === "chat" && isSystem) ? "none" :
+                (mode === "system" && !isSystem) ? "none" : "block";
+        });
+    }
+
+    // =========================================================
+    // NOTIFICATION MODES
+    // =========================================================
+   function flashTab() {
+    if (notifyMode !== "flash") return;
+    if (notifyMode === "off") return;
+
+    sysBtn.classList.add("flash");
+    setTimeout(() => sysBtn.classList.remove("flash"), 400);
+}
+function updateBadge() {
+    if (notifyMode !== "number" || notifyMode === "off") {
+        badge.style.display = "none";
+        return;
+    }
+
+    if (unread > 0 && mode !== "system") {
+        badge.style.display = "block";
+        badge.textContent = unread;
+    } else {
+        badge.style.display = "none";
+    }
+}
+
+    // inject flash css once
+    if (!document.getElementById("qol-flash-style")) {
+        const style = document.createElement("style");
+        style.id = "qol-flash-style";
+        style.innerHTML = `
+            .qol-chat-tab button.flash {
+                background: #ff4d4d !important;
+                box-shadow: 0 0 12px rgba(255,0,0,0.8);
+                transform: scale(1.05);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // =========================================================
+    // OPTION HOOK
+    // =========================================================
+    function hookOptions() {
+    const select = document.getElementById("qol-notify-mode");
+    if (!select) return;
+
+    notifyMode = select.value;
+
+    select.onchange = () => {
+        notifyMode = select.value;
+
+        // reset state when switching modes
+        unread = 0;
+        updateBadge();
+
+        // stop any visual leftovers immediately
+        if (notifyMode === "off") {
+            sysBtn?.classList?.remove("flash");
+            badge.style.display = "none";
+        }
+    };
+}
+
+    setInterval(hookOptions, 1000);
+
+    // =========================================================
+    // TAB SWITCHING
+    // =========================================================
+    chatBtn.onclick = () => {
+        mode = "chat";
+        chatMode = "chat";
+
+        applyFilter();
+        setTimeout(scrollToBottom, 50);
+    };
+
+    sysBtn.onclick = () => {
+        mode = "system";
+        chatMode = "system";
+
+        unread = 0;
+        updateBadge();
+
+        applyFilter();
+        setTimeout(scrollToBottom, 50);
+    };
+
+    // =========================================================
+// OBSERVER
+// =========================================================
+const obs = new MutationObserver(() => {
+    const msgs = chat.querySelectorAll('.chat-msg');
+
+    msgs.forEach(m => {
+        if (m.dataset.qolChecked) return;
+        m.dataset.qolChecked = "1";
+
+        const text = m.textContent.toLowerCase();
+
+        // whisper detection
+        const isWhisper =
+            text.includes("to ") &&
+            text.includes(":");
+
+			const isOnlineList =
+    text.startsWith("online (") &&
+    text.includes("):");
+
+        const isChatEvent =
+            text.includes("killed") ||
+            text.includes("slain") ||
+            text.includes("died") ||
+            text.includes("eliminated") ||
+            text.includes("knocked out") ||
+            text.includes("players remain") ||
+            text.includes("teams remain") ||
+            text.includes("takes the lead") ||
+            text.includes("entered the arena") ||
+            text.includes("forbidden zone") ||
+            text.includes("battle will begin") ||
+            text.includes("/battle") ||
+            text.includes("community poll") ||
+            text.includes("click here to vote") ||
+            text.includes("champ is now open") ||
+            text.includes("/champ") ||
+            text.includes("have won battle") ||
+            text.includes("has won battle") ||
+            text.includes("won battle") ||
+            isWhisper;
+
+        const isSocial =
+            text.includes("joined the game") ||
+            text.includes("left the game");
+
+        // force whisper into chat
+        if (isWhisper) {
+            m.classList.remove('system');
+            m.classList.add('chat');
+        }
+
+        if (isChatEvent || isOnlineList) {
+    m.classList.remove('system');
+    m.classList.add('chat');
+}
+
+        if (isSocial) {
+            m.classList.remove('system');
+            m.classList.add('social');
+        }
+    });
+
+    // notification logic
+    if (mode !== "system") {
+        if (notifyMode !== "off") {
+            unread++;
+
+            if (notifyMode === "flash") flashTab();
+            if (notifyMode === "number") updateBadge();
+        }
+    }
+
+    applyFilter();
+});
+
+obs.observe(chat, { childList: true, subtree: true });
+applyFilter();
+}
+
+setTimeout(initChatTabs, 1000);
+
+    // =========================================================
+// LOGIN IMAGE REPLACER
+// =========================================================
+function replaceLoginImages() {
+    const logo = document.querySelector('img.logo-registry');
+    const bottom = document.querySelector('img.registry-bottom');
+
+    if (logo && logo.src !== "https://loociez.github.io/MOC-IV/logo-registry.png") {
+        logo.src = "https://loociez.github.io/MOC-IV/logo-registry.png";
+    }
+
+    if (bottom && bottom.src !== "https://loociez.github.io/MOC-IV/registry-bottom.png") {
+        bottom.src = "https://loociez.github.io/MOC-IV/registry-bottom.png";
+    }
+}
+
+// Run immediately + keep watching for UI reloads
+setInterval(replaceLoginImages, 500);
+    // =========================================================
+// PURPLE LOGIN OVERHAUL (SIDES + PANELS + INPUTS)
+// =========================================================
+function applyPurpleLoginSkin() {
+    const styleId = "qol-login-purple";
+
+    if (document.getElementById(styleId)) return;
+
+    const style = document.createElement("style");
+    style.id = styleId;
+
+    style.innerHTML = `
+    /* =========================
+       MAIN LOGIN BACKDROP
+    ========================= */
+    .login-container {
+        background: radial-gradient(circle at top, #1a1028 0%, #0b0716 100%) !important;
+        border: 1px solid rgba(123, 104, 238, 0.35);
+        box-shadow: 0 0 40px rgba(123, 104, 238, 0.25);
+        border-radius: 14px;
+        padding: 18px;
+    }
+
+    /* subtle animated glow edge */
+    .login-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 14px;
+        pointer-events: none;
+        box-shadow: 0 0 25px rgba(123, 104, 238, 0.15);
+        animation: loginGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes loginGlow {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.9; }
+    }
+
+    /* =========================
+       TERMINAL PANEL (LEFT SIDE TEXT AREA)
+    ========================= */
+    .registry-terminal {
+        background: rgba(20, 10, 40, 0.55) !important;
+        border: 1px solid rgba(123, 104, 238, 0.35);
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: inset 0 0 18px rgba(123, 104, 238, 0.15);
+        font-family: monospace;
+        color: #d8ccff;
+    }
+
+    .terminal-line {
+        color: #cbb6ff;
+        text-shadow: 0 0 6px rgba(123, 104, 238, 0.25);
+    }
+
+    /* links in terminal */
+    .registry-terminal a {
+        color: #b89cff;
+        text-decoration: none;
+    }
+
+    .registry-terminal a:hover {
+        color: white;
+        text-shadow: 0 0 8px #7b68ee;
+    }
+
+    /* =========================
+       CHARACTER SELECT PANEL
+    ========================= */
+    .game-character-select {
+        background: rgba(20, 10, 40, 0.55) !important;
+        border: 1px solid rgba(123, 104, 238, 0.35);
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: inset 0 0 20px rgba(123, 104, 238, 0.12);
+    }
+
+    /* class cards */
+    .class-option {
+        background: rgba(10, 8, 20, 0.7) !important;
+        border: 1px solid rgba(123, 104, 238, 0.25);
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .class-option:hover {
+        transform: translateY(-2px);
+        border-color: rgba(123, 104, 238, 0.6);
+        box-shadow: 0 0 12px rgba(123, 104, 238, 0.25);
+    }
+
+    .class-option.selected {
+        border-color: #7b68ee;
+        box-shadow: 0 0 14px rgba(123, 104, 238, 0.5);
+    }
+
+    .class-name {
+        color: #e6ddff;
+    }
+
+    /* =========================
+       INPUT FIELDS (NAME + PASSWORD)
+    ========================= */
+    input, select {
+        background: rgba(10, 8, 20, 0.75) !important;
+        border: 1px solid rgba(123, 104, 238, 0.3) !important;
+        color: #eee !important;
+        border-radius: 10px;
+        padding: 8px;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus {
+        border-color: #7b68ee !important;
+        box-shadow: 0 0 10px rgba(123, 104, 238, 0.35);
+    }
+
+    /* =========================
+       SAVED CHARACTERS
+    ========================= */
+    #saved-characters {
+        margin-top: 8px;
+    }
+
+    .saved-char-btn {
+        background: rgba(10, 8, 20, 0.75) !important;
+        border: 1px solid rgba(123, 104, 238, 0.25);
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .saved-char-btn:hover {
+        border-color: #7b68ee;
+        box-shadow: 0 0 12px rgba(123, 104, 238, 0.3);
+        transform: translateX(2px);
+    }
+
+    .saved-char-name {
+        color: #f0eaff;
+    }
+
+    .saved-char-sub {
+        color: #b8a8ff;
+        opacity: 0.9;
+    }
+
+    /* =========================
+       ERROR / STATUS TEXT
+    ========================= */
+    .error-msg {
+        color: #ff6bff !important;
+        text-shadow: 0 0 8px rgba(255, 0, 255, 0.3);
+    }
+
+    /* =========================
+       BUTTONS (LOGIN / RECOVERY)
+    ========================= */
+    button {
+        background: linear-gradient(180deg, #2a1a4a, #1a1028) !important;
+        border: 1px solid #7b68ee !important;
+        border-radius: 10px !important;
+        color: white !important;
+        transition: all 0.2s ease;
+    }
+
+    button:hover {
+        box-shadow: 0 0 14px rgba(123, 104, 238, 0.4);
+        transform: translateY(-1px);
+    }
+
+    /* =========================
+       LINKS
+    ========================= */
+    a {
+        color: #b89cff;
+    }
+
+    a:hover {
+        color: white;
+        text-shadow: 0 0 8px #7b68ee;
+    }
+    `;
+
+    document.head.appendChild(style);
+}
+
+// Run constantly (login screen can re-render)
+setInterval(applyPurpleLoginSkin, 1000);
+// =========================================================
+// SHOP / BANK INDICATOR (TEXT GLOW - CLEAN VERSION)
+// =========================================================
+function highlightActionButtons() {
+    const buttons = document.querySelectorAll('.menu-btn');
+
+    buttons.forEach(btn => {
+        const action = btn.dataset.action;
+        if (!action) return;
+
+        const isShopAction =
+    action === "bank" ||
+    action === "sell" ||
+    action === "shop" ||
+    action === "trade" ||
+    action === "repair";
+
+        if (!isShopAction) return;
+
+        const isActive = btn.classList.contains('active');
+
+        // toggle our custom class
+        btn.classList.toggle('qol-shop-active', isActive);
+    });
+}
+
+// inject CSS once
+if (!document.getElementById("qol-shop-style")) {
+    const style = document.createElement("style");
+    style.id = "qol-shop-style";
+    style.innerHTML = `
+        /* ACTIVE (shop present) */
+        .menu-btn.qol-shop-active {
+            color: #ff4d4d !important;
+            text-shadow:
+                0 0 4px rgba(255,0,0,0.8),
+                0 0 8px rgba(255,0,0,0.6),
+                0 0 12px rgba(255,0,0,0.4);
+            filter: brightness(1.2);
+            opacity: 1;
+        }
+
+        /* INACTIVE (normal room) */
+        .menu-btn:not(.qol-shop-active) {
+            opacity: 0.5;
+            filter: brightness(0.6);
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+
+setInterval(highlightActionButtons, 250);
+// =========================================================
+// SHIFT + RIGHT CLICK = DROP 1 ITEM
+// =========================================================
+function initQuickDrop() {
+
+    document.addEventListener('contextmenu', function (e) {
+
+
+        if (!e.shiftKey) return;
+
+        const slot = e.target.closest('.inv-slot.filled');
+        if (!slot) return;
+
+        // stop normal right-click menu
+        e.preventDefault();
+
+        // simulate normal right click to trigger game logic
+        slot.dispatchEvent(new MouseEvent('contextmenu', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        }));
+
+        // wait for drop modal to appear
+        setTimeout(() => {
+            const input = document.getElementById('drop-amount');
+            const okBtn = document.getElementById('drop-ok');
+
+            if (!input || !okBtn) return;
+
+            // set value to 1
+            input.value = "1";
+
+            // trigger input event (important for some frameworks)
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+
+            // click OK
+            okBtn.click();
+
+        }, 50); // small delay for UI
+    });
+}
+// =========================================================
+// SHIFT + LEFT CLICK = ITEM CHAT
+// =========================================================
+function initShiftClickItemInspect() {
+    document.addEventListener('click', (e) => {
+        if (!e.shiftKey) return;
+
+        const canvas = e.target.closest('#item-details-icon');
+        if (!canvas) return;
+
+        const container = document.querySelector('.item-col-left');
+        const chatInput = document.getElementById('chat-input');
+
+        if (!container || !chatInput) return;
+
+        const name =
+            container.querySelector('.item-name')?.innerText || "Unknown Item";
+
+        const stats =
+            container.querySelector('.item-stat')?.innerText || "";
+
+        const dur =
+            container.querySelector('.item-dur')?.innerText || "";
+
+        const sell = [...container.querySelectorAll('span')]
+            .map(s => s.innerText)
+            .find(t => t.toLowerCase().includes("sells for")) || "";
+
+        const formatted =
+            `${name} | ${stats} | ${dur} | ${sell}`
+                .replace(/\s+/g, ' ')
+                .trim();
+
+        chatInput.value = formatted;
+        chatInput.focus();
+
+        chatInput.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+}
+
+setTimeout(initShiftClickItemInspect, 1000);
+    // =========================================================
+    // VITALS
+    // =========================================================
+    function fixVitals() {
+        const bars = document.querySelectorAll('.vitals-bar');
+
+        bars.forEach(bar => {
+            if (bar.classList.contains('health'))
+                bar.style.background = "linear-gradient(90deg,#ff3b3b,#8b0000)";
+            else if (bar.classList.contains('mana'))
+                bar.style.background = "linear-gradient(90deg,#2f8fff,#003cff)";
+            else
+                bar.style.background = "linear-gradient(90deg,#ffd000,#ff7b00)";
+
+            bar.style.borderRadius = "6px";
+        });
+    }
+
+    setInterval(fixVitals, 500);
+
+    // INIT
+    applyTheme();
+
+	setTimeout(() => {
+    injectNotificationOption();
+}, 1500);
+initQuickDrop();
+})();e
