@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Odyssey Bank Exact Quantities - Loocie
+// @name         Odyssey Bank / EQ Dura - Loocie
 // @namespace    odyssey.qol.bankfix
-// @version      1.1
+// @version      1.2
 // @description  Compact numbers (floor), color tiers, and auto-fit to slot
 // @match        https://playodyssey.app/*
 // @grant        none
