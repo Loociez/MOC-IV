@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Odyssey Bank Exact Quantities - Loocie
 // @namespace    odyssey.qol.bankfix
-// @version      1.1
-// @description  Compact numbers (floor), color tiers, and auto-fit to slot
+// @version      1.2
+// @description  Compact numbers (floor), color tiers, auto-fit to slot + durability edge highlights
 // @match        https://playodyssey.app/*
 // @grant        none
 // ==/UserScript==
@@ -32,10 +32,9 @@
         return Math.floor(num * multiplier);
     }
 
-    // 🔥 FLOOR BASED COMPACT (NO ROUNDING UP EVER)
     function formatCompact(num) {
         if (num >= 1000000000) {
-            const val = Math.floor(num / 100000000) / 10; // 1 decimal floor
+            const val = Math.floor(num / 100000000) / 10;
             return val + "B";
         }
         if (num >= 1000000) {
@@ -68,7 +67,6 @@
         let size = 12;
         el.style.fontSize = size + "px";
 
-        // shrink until it fits
         while (el.scrollWidth > parent.clientWidth && size > 7) {
             size -= 1;
             el.style.fontSize = size + "px";
@@ -87,8 +85,6 @@
         el.style.textAlign = "center";
 
         applyColor(el, num);
-
- 
         autoFit(el);
     }
 
@@ -107,6 +103,41 @@
         });
     }
 
-    setInterval(updateBank, 300);
+    //Durability Edge Highlighting
+    function updateDurabilityBorders() {
+        const equippedSlots = document.querySelectorAll('.inv-slot.eq-slot.equipped');
+
+        equippedSlots.forEach(slot => {
+            const fill = slot.querySelector('.inv-dur-fill');
+            if (!fill) return;
+
+            const width = fill.style.width;
+            if (!width) return;
+
+            const percent = parseFloat(width.replace('%', ''));
+            if (isNaN(percent)) return;
+
+            let color = '';
+
+            if (percent < 15) {
+                color = '#ff3b3b'; // red
+            } else if (percent < 50) {
+                color = '#ffd93b'; // yellow
+            } else {
+                color = '#3bff5c'; // green
+            }
+
+            // Apply border
+            slot.style.boxSizing = "border-box";
+            slot.style.border = `2px solid ${color}`;
+        });
+    }
+
+    function loop() {
+        updateBank();
+        updateDurabilityBorders();
+    }
+
+    setInterval(loop, 300);
 
 })();
