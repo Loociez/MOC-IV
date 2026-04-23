@@ -74,6 +74,7 @@ body::before{
   gap:15px;
 }
 
+/* CARD FIX */
 .card{
   background:rgba(0,0,0,0.35);
   border:1px solid rgba(255,255,255,0.08);
@@ -81,6 +82,10 @@ body::before{
   padding:15px;
   text-align:center;
   transition:0.2s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
 }
 
 .card:hover{
@@ -90,20 +95,14 @@ body::before{
 }
 
 .card h3{
-  margin:10px 0;
+  margin:5px 0 10px;
   color:var(--accent2);
   text-shadow:0 0 8px rgba(0,255,213,0.3);
 }
 
-.card p{
-  font-size:13px;
-  opacity:0.8;
-  min-height:40px;
-}
-
-.btn{
+/* BUTTON FIX (no stretching) */
+.card a.btn{
   display:inline-block;
-  margin-top:10px;
   padding:8px 14px;
   border-radius:8px;
   text-decoration:none;
@@ -112,10 +111,20 @@ body::before{
   background:linear-gradient(135deg, var(--accent), var(--accent2));
   box-shadow:0 0 10px rgba(138,43,226,0.3);
   cursor:pointer;
+  margin-bottom:10px;
+  width:auto;
 }
 
-.btn:hover{
+.card a.btn:hover{
   filter:brightness(1.2);
+}
+
+/* DESCRIPTION UNDER BUTTON */
+.card p{
+  font-size:12px;
+  opacity:0.8;
+  margin:0;
+  line-height:1.4;
 }
 
 .footer{
@@ -137,9 +146,29 @@ body::before{
 <div class="panel">
 
   <div class="grid">
-<button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/odyui.user.js'">Install OdyUi 1.2B - UI and QoL Enhancements(TamperMonkey)</button>
-  </div>
-  <button onclick="window.location.href='https://loociez.github.io/MOC-IV/scripts/odybank.user.js'">Install OdyBank 1.1 - Banking Number and other changes (TamperMonkey)</button>
+
+    <div class="card">
+      <h3>OdyUI 1.2B</h3>
+      <a class="btn"
+         href="https://loociez.github.io/MOC-IV/scripts/odyui.user.js"
+         target="_blank"
+         rel="noopener noreferrer">
+        Install
+      </a>
+      <p>Main UI overhaul + QoL improvements including quick actions and interface upgrades.</p>
+    </div>
+
+    <div class="card">
+      <h3>OdyBank 1.1</h3>
+      <a class="btn"
+         href="https://loociez.github.io/MOC-IV/scripts/odybank.user.js"
+         target="_blank"
+         rel="noopener noreferrer">
+        Install
+      </a>
+      <p>Banking improvements including number formatting, cleaner UI, and usability tweaks.</p>
+    </div>
+
   </div>
 
   <div class="footer">
