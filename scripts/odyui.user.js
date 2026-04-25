@@ -456,14 +456,28 @@ const obs = new MutationObserver(() => {
 
         const text = m.textContent.toLowerCase();
 
-        // whisper detection
+        // =====================================================
+        // HARD FILTER (FORCE SYSTEM ONLY + HIDE FROM CHAT TAB)
+        // =====================================================
+        const isHiddenSystemText =
+            text.includes("face a tree, fishing spot, or mine to use skills") ||
+            text.includes("you see nothing special");
+
+        if (isHiddenSystemText) {
+            m.classList.add('system');
+            m.dataset.qolForceSystem = "1"; // mark it
+        }
+
+        // =====================================================
+        // DETECTIONS
+        // =====================================================
         const isWhisper =
             text.includes("to ") &&
             text.includes(":");
 
-			const isOnlineList =
-    text.startsWith("online (") &&
-    text.includes("):");
+        const isOnlineList =
+            text.startsWith("online (") &&
+            text.includes("):");
 
         const isChatEvent =
             text.includes("killed") ||
@@ -490,34 +504,41 @@ const obs = new MutationObserver(() => {
         const isSocial =
             text.includes("joined the game") ||
             text.includes("left the game");
+			
+			
+const isNewPlayerMsg =
+    text.includes("a new adventurer in this land");
 
-        // force whisper into chat
-        if (isWhisper) {
-            m.classList.remove('system');
-            m.classList.add('chat');
-        }
+        const isTofEvent =
+            text.includes("tof run is now open") ||
+            text.includes("type /tof") ||
+            text.includes("tof run is now closed");
 
-        if (isChatEvent || isOnlineList) {
-    m.classList.remove('system');
-    m.classList.add('chat');
+        // =====================================================
+        // CLASS FIXES
+        // =====================================================
+        if (!m.dataset.qolForceSystem) {
+
+    if (isWhisper) {
+        m.classList.remove('system');
+        m.classList.add('chat');
+    }
+
+    if (isChatEvent || isOnlineList || isTofEvent || isNewPlayerMsg) {
+        m.classList.remove('system');
+        m.classList.add('chat');
+    }
+
+    if (isSocial) {
+        m.classList.remove('system');
+        m.classList.add('social');
+    }
 }
-
-        if (isSocial) {
-            m.classList.remove('system');
-            m.classList.add('social');
-        }
     });
-const isTofEvent =
-    text.includes("tof run is now open") ||
-    text.includes("type /tof") ||
-    text.includes("tof run is now closed");
 
-// ToF
-if (isTofEvent) {
-    m.classList.remove('system');
-    m.classList.add('chat');
-}
-    // notification logic
+    // =====================================================
+    // NOTIFICATIONS
+    // =====================================================
     if (mode !== "system") {
         if (notifyMode !== "off") {
             unread++;

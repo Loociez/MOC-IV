@@ -133,6 +133,14 @@ body::before{
   font-size:12px;
   opacity:0.6;
 }
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:10px;
+  border:1px solid rgba(255,255,255,0.1);
+}
 </style>
 </head>
 
@@ -146,28 +154,42 @@ body::before{
 <div class="panel">
 
   <div class="grid">
+<div class="subtitle">First, install the Tampermonkey extension for your Chromium-based browser (such as Chrome, Edge, Opera, or Firefox).
 
-    <div class="card">
-      <h3>OdyUI 1.3B</h3>
-      <a class="btn"
-         href="https://loociez.github.io/MOC-IV/scripts/odyui.user.js"
-         target="_blank"
-         rel="noopener noreferrer">
-        Install
-      </a>
-      <p>Main UI overhaul + QoL improvements including quick actions and interface upgrades.</p>
-    </div>
+Once installed, click the provided “Install” link for the script. You will be taken to a confirmation page where you can review the script’s code before proceeding. After verifying, click Install to add it to Tampermonkey.
 
-    <div class="card">
-      <h3>OdyBank 1.2</h3>
-      <a class="btn"
-         href="https://loociez.github.io/MOC-IV/scripts/odybank.user.js"
-         target="_blank"
-         rel="noopener noreferrer">
-        Install
-      </a>
-      <p>Banking improvements including number formatting, cleaner UI, and usability tweaks.</p>
-    </div>
+After installation, a Tampermonkey icon will appear in your browser toolbar. Click the icon and ensure that the script is enabled. Once enabled, simply refresh Ody for the script to take effect.
+
+If you wish to disable the script at any time, you can either toggle it off within Tampermonkey or remove it entirely. After making changes, refresh Ody again to apply them.</div>
+   <div class="card">
+  <img src="https://loociez.github.io/MOC-IV/odyui.png" alt="OdyUI Preview">
+
+  <h3>OdyUI 1.3B</h3>
+
+  <a class="btn"
+     href="https://loociez.github.io/MOC-IV/scripts/odyui.user.js"
+     target="_blank"
+     rel="noopener noreferrer">
+    Install
+  </a>
+
+  <p>Main UI overhaul + QoL improvements including quick actions and interface upgrades.</p>
+</div>
+
+<div class="card">
+  <img src="https://loociez.github.io/MOC-IV/scripts/odybank.png" alt="OdyBank Preview">
+
+  <h3>OdyBank 1.2</h3>
+
+  <a class="btn"
+     href="https://loociez.github.io/MOC-IV/scripts/odybank.user.js"
+     target="_blank"
+     rel="noopener noreferrer">
+    Install
+  </a>
+
+  <p>Banking improvements including number formatting, cleaner UI, and usability tweaks.</p>
+</div>
 
   </div>
 
