@@ -485,6 +485,17 @@ function clearFavorites(){
         if(favBox) favBox.checked = false;
     });
 }
+let itemIdsMap = {};
+
+async function fetchItemIds() {
+    try {
+        const response = await fetch('itemids.json');
+        itemIdsMap = await response.json();
+        window.itemIdsMap = itemIdsMap;
+    } catch (err) {
+        console.error("Failed to load itemids.json", err);
+    }
+}
 async function fetchAndDisplayItems() {
     try {
         let items = await fetchItemData();
@@ -614,6 +625,13 @@ formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
                 formattedLines.push("");
                 formattedLines.push("Spell Amp:");
                 formattedLines.push(...spellAmpEntries);
+				// Add Item ID from itemids.json
+if (window.itemIdsMap) {
+    const itemIdEntry = Object.entries(window.itemIdsMap).find(([id, name]) => name === item.name);
+    if (itemIdEntry) {
+        formattedLines.push(`Item ID: ${itemIdEntry[0]}`);
+    }
+}
             }
             dataCell.textContent = formattedLines.join('\n').trim() || 'No stats';
             dataCell.classList.add('data');
@@ -807,7 +825,7 @@ const isFavoriteItem = isFavorite(itemName);
 document.addEventListener("DOMContentLoaded", () => {
 
     populateSpellAmpDropdown();
-
+await fetchItemIds();
     document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
 
     fetchAndDisplayItems();
