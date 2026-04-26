@@ -521,7 +521,7 @@ async function fetchAndDisplayItems() {
         const tableBody = document.getElementById('itemTable').querySelector('tbody');
         tableBody.innerHTML = '';
 
-        items.forEach(item => {
+        items.forEach((item, index) => {
             const row = document.createElement('tr');
 
             // rarity detection
@@ -629,7 +629,7 @@ formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
 if (window.itemIdsMap) {
     const itemIdEntry = Object.entries(window.itemIdsMap).find(([id, name]) => name === item.name);
     if (itemIdEntry) {
-        formattedLines.push(`Item ID: ${itemIdEntry[0]}`);
+        formattedLines.push(`Item ID: ${index}`);
     }
 }
 
