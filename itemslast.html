@@ -623,15 +623,17 @@ formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
                 .map(([key, label]) => `${label}: ${item.data[key]}`);
             if (spellAmpEntries.length > 0) {
                 formattedLines.push("");
-                formattedLines.push("Spell Amp:");
-                formattedLines.push(...spellAmpEntries);
-				// Add Item ID from itemids.json
+formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
+
+
 if (window.itemIdsMap) {
     const itemIdEntry = Object.entries(window.itemIdsMap).find(([id, name]) => name === item.name);
     if (itemIdEntry) {
         formattedLines.push(`Item ID: ${itemIdEntry[0]}`);
     }
 }
+
+const spellAmpEntries = Object.entries(spellAmpLabels)
             }
             dataCell.textContent = formattedLines.join('\n').trim() || 'No stats';
             dataCell.classList.add('data');
@@ -822,10 +824,11 @@ const isFavoriteItem = isFavorite(itemName);
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     populateSpellAmpDropdown();
-await fetchItemIds();
+    await fetchItemIds();
+
     document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
 
     fetchAndDisplayItems();
