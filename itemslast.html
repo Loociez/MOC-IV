@@ -616,25 +616,22 @@ async function fetchAndDisplayItems() {
     return `${key.replace(/_/g, ' ')}: ${value}`;
 });
 
-formattedLines.push("");
-formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
-            const spellAmpEntries = Object.entries(spellAmpLabels)
-                .filter(([key]) => item.data?.[key] !== undefined)
-                .map(([key, label]) => `${label}: ${item.data[key]}`);
-            if (spellAmpEntries.length > 0) {
-                formattedLines.push("");
-formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
+            // Spell Amp stats
+const spellAmpEntries = Object.entries(spellAmpLabels)
+    .filter(([key]) => item.data?.[key] !== undefined)
+    .map(([key, label]) => `${label}: ${item.data[key]}`);
 
-
-if (window.itemIdsMap) {
-    const itemIdEntry = Object.entries(window.itemIdsMap).find(([id, name]) => name === item.name);
-    if (itemIdEntry) {
-        formattedLines.push(`Item ID: ${index}`);
-    }
+if (spellAmpEntries.length > 0) {
+    formattedLines.push("");
+    formattedLines.push(...spellAmpEntries);
 }
 
-const spellAmpEntries = Object.entries(spellAmpLabels)
-            }
+// Droppable
+formattedLines.push("");
+formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
+
+// Item ID (simple + correct)
+formattedLines.push(`Item ID: ${index}`);
             dataCell.textContent = formattedLines.join('\n').trim() || 'No stats';
             dataCell.classList.add('data');
             row.appendChild(dataCell);
