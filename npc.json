@@ -73134,7 +73134,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Ghost Knight of Norax",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -73149,38 +73149,38 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 555,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 1.2,
     "color": "#008b8b",
-    "spawn_delay": 1,
+    "spawn_delay": 8,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 90,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 80,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 7800,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 940,
+      "def": 55,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 65,
       "mat": 0,
-      "mdf": 0
+      "mdf": 65
     },
     "drop_items": [
       {
@@ -94910,19 +94910,19 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 1,
+        "chance": 100
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 2,
+        "chance": 100
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 3,
+        "chance": 100
       },
       {
         "item_id": -1,
@@ -95012,19 +95012,19 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 2,
+        "chance": 100
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 3,
+        "chance": 100
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 5,
+        "chance": 100
       },
       {
         "item_id": -1,
@@ -95114,19 +95114,19 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 3,
+        "chance": 100
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 6,
+        "chance": 100
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1063,
+        "amount": 10,
+        "chance": 100
       },
       {
         "item_id": -1,
