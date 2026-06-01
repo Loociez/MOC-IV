@@ -1,419 +1,216 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mirage Online Classic Leaderboards</title>
-
+<title>Mirage Online Classic Leaderboards v2</title>
 <style>
 :root{
-    --bg:#151222;
-    --sidebar:#211a38;
-    --card:#2c2650;
-    --card-hover:#3b2f6e;
-    --accent:#8b5cf6;
-    --accent2:#a78bfa;
-    --text:#e9e4ff;
-    --muted:#b8acee;
-    --border:#493d7d;
+--bg:#151222;--sidebar:#211a38;--card:#2c2650;--accent:#8b5cf6;
+--accent2:#a78bfa;--text:#ece7ff;--border:#4a3d80;
 }
-
-*{box-sizing:border-box;margin:0;padding:0;}
-
-body{
-    font-family:Segoe UI,Tahoma,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-}
-
-.layout{
-    display:flex;
-    min-height:100vh;
-}
-
-.sidebar{
-    width:280px;
-    background:var(--sidebar);
-    border-right:1px solid var(--border);
-    position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
-    overflow-y:auto;
-}
-
-.logo{
-    padding:20px;
-    text-align:center;
-    border-bottom:1px solid var(--border);
-}
-
-.logo h1{
-    font-size:1.4rem;
-    color:var(--accent2);
-}
-
-.updated{
-    margin-top:8px;
-    font-size:.8rem;
-    color:var(--muted);
-}
-
-.search-box{
-    padding:15px;
-    border-bottom:1px solid var(--border);
-}
-
-.search-box input{
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    border:none;
-    margin-bottom:10px;
-    background:#141122;
-    color:white;
-}
-
-.search-box button{
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    background:var(--accent);
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.menu{
-    padding:10px;
-}
-
-.menu button{
-    width:100%;
-    text-align:left;
-    padding:12px;
-    margin-bottom:6px;
-    border:none;
-    border-radius:8px;
-    background:transparent;
-    color:var(--muted);
-    cursor:pointer;
-}
-
-.menu button:hover,
-.menu button.active{
-    background:var(--accent);
-    color:white;
-}
-
-.main{
-    margin-left:280px;
-    padding:25px;
-    width:calc(100% - 280px);
-}
-
-.panel{
-    background:var(--card);
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 6px 18px rgba(0,0,0,.35);
-}
-
-.panel h2{
-    margin-bottom:15px;
-    color:var(--accent2);
-}
-
-.table-wrap{
-    overflow:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th{
-    background:var(--accent);
-    color:white;
-    padding:12px;
-    text-align:left;
-}
-
-td{
-    padding:10px 12px;
-    border-bottom:1px solid var(--border);
-}
-
-tbody tr:nth-child(even){
-    background:rgba(255,255,255,.03);
-}
-
-tbody tr:hover{
-    background:rgba(167,139,250,.15);
-}
-
-.gold{
-    background:#FFD700!important;
-    color:black!important;
-}
-
-.silver{
-    background:#C0C0C0!important;
-    color:black!important;
-}
-
-.bronze{
-    background:#cd7f32!important;
-    color:black!important;
-}
-
-.hidden{
-    display:none;
-}
-
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,sans-serif}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:280px;background:var(--sidebar);padding:15px;border-right:1px solid var(--border);position:fixed;top:0;bottom:0;overflow-y:auto}
+.main{margin-left:280px;padding:20px;width:calc(100% - 280px)}
+h1{font-size:1.3rem;color:var(--accent2);margin:0}
+.updated{font-size:.8rem;margin-top:6px;color:#bbb}
+.search input{width:100%;padding:10px;border-radius:8px;border:none;margin-top:15px}
+.search button{width:100%;margin-top:8px;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer}
+.menu{margin-top:15px}
+.menu button{display:block;width:100%;padding:10px;text-align:left;background:none;border:none;color:#ddd;border-radius:8px;cursor:pointer}
+.menu button:hover,.menu button.active{background:var(--accent)}
+.card{background:var(--card);padding:18px;border-radius:12px;margin-bottom:20px}
+.hidden{display:none}
+.table-wrap{overflow:auto;max-height:70vh}
+table{width:100%;border-collapse:collapse}
+th{background:var(--accent);padding:10px;text-align:left;position:sticky;top:0}
+td{padding:8px;border-bottom:1px solid var(--border)}
+.gold{background:#FFD700!important;color:#000}
+.silver{background:#C0C0C0!important;color:#000}
+.bronze{background:#cd7f32!important;color:#000}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.stat{background:#1b1730;padding:15px;border-radius:10px;text-align:center}
+.stat .label{font-size:.8rem;color:#bbb}
+.stat .value{font-size:1.1rem;font-weight:bold;color:var(--accent2);margin-top:5px}
 @media(max-width:900px){
-    .sidebar{
-        position:relative;
-        width:100%;
-        height:auto;
-    }
-
-    .layout{
-        flex-direction:column;
-    }
-
-    .main{
-        margin-left:0;
-        width:100%;
-    }
+.sidebar{position:relative;width:100%}
+.main{margin-left:0;width:100%}
+.layout{display:block}
 }
 </style>
 </head>
 <body>
-
 <div class="layout">
-
 <div class="sidebar">
-    <div class="logo">
-        <h1>Mirage Online Classic</h1>
-        <div id="lastUpdated" class="updated">Loading...</div>
-    </div>
+<h1>Mirage Online Classic</h1>
+<div id="updated" class="updated">Loading...</div>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search player...">
-        <button onclick="searchPlayer()">Search All Boards</button>
-    </div>
+<div class="search">
+<input id="searchInput" placeholder="Search player...">
+<button onclick="searchPlayer()">Search All Boards</button>
+<button onclick="clearSearch()">Back To Leaderboard</button>
+</div>
 
-    <div id="menu" class="menu"></div>
+<div class="menu" id="menu"></div>
 </div>
 
 <div class="main">
 
-<div id="leaderboardView" class="panel">
-    <h2 id="boardTitle">Loading...</h2>
-
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr id="tableHead"></tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
-    </div>
+<!-- SEARCH NOW APPEARS AT TOP -->
+<div id="searchCard" class="card hidden">
+<h2>Player Results</h2>
+<div class="table-wrap" style="max-height:none">
+<table>
+<thead>
+<tr>
+<th>Leaderboard</th>
+<th>Rank</th>
+<th>Player</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody id="searchBody"></tbody>
+</table>
+</div>
 </div>
 
-<div id="searchView" class="panel hidden">
-    <h2 id="searchTitle">Search Results</h2>
+<div id="leaderboardCard" class="card">
+<h2 id="boardTitle">Loading...</h2>
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Leaderboard</th>
-                    <th>Rank</th>
-                    <th>Player</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody id="searchBody"></tbody>
-        </table>
-    </div>
+<!-- SUMMARY STATS INSTEAD OF SCROLLING TO TOP PLAYERS -->
+<div class="stats" id="stats"></div>
+
+<div class="table-wrap">
+<table>
+<thead><tr id="thead"></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
 </div>
 
 </div>
 </div>
 
 <script>
-const DATA_URL = "https://loociez.github.io/MOC-IV/leaderboard_cache.json";
+const URL="https://loociez.github.io/MOC-IV/leaderboard_cache.json";
+let db={};
+let current="";
 
-let leaderboardData = {};
-let currentBoard = "";
-
-fetch(DATA_URL,{method:"HEAD"})
-.then(r=>{
-    const lm=r.headers.get("Last-Modified");
-    if(lm){
-        document.getElementById("lastUpdated").textContent =
-            "Updated: " + new Date(lm).toLocaleString();
-    }
-})
-.catch(()=>{});
-
-fetch(DATA_URL)
-.then(r=>r.json())
-.then(data=>{
-    leaderboardData=data;
-
-    const categories = Object.keys(data).filter(k=>k!=="last_updated");
-
-    const menu=document.getElementById("menu");
-
-    categories.forEach((cat,index)=>{
-        const btn=document.createElement("button");
-        btn.textContent=cat.replace(/_/g," ").toUpperCase();
-
-        btn.onclick=()=>showBoard(cat);
-
-        menu.appendChild(btn);
-
-        if(index===0){
-            currentBoard=cat;
-            btn.classList.add("active");
-        }
-    });
-
-    showBoard(currentBoard);
-})
-.catch(err=>{
-    document.getElementById("boardTitle").textContent =
-        "Failed to load leaderboard data";
-    console.error(err);
+fetch(URL,{method:"HEAD"}).then(r=>{
+ const lm=r.headers.get("Last-Modified");
+ if(lm) document.getElementById("updated").textContent="Updated: "+new Date(lm).toLocaleString();
 });
 
-function showBoard(category){
+fetch(URL)
+.then(r=>r.json())
+.then(data=>{
+ db=data;
 
-    document.getElementById("leaderboardView").classList.remove("hidden");
-    document.getElementById("searchView").classList.add("hidden");
+ const boards=Object.keys(data).filter(k=>k!=="last_updated");
+ const menu=document.getElementById("menu");
 
-    currentBoard=category;
+ boards.forEach((b,i)=>{
+   const btn=document.createElement("button");
+   btn.textContent=b.replace(/_/g," ").toUpperCase();
+   btn.onclick=()=>showBoard(b);
+   menu.appendChild(btn);
 
-    document.querySelectorAll(".menu button").forEach(btn=>{
-        btn.classList.remove("active");
+   if(i===0){
+      btn.classList.add("active");
+      current=b;
+   }
+ });
 
-        if(btn.textContent===category.replace(/_/g," ").toUpperCase()){
-            btn.classList.add("active");
-        }
-    });
+ showBoard(current);
+});
 
-    const entries=leaderboardData[category] || [];
+function showBoard(board){
+ current=board;
 
-    document.getElementById("boardTitle").textContent =
-        category.replace(/_/g," ").toUpperCase();
+ document.querySelectorAll(".menu button").forEach(b=>{
+   b.classList.toggle("active",b.textContent===board.replace(/_/g," ").toUpperCase());
+ });
 
-    const head=document.getElementById("tableHead");
-    const body=document.getElementById("tableBody");
+ const rows=db[board]||[];
 
-    head.innerHTML="";
-    body.innerHTML="";
+ document.getElementById("boardTitle").textContent=board.replace(/_/g," ").toUpperCase();
 
-    const thRank=document.createElement("th");
-    thRank.textContent="Rank";
-    head.appendChild(thRank);
+ const stats=document.getElementById("stats");
+ stats.innerHTML="";
 
-    const keys=[...new Set(entries.flatMap(e=>Object.keys(e)))];
+ if(rows.length){
+   const first=rows[0];
+   const keys=Object.keys(first);
 
-    keys.forEach(k=>{
-        const th=document.createElement("th");
-        th.textContent=k;
-        head.appendChild(th);
-    });
+   const player=first[keys[0]] ?? "Unknown";
+   const value=first[keys[1]] ?? "";
 
-    entries.forEach((entry,index)=>{
+   stats.innerHTML=`
+   <div class="stat"><div class="label">Top Player</div><div class="value">${player}</div></div>
+   <div class="stat"><div class="label">Top Value</div><div class="value">${value}</div></div>
+   <div class="stat"><div class="label">Entries</div><div class="value">${rows.length}</div></div>`;
+ }
 
-        const tr=document.createElement("tr");
+ const keys=[...new Set(rows.flatMap(x=>Object.keys(x)))];
+ thead.innerHTML="<th>Rank</th>"+keys.map(k=>`<th>${k}</th>`).join("");
+ tbody.innerHTML="";
 
-        if(index===0) tr.classList.add("gold");
-        else if(index===1) tr.classList.add("silver");
-        else if(index===2) tr.classList.add("bronze");
+ rows.forEach((r,i)=>{
+   const tr=document.createElement("tr");
+   if(i===0) tr.classList.add("gold");
+   else if(i===1) tr.classList.add("silver");
+   else if(i===2) tr.classList.add("bronze");
 
-        let html=`<td><strong>#${index+1}</strong></td>`;
-
-        keys.forEach(k=>{
-            html+=`<td>${entry[k] ?? ""}</td>`;
-        });
-
-        tr.innerHTML=html;
-        body.appendChild(tr);
-    });
+   tr.innerHTML="<td><b>#"+(i+1)+"</b></td>"+keys.map(k=>`<td>${r[k]??""}</td>`).join("");
+   tbody.appendChild(tr);
+ });
 }
 
 function searchPlayer(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ if(!q) return;
 
-    const query=document.getElementById("searchInput")
-        .value.trim().toLowerCase();
+ document.getElementById("searchCard").classList.remove("hidden");
 
-    if(!query) return;
+ const body=document.getElementById("searchBody");
+ body.innerHTML="";
+ let found=0;
 
-    document.getElementById("leaderboardView").classList.add("hidden");
-    document.getElementById("searchView").classList.remove("hidden");
+ Object.entries(db).forEach(([board,rows])=>{
+   if(board==="last_updated") return;
 
-    document.getElementById("searchTitle").textContent =
-        `Search Results: "${query}"`;
+   rows.forEach((row,index)=>{
+      const match=Object.values(row).some(v=>String(v).toLowerCase().includes(q));
 
-    const body=document.getElementById("searchBody");
-    body.innerHTML="";
+      if(match){
+        found++;
+        const keys=Object.keys(row);
 
-    let found=0;
-
-    Object.entries(leaderboardData).forEach(([category,entries])=>{
-
-        if(category==="last_updated") return;
-
-        entries.forEach((entry,index)=>{
-
-            const values=Object.values(entry)
-                .map(v=>String(v).toLowerCase());
-
-            const match=values.some(v=>v.includes(query));
-
-            if(match){
-
-                found++;
-
-                const keys=Object.keys(entry);
-                const player=entry[keys[0]] ?? "";
-                const value=entry[keys[1]] ?? "";
-
-                const tr=document.createElement("tr");
-
-                if(index===0) tr.classList.add("gold");
-                else if(index===1) tr.classList.add("silver");
-                else if(index===2) tr.classList.add("bronze");
-
-                tr.innerHTML=`
-                    <td>${category.replace(/_/g," ").toUpperCase()}</td>
-                    <td>#${index+1}</td>
-                    <td>${player}</td>
-                    <td>${value}</td>
-                `;
-
-                body.appendChild(tr);
-            }
-        });
-    });
-
-    if(found===0){
-        body.innerHTML=`
+        body.innerHTML += `
         <tr>
-            <td colspan="4" style="text-align:center;padding:30px;">
-                No player found.
-            </td>
+          <td>${board.replace(/_/g," ").toUpperCase()}</td>
+          <td>#${index+1}</td>
+          <td>${row[keys[0]]??""}</td>
+          <td>${row[keys[1]]??""}</td>
         </tr>`;
-    }
+      }
+   });
+ });
+
+ if(!found){
+   body.innerHTML='<tr><td colspan="4">No results found.</td></tr>';
+ }
+
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function clearSearch(){
+ document.getElementById("searchCard").classList.add("hidden");
+ document.getElementById("searchInput").value="";
 }
 </script>
-
 </body>
 </html>
