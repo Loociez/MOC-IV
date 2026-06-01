@@ -30,7 +30,7 @@
       background: var(--bg-main);
       color: var(--text-main);
       line-height: 1.5;
-      padding: 2rem 1rem;
+      padding: 6rem 1rem 2rem;
     }
 
     .container {
@@ -41,7 +41,7 @@
     /* Header styling */
     header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
     h1 {
       font-size: 2.5rem;
@@ -55,27 +55,62 @@
       font-style: italic;
     }
 
-    /* Interactive Search & Filter Controls */
-    .controls {
+    /* Fixed Navigation Bar */
+    nav#menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-nav);
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+      padding: 0.75rem 1rem;
+      z-index: 999;
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
+    }
+    nav#menu::-webkit-scrollbar {
+      height: 6px;
+    }
+    nav#menu::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 3px;
+    }
+    nav#menu button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    nav#menu button:hover,
+    nav#menu button:focus {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--text-main);
+      border-color: var(--primary);
+      outline: none;
+    }
+    nav#menu button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Search Bar Control Card */
+    .search-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.25rem;
       margin-bottom: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    .search-box {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .search-box label {
-      font-weight: 600;
-      color: var(--text-muted);
-      font-size: 0.9rem;
     }
     .search-row {
       display: flex;
@@ -103,6 +138,7 @@
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
       transition: background 0.2s;
     }
     .btn:hover {
@@ -116,45 +152,7 @@
       background: #3e3468;
     }
 
-    /* Tab-based Navigation */
-    .tabs-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .tabs-label {
-      font-weight: 600;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      overflow-x: auto;
-      padding-bottom: 0.5rem;
-    }
-    .tab-btn {
-      background: var(--bg-nav);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .tab-btn:hover {
-      color: var(--text-main);
-      border-color: var(--primary);
-    }
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Views (Leaderboard vs Search Results) */
+    /* Views Framework Panels */
     .view-panel {
       display: none;
       background: var(--bg-card);
@@ -173,17 +171,22 @@
       color: var(--primary-hover);
       border-bottom: 2px solid var(--border);
       padding-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    /* Data Tables */
+    /* Redesigned Tables */
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
+      font-size: 0.95rem;
     }
     th, td {
-      padding: 1rem;
+      padding: 0.85rem 1rem;
       border-bottom: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
     th {
       font-weight: 600;
@@ -196,151 +199,146 @@
       background: rgba(139, 92, 246, 0.05);
     }
     
-    /* Rank badges */
-    .rank {
-      font-weight: bold;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
+    /* Elegant Medal Row Overrides */
+    tbody tr.gold {
+      background-color: rgba(251, 191, 36, 0.15) !important;
+      border-left: 4px solid var(--gold);
     }
-    .rank-1 { background: var(--gold); color: #000; }
-    .rank-2 { background: var(--silver); color: #000; }
-    .rank-3 { background: var(--bronze); color: #fff; }
+    tbody tr.silver {
+      background-color: rgba(148, 163, 184, 0.15) !important;
+      border-left: 4px solid var(--silver);
+    }
+    tbody tr.bronze {
+      background-color: rgba(180, 83, 9, 0.15) !important;
+      border-left: 4px solid var(--bronze);
+    }
+    
+    /* Table Loading Text */
+    .loading-text {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-      body { padding: 1rem 0.5rem; }
+      body { padding: 8rem 0.5rem 2rem; }
       h1 { font-size: 2rem; }
       th, td { padding: 0.75rem 0.5rem; }
       .search-row { flex-direction: column; }
+      .btn { width: 100%; }
     }
   </style>
 </head>
 <body>
 
+  <nav id="menu" aria-label="Leaderboard navigation">
+    <button disabled>Loading Menu...</button>
+  </nav>
+
   <div class="container">
     <header>
       <h1>Mirage Online Classic Leaderboards</h1>
-      <div id="last-updated">Last Updated: Loading...</div>
+      <div id="last-updated">Loading last updated timestamp...</div>
     </header>
 
-    <!-- Search and Switcher Panel -->
-    <section class="controls" aria-label="Leaderboard options">
-      <div class="search-box">
-        <label for="username-search">Search Player History</label>
-        <div class="search-row">
-          <input type="text" id="username-search" placeholder="Enter username..." autocomplete="off">
-          <button class="btn" id="search-submit">Search Profile</button>
-          <button class="btn btn-secondary" id="search-clear" style="display:none;">Clear</button>
-        </div>
-      </div>
-
-      <div class="tabs-container">
-        <span class="tabs-label" id="tabs-nav-label">Select Leaderboard Category</span>
-        <nav class="tabs" aria-labelledby="tabs-nav-label" id="board-tabs">
-          <!-- Tabs populated dynamically via JavaScript -->
-        </nav>
+    <!-- Unified Search Control Box -->
+    <section class="search-card" aria-label="Player Search Panel">
+      <div class="search-row">
+        <input type="text" id="username-search" placeholder="Search a username cross-history..." autocomplete="off">
+        <button class="btn" id="search-submit">Search Player</button>
+        <button class="btn btn-secondary" id="search-clear" style="display:none;">Clear Search</button>
       </div>
     </section>
 
-    <main>
-      <!-- Standard Leaderboard view container -->
-      <section id="leaderboard-panel" class="view-panel active" aria-live="polite">
+    <main id="view-container">
+      <!-- Default Display Component Placeholder -->
+      <div id="loading-fallback" class="loading-text">Loading remote leaderboard assets...</div>
+
+      <!-- Live Leaderboard Interactive Panel View -->
+      <section id="leaderboard-panel" class="view-panel" aria-live="polite">
         <h2 class="panel-title" id="current-board-title">Active Board</h2>
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 80px;">Rank</th>
-              <th>Username</th>
-              <th id="stat-column-header">Value</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboard-data">
-            <!-- Table data populated dynamically via JavaScript -->
-          </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+          <table id="board-table">
+            <thead>
+              <tr id="board-header-row"></tr>
+            </thead>
+            <tbody id="board-data-rows"></tbody>
+          </table>
+        </div>
       </section>
 
-      <!-- Global Search Result view container -->
+      <!-- Profile Universal Metric Lookup Results View -->
       <section id="search-panel" class="view-panel" aria-live="polite">
         <h2 class="panel-title" id="search-profile-title">Player Performance Cross-Search</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Leaderboard Type</th>
-              <th>Player Rank</th>
-              <th>Value Record</th>
-            </tr>
-          </thead>
-          <tbody id="search-data">
-            <!-- Search profiles rows populated dynamically via JavaScript -->
-          </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Leaderboard Track</th>
+                <th>Rank</th>
+                <th>Stat Field</th>
+                <th>Metric Value</th>
+              </tr>
+            </thead>
+            <tbody id="search-data-rows"></tbody>
+          </table>
+        </div>
       </section>
     </main>
   </div>
 
   <script>
-    // MOCK DATA: Replace this section with your server-side formatted JSON payload
-    const rawDataJson = {
-      "lastUpdated": "2026-06-01 04:00 AM",
-      "boards": {
-        "Level Experience": [
-          {"username": "Striker", "value": "154,200,500"},
-          {"username": "Eldritch", "value": "142,110,000"},
-          {"username": "ShadowViper", "value": "139,450,200"},
-          {"username": "Zalthor", "value": "110,000,000"}
-        ],
-        "Gold Wealth": [
-          {"username": "Zalthor", "value": "52,000,000"},
-          {"username": "Striker", "value": "41,500,000"},
-          {"username": "MidasTouch", "value": "39,000,000"},
-          {"username": "ShadowViper", "value": "12,000,000"}
-        ],
-        "Player Kills (PvP)": [
-          {"username": "ShadowViper", "value": "2,401"},
-          {"username": "Striker", "value": "1,850"},
-          {"username": "BloodMage", "value": "942"}
-        ]
-      }
-    };
+    // System Master Runtime Cache Properties
+    let globalLeaderboardCache = null;
+    let currentlySelectedCategory = "";
 
-    // State Variables
-    let activeBoardName = Object.keys(rawDataJson.boards)[0];
-
-    // DOM Elements
-    const lastUpdatedEl = document.getElementById('last-updated');
-    const boardTabsContainer = document.getElementById('board-tabs');
+    // DOM References
+    const menuNav = document.getElementById('menu');
+    const lastUpdatedDiv = document.getElementById('last-updated');
+    const loadingFallback = document.getElementById('loading-fallback');
+    
     const leaderboardPanel = document.getElementById('leaderboard-panel');
-    const searchPanel = document.getElementById('search-panel');
-    
     const currentBoardTitle = document.getElementById('current-board-title');
-    const statColumnHeader = document.getElementById('stat-column-header');
-    const leaderboardData = document.getElementById('leaderboard-data');
+    const boardHeaderRow = document.getElementById('board-header-row');
+    const boardDataRows = document.getElementById('board-data-rows');
     
-    const usernameSearchInput = document.getElementById('username-search');
+    const searchPanel = document.getElementById('search-panel');
+    const searchProfileTitle = document.getElementById('search-profile-title');
+    const searchDataRows = document.getElementById('search-data-rows');
+    
+    const searchInput = document.getElementById('username-search');
     const searchSubmitBtn = document.getElementById('search-submit');
     const searchClearBtn = document.getElementById('search-clear');
-    const searchProfileTitle = document.getElementById('search-profile-title');
-    const searchDataRows = document.getElementById('search-data');
 
-    // Initialize Layout & Data Insertion
-    function initialize() {
-      lastUpdatedEl.textContent = `Last Updated: ${rawDataJson.lastUpdated}`;
-      renderTabs();
-      showLeaderboard(activeBoardName);
-      setupEventListeners();
-    }
+    // First fetch the last modified date using a HEAD request
+    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json', { method: 'HEAD' })
+      .then(response => {
+        const lastModified = response.headers.get('Last-Modified');
+        if (lastModified) {
+          const date = new Date(lastModified);
+          lastUpdatedDiv.textContent = `Last updated: ${date.toLocaleString()}`;
+        } else {
+          lastUpdatedDiv.textContent = 'Last updated date not available';
+        }
+      })
+      .catch(() => {
+        lastUpdatedDiv.textContent = 'Failed to load last updated date';
+      });
 
-    // Render navigation system tabs dynamically based on data keys
-    function renderTabs() {
-      boardTabsContainer.innerHTML = '';
-      Object.keys(rawDataJson.boards).forEach(boardName => {
-        const btn = document.createElement('button');
-        btn.className = `tab-btn ${boardName === activeBoardName ? 'active' : ''}`;
-        btn.textContent = boardName;
-        btn.setAttribute('role', 'tab');
-        btn.addEventListener('click', () => {
+    // Then fetch the actual leaderboard JSON and build the tables dynamically
+    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json')
+      .then(res => res.json())
+      .then(data => {
+        // Save database payload globally for tab/query operations
+        globalLeaderboardCache = data;
+        
+        // Wipe placeholders
+        menuNav.innerHTML = '';
+        loadingFallback.style.display = 'none';
+
+        // Filter invalid data tracks and establish parsing layout
+        const categories = Object.keys(data).filter(cat => cat !== 'last_updated');
+        
+        if(categories.length === 0) {
