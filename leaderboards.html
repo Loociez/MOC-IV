@@ -289,7 +289,7 @@
     </main>
   </div>
 
-  <script>
+  <script type="module">
     // System Master Runtime Cache Properties
     let globalLeaderboardCache = null;
     let currentlySelectedCategory = "";
@@ -342,3 +342,4 @@
         const categories = Object.keys(data).filter(cat => cat !== 'last_updated');
         
         if(categories.length === 0) {
+</script>
