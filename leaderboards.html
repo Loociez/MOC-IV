@@ -5,331 +5,342 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mirage Online Classic Leaderboards</title>
   <style>
-   :root{
-  --bg:#13111d;
-  --card:#1f1b2e;
-  --card-hover:#29233d;
-  --accent:#8b5cf6;
-  --accent2:#c084fc;
-  --text:#f3f0ff;
-  --muted:#b9b2d0;
-  --gold:#ffd700;
-  --silver:#c0c0c0;
-  --bronze:#cd7f32;
-}
+    /* Reset & Base Variables */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-main: #0f0d19;
+      --bg-card: #1a162b;
+      --bg-nav: #231d3a;
+      --primary: #8b5cf6;
+      --primary-hover: #a78bfa;
+      --text-main: #f3f1fe;
+      --text-muted: #a7a2ca;
+      --border: #312952;
+      --gold: #fbbf24;
+      --silver: #94a3b8;
+      --bronze: #b45309;
+    }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 2rem 1rem;
+    }
 
-body{
-  font-family:Inter,Segoe UI,sans-serif;
-  background:
-    radial-gradient(circle at top,#2b1f52 0%,#13111d 45%);
-  color:var(--text);
-  min-height:100vh;
-  padding:130px 25px 40px;
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-h1{
-  text-align:center;
-  font-size:3rem;
-  font-weight:800;
-  letter-spacing:2px;
-  margin-bottom:10px;
-}
+    /* Header styling */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: var(--primary-hover);
+      text-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+      margin-bottom: 0.5rem;
+    }
+    #last-updated {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
 
-#last-updated{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:30px;
-}
+    /* Interactive Search & Filter Controls */
+    .controls {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .search-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .search-box label {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .search-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .search-row input {
+      flex: 1;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .search-row input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: #3e3468;
+    }
 
-nav#menu{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:1000;
+    /* Tab-based Navigation */
+    .tabs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .tabs-label {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .tab-btn {
+      background: var(--bg-nav);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
 
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
+    /* Views (Leaderboard vs Search Results) */
+    .view-panel {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      overflow-x: auto;
+    }
+    .view-panel.active {
+      display: block;
+    }
+    .panel-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--primary-hover);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
 
-  padding:18px;
+    /* Data Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+    tbody tr:hover {
+      background: rgba(139, 92, 246, 0.05);
+    }
+    
+    /* Rank badges */
+    .rank {
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+    }
+    .rank-1 { background: var(--gold); color: #000; }
+    .rank-2 { background: var(--silver); color: #000; }
+    .rank-3 { background: var(--bronze); color: #fff; }
 
-  background:rgba(20,18,31,.95);
-  backdrop-filter:blur(12px);
-
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-nav#menu a{
-  text-decoration:none;
-  color:var(--muted);
-  background:rgba(255,255,255,.05);
-  padding:10px 18px;
-  border-radius:999px;
-  transition:.25s;
-  font-weight:600;
-}
-
-nav#menu a:hover{
-  background:var(--accent);
-  color:white;
-  transform:translateY(-2px);
-}
-
-#leaderboard-container{
-  max-width:1600px;
-  margin:auto;
-
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
-  gap:30px;
-}
-
-.leaderboard{
-  background:rgba(31,27,46,.85);
-
-  backdrop-filter:blur(12px);
-
-  border:1px solid rgba(255,255,255,.05);
-
-  border-radius:20px;
-
-  overflow:hidden;
-
-  transition:.3s;
-}
-
-.leaderboard:hover{
-  transform:translateY(-4px);
-  background:var(--card-hover);
-}
-
-.leaderboard h2{
-  text-align:center;
-
-  padding:20px;
-
-  background:linear-gradient(
-    90deg,
-    var(--accent),
-    var(--accent2)
-  );
-
-  color:white;
-
-  font-size:1.2rem;
-
-  letter-spacing:1px;
-
-  text-transform:uppercase;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-thead{
-  background:#151220;
-}
-
-th{
-  color:var(--accent2);
-  padding:14px;
-  font-size:.85rem;
-  text-transform:uppercase;
-}
-
-td{
-  padding:12px 14px;
-}
-
-tbody tr{
-  transition:.2s;
-}
-
-tbody tr:nth-child(even){
-  background:rgba(255,255,255,.03);
-}
-
-tbody tr:hover{
-  background:rgba(139,92,246,.20);
-}
-
-.gold{
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255,215,0,.25),
-      rgba(255,215,0,.05)
-    ) !important;
-}
-
-.silver{
-  background:
-    linear-gradient(
-      90deg,
-      rgba(192,192,192,.20),
-      rgba(192,192,192,.05)
-    ) !important;
-}
-
-.bronze{
-  background:
-    linear-gradient(
-      90deg,
-      rgba(205,127,50,.20),
-      rgba(205,127,50,.05)
-    ) !important;
-}
-
-.gold td:first-child::before{
-  content:"🥇 ";
-}
-
-.silver td:first-child::before{
-  content:"🥈 ";
-}
-
-.bronze td:first-child::before{
-  content:"🥉 ";
-}
-
-::-webkit-scrollbar{
-  width:10px;
-}
-
-::-webkit-scrollbar-thumb{
-  background:var(--accent);
-  border-radius:10px;
-}
-
-@media(max-width:768px){
-
-  body{
-    padding-top:160px;
-  }
-
-  #leaderboard-container{
-    grid-template-columns:1fr;
-  }
-
-  nav#menu{
-    justify-content:flex-start;
-    overflow-x:auto;
-    flex-wrap:nowrap;
-  }
-
-  .leaderboard{
-    overflow-x:auto;
-  }
-}
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body { padding: 1rem 0.5rem; }
+      h1 { font-size: 2rem; }
+      th, td { padding: 0.75rem 0.5rem; }
+      .search-row { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
-  <h1>Mirage Online Classic Leaderboards</h1>
-  <div id="last-updated">Loading last updated timestamp...</div>
-  <nav id="menu" aria-label="Leaderboard navigation"></nav>
-  <div id="leaderboard-container">Loading...</div>
+
+  <div class="container">
+    <header>
+      <h1>Mirage Online Classic Leaderboards</h1>
+      <div id="last-updated">Last Updated: Loading...</div>
+    </header>
+
+    <!-- Search and Switcher Panel -->
+    <section class="controls" aria-label="Leaderboard options">
+      <div class="search-box">
+        <label for="username-search">Search Player History</label>
+        <div class="search-row">
+          <input type="text" id="username-search" placeholder="Enter username..." autocomplete="off">
+          <button class="btn" id="search-submit">Search Profile</button>
+          <button class="btn btn-secondary" id="search-clear" style="display:none;">Clear</button>
+        </div>
+      </div>
+
+      <div class="tabs-container">
+        <span class="tabs-label" id="tabs-nav-label">Select Leaderboard Category</span>
+        <nav class="tabs" aria-labelledby="tabs-nav-label" id="board-tabs">
+          <!-- Tabs populated dynamically via JavaScript -->
+        </nav>
+      </div>
+    </section>
+
+    <main>
+      <!-- Standard Leaderboard view container -->
+      <section id="leaderboard-panel" class="view-panel active" aria-live="polite">
+        <h2 class="panel-title" id="current-board-title">Active Board</h2>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Rank</th>
+              <th>Username</th>
+              <th id="stat-column-header">Value</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-data">
+            <!-- Table data populated dynamically via JavaScript -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Global Search Result view container -->
+      <section id="search-panel" class="view-panel" aria-live="polite">
+        <h2 class="panel-title" id="search-profile-title">Player Performance Cross-Search</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Leaderboard Type</th>
+              <th>Player Rank</th>
+              <th>Value Record</th>
+            </tr>
+          </thead>
+          <tbody id="search-data">
+            <!-- Search profiles rows populated dynamically via JavaScript -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
 
   <script>
-    // First fetch the last modified date using a HEAD request
-    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json', { method: 'HEAD' })
-      .then(response => {
-        const lastModified = response.headers.get('Last-Modified');
-        const lastUpdatedDiv = document.getElementById('last-updated');
-        if (lastModified) {
-          const date = new Date(lastModified);
-          lastUpdatedDiv.textContent = `Last updated: ${date.toLocaleString()}`;
-        } else {
-          lastUpdatedDiv.textContent = 'Last updated date not available';
-        }
-      })
-      .catch(() => {
-        document.getElementById('last-updated').textContent = 'Failed to load last updated date';
-      });
+    // MOCK DATA: Replace this section with your server-side formatted JSON payload
+    const rawDataJson = {
+      "lastUpdated": "2026-06-01 04:00 AM",
+      "boards": {
+        "Level Experience": [
+          {"username": "Striker", "value": "154,200,500"},
+          {"username": "Eldritch", "value": "142,110,000"},
+          {"username": "ShadowViper", "value": "139,450,200"},
+          {"username": "Zalthor", "value": "110,000,000"}
+        ],
+        "Gold Wealth": [
+          {"username": "Zalthor", "value": "52,000,000"},
+          {"username": "Striker", "value": "41,500,000"},
+          {"username": "MidasTouch", "value": "39,000,000"},
+          {"username": "ShadowViper", "value": "12,000,000"}
+        ],
+        "Player Kills (PvP)": [
+          {"username": "ShadowViper", "value": "2,401"},
+          {"username": "Striker", "value": "1,850"},
+          {"username": "BloodMage", "value": "942"}
+        ]
+      }
+    };
 
-    // Then fetch the actual leaderboard JSON and build the tables
-    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('leaderboard-container');
-        const menu = document.getElementById('menu');
-        container.innerHTML = '';
-        menu.innerHTML = '';
+    // State Variables
+    let activeBoardName = Object.keys(rawDataJson.boards)[0];
 
-        for (const [category, entries] of Object.entries(data)) {
-          // We no longer skip last_updated since it doesn't exist or is not relevant
-          if (category === 'last_updated') continue;
+    // DOM Elements
+    const lastUpdatedEl = document.getElementById('last-updated');
+    const boardTabsContainer = document.getElementById('board-tabs');
+    const leaderboardPanel = document.getElementById('leaderboard-panel');
+    const searchPanel = document.getElementById('search-panel');
+    
+    const currentBoardTitle = document.getElementById('current-board-title');
+    const statColumnHeader = document.getElementById('stat-column-header');
+    const leaderboardData = document.getElementById('leaderboard-data');
+    
+    const usernameSearchInput = document.getElementById('username-search');
+    const searchSubmitBtn = document.getElementById('search-submit');
+    const searchClearBtn = document.getElementById('search-clear');
+    const searchProfileTitle = document.getElementById('search-profile-title');
+    const searchDataRows = document.getElementById('search-data');
 
-          const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-').replace(/[^\w-]/g, '');
+    // Initialize Layout & Data Insertion
+    function initialize() {
+      lastUpdatedEl.textContent = `Last Updated: ${rawDataJson.lastUpdated}`;
+      renderTabs();
+      showLeaderboard(activeBoardName);
+      setupEventListeners();
+    }
 
-          const link = document.createElement('a');
-          link.href = `#${slug}`;
-          link.textContent = category.replace(/_/g, ' ').toUpperCase();
-          menu.appendChild(link);
-
-          const section = document.createElement('section');
-          section.classList.add('leaderboard');
-          section.id = slug;
-
-          const heading = document.createElement('h2');
-          heading.textContent = category.replace(/_/g, ' ').toUpperCase();
-          section.appendChild(heading);
-
-          const table = document.createElement('table');
-
-          const thead = document.createElement('thead');
-          const headerRow = document.createElement('tr');
-          const rankTh = document.createElement('th');
-          rankTh.textContent = 'Rank';
-          headerRow.appendChild(rankTh);
-
-          const keys = Object.keys(entries[0] || {});
-          keys.forEach(key => {
-            const th = document.createElement('th');
-            th.textContent = key;
-            headerRow.appendChild(th);
-          });
-          thead.appendChild(headerRow);
-          table.appendChild(thead);
-
-          const tbody = document.createElement('tbody');
-          entries.forEach((entry, index) => {
-            const tr = document.createElement('tr');
-            if (index === 0) tr.classList.add('gold');
-            else if (index === 1) tr.classList.add('silver');
-            else if (index === 2) tr.classList.add('bronze');
-
-            const rankTd = document.createElement('td');
-            rankTd.textContent = index + 1;
-            tr.appendChild(rankTd);
-
-            keys.forEach((key, i) => {
-              const td = document.createElement('td');
-              td.textContent = entry[key];
-              td.setAttribute(`data-label-${i + 1}`, key);
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-          });
-          table.appendChild(tbody);
-
-          section.appendChild(table);
-          container.appendChild(section);
-        }
-      })
-      .catch(err => {
-        document.getElementById('leaderboard-container').textContent = 'Failed to load leaderboard data.';
-        console.error(err);
-      });
-  </script>
-</body>
-</html>
+    // Render navigation system tabs dynamically based on data keys
+    function renderTabs() {
+      boardTabsContainer.innerHTML = '';
+      Object.keys(rawDataJson.boards).forEach(boardName => {
+        const btn = document.createElement('button');
+        btn.className = `tab-btn ${boardName === activeBoardName ? 'active' : ''}`;
+        btn.textContent = boardName;
+        btn.setAttribute('role', 'tab');
+        btn.addEventListener('click', () => {
