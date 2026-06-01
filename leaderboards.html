@@ -1,345 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mirage Online Classic Leaderboards</title>
-  <style>
-    /* Reset & Base Variables */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    :root {
-      --bg-main: #0f0d19;
-      --bg-card: #1a162b;
-      --bg-nav: #231d3a;
-      --primary: #8b5cf6;
-      --primary-hover: #a78bfa;
-      --text-main: #f3f1fe;
-      --text-muted: #a7a2ca;
-      --border: #312952;
-      --gold: #fbbf24;
-      --silver: #94a3b8;
-      --bronze: #b45309;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirage Online Classic Leaderboards</title>
+
+<style>
+:root{
+    --bg:#151222;
+    --sidebar:#211a38;
+    --card:#2c2650;
+    --card-hover:#3b2f6e;
+    --accent:#8b5cf6;
+    --accent2:#a78bfa;
+    --text:#e9e4ff;
+    --muted:#b8acee;
+    --border:#493d7d;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+    font-family:Segoe UI,Tahoma,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+.layout{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:280px;
+    background:var(--sidebar);
+    border-right:1px solid var(--border);
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    overflow-y:auto;
+}
+
+.logo{
+    padding:20px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+}
+
+.logo h1{
+    font-size:1.4rem;
+    color:var(--accent2);
+}
+
+.updated{
+    margin-top:8px;
+    font-size:.8rem;
+    color:var(--muted);
+}
+
+.search-box{
+    padding:15px;
+    border-bottom:1px solid var(--border);
+}
+
+.search-box input{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin-bottom:10px;
+    background:#141122;
+    color:white;
+}
+
+.search-box button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:var(--accent);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.menu{
+    padding:10px;
+}
+
+.menu button{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    margin-bottom:6px;
+    border:none;
+    border-radius:8px;
+    background:transparent;
+    color:var(--muted);
+    cursor:pointer;
+}
+
+.menu button:hover,
+.menu button.active{
+    background:var(--accent);
+    color:white;
+}
+
+.main{
+    margin-left:280px;
+    padding:25px;
+    width:calc(100% - 280px);
+}
+
+.panel{
+    background:var(--card);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+
+.panel h2{
+    margin-bottom:15px;
+    color:var(--accent2);
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:var(--accent);
+    color:white;
+    padding:12px;
+    text-align:left;
+}
+
+td{
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+}
+
+tbody tr:nth-child(even){
+    background:rgba(255,255,255,.03);
+}
+
+tbody tr:hover{
+    background:rgba(167,139,250,.15);
+}
+
+.gold{
+    background:#FFD700!important;
+    color:black!important;
+}
+
+.silver{
+    background:#C0C0C0!important;
+    color:black!important;
+}
+
+.bronze{
+    background:#cd7f32!important;
+    color:black!important;
+}
+
+.hidden{
+    display:none;
+}
+
+@media(max-width:900px){
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
     }
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--bg-main);
-      color: var(--text-main);
-      line-height: 1.5;
-      padding: 6rem 1rem 2rem;
+    .layout{
+        flex-direction:column;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    .main{
+        margin-left:0;
+        width:100%;
     }
-
-    /* Header styling */
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: var(--primary-hover);
-      text-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
-      margin-bottom: 0.5rem;
-    }
-    #last-updated {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    /* Fixed Navigation Bar */
-    nav#menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: var(--bg-nav);
-      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-      padding: 0.75rem 1rem;
-      z-index: 999;
-      display: flex;
-      gap: 0.75rem;
-      overflow-x: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--primary) transparent;
-    }
-    nav#menu::-webkit-scrollbar {
-      height: 6px;
-    }
-    nav#menu::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 3px;
-    }
-    nav#menu button {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      font-weight: 600;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      white-space: nowrap;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-    }
-    nav#menu button:hover,
-    nav#menu button:focus {
-      background: rgba(139, 92, 246, 0.15);
-      color: var(--text-main);
-      border-color: var(--primary);
-      outline: none;
-    }
-    nav#menu button.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Search Bar Control Card */
-    .search-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    .search-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .search-row input {
-      flex: 1;
-      background: var(--bg-main);
-      border: 1px solid var(--border);
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      color: var(--text-main);
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-    .search-row input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    .btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s;
-    }
-    .btn:hover {
-      background: var(--primary-hover);
-    }
-    .btn-secondary {
-      background: var(--border);
-      color: var(--text-main);
-    }
-    .btn-secondary:hover {
-      background: #3e3468;
-    }
-
-    /* Views Framework Panels */
-    .view-panel {
-      display: none;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      overflow-x: auto;
-    }
-    .view-panel.active {
-      display: block;
-    }
-    .panel-title {
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
-      color: var(--primary-hover);
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Redesigned Tables */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.95rem;
-    }
-    th, td {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--border);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    th {
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-    }
-    tbody tr:hover {
-      background: rgba(139, 92, 246, 0.05);
-    }
-    
-    /* Elegant Medal Row Overrides */
-    tbody tr.gold {
-      background-color: rgba(251, 191, 36, 0.15) !important;
-      border-left: 4px solid var(--gold);
-    }
-    tbody tr.silver {
-      background-color: rgba(148, 163, 184, 0.15) !important;
-      border-left: 4px solid var(--silver);
-    }
-    tbody tr.bronze {
-      background-color: rgba(180, 83, 9, 0.15) !important;
-      border-left: 4px solid var(--bronze);
-    }
-    
-    /* Table Loading Text */
-    .loading-text {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      body { padding: 8rem 0.5rem 2rem; }
-      h1 { font-size: 2rem; }
-      th, td { padding: 0.75rem 0.5rem; }
-      .search-row { flex-direction: column; }
-      .btn { width: 100%; }
-    }
-  </style>
+}
+</style>
 </head>
 <body>
 
-  <nav id="menu" aria-label="Leaderboard navigation">
-    <button disabled>Loading Menu...</button>
-  </nav>
+<div class="layout">
 
-  <div class="container">
-    <header>
-      <h1>Mirage Online Classic Leaderboards</h1>
-      <div id="last-updated">Loading last updated timestamp...</div>
-    </header>
+<div class="sidebar">
+    <div class="logo">
+        <h1>Mirage Online Classic</h1>
+        <div id="lastUpdated" class="updated">Loading...</div>
+    </div>
 
-    <!-- Unified Search Control Box -->
-    <section class="search-card" aria-label="Player Search Panel">
-      <div class="search-row">
-        <input type="text" id="username-search" placeholder="Search a username cross-history..." autocomplete="off">
-        <button class="btn" id="search-submit">Search Player</button>
-        <button class="btn btn-secondary" id="search-clear" style="display:none;">Clear Search</button>
-      </div>
-    </section>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search player...">
+        <button onclick="searchPlayer()">Search All Boards</button>
+    </div>
 
-    <main id="view-container">
-      <!-- Default Display Component Placeholder -->
-      <div id="loading-fallback" class="loading-text">Loading remote leaderboard assets...</div>
+    <div id="menu" class="menu"></div>
+</div>
 
-      <!-- Live Leaderboard Interactive Panel View -->
-      <section id="leaderboard-panel" class="view-panel" aria-live="polite">
-        <h2 class="panel-title" id="current-board-title">Active Board</h2>
-        <div style="overflow-x: auto;">
-          <table id="board-table">
+<div class="main">
+
+<div id="leaderboardView" class="panel">
+    <h2 id="boardTitle">Loading...</h2>
+
+    <div class="table-wrap">
+        <table>
             <thead>
-              <tr id="board-header-row"></tr>
+                <tr id="tableHead"></tr>
             </thead>
-            <tbody id="board-data-rows"></tbody>
-          </table>
-        </div>
-      </section>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
 
-      <!-- Profile Universal Metric Lookup Results View -->
-      <section id="search-panel" class="view-panel" aria-live="polite">
-        <h2 class="panel-title" id="search-profile-title">Player Performance Cross-Search</h2>
-        <div style="overflow-x: auto;">
-          <table>
+<div id="searchView" class="panel hidden">
+    <h2 id="searchTitle">Search Results</h2>
+
+    <div class="table-wrap">
+        <table>
             <thead>
-              <tr>
-                <th>Leaderboard Track</th>
-                <th>Rank</th>
-                <th>Stat Field</th>
-                <th>Metric Value</th>
-              </tr>
+                <tr>
+                    <th>Leaderboard</th>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Value</th>
+                </tr>
             </thead>
-            <tbody id="search-data-rows"></tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-  </div>
+            <tbody id="searchBody"></tbody>
+        </table>
+    </div>
+</div>
 
-  <script type="module">
-    // System Master Runtime Cache Properties
-    let globalLeaderboardCache = null;
-    let currentlySelectedCategory = "";
+</div>
+</div>
 
-    // DOM References
-    const menuNav = document.getElementById('menu');
-    const lastUpdatedDiv = document.getElementById('last-updated');
-    const loadingFallback = document.getElementById('loading-fallback');
-    
-    const leaderboardPanel = document.getElementById('leaderboard-panel');
-    const currentBoardTitle = document.getElementById('current-board-title');
-    const boardHeaderRow = document.getElementById('board-header-row');
-    const boardDataRows = document.getElementById('board-data-rows');
-    
-    const searchPanel = document.getElementById('search-panel');
-    const searchProfileTitle = document.getElementById('search-profile-title');
-    const searchDataRows = document.getElementById('search-data-rows');
-    
-    const searchInput = document.getElementById('username-search');
-    const searchSubmitBtn = document.getElementById('search-submit');
-    const searchClearBtn = document.getElementById('search-clear');
+<script>
+const DATA_URL = "https://loociez.github.io/MOC-IV/leaderboard_cache.json";
 
-    // First fetch the last modified date using a HEAD request
-    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json', { method: 'HEAD' })
-      .then(response => {
-        const lastModified = response.headers.get('Last-Modified');
-        if (lastModified) {
-          const date = new Date(lastModified);
-          lastUpdatedDiv.textContent = `Last updated: ${date.toLocaleString()}`;
-        } else {
-          lastUpdatedDiv.textContent = 'Last updated date not available';
+let leaderboardData = {};
+let currentBoard = "";
+
+fetch(DATA_URL,{method:"HEAD"})
+.then(r=>{
+    const lm=r.headers.get("Last-Modified");
+    if(lm){
+        document.getElementById("lastUpdated").textContent =
+            "Updated: " + new Date(lm).toLocaleString();
+    }
+})
+.catch(()=>{});
+
+fetch(DATA_URL)
+.then(r=>r.json())
+.then(data=>{
+    leaderboardData=data;
+
+    const categories = Object.keys(data).filter(k=>k!=="last_updated");
+
+    const menu=document.getElementById("menu");
+
+    categories.forEach((cat,index)=>{
+        const btn=document.createElement("button");
+        btn.textContent=cat.replace(/_/g," ").toUpperCase();
+
+        btn.onclick=()=>showBoard(cat);
+
+        menu.appendChild(btn);
+
+        if(index===0){
+            currentBoard=cat;
+            btn.classList.add("active");
         }
-      })
-      .catch(() => {
-        lastUpdatedDiv.textContent = 'Failed to load last updated date';
-      });
+    });
 
-    // Then fetch the actual leaderboard JSON and build the tables dynamically
-    fetch('https://loociez.github.io/MOC-IV/leaderboard_cache.json')
-      .then(res => res.json())
-      .then(data => {
-        // Save database payload globally for tab/query operations
-        globalLeaderboardCache = data;
-        
-        // Wipe placeholders
-        menuNav.innerHTML = '';
-        loadingFallback.style.display = 'none';
+    showBoard(currentBoard);
+})
+.catch(err=>{
+    document.getElementById("boardTitle").textContent =
+        "Failed to load leaderboard data";
+    console.error(err);
+});
 
-        // Filter invalid data tracks and establish parsing layout
-        const categories = Object.keys(data).filter(cat => cat !== 'last_updated');
-        
-        if(categories.length === 0) {
+function showBoard(category){
+
+    document.getElementById("leaderboardView").classList.remove("hidden");
+    document.getElementById("searchView").classList.add("hidden");
+
+    currentBoard=category;
+
+    document.querySelectorAll(".menu button").forEach(btn=>{
+        btn.classList.remove("active");
+
+        if(btn.textContent===category.replace(/_/g," ").toUpperCase()){
+            btn.classList.add("active");
+        }
+    });
+
+    const entries=leaderboardData[category] || [];
+
+    document.getElementById("boardTitle").textContent =
+        category.replace(/_/g," ").toUpperCase();
+
+    const head=document.getElementById("tableHead");
+    const body=document.getElementById("tableBody");
+
+    head.innerHTML="";
+    body.innerHTML="";
+
+    const thRank=document.createElement("th");
+    thRank.textContent="Rank";
+    head.appendChild(thRank);
+
+    const keys=[...new Set(entries.flatMap(e=>Object.keys(e)))];
+
+    keys.forEach(k=>{
+        const th=document.createElement("th");
+        th.textContent=k;
+        head.appendChild(th);
+    });
+
+    entries.forEach((entry,index)=>{
+
+        const tr=document.createElement("tr");
+
+        if(index===0) tr.classList.add("gold");
+        else if(index===1) tr.classList.add("silver");
+        else if(index===2) tr.classList.add("bronze");
+
+        let html=`<td><strong>#${index+1}</strong></td>`;
+
+        keys.forEach(k=>{
+            html+=`<td>${entry[k] ?? ""}</td>`;
+        });
+
+        tr.innerHTML=html;
+        body.appendChild(tr);
+    });
+}
+
+function searchPlayer(){
+
+    const query=document.getElementById("searchInput")
+        .value.trim().toLowerCase();
+
+    if(!query) return;
+
+    document.getElementById("leaderboardView").classList.add("hidden");
+    document.getElementById("searchView").classList.remove("hidden");
+
+    document.getElementById("searchTitle").textContent =
+        `Search Results: "${query}"`;
+
+    const body=document.getElementById("searchBody");
+    body.innerHTML="";
+
+    let found=0;
+
+    Object.entries(leaderboardData).forEach(([category,entries])=>{
+
+        if(category==="last_updated") return;
+
+        entries.forEach((entry,index)=>{
+
+            const values=Object.values(entry)
+                .map(v=>String(v).toLowerCase());
+
+            const match=values.some(v=>v.includes(query));
+
+            if(match){
+
+                found++;
+
+                const keys=Object.keys(entry);
+                const player=entry[keys[0]] ?? "";
+                const value=entry[keys[1]] ?? "";
+
+                const tr=document.createElement("tr");
+
+                if(index===0) tr.classList.add("gold");
+                else if(index===1) tr.classList.add("silver");
+                else if(index===2) tr.classList.add("bronze");
+
+                tr.innerHTML=`
+                    <td>${category.replace(/_/g," ").toUpperCase()}</td>
+                    <td>#${index+1}</td>
+                    <td>${player}</td>
+                    <td>${value}</td>
+                `;
+
+                body.appendChild(tr);
+            }
+        });
+    });
+
+    if(found===0){
+        body.innerHTML=`
+        <tr>
+            <td colspan="4" style="text-align:center;padding:30px;">
+                No player found.
+            </td>
+        </tr>`;
+    }
+}
 </script>
+
+</body>
+</html>
