@@ -2801,7 +2801,29 @@ function formatNumber(num) {
         li.appendChild(btn);
         statsWindow.appendChild(li);
     }
+// --- HOTKEY (FIXED + SAFE) ---
+(() => {
+    if (window.__sessionTrackerHotkeyInstalled) return;
+    window.__sessionTrackerHotkeyInstalled = true;
 
+    document.addEventListener('keydown', (e) => {
+        const key = e.code === 'KeyL';
+
+        if (e.ctrlKey && !e.shiftKey && !e.altKey && key) {
+            e.preventDefault();
+
+            const existing = document.querySelector('#winSessionTracker');
+
+            if (existing) {
+                existing.remove();
+            } else {
+                if (typeof createTrackerWindow === "function") {
+                    createTrackerWindow();
+                }
+            }
+        }
+    });
+})();
 })();
 //background Color
 
