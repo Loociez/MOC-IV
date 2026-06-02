@@ -216,9 +216,10 @@
                 </select>
 
                 <button id="moc-add-fav"
-                        style="width:100%; margin-top:6px; padding:4px; background:#30363d; color:#fff; border:1px solid #8b949e; border-radius:3px;">
-                    ★ Add Current Tileset
-                </button>
+        type="button"
+        style="width:100%; margin-top:6px; padding:4px; background:#30363d; color:#fff; border:1px solid #8b949e; border-radius:3px;">
+    ★ Add Current Tileset
+</button>
             </div>
 
             <div id="moc-resize"
