@@ -4,6 +4,7 @@
 // @version      1.0
 // @description  QoL improvements for Map Editor
 // @match        https://play.mirageonlineclassic.com/*
+// @match        https://mo.mirageonlineclassic.com/*
 // @match        https://play.consty.com/*
 // @grant        none
 // ==/UserScript==
@@ -220,6 +221,12 @@
         style="width:100%; margin-top:6px; padding:4px; background:#30363d; color:#fff; border:1px solid #8b949e; border-radius:3px;">
     ★ Add Current Tileset
 </button>
+
+<button id="moc-remove-fav"
+        type="button"
+        style="width:100%; margin-top:4px; padding:4px; background:#8b2d2d; color:#fff; border:1px solid #b84a4a; border-radius:3px;">
+    ✖ Remove Selected Favourite
+</button>
             </div>
 
             <div id="moc-resize"
@@ -255,29 +262,31 @@
     }
 
     function renderFavorites() {
-        const dropdown = document.getElementById('moc-favs');
-        if (!dropdown) return;
+    const dropdown = document.getElementById('moc-favs');
+    if (!dropdown) return;
 
-        dropdown.innerHTML = '<option value="">Select Favourite...</option>';
+    dropdown.innerHTML = '<option value="">Select Favourite...</option>';
 
-        const favs = JSON.parse(localStorage.getItem(STORAGE.FAVORITES) || '[]');
+    const favs = JSON.parse(localStorage.getItem(STORAGE.FAVORITES) || '[]');
 
-        favs.forEach(name => {
-            const opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
-            dropdown.appendChild(opt);
-        });
+    favs.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        dropdown.appendChild(opt);
+    });
 
-        dropdown.onchange = () => {
-            const select = getTilesetSelect();
-            if (!select || !dropdown.value) return;
+    dropdown.onchange = () => {
+        const select = getTilesetSelect();
+        if (!select || !dropdown.value) return;
 
-            select.value = dropdown.value;
-            select.dispatchEvent(new Event('change'));
-        };
+        select.value = dropdown.value;
+        select.dispatchEvent(new Event('change'));
+    };
 
-        document.getElementById('moc-add-fav')?.addEventListener('click', () => {
+    const addBtn = document.getElementById('moc-add-fav');
+    if (addBtn) {
+        addBtn.onclick = () => {
             const select = getTilesetSelect();
             if (!select) return;
 
@@ -289,8 +298,24 @@
                 localStorage.setItem(STORAGE.FAVORITES, JSON.stringify(favs));
                 renderFavorites();
             }
-        });
+        };
     }
+
+    const removeBtn = document.getElementById('moc-remove-fav');
+    if (removeBtn) {
+        removeBtn.onclick = () => {
+            if (!dropdown.value) return;
+
+            let favs = JSON.parse(localStorage.getItem(STORAGE.FAVORITES) || '[]');
+
+            favs = favs.filter(f => f !== dropdown.value);
+
+            localStorage.setItem(STORAGE.FAVORITES, JSON.stringify(favs));
+
+            renderFavorites();
+        };
+    }
+}
 
     /* ---------------- HOTKEYS ---------------- */
 
