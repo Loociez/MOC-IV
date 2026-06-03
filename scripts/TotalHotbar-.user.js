@@ -462,32 +462,88 @@
         });
     }, 120);
 
-    // ===========================
-    // MINION AUTO-DISMISS (unchanged)
-    // ===========================
-    (() => {
-        const observer = new MutationObserver(() => {
-            const popup = document.querySelector('#winPopup');
-            const title = document.querySelector('#txtPopupTitle');
-            if (
-                popup &&
-                popup.style.display !== 'none' &&
-                title?.textContent.trim() === 'Minion'
-            ) {
-                const buttons = popup.querySelectorAll('button');
-                const dismissBtn = [...buttons].find(btn =>
-                    btn.textContent.trim().toLowerCase().includes('dismiss')
-                );
-                if (dismissBtn) {
-                    dismissBtn.click();
-                    console.log('[autoDismissMinion] Dismiss button clicked.');
-                }
-            }
-        });
+// ===========================
+// MINION AUTO-DISMISS + CTRL INSPECT
+// ===========================
+(() => {
 
-        observer.observe(document.body, { childList: true, subtree: true });
-        console.log('[autoDismissMinion] Watching for Minion popup...');
-    })();
+    let inspectUntil = 0;
+
+   document.addEventListener("mousedown", (e) => {
+
+    // Ctrl + Left Click
+    if (e.button !== 0 || !e.ctrlKey) return;
+
+    inspectUntil = Date.now() + 1500;
+
+    console.log("[Minion] Inspect requested.");
+
+    // Stop the normal left-click selection
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target;
+
+    // Simulate a complete right-click
+    ["mousedown", "mouseup", "contextmenu"].forEach(type => {
+        target.dispatchEvent(new MouseEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            button: 2,
+            buttons: 2,
+            clientX: e.clientX,
+            clientY: e.clientY,
+            ctrlKey: true
+        }));
+    });
+
+}, true);
+
+    const observer = new MutationObserver(() => {
+
+        const popup = document.querySelector('#winPopup');
+        const title = document.querySelector('#txtPopupTitle');
+
+        if (
+            !popup ||
+            popup.style.display === 'none' ||
+            title?.textContent.trim() !== 'Minion'
+        ) {
+            return;
+        }
+
+        // CTRL+LEFT CLICK = KEEP OPEN
+        if (Date.now() < inspectUntil) {
+
+            popup.style.zIndex = "999999";
+
+            console.log("[Minion] Inspect mode active.");
+
+            return;
+        }
+
+        // NORMAL CLICK = DISMISS
+        const dismissBtn = [...popup.querySelectorAll('button')]
+            .find(btn =>
+                btn.textContent.trim().toLowerCase().includes('dismiss')
+            );
+
+        if (dismissBtn) {
+            dismissBtn.click();
+            console.log("[Minion] Auto dismissed.");
+        }
+
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    console.log('[Minion] Ctrl+LeftClick inspect enabled.');
+
+})();
 
     console.log("%cCanvas Hotbar Loaded (slow, visible green ripple)!", "color:#0f0");
 
