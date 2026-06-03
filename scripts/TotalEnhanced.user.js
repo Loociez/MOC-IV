@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TotalEnhanced for Mirage Online Classic
 // @namespace    http://tampermonkey.net/
-// @version      2025-12-04
+// @version      2026-06-03
 // @description  Enhanced modification tool for MoC!
 // @author       Loocie
 // @match        https://play.consty.com/
