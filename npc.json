@@ -47226,11 +47226,11 @@
     ]
   },
   {
-    "name": "",
+    "name": "Norax, Dark Warlock",
     "desc": "",
     "tag": "",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
@@ -47241,44 +47241,44 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 634,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 250,
+      "saturation": 4444,
+      "brightness": 80
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 1.2,
+    "color": "#5d0047",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 90,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
+    "attack_delay": 90,
+    "flee_threshold": 0,
+    "behavior": 1,
+    "targeting": 9,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 1,
-      "mp": 1,
-      "sp": 1
+      "hp": 60000,
+      "mp": 0,
+      "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 1000,
       "def": 0,
-      "rat": 0,
+      "rat": 1000,
       "rdf": 0,
-      "mat": 0,
+      "mat": 890,
       "mdf": 0
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 974,
+        "amount": 1,
+        "chance": 100
       },
       {
         "item_id": -1,
@@ -47286,7 +47286,7 @@
         "chance": 0
       },
       {
-        "item_id": -1,
+        "item_id": 329,
         "amount": 0,
         "chance": 0
       },
@@ -55747,19 +55747,19 @@
         "chance": 3
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
         "item_id": 794,
         "amount": 1,
-        "chance": 4
+        "chance": 9
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
       },
       {
         "item_id": -1,
@@ -55844,24 +55844,24 @@
     },
     "drop_items": [
       {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
+      },
+      {
         "item_id": 779,
         "amount": 1,
-        "chance": 4
+        "chance": 9
       },
       {
         "item_id": 783,
         "amount": 1,
-        "chance": 4
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
-      },
-      {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "chance": 9
       },
       {
         "item_id": -1,
@@ -56048,14 +56048,14 @@
     },
     "drop_items": [
       {
-        "item_id": 786,
-        "amount": 1,
-        "chance": 4
-      },
-      {
         "item_id": -1,
         "amount": 0,
         "chance": 0
+      },
+      {
+        "item_id": 786,
+        "amount": 1,
+        "chance": 9
       },
       {
         "item_id": -1,
@@ -56150,34 +56150,34 @@
     },
     "drop_items": [
       {
-        "item_id": 788,
-        "amount": 1,
-        "chance": 6
-      },
-      {
         "item_id": 789,
         "amount": 1,
-        "chance": 6
+        "chance": 15
       },
       {
         "item_id": 790,
         "amount": 1,
-        "chance": 6
+        "chance": 15
       },
       {
         "item_id": 791,
         "amount": 1,
-        "chance": 6
+        "chance": 15
+      },
+      {
+        "item_id": 792,
+        "amount": 1,
+        "chance": 15
+      },
+      {
+        "item_id": 788,
+        "amount": 1,
+        "chance": 15
       },
       {
         "item_id": -1,
         "amount": 0,
         "chance": 0
-      },
-      {
-        "item_id": 792,
-        "amount": 1,
-        "chance": 6
       },
       {
         "item_id": -1,
@@ -58700,14 +58700,14 @@
     },
     "drop_items": [
       {
-        "item_id": 885,
-        "amount": 1,
-        "chance": 2
-      },
-      {
         "item_id": -1,
         "amount": 0,
         "chance": 0
+      },
+      {
+        "item_id": 885,
+        "amount": 1,
+        "chance": 25
       },
       {
         "item_id": -1,
@@ -67472,9 +67472,9 @@
     },
     "drop_items": [
       {
-        "item_id": 734,
-        "amount": 1,
-        "chance": 1
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
       },
       {
         "item_id": 587,
@@ -67487,9 +67487,9 @@
         "chance": 2
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 734,
+        "amount": 1,
+        "chance": 15
       },
       {
         "item_id": -1,
@@ -69488,22 +69488,22 @@
     "color": "#ff66ff",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 80,
+    "move_delay": 70,
     "move_amount": 1,
-    "attack_delay": 80,
+    "attack_delay": 70,
     "flee_threshold": 0,
-    "behavior": 0,
-    "targeting": 0,
+    "behavior": 1,
+    "targeting": 8,
     "sight_range": 4,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 200000,
+      "hp": 300000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 2450,
+      "atk": 2700,
       "def": 100,
       "rat": 0,
       "rdf": 120,
@@ -69512,9 +69512,9 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 736,
+        "amount": 10,
+        "chance": 50
       },
       {
         "item_id": -1,
@@ -72828,11 +72828,11 @@
     ]
   },
   {
-    "name": "",
+    "name": "Corrupted Knight of Norax",
     "desc": "",
     "tag": "",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
@@ -72842,45 +72842,45 @@
     "kill_verb": "killed",
     "attack_sound_id": 1,
     "death_sound_id": 2,
-    "mapswitch_radius": 3,
-    "sprite": 0,
+    "mapswitch_radius": 0,
+    "sprite": 561,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 310,
+      "saturation": 4444,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
+    "color": "#1a1a00",
+    "spawn_delay": 7,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 80,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "flee_threshold": 1,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 16750,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 600,
+      "def": 65,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 65,
       "mat": 0,
-      "mdf": 0
+      "mdf": 65
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 348,
+        "amount": 1,
+        "chance": 15
       },
       {
         "item_id": -1,
@@ -72888,9 +72888,9 @@
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1244,
+        "amount": 1,
+        "chance": 15
       },
       {
         "item_id": -1,
@@ -73032,7 +73032,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Norax Gatekeeper",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -73047,38 +73047,38 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 639,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 1,
+      "saturation": 333,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
+    "color": "#31b9d2",
+    "spawn_delay": 6,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 90,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 80,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 12500,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 1000,
+      "def": 45,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 50,
       "mat": 0,
-      "mdf": 0
+      "mdf": 50
     },
     "drop_items": [
       {
@@ -73087,9 +73087,9 @@
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1059,
+        "amount": 1,
+        "chance": 100
       },
       {
         "item_id": -1,
@@ -73170,7 +73170,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 7800,
+      "hp": 7200,
       "mp": 0,
       "sp": 0
     },
@@ -73361,36 +73361,36 @@
       "brightness": 125
     },
     "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 30,
+    "color": "#002430",
+    "spawn_delay": 16,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 110,
     "move_amount": 1,
     "attack_delay": 90,
-    "flee_threshold": 15,
-    "behavior": 1,
+    "flee_threshold": 7,
+    "behavior": 0,
     "targeting": 0,
     "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 10000,
+      "hp": 8000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
       "atk": 500,
-      "def": 300,
+      "def": 250,
       "rat": 17500,
-      "rdf": 320,
+      "rdf": 300,
       "mat": 0,
-      "mdf": 320
+      "mdf": 300
     },
     "drop_items": [
       {
-        "item_id": 900,
-        "amount": 1,
-        "chance": 2
+        "item_id": -1,
+        "amount": 0,
+        "chance": 0
       },
       {
         "item_id": 736,
@@ -73398,9 +73398,9 @@
         "chance": 10
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 900,
+        "amount": 1,
+        "chance": 66
       },
       {
         "item_id": -1,
@@ -73542,7 +73542,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Bound Imp of Norax",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -73557,44 +73557,44 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 57,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 55,
+      "saturation": 111,
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
-    "spawn_delay": 1,
+    "color": "#ff6347",
+    "spawn_delay": 30,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
+    "flee_threshold": 0,
+    "behavior": 1,
+    "targeting": 7,
+    "sight_range": 12,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 3900,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
-      "rat": 0,
-      "rdf": 0,
-      "mat": 0,
-      "mdf": 0
+      "atk": 700,
+      "def": 35,
+      "rat": 1400,
+      "rdf": 45,
+      "mat": 650,
+      "mdf": 45
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1159,
+        "amount": 1,
+        "chance": 0.025
       },
       {
         "item_id": -1,
@@ -74970,7 +74970,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Bird",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -74981,37 +74981,37 @@
     "show_name": false,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "pecked",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 188,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 1.5,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
+    "move_delay": 75,
+    "move_amount": 4,
+    "attack_delay": 25,
+    "flee_threshold": 0,
+    "behavior": 1,
+    "targeting": 9,
+    "sight_range": 4,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 7500,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 500,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -77046,7 +77046,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 125000,
+      "hp": 110000,
       "mp": 0,
       "sp": 0
     },
@@ -102510,7 +102510,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "NPC 1",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -102525,33 +102525,33 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 518,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 90,
+      "saturation": 50,
       "brightness": 100
     },
     "scale": 1,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 85,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 50,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 2000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 800,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -102612,7 +102612,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "NPC 2",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -102627,10 +102627,10 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 576,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 270,
       "saturation": 100,
       "brightness": 100
     },
@@ -102638,22 +102638,22 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 70,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 10,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 2500,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 1200,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -102714,7 +102714,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "NPC 3",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -102729,33 +102729,33 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 578,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 271,
+      "saturation": 50,
+      "brightness": 200
     },
     "scale": 1,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 125,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 300,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 7500,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 2500,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -102816,7 +102816,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "NPC 4",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -102831,10 +102831,10 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 423,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
       "brightness": 100
     },
@@ -102844,20 +102844,20 @@
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
+    "attack_delay": 75,
+    "flee_threshold": 0,
+    "behavior": 1,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 2750,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 1400,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -102918,7 +102918,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "NPC 5",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -102933,33 +102933,33 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 210,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 90,
+      "saturation": 50,
       "brightness": 100
     },
     "scale": 1,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 80,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 33,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 2000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 600,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -118218,37 +118218,37 @@
     ]
   },
   {
-    "name": "",
+    "name": "Currimp",
     "desc": "",
-    "tag": "",
+    "tag": "🐶",
     "pursue_run": false,
     "equip_drops": false,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
-    "show_name": false,
+    "show_name": true,
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 57,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 55,
+      "saturation": 125,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.5,
+    "color": "#C0C0C0",
     "spawn_delay": 1,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 5,
     "targeting": 0,
     "sight_range": 1,
     "hostility_flags": -1,
