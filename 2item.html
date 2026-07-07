@@ -441,125 +441,103 @@ if (
 
             // ... rest of your code for stats, repair cost, uses, sell value, handedness, favorites, etc. ...
 
-           const dataCell = document.createElement('td');
-
-let stats = item.data
+            const dataCell = document.createElement('td');
+            let stats = item.data
     ? Object.entries(item.data).filter(([key]) => key !== 'recipe_items')
     : [];
 
-if (item.tile_range) stats.push(['tile range', item.tile_range]);
+            if (item.tile_range) stats.push(['tile range', item.tile_range]);
 
-const excludedKeys = [
-    "hue", "move", "spin", "alpha", "scale",
-    "sprite", "sprite rotation",
-    "brightness", "saturation", "damage stat"
-];
+            const excludedKeys = ["hue", "move", "spin", "alpha", "scale", "sprite", "sprite rotation", "brightness", "saturation", "damage stat"];
+            const groupedStats = {};
+            stats.forEach(([key, value]) => {
+                const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
+                if (excludedKeys.includes(normalizedKey) || key.startsWith('!')) return;
+                const match = key.match(/^(min|max)_(.+)$/);
+                if (match) {
+                    const [, bound, statName] = match;
+                    if (!groupedStats[statName]) groupedStats[statName] = {};
+                    groupedStats[statName][bound] = value;
+                } else {
+                    groupedStats[key] = value;
+                }
+            });
 
-const groupedStats = {};
+            let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
+                if (typeof value === 'object') {
+                    const min = value.min;
+                    const max = value.max;
+                    if (min !== undefined && max !== undefined) return `${key}: ${min} - ${max}`;
+                    else if (min !== undefined) return `${key} (min): ${min}`;
+                    else if (max !== undefined) return `${key} (max): ${max}`;
+                    else return `${key}: ?`;
+                }
+                return `${key.replace(/_/g, ' ')}: ${value}`;
+            });
 
-stats.forEach(([key, value]) => {
-    const normalizedKey = key.toLowerCase().replace(/_/g, ' ').trim();
+            // Spell Amp shortened display
+            const spellAmpLabels = {
+                "!bard_buff_uptime": "Bard Buff Uptime",
+                "!bard_buff_cost": "Bard Buff Cost",
+                "!jester_confuse_cost": "Jester Confuse Cost",
+                "!jester_playerconfuse_uptime": "Jester player uptime",
+                "!jester_npcconfuse_uptime": "Jester NPC Uptime",
+                "!cleric_petheal_amount": "Cleric Pet Heal",
+                "!cleric_petheal_cost": "Cleric Pet Heal Cost",
+                "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
+                "!dragoon_invisible_cost": "Dragoon Invis Cost",
+                "!warlock_npcaoe_damage": "Warlock NPC AoE",
+                "!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
+                "!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
+                "!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
+                "!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
+                "!warlock_npcaoe_cost": "Warlock NPC Cost Cast",
+                "!warlock_selfaoe_cost": "Warlock Self Cost Cast",
+                "!warlock_playeraoe_cost": "Warlock Opponent Cost Cast",
+                "!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
+                "!cleric_playerheal_amount": "Cleric Player Heal",
+                "!cleric_playerheal_cost": "Cleric Player Heal Cost",
+                "!cleric_allheal_cooldown": "Cleric Cooldown",
+                "!dragoon_playeraoe_damage": "Dragoon Player AoE",
+                "!warlock_playeraoe_damage": "Warlock Player AoE",
+                "!assassin_npcpoison_damage": "Assassin NPC Poison",
+                "!assassin_cloak_cost": "Assassin Cloak Cost",
+                "!assassins_npcpoison_ticks": "Assassin NPC Ticks",
+                "!assassins_playerpoison_ticks": "Assassin Player Ticks",
+                "!necromancer_minion_damage": "Necromancer Minion DMG",
+                "!necromancer_minion_hp": "Necroamncer Minion HP",
+                "!necromancer_minion_cost": "Necromancer Minion Cost",
+                "!necromancer_minion_cooldown": "Necromancer Minion Cooldown",
+                "!samurai_npcriposte_damage": "Samurai NPC Riposte",
+                "!samurai_riposte_cooldown": "Samurai Riposte cooldown",
+                "!samurai_riposte_cost": "Samurai Riposte Cost",
+                "!barbarian_alldamage_amount": "Barbarian All Damage",
+                "!marksman_npcshotgun_damage": "Marksman NPC Shotgun",
+                "!marksman_shotgun_cooldown": "Marksman Shotgun Cooldown",
+                "!assassin_playerpoison_damage": "Assassin Player Poison",
+                "!assassin_cloak_cooldown": "Assassin cloak cooldown",
+                "!samurai_playerriposte_damage": "Samurai Player Riposte",
+                "!marksman_playershotgun_damage": "Marksman Player Shotgun",
+                "!marksman_shotgun_cost": "Marksman Shotgun Cost",
+                "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
+                "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
+            };
 
-    if (excludedKeys.includes(normalizedKey) || key.startsWith('!')) return;
+            const spellAmpEntries = Object.entries(spellAmpLabels)
+                .filter(([key]) => item.data?.[key] !== undefined)
+                .map(([key, label]) => `${label}: ${item.data[key]}`);
 
-    const match = key.match(/^(min|max)_(.+)$/);
+            if (spellAmpEntries.length > 0) {
+                formattedLines.push("");
+                formattedLines.push("Spell Amp:");
+                formattedLines.push(...spellAmpEntries);
+            }
 
-    if (match) {
-        const [, bound, statName] = match;
+            const formattedData = formattedLines.join('\n');
 
-        if (!groupedStats[statName])
-            groupedStats[statName] = {};
-
-        groupedStats[statName][bound] = value;
-    } else {
-        groupedStats[key] = value;
-    }
-});
-
-let formattedLines = Object.entries(groupedStats).map(([key, value]) => {
-
-    if (typeof value === 'object') {
-
-        const min = value.min;
-        const max = value.max;
-
-        if (min !== undefined && max !== undefined)
-            return `${key}: ${min} - ${max}`;
-        else if (min !== undefined)
-            return `${key} (min): ${min}`;
-        else if (max !== undefined)
-            return `${key} (max): ${max}`;
-        else
-            return `${key}: ?`;
-    }
-
-    return `${key.replace(/_/g, ' ')}: ${value}`;
-});
-
-// Spell Amp shortened display
-const spellAmpLabels = {
-    "!bard_buff_uptime": "Bard Buff Uptime",
-    "!bard_buff_cost": "Bard Buff Cost",
-    "!jester_confuse_cost": "Jester Confuse Cost",
-    "!jester_playerconfuse_uptime": "Jester player uptime",
-    "!jester_npcconfuse_uptime": "Jester NPC Uptime",
-    "!cleric_petheal_amount": "Cleric Pet Heal",
-    "!cleric_petheal_cost": "Cleric Pet Heal Cost",
-    "!dragoon_npcaoe_damage": "Dragoon NPC AoE",
-    "!dragoon_invisible_cost": "Dragoon Invis Cost",
-    "!warlock_npcaoe_damage": "Warlock NPC AoE",
-    "!warlock_npcaoe_highercost": "Warlock NPC AoE Cost",
-    "!warlock_selfaoe_highercost": "Warlock Self AoE Cost",
-    "!warlock_playeraoe_highercost": "Warlock Player AoE Cost",
-    "!warlock_npcaoe_cooldown": "Warlock NPC Cooldown",
-    "!warlock_npcaoe_cost": "Warlock NPC Cost Cast",
-    "!warlock_selfaoe_cost": "Warlock Self Cost Cast",
-    "!warlock_playeraoe_cost": "Warlock Opponent Cost Cast",
-    "!warlock_playeraoe_cooldown": "Warlock Player Cooldown",
-    "!cleric_playerheal_amount": "Cleric Player Heal",
-    "!cleric_playerheal_cost": "Cleric Player Heal Cost",
-    "!cleric_allheal_cooldown": "Cleric Cooldown",
-    "!dragoon_playeraoe_damage": "Dragoon Player AoE",
-    "!warlock_playeraoe_damage": "Warlock Player AoE",
-    "!assassin_npcpoison_damage": "Assassin NPC Poison",
-    "!assassin_cloak_cost": "Assassin Cloak Cost",
-    "!assassins_npcpoison_ticks": "Assassin NPC Ticks",
-    "!assassins_playerpoison_ticks": "Assassin Player Ticks",
-    "!necromancer_minion_damage": "Necromancer Minion DMG",
-    "!necromancer_minion_hp": "Necromancer Minion HP",
-    "!necromancer_minion_cost": "Necromancer Minion Cost",
-    "!necromancer_minion_cooldown": "Necromancer Minion Cooldown",
-    "!samurai_npcriposte_damage": "Samurai NPC Riposte",
-    "!samurai_riposte_cooldown": "Samurai Riposte Cooldown",
-    "!samurai_riposte_cost": "Samurai Riposte Cost",
-    "!barbarian_alldamage_amount": "Barbarian All Damage",
-    "!marksman_npcshotgun_damage": "Marksman NPC Shotgun",
-    "!marksman_shotgun_cooldown": "Marksman Shotgun Cooldown",
-    "!assassin_playerpoison_damage": "Assassin Player Poison",
-    "!assassin_cloak_cooldown": "Assassin Cloak Cooldown",
-    "!samurai_playerriposte_damage": "Samurai Player Riposte",
-    "!marksman_playershotgun_damage": "Marksman Player Shotgun",
-    "!marksman_shotgun_cost": "Marksman Shotgun Cost",
-    "!vampire_npclifesteal_amount": "Vampire NPC Lifesteal",
-    "!vampire_playerlifesteal_amount": "Vampire Player Lifesteal"
-};
-
-const spellAmpEntries = Object.entries(spellAmpLabels)
-    .filter(([key]) => item.data?.[key] !== undefined)
-    .map(([key, label]) => `${label}: ${item.data[key]}`);
-
-if (spellAmpEntries.length > 0) {
-    formattedLines.push("");
-    formattedLines.push(...spellAmpEntries);
-}
-
-formattedLines.push("");
-formattedLines.push(`Droppable: ${item.death_drop ? "Yes" : "No"}`);
-formattedLines.push(`Item ID: ${index}`);
-
-dataCell.textContent = formattedLines.join('\n').trim() || 'No stats';
-dataCell.classList.add('data');
-row.appendChild(dataCell);
+            dataCell.textContent = formattedData.trim() || 'No stats';
+            dataCell.classList.add('data');
+            row.appendChild(dataCell);
 
             const repairCostCell = document.createElement('td');
             repairCostCell.textContent = item.repair_cost || 'No repair cost';
