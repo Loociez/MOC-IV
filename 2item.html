@@ -157,7 +157,15 @@ th {
 .theme-forest td {
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
+.data{
+    white-space: nowrap;
+    line-height: 1.4;
+}
 
+.data br{
+    display:block;
+    margin-bottom:2px;
+}
   </style>
 </head>
 <body class="theme-ocean">
@@ -533,11 +541,15 @@ if (
                 formattedLines.push(...spellAmpEntries);
             }
 
-            const formattedData = formattedLines.join('\n');
+            dataCell.innerHTML = formattedLines
+    .map(line => line === "" ? "<br>" : line)
+    .join("<br>");
 
-            dataCell.textContent = formattedData.trim() || 'No stats';
-            dataCell.classList.add('data');
-            row.appendChild(dataCell);
+dataCell.style.whiteSpace = "nowrap";
+dataCell.style.lineHeight = "1.4";
+dataCell.classList.add("data");
+
+row.appendChild(dataCell);
 
             const repairCostCell = document.createElement('td');
             repairCostCell.textContent = item.repair_cost || 'No repair cost';
