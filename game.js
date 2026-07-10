@@ -98,9 +98,13 @@ let waitingForNextFight = false;
 /* =========================
    BOUNDS
 ========================= */
+// FIX (bounds mismatch): these now match the actual physics walls in
+// fighter.js (previously fighter.js silently ignored this object and
+// used its own hardcoded 40/760, so AI scripts were reacting to walls
+// 10px off from where they really were).
 const bounds = {
-  left: 50,
-  right: 750
+  left: 40,
+  right: 760
 };
 
 /* =========================

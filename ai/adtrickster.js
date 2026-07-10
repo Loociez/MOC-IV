@@ -1,31 +1,67 @@
 export const name = "Adaptive Trickster";
-export const characterIndex = 11;     // 👈 specific character slot
-export const spriteSheetIndex = 4;   // 👈 specific sheet (optional)
+export const characterIndex = 11;    // specific character slot
+export const spriteSheetIndex = 4;   // specific sheet
 
 const memory = new WeakMap();
 
 function getMem(self) {
   if (!memory.has(self)) {
     memory.set(self, {
-      unpredictability: 0.7
+      unpredictability: 0.7,
+      feintTimer: 0,
+      tauntCooldown: 0
     });
   }
   return memory.get(self);
 }
 
-export default function ADtrickster(self, opponent) {
+function taunt(msg, mem) {
+  mem.tauntCooldown = 110;
+  if (window.pushFightLog) window.pushFightLog(msg, "system");
+}
+
+export default function ADtrickster(self, opponent, bounds) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);
 
   const mem = getMem(self);
+  if (mem.tauntCooldown > 0) mem.tauntCooldown--;
+  if (mem.feintTimer > 0) mem.feintTimer--;
 
   if (self.hitstun > 0 || self.hitStop > 0) return 'idle';
 
-  if (self.x <= 50) return 'moveRight';
-  if (self.x >= 750) return 'moveLeft';
+  const left = bounds?.left ?? 40;
+  const right = bounds?.right ?? 760;
+  if (self.x <= left) return 'moveRight';
+  if (self.x >= right) return 'moveLeft';
 
-  // RANDOM CHAOS FACTOR
-  if (Math.random() < mem.unpredictability * 0.2) {
+  // Reads the opponent: block a lot -> lean harder into mixups/teleports
+  // to punish that habit instead of just rolling dice blindly.
+  const opponentTurtling = opponent.isBlocking;
+  const chaosChance = mem.unpredictability * (opponentTurtling ? 0.3 : 0.18);
+
+  // FEINT: fake a retreat, then reverse into a punish. This is a
+  // deliberate signature move rather than noise - it only fires when
+  // actually close enough for it to mean something.
+  if (mem.feintTimer === 0 && absDist < 120 && self.cooldown === 0 && Math.random() < 0.12) {
+    mem.feintTimer = 18;
+    if (mem.tauntCooldown === 0 && Math.random() < 0.4) {
+      taunt(`${self.name} backs off... is it a trap?`, mem);
+    }
+    return dist > 0 ? 'moveLeft' : 'moveRight'; // step away from opponent
+  }
+  if (mem.feintTimer > 10) {
+    // still retreating
+    return dist > 0 ? 'moveLeft' : 'moveRight';
+  }
+  if (mem.feintTimer > 0 && mem.feintTimer <= 10 && self.cooldown === 0) {
+    // snap back in for the punish
+    if (Math.random() < 0.5) return 'shadowStep';
+    return 'dash';
+  }
+
+  // RANDOM CHAOS FACTOR (reduced, and reactive to opponent behavior above)
+  if (Math.random() < chaosChance) {
     const randomMoves = ['dash', 'teleport', 'jump', 'block'];
     return randomMoves[Math.floor(Math.random() * randomMoves.length)];
   }
@@ -43,7 +79,7 @@ export default function ADtrickster(self, opponent) {
 
     if (Math.random() < 0.4) return 'teleport';
 
-    return 'moveRight';
+    return dist > 0 ? 'moveRight' : 'moveLeft';
   }
 
   // MID RANGE = CONFUSE ENEMY

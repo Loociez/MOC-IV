@@ -1,6 +1,6 @@
 export const name = "Adaptive Berserker";
-export const characterIndex = 6;     // 👈 specific character slot
-export const spriteSheetIndex = 3;   // 👈 specific sheet (optional)
+export const characterIndex = 6;     // specific character slot
+export const spriteSheetIndex = 3;   // specific sheet
 
 const memory = new WeakMap();
 
@@ -8,34 +8,46 @@ function getMem(self) {
   if (!memory.has(self)) {
     memory.set(self, {
       aggression: 0.7,
-      rage: 0
+      rage: 0,
+      tauntCooldown: 0,
+      wasLowHp: false
     });
   }
   return memory.get(self);
 }
 
-export default function berserker(self, opponent) {
+function taunt(msg, mem) {
+  mem.tauntCooldown = 100;
+  if (window.pushFightLog) window.pushFightLog(msg, "system");
+}
+
+export default function berserker(self, opponent, bounds) {
   const dist = opponent.x - self.x;
   const absDist = Math.abs(dist);
 
   const mem = getMem(self);
+  if (mem.tauntCooldown > 0) mem.tauntCooldown--;
 
   const lowHp = self.hp < self.maxHp * 0.4;
   const hasAdvantage = self.hp > opponent.hp;
 
-  // build rage over time or when hurt
   if (lowHp) mem.rage = Math.min(1, mem.rage + 0.05);
   else mem.rage = Math.max(0, mem.rage - 0.02);
 
   if (hasAdvantage) mem.aggression = Math.min(1, mem.aggression + 0.02);
+  else mem.aggression = Math.max(0.4, mem.aggression - 0.01);
 
-  // safety
-  if (self.hitstun > 0 || self.hitStop > 0) return 'idle';
+  if (lowHp && !mem.wasLowHp && mem.tauntCooldown === 0) {
+    taunt(`${self.name} is bleeding out and getting angrier!`, mem);
+  }
+  mem.wasLowHp = lowHp;
 
-  if (self.x <= 50) return 'moveRight';
-  if (self.x >= 750) return 'moveLeft';
+  const left = bounds?.left ?? 40;
+  const right = bounds?.right ?? 760;
 
-  // CLOSE RANGE = CHAOS
+  if (self.x <= left) return 'moveRight';
+  if (self.x >= right) return 'moveLeft';
+
   if (absDist < 90) {
     if (self.cooldown === 0) {
       const r = Math.random();
@@ -43,26 +55,27 @@ export default function berserker(self, opponent) {
       if (r < 0.4 + mem.rage * 0.3) return 'attack';
       if (r < 0.6) return 'groundSlam';
       if (r < 0.75) return 'dash';
-      if (r < 0.9) return 'rageMode';
+      if (r < 0.85 && mem.rage > 0.6 && mem.tauntCooldown === 0) {
+        taunt(`${self.name} enters a berserker rage!`, mem);
+        return 'rageMode';
+      }
     }
 
     if (Math.random() < 0.3) return 'teleport';
 
-    return 'moveRight';
+    return dist > 0 ? 'moveRight' : 'moveLeft';
   }
 
-  // MID RANGE = FORCE ENGAGE
   if (absDist < 200) {
     if (self.cooldown === 0) {
       if (Math.random() < 0.5) return 'dash';
-      if (Math.random() < 0.7) return 'rageMode';
+      if (Math.random() < 0.2 && mem.rage > 0.5) return 'rageMode';
       return 'shoot';
     }
 
     return dist > 0 ? 'moveRight' : 'moveLeft';
   }
 
-  // LONG RANGE = CLOSE GAP FAST
   if (self.cooldown === 0 && Math.random() < 0.6) return 'dash';
   if (Math.random() < 0.3) return 'teleport';
 

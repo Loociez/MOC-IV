@@ -15,6 +15,11 @@ export class Fighter {
     this.cooldown = 0;
     this.botLogic = botLogic;
 
+    // Frames during which the AI is not consulted for a new decision
+    // (covers dash/special/teleport windup so moves can't be interrupted
+    // or double-triggered mid-animation).
+    this.actionLockTimer = 0;
+
     this.character = character;
 
     this.action = 'idle';
@@ -54,6 +59,10 @@ export class Fighter {
     this.slamWaves = [];
     this.healFX = [];
     this.shieldTimer = 0;
+    this.rageBuffTimer = 0;
+    this.slowTimer = 0;
+    this.poisonTicksLeft = 0;
+    this.poisonTickTimer = 0;
     this.energyWaves = [];
 	
 	// ===== UNIQUE ABILITY FX PALETTES =====
@@ -268,7 +277,7 @@ if (finalDmg >= 8) {
      UPDATE
   ========================= */
 
-  update(opponent) {
+  update(opponent, bounds) {
     if (!this.ready) return;
 
     if (this.hitStop > 0) {
@@ -284,13 +293,35 @@ if (finalDmg >= 8) {
     if (this.cooldown > 0) this.cooldown--;
 
     if (this.shieldTimer > 0) this.shieldTimer--;
+    if (this.rageBuffTimer > 0) this.rageBuffTimer--;
+    if (this.slowTimer > 0) this.slowTimer--;
+
+    // FIX: poisonCloud used to apply nothing. Now it's a real
+    // damage-over-time tick, ~1 tick every 20 frames while stacks remain.
+    if (this.poisonTicksLeft > 0) {
+      this.poisonTickTimer++;
+      if (this.poisonTickTimer >= 20) {
+        this.poisonTickTimer = 0;
+        this.poisonTicksLeft--;
+        const tickDmg = 2 + Math.floor(Math.random() * 3);
+        this.takeDamage(tickDmg);
+        this.showDamage(tickDmg, 'rgba(0,255,100,0.9)');
+      }
+    }
+
+    if (this.actionLockTimer > 0) this.actionLockTimer--;
 
     this.auraPulse += 0.05;
 
+    // FIX: previously checked this.action for 'dash'/'special', but those
+    // cases actually set this.action to 'run'/'attack', so the guard never
+    // caught them and AI could spam re-decisions mid-move. Now uses a real
+    // timer set explicitly by the moves that need a committed window.
     if (
   this.hitstun === 0 &&
   this.juggleCount < 4 && // STOP AIR LOCK COMBOS
-  !['attack', 'special', 'dash'].includes(this.action)
+  this.actionLockTimer === 0 &&
+  this.action !== 'attack'
 ) {
   const action = this.botLogic(this, opponent);
   this.handleAction(action, opponent);
@@ -300,7 +331,11 @@ if (finalDmg >= 8) {
 // PHYSICS (SAFE ARENA CONTAINMENT FIX)
 // =========================
 
-this.x += this.vx;
+// FIX: timeSlow used to set slowTimer but nothing ever read it. Now a
+// slowed fighter actually moves at reduced speed while it's active.
+const slowFactor = this.slowTimer > 0 ? 0.4 : 1;
+
+this.x += this.vx * slowFactor;
 this.y += this.vy;
 
 // =========================
@@ -323,8 +358,20 @@ this.vy = Math.max(-MAX_VY, Math.min(MAX_VY, this.vy));
 // -------------------------
 const ground = 395;
 const ceiling = 0;
-const stageLeft = 40;
-const stageRight = 760;
+// FIX (bounds mismatch): game.js hands AI scripts a `bounds` object
+// (self.x <= bounds.left / >= bounds.right checks live in every AI file)
+// but this physics code used to hardcode its own different numbers
+// (40/760), so the walls the AI "saw" weren't the walls that actually
+// stopped it. Now both read from the same object, with these as a
+// fallback only if none is passed in.
+const stageLeft = bounds?.left ?? 40;
+const stageRight = bounds?.right ?? 760;
+
+// Stash so handleAction() (called earlier this same tick, before these
+// consts existed) and ability moves like teleport/shadowStep can clamp
+// against the exact same walls instead of their own hardcoded numbers.
+this.arenaLeft = stageLeft;
+this.arenaRight = stageRight;
 
 // -------------------------
 // FLOOR (GROUND LOCK)
@@ -403,7 +450,8 @@ if (this.x >= stageRight) {
       const dist = Math.abs(this.x - opponent.x);
 
       if (dist <= this.attackRange) {
-        const dmg = 5 + Math.floor(Math.random() * 6);
+        const rageMult = this.rageBuffTimer > 0 ? 1.4 : 1;
+        const dmg = Math.floor((5 + Math.floor(Math.random() * 6)) * rageMult);
         const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
 
         opponent.takeDamage(finalDmg);
@@ -522,7 +570,29 @@ this.beamEffects = this.beamEffects.filter(b => --b.life > 0);
 this.teleportFX = this.teleportFX.filter(t => --t.life > 0);
 this.slamWaves = this.slamWaves.filter(s => --s.life > 0);
 this.healFX = this.healFX.filter(h => --h.life > 0);
-this.energyWaves = this.energyWaves.filter(e => --e.life > 0);
+
+// FIX: energyWave used to only move/decay inside draw() (wrong place -
+// rendering code shouldn't be the thing driving gameplay state) and had
+// no collision check at all, so it could never actually hit anyone. Now
+// it moves and checks for a hit here in update(), same as everything
+// else that affects game state.
+this.energyWaves.forEach(e => {
+  if (!e.active || e.hasHit) return;
+  e.x += e.speed;
+
+  const hit = Math.abs(e.x - opponent.x) < 24 && Math.abs(e.y - opponent.y) < 40;
+  if (hit) {
+    const dmg = 5 + Math.floor(Math.random() * 5);
+    const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.35) : dmg;
+    opponent.takeDamage(finalDmg);
+    opponent.hitstun = opponent.isBlocking ? 5 : 12;
+    opponent.createHitSparks(opponent.x, opponent.y - 20, 'rgba(0,200,255,0.9)');
+    opponent.showDamage(finalDmg);
+    e.hasHit = true;
+    e.active = false;
+  }
+});
+this.energyWaves = this.energyWaves.filter(e => e.active && --e.life > 0);
 
 // NEW FX CLEANUP
 this.voidWallFX = this.voidWallFX?.filter(v => --v.life > 0) || [];
@@ -549,26 +619,39 @@ if (this.voidWallActive) {
 handleAction(action, opponent) {
   if (this.hitstun > 0) return;
 
+  // FIX ("can't be attacked" bug): isBlocking used to only get cleared by
+  // moveLeft/moveRight, so any AI that called 'block' once stayed
+  // heavily damage-reduced forever after, even mid-attack. Now every
+  // action starts by clearing it, and only 'block' turns it back on.
+  if (action !== 'block') {
+    this.isBlocking = false;
+  }
+
   switch (action) {
 
     case 'moveLeft':
       this.vx = -2;
       this.action = 'run';
-      this.isBlocking = false;
       break;
 
     case 'moveRight':
       this.vx = 2;
       this.action = 'run';
-      this.isBlocking = false;
       break;
 
     case 'attack':
       if (this.cooldown === 0) {
         this.action = 'attack';
         this.frame = 0;
-        this.cooldown = 30;
+        this.cooldown = this.rageBuffTimer > 0 ? 18 : 30; // rage = faster swings too
         this.attackHasHit = false;
+      } else {
+        // FIX (AI "freeze" bug): requesting an attack while on cooldown
+        // used to do nothing at all, so fighters could stand frozen in
+        // place for the whole cooldown window. Now they at least keep
+        // stepping toward their opponent so they stay dynamic.
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
       }
       break;
 
@@ -576,6 +659,9 @@ handleAction(action, opponent) {
       if (this.cooldown === 0) {
         this.shootProjectile(opponent.x, opponent.y);
         this.cooldown = 50;
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
       }
       break;
 
@@ -595,6 +681,7 @@ handleAction(action, opponent) {
     case 'dash':
       this.vx = this.facing === 'right' ? 6 : -6;
       this.action = 'run';
+      this.actionLockTimer = 8;
 
       this.dashTrail = this.dashTrail || [];
       this.dashTrail.push({ x: this.x, y: this.y, life: 10 });
@@ -605,68 +692,134 @@ handleAction(action, opponent) {
     ========================= */
 
     case 'teleport':
-      this.x += this.facing === 'right' ? 80 : -80;
+      // FIX (leaving-arena bug): this used to move the fighter +/-80px
+      // with no bounds clamp and no relation to the opponent, so it could
+      // fling a fighter to a nonsensical spot right at (or past) a wall.
+      // Now it's clamped like shadowStep, and always repositions relative
+      // to the opponent so it reads as an intentional reposition rather
+      // than a random glitch.
+      {
+        const side = this.x < opponent.x ? -1 : 1; // land on our own side
+        const targetX = opponent.x + side * 80;
+        const left = this.arenaLeft ?? 40;
+        const right = this.arenaRight ?? 760;
+        this.x = Math.max(left, Math.min(right, targetX));
+      }
+      this.actionLockTimer = 6;
 
       this.teleportFX = this.teleportFX || [];
       this.teleportFX.push({ x: this.x, y: this.y, life: 10 });
       break;
 
     case 'groundSlam':
-      this.slamWaves = this.slamWaves || [];
-      this.slamWaves.push({ x: this.x, y: this.y, life: 15 });
+      // FIX: this used to have zero mechanical effect and no range/cooldown
+      // gate - it could hitstun/launch an opponent from anywhere on the
+      // stage for free, every single frame it was requested. Now it's a
+      // real close-range AOE attack that only lands (and only knocks up)
+      // if the opponent is actually close enough, and it costs a cooldown
+      // like every other attack.
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 45;
 
-      opponent.hitstun = 10;
-      opponent.vy = -6;
+        this.slamWaves = this.slamWaves || [];
+        this.slamWaves.push({ x: this.x, y: this.y, life: 15 });
+
+        const slamDist = Math.abs(this.x - opponent.x);
+        if (slamDist <= 100) {
+          const dmg = 7 + Math.floor(Math.random() * 6);
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.hitstun = opponent.isBlocking ? 6 : 10;
+          opponent.vy = -6;
+          opponent.createHitSparks(opponent.x, opponent.y - 20, 'orange');
+          opponent.showDamage(finalDmg);
+          window.effects?.shake();
+          window.effects?.flash();
+        }
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
+      }
       break;
 
     case 'healPulse':
-  this.healFX = this.healFX || [];
+      // FIX: this never actually restored HP (FX only), and had no
+      // cooldown, so an AI could "heal" every frame for a purely cosmetic
+      // green glow while taking real damage. Now it heals a real amount
+      // and is gated behind a meaningful cooldown so it's a genuine
+      // tactical choice rather than free decoration.
+      if (this.cooldown === 0) {
+        this.cooldown = 90;
+        const healAmount = 15 + Math.floor(Math.random() * 11);
+        this.hp = Math.min(this.maxHp, this.hp + healAmount);
 
-  this.healFX.push({
-    x: this.x,
-    y: this.y,
-    life: 40,
-    radius: 5
-  });
+        this.healFX = this.healFX || [];
+        this.healFX.push({
+          x: this.x,
+          y: this.y,
+          life: 40,
+          radius: 5
+        });
 
-  this.hitSparks.push({
-    x: this.x,
-    y: this.y,
-    vx: 0,
-    vy: -2,
-    life: 20,
-    color: 'lime'
-  });
-  break;
+        this.hitSparks.push({
+          x: this.x,
+          y: this.y,
+          vx: 0,
+          vy: -2,
+          life: 20,
+          color: 'lime'
+        });
+
+        this.floatingText = { text: `+${healAmount}`, color: 'lime', timer: 30, yOffset: 0 };
+      }
+      break;
 
     case 'shield':
       this.shieldTimer = 60;
       break;
 
     case 'energyWave':
-      this.energyWaves = this.energyWaves || [];
-      this.energyWaves.push({
-        x: this.x,
-        y: this.y,
-        speed: 6,
-        life: 60,
-        active: true
-      });
+      // FIX: this used to spawn a rectangle that visually "traveled" but
+      // could never actually hit anyone (no collision check existed
+      // anywhere), and had no cooldown so it could be spammed every frame.
+      // Collision + damage now happens in update() (see energyWaves loop).
+      if (this.cooldown === 0) {
+        this.cooldown = 45;
+        this.energyWaves = this.energyWaves || [];
+        this.energyWaves.push({
+          x: this.x,
+          y: this.y - 20,
+          speed: (this.facing === 'right' ? 6 : -6),
+          life: 60,
+          active: true,
+          hasHit: false
+        });
+      }
       break;
 
      case 'special':
-      this.action = 'attack';
-      this.cooldown = 70;
-      this.shootProjectile(opponent.x, opponent.y);
+      // FIX: this never actually checked cooldown, so an AI that forgot
+      // to gate its own 'special' call could refire it as soon as the
+      // brief attack-animation lock cleared, ignoring the 70-frame
+      // cooldown entirely.
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 70;
+        this.shootProjectile(opponent.x, opponent.y);
 
-      this.beamEffects = this.beamEffects || [];
-      this.beamEffects.push({
-        x: this.x - 0,
-        y: this.y - 0,
-        tx: opponent.x,
-        ty: opponent.y,
-        life: 10
-      });
+        this.beamEffects = this.beamEffects || [];
+        this.beamEffects.push({
+          x: this.x - 0,
+          y: this.y - 0,
+          tx: opponent.x,
+          ty: opponent.y,
+          life: 10
+        });
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
+      }
       break;
 
     /* =========================
@@ -674,64 +827,97 @@ handleAction(action, opponent) {
     ========================= */
 
     case 'uppercut':
-  this.hitEffects = this.hitEffects || [];
-  this.hitEffects.push({
-    x: opponent.x,
-    y: opponent.y,
-    life: 12,
-    type: 'uppercut'
-  });
+      // FIX: used to be FX-only with no damage, no launch, no range check,
+      // and no cooldown - a free, infinitely-spammable no-op. Now it's a
+      // real close-range launcher.
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 40;
 
-  this.hitSparks.push({
-    x: opponent.x,
-    y: opponent.y,
-    vx: 0,
-    vy: -4,
-    life: 15,
-    color: 'white'
-  });
-  break;
+        this.hitEffects = this.hitEffects || [];
+        this.hitEffects.push({ x: opponent.x, y: opponent.y, life: 12, type: 'uppercut' });
+
+        const upDist = Math.abs(this.x - opponent.x);
+        if (upDist <= 80) {
+          const dmg = 9 + Math.floor(Math.random() * 7);
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.vy = -9; // real launch, unlike before
+          opponent.hitstun = opponent.isBlocking ? 8 : 16;
+          opponent.juggleCount = (opponent.juggleCount || 0) + 1;
+
+          this.hitSparks.push({ x: opponent.x, y: opponent.y, vx: 0, vy: -4, life: 15, color: 'white' });
+          opponent.showDamage(finalDmg);
+          window.effects?.shake();
+          window.effects?.flash();
+        }
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
+      }
+      break;
 
     case 'fireNova':
-  this.novaFX = this.novaFX || [];
-  this.novaFX.push({
-    x: this.x,
-    y: this.y,
-    radius: 0,
-    life: 25,
-    pulse: 0
-  });
+      // FIX: FX-only before - a fire "nova" that burned nobody. Now it's
+      // a real close-range AOE burst.
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 55;
 
-  this.hitSparks.push({
-    x: this.x,
-    y: this.y,
-    vx: 0,
-    vy: 0,
-    life: 20,
-    color: 'orange'
-  });
-  break;
+        this.novaFX = this.novaFX || [];
+        this.novaFX.push({ x: this.x, y: this.y, radius: 0, life: 25, pulse: 0 });
+        this.hitSparks.push({ x: this.x, y: this.y, vx: 0, vy: 0, life: 20, color: 'orange' });
+
+        const novaDist = Math.abs(this.x - opponent.x);
+        if (novaDist <= 110) {
+          const dmg = 8 + Math.floor(Math.random() * 7);
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.hitstun = opponent.isBlocking ? 6 : 12;
+          opponent.vx = this.x < opponent.x ? 4 : -4;
+          opponent.createHitSparks(opponent.x, opponent.y - 20, 'orange');
+          opponent.showDamage(finalDmg);
+          window.effects?.shake();
+          window.effects?.flash();
+        }
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
+      }
+      break;
 
     case 'iceTrap':
-  this.iceFX = this.iceFX || [];
-  this.iceFX.push({
-    x: opponent.x,
-    y: opponent.y,
-    life: 40
-  });
+      // FIX: FX-only before - "trapped" nobody and never slowed anything.
+      // Now it deals a modest hit and applies a real, extended freeze
+      // (long hitstun) so it reads as actual crowd control.
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 60;
 
-  // frozen shard burst
-  for (let i = 0; i < 6; i++) {
-    this.hitSparks.push({
-      x: opponent.x,
-      y: opponent.y,
-      vx: (Math.random() - 0.5) * 2,
-      vy: (Math.random() - 0.5) * 2,
-      life: 25,
-      color: 'cyan'
-    });
-  }
-  break;
+        this.iceFX = this.iceFX || [];
+        this.iceFX.push({ x: opponent.x, y: opponent.y, life: 40 });
+        for (let i = 0; i < 6; i++) {
+          this.hitSparks.push({
+            x: opponent.x, y: opponent.y,
+            vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2,
+            life: 25, color: 'cyan'
+          });
+        }
+
+        const iceDist = Math.abs(this.x - opponent.x);
+        if (iceDist <= 150) {
+          const dmg = 4 + Math.floor(Math.random() * 5);
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.hitstun = opponent.isBlocking ? 10 : 24; // the "freeze"
+          opponent.vx *= 0.2;
+          opponent.showDamage(finalDmg, 'cyan');
+        }
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
+      }
+      break;
 
    case 'shadowStep':
 
@@ -751,7 +937,7 @@ handleAction(action, opponent) {
 
   const newX = opponent.x + (this.facing === 'right' ? -60 : 60);
 
-  this.x = Math.max(40, Math.min(760, newX));
+  this.x = Math.max(this.arenaLeft ?? 40, Math.min(this.arenaRight ?? 760, newX));
 
   this.teleportFX.push({
     x: this.x,
@@ -767,28 +953,27 @@ handleAction(action, opponent) {
   break;
 
     case 'rageMode':
-  this.rageFX = this.rageFX || [];
+      // FIX: this used to be a pure light-show with no gameplay effect and
+      // no cooldown, so it could be re-triggered every frame for free.
+      // Now it grants a real, temporary damage/speed buff (read by the
+      // 'attack' case below) and costs a real cooldown.
+      if (this.cooldown === 0) {
+        this.cooldown = 180;
+        this.rageBuffTimer = 240; // ~4s of buffed attacks
 
-  this.rageFX.push({
-    x: this.x,
-    y: this.y,
-    life: 80,
-    pulse: 0
-  });
+        this.rageFX = this.rageFX || [];
+        this.rageFX.push({ x: this.x, y: this.y, life: 80, pulse: 0 });
 
-  // explosion aura burst
-  for (let i = 0; i < 12; i++) {
-    this.hitSparks.push({
-      x: this.x,
-      y: this.y,
-      vx: (Math.random() - 0.5) * 8,
-      vy: (Math.random() - 0.5) * 8,
-      life: 30,
-      color: 'red'
-    });
-  }
-  break;
-  
+        for (let i = 0; i < 12; i++) {
+          this.hitSparks.push({
+            x: this.x, y: this.y,
+            vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8,
+            life: 30, color: 'red'
+          });
+        }
+      }
+      break;
+
   case 'voidWall':
       this.voidWallActive = true;
       this.voidWallTimer = 60;
@@ -810,57 +995,98 @@ handleAction(action, opponent) {
       break;
 
     case 'lightningStrike':
-      this.lightningFX = this.lightningFX || [];
-      this.lightningFX.push({
-        x: opponent.x,
-        y: opponent.y - 80,
-        life: 10
-      });
+      // FIX: FX + hitstun only, no damage, no cooldown, no range check -
+      // a free stun from anywhere on the stage.
+      if (this.cooldown === 0) {
+        this.cooldown = 65;
+        this.lightningFX = this.lightningFX || [];
+        this.lightningFX.push({ x: opponent.x, y: opponent.y - 80, life: 10 });
 
-      opponent.hitstun = 8;
+        const boltDist = Math.abs(this.x - opponent.x);
+        if (boltDist <= 300) {
+          const dmg = 6 + Math.floor(Math.random() * 6);
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.hitstun = opponent.isBlocking ? 5 : 8;
+          opponent.showDamage(finalDmg, 'yellow');
+        }
+      }
       break;
 
     case 'windPush':
-      this.windFX = this.windFX || [];
-      this.windFX.push({
-        x: this.x,
-        y: this.y,
-        life: 20
-      });
+      // FIX: knockback + hitstun applied unconditionally with no range
+      // check or cooldown; kept the push utility but added a small real
+      // hit and gating so it's a genuine close-range tool.
+      if (this.cooldown === 0) {
+        this.cooldown = 40;
+        this.windFX = this.windFX || [];
+        this.windFX.push({ x: this.x, y: this.y, life: 20 });
 
-      opponent.vx += this.facing === 'right' ? 5 : -5;
-      opponent.hitstun = 5;
+        const pushDist = Math.abs(this.x - opponent.x);
+        if (pushDist <= 120) {
+          const dmg = 3 + Math.floor(Math.random() * 4);
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.vx += this.facing === 'right' ? 5 : -5;
+          opponent.hitstun = opponent.isBlocking ? 4 : 5;
+          opponent.showDamage(finalDmg);
+        }
+      }
       break;
 
     case 'poisonCloud':
-      this.poisonFX = this.poisonFX || [];
-      this.poisonFX.push({
-        x: opponent.x,
-        y: opponent.y,
-        life: 80
-      });
+      // FIX: this created a visual cloud that never damaged anyone. Now
+      // it applies a real damage-over-time stack (ticked in update()).
+      if (this.cooldown === 0) {
+        const poisonDist = Math.abs(this.x - opponent.x);
+        if (poisonDist <= 140) {
+          this.cooldown = 90;
+          this.poisonFX = this.poisonFX || [];
+          this.poisonFX.push({ x: opponent.x, y: opponent.y, life: 80 });
+          opponent.poisonTicksLeft = (opponent.poisonTicksLeft || 0) + 5;
+          opponent.poisonTickTimer = opponent.poisonTickTimer || 0;
+        }
+      }
       break;
 
     case 'bladeDance':
-      this.bladeFX = this.bladeFX || [];
-      for (let i = 0; i < 3; i++) {
-        this.bladeFX.push({
-          x: opponent.x + (Math.random() * 20 - 10),
-          y: opponent.y + (Math.random() * 20 - 10),
-          life: 10
-        });
+      // FIX: FX + hitstun only, no damage, no cooldown, no range check.
+      if (this.cooldown === 0) {
+        this.action = 'attack';
+        this.cooldown = 50;
+        this.bladeFX = this.bladeFX || [];
+        for (let i = 0; i < 3; i++) {
+          this.bladeFX.push({
+            x: opponent.x + (Math.random() * 20 - 10),
+            y: opponent.y + (Math.random() * 20 - 10),
+            life: 10
+          });
+        }
+
+        const bladeDist = Math.abs(this.x - opponent.x);
+        if (bladeDist <= 95) {
+          const dmg = 9 + Math.floor(Math.random() * 8); // multi-hit flurry, hits hard
+          const finalDmg = opponent.isBlocking ? Math.floor(dmg * 0.4) : dmg;
+          opponent.takeDamage(finalDmg);
+          opponent.hitstun = opponent.isBlocking ? 6 : 12;
+          opponent.showDamage(finalDmg);
+        }
+      } else {
+        this.vx = this.x < opponent.x ? 1.2 : -1.2;
+        this.action = 'run';
       }
-      opponent.hitstun = 6;
       break;
 
     case 'timeSlow':
-      this.timeFX = this.timeFX || [];
-      this.timeFX.push({
-        x: this.x,
-        y: this.y,
-        life: 60
-      });
-      opponent.slowTimer = 60;
+      // FIX: set opponent.slowTimer but nothing ever read it, so it did
+      // literally nothing. Now the physics step (see update()) checks
+      // this and actually dampens the opponent's movement while active.
+      if (this.cooldown === 0) {
+        this.cooldown = 100;
+        this.timeFX = this.timeFX || [];
+        this.timeFX.push({ x: this.x, y: this.y, life: 60 });
+        opponent.slowTimer = 90;
+      }
       break;
 
     default:
@@ -949,10 +1175,7 @@ ctx.globalCompositeOperation = 'source-over';
 
     this.energyWaves.forEach(e => {
       ctx.fillStyle = 'rgba(0,200,255,0.6)';
-      ctx.fillRect(e.x, e.y, 10, 4);
-      e.x += e.speed;
-      e.life--;
-      if (e.life <= 0) e.active = false;
+      ctx.fillRect(e.x, e.y, 14, 5);
     });
 
     ctx.fillStyle = 'red';
