@@ -776,7 +776,14 @@ handleAction(action, opponent) {
       break;
 
     case 'shield':
-      this.shieldTimer = 60;
+      // FIX: had no cooldown at all, so an AI could call 'shield' every
+      // single frame and stay permanently at 50% damage reduction forever
+      // - the same "unhittable" problem as the old block bug, just under
+      // a different move name.
+      if (this.cooldown === 0) {
+        this.cooldown = 70;
+        this.shieldTimer = 60;
+      }
       break;
 
     case 'energyWave':

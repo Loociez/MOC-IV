@@ -2,358 +2,983 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fighter AI Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Fight Lab — Mirage Fighter</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
+:root {
+  --void: #0a0810;
+  --panel: #151222;
+  --panel-raised: #1d1830;
+  --line: #2f2846;
+  --text: #f1eefc;
+  --muted: #948dae;
+  --violet: #7c5cff;
+  --violet-dim: rgba(124, 92, 255, 0.16);
+  --amber: #ffb347;
+  --blue: #4da3ff;
+  --red: #ff5470;
+  --success: #33d17a;
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: Arial;
-  background: #0e0e14;
-  color: white;
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(124,92,255,0.14), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(255,179,71,0.08), transparent 40%),
+    var(--void);
+  min-height: 100vh;
+}
+
+/* ============ HEADER ============ */
+header {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 28px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: 1.5px;
+  color: var(--text);
+}
+.brand span { color: var(--violet); }
+
+.backlink {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  padding: 7px 12px;
+  border-radius: 6px;
+  transition: 0.15s;
+}
+.backlink:hover { color: var(--text); border-color: var(--violet); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+/* ============ LAYOUT ============ */
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 940px) {
+  .wrap { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   padding: 20px;
 }
 
-.container {
-  max-width: 980px;
-  margin: auto;
-  background: #1a1a24;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #333;
+h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+.sectionSub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 16px;
 }
 
-h1 { text-align: center; }
-
-label {
+label.field {
   display: block;
-  margin-top: 12px;
-  color: #bbb;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input[type=text], select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  background: var(--void);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-family: var(--font-body);
   font-size: 14px;
 }
-
-input, select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  background: #111;
-  color: white;
-  border: 1px solid #333;
-  border-radius: 5px;
+input[type=text]:focus, select:focus {
+  outline: none;
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px var(--violet-dim);
 }
 
-.sliderWrap {
+.sliderRow { margin-top: 16px; }
+.sliderLabelRow {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  color: #888;
+  align-items: baseline;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-
-.slider { width: 100%; }
-
-/* =========================
-   SPRITE PREVIEW
-========================= */
-.previewGrid {
-  display: flex;
-  gap: 20px;
-  margin-top: 15px;
-  align-items: center;
+.sliderLabelRow .val {
+  font-family: var(--font-mono);
+  color: var(--amber);
+  font-weight: 700;
 }
-
-.canvasBox {
-  background: #0b0b10;
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 10px;
-}
-
-canvas {
-  width: 96px;
-  height: 96px;
-  image-rendering: pixelated;
-  border: 1px solid #444;
-}
-
-.previewText {
-  font-size: 13px;
-  color: #aaa;
-}
-
-/* ========================= */
-
-.abilities {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.ability {
-  background: #111;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #333;
-}
-
-button {
-  margin-top: 15px;
+input[type=range] {
   width: 100%;
-  padding: 10px;
-  background: #6c5ce7;
+  margin-top: 6px;
+  accent-color: var(--violet);
+}
+.sliderExtremes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--muted);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* ============ ABILITY PICKER ============ */
+.abilityGroups {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.abilityGroup .groupTitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.groupTitle .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.dot.close { background: var(--red); }
+.dot.mid { background: var(--amber); }
+.dot.long { background: var(--blue); }
+.dot.mobility { background: var(--success); }
+.dot.defense { background: var(--violet); }
+
+.abilityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.ability {
+  position: relative;
+  background: var(--panel-raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px 9px 34px;
+  cursor: pointer;
+  transition: 0.12s;
+  font-size: 13px;
+}
+.ability:hover { border-color: var(--violet); }
+.ability input {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  accent-color: var(--violet);
+  width: 15px;
+  height: 15px;
+}
+.ability.checked {
+  border-color: var(--violet);
+  background: var(--violet-dim);
+}
+.ability .abName { font-weight: 600; }
+.ability .abDesc { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.tauntToggle {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.tauntToggle input { accent-color: var(--violet); width: 15px; height: 15px; }
+
+button.primary {
+  margin-top: 20px;
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--violet), #5a3fd6);
   border: none;
   color: white;
-  font-weight: bold;
-  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  letter-spacing: 1px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: 0.15s;
+}
+button.primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+.btnRow { display: flex; gap: 10px; }
+.btnRow button.secondary {
+  flex: 1;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--panel-raised);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+}
+.btnRow button.secondary:hover { border-color: var(--violet); }
+
+/* ============ RIGHT COLUMN: FIGHTER CARD ============ */
+.stickyCol {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-button:hover { background: #5a4bd6; }
+.fighterCard {
+  background: linear-gradient(180deg, var(--panel-raised), var(--panel));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.cardTop {
+  padding: 18px 18px 14px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+.spriteBox {
+  width: 84px;
+  height: 84px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 20px rgba(124,92,255,0.15);
+}
+canvas#spritePreview {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}
+.cardName {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+.cardMeta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.styleBadge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--violet-dim);
+  color: var(--violet);
+  border: 1px solid rgba(124,92,255,0.4);
+}
 
-pre {
-  margin-top: 15px;
-  background: #0b0b10;
-  padding: 10px;
-  border-radius: 6px;
+.statBars { padding: 14px 18px; }
+.statBar { margin-bottom: 10px; }
+.statBar:last-child { margin-bottom: 0; }
+.statBarLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.statBarLabel span:last-child { color: var(--text); font-family: var(--font-mono); }
+.statTrack {
+  height: 6px;
+  border-radius: 4px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.statFill { height: 100%; background: linear-gradient(90deg, var(--violet), var(--amber)); }
+
+.chipWrap {
+  padding: 12px 18px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+}
+.chip {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--amber);
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+.chip.empty { color: var(--muted); }
+
+/* ============ CODE OUTPUT ============ */
+.codePanel { }
+.codeHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+pre#output {
+  margin: 0;
+  background: var(--void);
+  border: 1px solid var(--line);
+  padding: 14px;
+  border-radius: 8px;
   overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #c9c3e8;
+  max-height: 420px;
+  overflow-y: auto;
+  white-space: pre;
+}
+.installNote {
+  margin-top: 12px;
   font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  background: var(--panel-raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.installNote code {
+  color: var(--amber);
+  font-family: var(--font-mono);
 }
 </style>
 </head>
 
 <body>
 
-<h1>⚔️ AI Fighter Builder (Sprite Edition)</h1>
-
-<div class="container">
-
-  <label>AI Name</label>
-  <input id="aiName" value="Custom Fighter AI" />
-
-  <label>Function Name</label>
-  <input id="functionName" value="customAI" />
-
-  <label>Personality Style</label>
-  <select id="style">
-    <option value="aggressive">Aggressive</option>
-    <option value="tactical">Tactical</option>
-    <option value="defensive">Defensive</option>
-    <option value="adaptive">Adaptive</option>
-  </select>
-
-  <!-- =========================
-       SPRITE SELECTOR
-  ========================= -->
-
-  <label>Sprite Sheet (1–6)</label>
-  <input type="range" id="spriteSheet" min="1" max="6" value="1" oninput="updatePreview()">
-  <div class="sliderWrap"><span>Sheet 1</span><span id="sheetVal">1</span><span>Sheet 6</span></div>
-
-  <label>Character Index (0–31)</label>
-  <input type="range" id="characterIndex" min="0" max="31" value="0" oninput="updatePreview()">
-  <div class="sliderWrap"><span>Char 0</span><span id="charVal">0</span><span>Char 31</span></div>
-
-  <div class="previewGrid">
-    <div class="canvasBox">
-      <canvas id="spritePreview" width="32" height="32"></canvas>
-    </div>
-
-    <div class="previewText" id="previewText">
-      Sprite Preview: Sheet 1 / Character 0
-    </div>
+<header>
+  <div>
+    <div class="eyebrow">Mirage Fighter — Roster Tools</div>
+    <div class="brand">AI FIGHT <span>LAB</span></div>
   </div>
+  <a class="backlink" href="./MFighter.html">&larr; Back to Arena</a>
+</header>
 
-  <!-- =========================
-       STATS
-  ========================= -->
+<div class="wrap">
 
-  <label>Aggression</label>
-  <div class="sliderWrap"><span>Passive</span><span id="aggVal">60</span><span>Aggressive</span></div>
-  <input type="range" id="aggression" min="0" max="100" value="60" oninput="aggVal.textContent=this.value">
+  <!-- LEFT: CONFIG -->
+  <div>
 
-  <label>Defense</label>
-  <div class="sliderWrap"><span>Fragile</span><span id="defVal">40</span><span>Tank</span></div>
-  <input type="range" id="defense" min="0" max="100" value="40" oninput="defVal.textContent=this.value">
+    <div class="panel">
+      <h2>Identity</h2>
+      <p class="sectionSub">Who is this fighter, and what do they look like?</p>
 
-  <label>Preferred Range</label>
-  <div class="sliderWrap"><span>Close</span><span id="rngVal">50</span><span>Long</span></div>
-  <input type="range" id="rangePref" min="0" max="100" value="50" oninput="rngVal.textContent=this.value">
+      <label class="field">Fighter name</label>
+      <input type="text" id="aiName" value="Custom Fighter AI" maxlength="40" />
 
-  <label>Intelligence</label>
-  <div class="sliderWrap"><span>Basic</span><span id="intelVal">50</span><span>Advanced</span></div>
-  <input type="range" id="intelligence" min="0" max="100" value="50" oninput="intelVal.textContent=this.value">
+      <label class="field">Function name (used in code, no spaces)</label>
+      <input type="text" id="functionName" value="customAI" maxlength="30" />
 
-  <!-- =========================
-       ABILITIES
-  ========================= -->
+      <label class="field">Fighting style</label>
+      <select id="style">
+        <option value="aggressive">Aggressive — presses forward, favors damage</option>
+        <option value="tactical">Tactical — leans on control &amp; ranged tools</option>
+        <option value="defensive">Defensive — turtles, punishes openings</option>
+        <option value="adaptive" selected>Adaptive — reads HP and reacts live</option>
+      </select>
 
-  <label>Abilities</label>
-  <div class="abilities">
+      <label class="field">Sprite sheet (1–6)</label>
+      <input type="range" id="spriteSheet" min="1" max="6" value="1" oninput="onSheetChange()">
 
-    <label class="ability"><input type="checkbox" value="attack"> Attack</label>
-    <label class="ability"><input type="checkbox" value="shoot"> Shoot</label>
-    <label class="ability"><input type="checkbox" value="dash"> Dash</label>
-    <label class="ability"><input type="checkbox" value="block"> Block</label>
-    <label class="ability"><input type="checkbox" value="jump"> Jump</label>
+      <label class="field">Character index (0–31)</label>
+      <input type="range" id="characterIndex" min="0" max="31" value="0" oninput="onSheetChange()">
+    </div>
 
-    <label class="ability"><input type="checkbox" value="teleport"> Teleport</label>
-    <label class="ability"><input type="checkbox" value="groundSlam"> Slam</label>
-    <label class="ability"><input type="checkbox" value="healPulse"> Heal</label>
-    <label class="ability"><input type="checkbox" value="shield"> Shield</label>
-    <label class="ability"><input type="checkbox" value="energyWave"> Energy</label>
-    <label class="ability"><input type="checkbox" value="special"> Special</label>
+    <div class="panel" style="margin-top:20px;">
+      <h2>Personality</h2>
+      <p class="sectionSub">These bias which moves get picked, and how often.</p>
 
-    <label class="ability"><input type="checkbox" value="blinkStrike"> Blink</label>
-    <label class="ability"><input type="checkbox" value="gravityWell"> Gravity</label>
-    <label class="ability"><input type="checkbox" value="fireAura"> Fire</label>
-    <label class="ability"><input type="checkbox" value="iceTrap"> Ice</label>
-    <label class="ability"><input type="checkbox" value="shockwaveBurst"> Shock</label>
+      <div class="sliderRow">
+        <div class="sliderLabelRow"><span>Aggression</span><span class="val" id="aggVal">60</span></div>
+        <input type="range" id="aggression" min="0" max="100" value="60" oninput="onSliderChange()">
+        <div class="sliderExtremes"><span>Passive</span><span>Relentless</span></div>
+      </div>
+
+      <div class="sliderRow">
+        <div class="sliderLabelRow"><span>Defense</span><span class="val" id="defVal">40</span></div>
+        <input type="range" id="defense" min="0" max="100" value="40" oninput="onSliderChange()">
+        <div class="sliderExtremes"><span>Fragile</span><span>Tank</span></div>
+      </div>
+
+      <div class="sliderRow">
+        <div class="sliderLabelRow"><span>Preferred range</span><span class="val" id="rngVal">50</span></div>
+        <input type="range" id="rangePref" min="0" max="100" value="50" oninput="onSliderChange()">
+        <div class="sliderExtremes"><span>Brawler</span><span>Kiter</span></div>
+      </div>
+
+      <div class="sliderRow">
+        <div class="sliderLabelRow"><span>Intelligence</span><span class="val" id="intelVal">50</span></div>
+        <input type="range" id="intelligence" min="0" max="100" value="50" oninput="onSliderChange()">
+        <div class="sliderExtremes"><span>Instinctive</span><span>Calculating</span></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <h2>Abilities</h2>
+      <p class="sectionSub">Every ability here is wired to a real effect in the engine — nothing on this list is decorative.</p>
+
+      <div class="abilityGroups" id="abilityGroups"></div>
+
+      <label class="tauntToggle">
+        <input type="checkbox" id="taunts" checked />
+        Enable live commentary lines in the fight feed
+      </label>
+    </div>
 
   </div>
 
-  <button onclick="generate()">Generate AI</button>
-  <button onclick="download()">Download .js</button>
+  <!-- RIGHT: CARD + CODE -->
+  <div class="stickyCol">
 
-  <pre id="output">// output will appear here</pre>
+    <div class="fighterCard">
+      <div class="cardTop">
+        <div class="spriteBox"><canvas id="spritePreview" width="32" height="32"></canvas></div>
+        <div>
+          <div class="cardName" id="cardName">Custom Fighter AI</div>
+          <div class="cardMeta" id="cardMeta">Sheet 1 · Char 0</div>
+          <div class="styleBadge" id="cardStyle">Adaptive</div>
+        </div>
+      </div>
+
+      <div class="statBars">
+        <div class="statBar">
+          <div class="statBarLabel"><span>Aggression</span><span id="barAggVal">60</span></div>
+          <div class="statTrack"><div class="statFill" id="barAgg" style="width:60%"></div></div>
+        </div>
+        <div class="statBar">
+          <div class="statBarLabel"><span>Defense</span><span id="barDefVal">40</span></div>
+          <div class="statTrack"><div class="statFill" id="barDef" style="width:40%"></div></div>
+        </div>
+        <div class="statBar">
+          <div class="statBarLabel"><span>Range</span><span id="barRngVal">50</span></div>
+          <div class="statTrack"><div class="statFill" id="barRng" style="width:50%"></div></div>
+        </div>
+        <div class="statBar">
+          <div class="statBarLabel"><span>Intelligence</span><span id="barIntelVal">50</span></div>
+          <div class="statTrack"><div class="statFill" id="barIntel" style="width:50%"></div></div>
+        </div>
+      </div>
+
+      <div class="chipWrap" id="chipWrap">
+        <span class="chip empty">No abilities selected yet</span>
+      </div>
+    </div>
+
+    <div class="panel codePanel">
+      <div class="codeHead">
+        <h2 style="margin:0;">Generated Code</h2>
+      </div>
+      <pre id="output">// Configure your fighter, then click "Generate AI"</pre>
+
+      <button class="primary" onclick="generate()">⚔️ Generate AI</button>
+      <div class="btnRow">
+        <button class="secondary" onclick="downloadFile()">⬇ Download .js</button>
+        <button class="secondary" onclick="copyCode()">📋 Copy code</button>
+      </div>
+
+      <div class="installNote">
+        Save the downloaded file into your <code>ai/</code> folder using the function
+        name as the filename (e.g. <code>customAI.js</code>), then make sure that path
+        is listed in <code>AI_FILES</code> inside <code>game.js</code>. It'll show up in
+        the roster the next fight.
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <script>
-let generated = "";
-
 /* =========================
-   SPRITE SHEET CONFIG
+   ABILITY DEFINITIONS
+   Every id here maps to a real, functioning move in fighter.js.
 ========================= */
-const SPRITE_SIZE = 32;
-const SHEET_WIDTH = 32; 
-const FRAMES_PER_CHARACTER = 12;
+const ABILITIES = [
+  // close range
+  { id: 'attack',      label: 'Attack',        icon: '⚔️', band: 'close', desc: 'Melee strike' },
+  { id: 'groundSlam',   label: 'Ground Slam',   icon: '💥', band: 'close', desc: 'Close AOE, knocks up' },
+  { id: 'uppercut',     label: 'Uppercut',      icon: '👊', band: 'close', desc: 'Close launcher' },
+  { id: 'fireNova',     label: 'Fire Nova',     icon: '🔥', band: 'close', desc: 'Close AOE burn' },
+  { id: 'bladeDance',   label: 'Blade Dance',   icon: '🗡️', band: 'close', desc: 'Close multi-hit flurry' },
+  { id: 'windPush',     label: 'Wind Push',     icon: '🌪️', band: 'close', desc: 'Hit + knockback' },
+  // mid range
+  { id: 'shoot',        label: 'Shoot',         icon: '🏹', band: 'mid', desc: 'Ranged projectile' },
+  { id: 'energyWave',   label: 'Energy Wave',   icon: '🌊', band: 'mid', desc: 'Traveling projectile' },
+  { id: 'iceTrap',      label: 'Ice Trap',      icon: '❄️', band: 'mid', desc: 'Hit + long freeze' },
+  { id: 'poisonCloud',  label: 'Poison Cloud',  icon: '☠️', band: 'mid', desc: 'Damage over time' },
+  { id: 'timeSlow',     label: 'Time Slow',     icon: '⏳', band: 'mid', desc: "Slows opponent's speed" },
+  // long range
+  { id: 'special',          label: 'Special',           icon: '✨', band: 'long', desc: 'Heavy ranged burst' },
+  { id: 'lightningStrike',  label: 'Lightning Strike',  icon: '⚡', band: 'long', desc: 'Long-range burst' },
+  // mobility
+  { id: 'dash',        label: 'Dash',        icon: '💨', band: 'mobility', desc: 'Burst toward opponent' },
+  { id: 'teleport',    label: 'Teleport',    icon: '🌀', band: 'mobility', desc: 'Blink near opponent' },
+  { id: 'shadowStep',  label: 'Shadow Step', icon: '👤', band: 'mobility', desc: 'Fast blink-in' },
+  { id: 'jump',        label: 'Jump',        icon: '🦘', band: 'mobility', desc: 'Hop — mixup/evasion' },
+  // defense
+  { id: 'block',      label: 'Block',      icon: '🛡️', band: 'defense', desc: 'Reduce incoming damage' },
+  { id: 'shield',     label: 'Shield',     icon: '🔷', band: 'defense', desc: 'Temporary 50% reduction' },
+  { id: 'healPulse',  label: 'Heal Pulse', icon: '💚', band: 'defense', desc: 'Restore HP' },
+  { id: 'rageMode',   label: 'Rage Mode',  icon: '🔥', band: 'defense', desc: 'Temp damage/speed buff' },
+];
 
-const sheetImages = {};
+const BAND_META = {
+  close:    { title: 'Close Range',   dot: 'close' },
+  mid:      { title: 'Mid Range',     dot: 'mid' },
+  long:     { title: 'Long Range',    dot: 'long' },
+  mobility: { title: 'Mobility',      dot: 'mobility' },
+  defense:  { title: 'Defense & Utility', dot: 'defense' },
+};
 
-function getSheetPath(n) {
-  return `./sprites/sprites${n}.png`;
+const DEFAULT_CHECKED = new Set(['attack', 'shoot', 'dash', 'block', 'teleport', 'shield']);
+
+function renderAbilityGroups() {
+  const root = document.getElementById('abilityGroups');
+  const order = ['close', 'mid', 'long', 'mobility', 'defense'];
+  root.innerHTML = order.map(bandKey => {
+    const meta = BAND_META[bandKey];
+    const items = ABILITIES.filter(a => a.band === bandKey);
+    const cards = items.map(a => `
+      <label class="ability${DEFAULT_CHECKED.has(a.id) ? ' checked' : ''}" data-ability="${a.id}">
+        <input type="checkbox" value="${a.id}" ${DEFAULT_CHECKED.has(a.id) ? 'checked' : ''} onchange="onAbilityToggle(this)">
+        <span class="abName">${a.icon} ${a.label}</span>
+        <span class="abDesc">${a.desc}</span>
+      </label>
+    `).join('');
+    return `
+      <div class="abilityGroup">
+        <div class="groupTitle"><span class="dot ${meta.dot}"></span>${meta.title}</div>
+        <div class="abilityGrid">${cards}</div>
+      </div>
+    `;
+  }).join('');
 }
 
+function onAbilityToggle(input) {
+  input.closest('.ability').classList.toggle('checked', input.checked);
+  updateCardChips();
+}
+
+function getSelectedAbilities() {
+  return [...document.querySelectorAll('.ability input:checked')].map(x => x.value);
+}
+
+/* =========================
+   SPRITE PREVIEW
+========================= */
+const SPRITE_SIZE = 32;
+const SHEET_WIDTH = 32;
+const FRAMES_PER_CHARACTER = 12;
+const RIGHT_IDLE_OFFSET = 10; // matches fighter.js getFrameIndex(): right-idle frame
+
+const sheetImages = {};
 function loadSheet(n) {
   if (sheetImages[n]) return sheetImages[n];
-
   const img = new Image();
-  img.src = getSheetPath(n);
+  img.src = `./sprites/sprites${n}.png`;
   sheetImages[n] = img;
   return img;
 }
 
-function updatePreview() {
-  const sheet = +document.getElementById("spriteSheet").value;
-  const character = +document.getElementById("characterIndex").value;
+function onSheetChange() {
+  const sheet = +document.getElementById('spriteSheet').value;
+  const character = +document.getElementById('characterIndex').value;
+  const frameIndex = character * FRAMES_PER_CHARACTER + RIGHT_IDLE_OFFSET;
 
-  const frameIndex = character * FRAMES_PER_CHARACTER; 
-  // 👆 THIS is the key fix
+  document.getElementById('cardMeta').textContent = `Sheet ${sheet} · Char ${character}`;
 
-  document.getElementById("sheetVal").textContent = sheet;
-  document.getElementById("charVal").textContent = character;
-
-  document.getElementById("previewText").textContent =
-    `Sprite Preview: Sheet ${sheet} | Character ${character} (Frame 0/12)`;
-
-  const canvas = document.getElementById("spritePreview");
-  const ctx = canvas.getContext("2d");
-
+  const canvas = document.getElementById('spritePreview');
+  const ctx = canvas.getContext('2d');
   const img = loadSheet(sheet);
 
   const sx = (frameIndex % SHEET_WIDTH) * SPRITE_SIZE;
   const sy = Math.floor(frameIndex / SHEET_WIDTH) * SPRITE_SIZE;
 
   ctx.clearRect(0, 0, 32, 32);
+  const draw = () => ctx.drawImage(img, sx, sy, 32, 32, 0, 0, 32, 32);
+  if (img.complete) draw(); else img.onload = draw;
+}
 
-  if (img.complete) {
-    ctx.drawImage(img, sx, sy, 32, 32, 0, 0, 32, 32);
-  } else {
-    img.onload = () => {
-      ctx.drawImage(img, sx, sy, 32, 32, 0, 0, 32, 32);
-    };
+/* =========================
+   LIVE CARD PREVIEW
+========================= */
+function onSliderChange() {
+  const agg = +document.getElementById('aggression').value;
+  const def = +document.getElementById('defense').value;
+  const rng = +document.getElementById('rangePref').value;
+  const intel = +document.getElementById('intelligence').value;
+
+  document.getElementById('aggVal').textContent = agg;
+  document.getElementById('defVal').textContent = def;
+  document.getElementById('rngVal').textContent = rng;
+  document.getElementById('intelVal').textContent = intel;
+
+  document.getElementById('barAgg').style.width = agg + '%';
+  document.getElementById('barDef').style.width = def + '%';
+  document.getElementById('barRng').style.width = rng + '%';
+  document.getElementById('barIntel').style.width = intel + '%';
+  document.getElementById('barAggVal').textContent = agg;
+  document.getElementById('barDefVal').textContent = def;
+  document.getElementById('barRngVal').textContent = rng;
+  document.getElementById('barIntelVal').textContent = intel;
+}
+
+function updateCardChips() {
+  const selected = getSelectedAbilities();
+  const wrap = document.getElementById('chipWrap');
+  if (selected.length === 0) {
+    wrap.innerHTML = '<span class="chip empty">No abilities selected yet</span>';
+    return;
+  }
+  wrap.innerHTML = selected.map(id => {
+    const a = ABILITIES.find(x => x.id === id);
+    return `<span class="chip">${a.icon} ${a.label}</span>`;
+  }).join('');
+}
+
+document.getElementById('aiName').addEventListener('input', e => {
+  document.getElementById('cardName').textContent = e.target.value || 'Unnamed Fighter';
+});
+document.getElementById('style').addEventListener('change', e => {
+  const label = e.target.options[e.target.selectedIndex].text.split(' —')[0];
+  document.getElementById('cardStyle').textContent = label;
+});
+
+/* =========================
+   CODE GENERATION
+   Weights are computed once, at generation time, from the sliders — the
+   generated fighter itself just does a weighted random pick at runtime,
+   so the output stays simple and readable.
+========================= */
+function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+
+function applyStyleBias(style, agg, def, intel) {
+  switch (style) {
+    case 'aggressive': return { agg: clamp01(agg + 0.2), def: clamp01(def - 0.1), intel };
+    case 'tactical':   return { agg, def, intel: clamp01(intel + 0.2) };
+    case 'defensive':  return { agg: clamp01(agg - 0.1), def: clamp01(def + 0.2), intel };
+    case 'adaptive':   return { agg, def, intel: clamp01(intel + 0.1) };
+    default:            return { agg, def, intel };
   }
 }
 
-function getAbilities() {
-  return [...document.querySelectorAll("input[type=checkbox]:checked")]
-    .map(x => x.value);
+// base weight + how much each personality axis scales it, per ability
+const WEIGHT_FORMULAS = {
+  attack:          b => 30 + b.agg * 40,
+  groundSlam:      b => 14 + b.agg * 26,
+  uppercut:        b => 14 + b.agg * 24,
+  fireNova:        b => 14 + b.agg * 22,
+  bladeDance:      b => 12 + b.agg * 20 + b.intel * 10,
+  windPush:        b => 10 + b.def * 14 + b.intel * 10,
+  shoot:           b => 22 + b.agg * 18 + b.intel * 10,
+  energyWave:      b => 18 + b.agg * 10 + b.intel * 16,
+  iceTrap:         b => 12 + b.intel * 22,
+  poisonCloud:     b => 10 + b.intel * 18,
+  timeSlow:        b => 10 + b.intel * 20,
+  special:         b => 16 + b.intel * 22,
+  lightningStrike: b => 16 + b.intel * 24,
+};
+const BAND_FOR_MOVE = {
+  attack: 'close', groundSlam: 'close', uppercut: 'close', fireNova: 'close', bladeDance: 'close', windPush: 'close',
+  shoot: 'mid', energyWave: 'mid', iceTrap: 'mid', poisonCloud: 'mid', timeSlow: 'mid',
+  special: 'long', lightningStrike: 'long',
+};
+
+function sanitizeIdentifier(name, fallback) {
+  let out = (name || '').trim().replace(/[^a-zA-Z0-9_]/g, '');
+  if (!out || /^[0-9]/.test(out)) out = fallback + out;
+  return out || fallback;
 }
 
-function buildLogic(abilities, a, d, r, intel, fnName) {
+function buildGeneratedCode() {
+  const displayName = (document.getElementById('aiName').value || 'Custom Fighter AI').replace(/"/g, "'");
+  const fnName = sanitizeIdentifier(document.getElementById('functionName').value, 'customAI');
+  const style = document.getElementById('style').value;
+  const sheet = +document.getElementById('spriteSheet').value;
+  const char = +document.getElementById('characterIndex').value;
+  const tauntsEnabled = document.getElementById('taunts').checked;
 
-return `
-export default function ${fnName}(self, opponent, bounds) {
+  const rawAgg = (+document.getElementById('aggression').value) / 100;
+  const rawDef = (+document.getElementById('defense').value) / 100;
+  const rawRng = (+document.getElementById('rangePref').value) / 100;
+  const rawIntel = (+document.getElementById('intelligence').value) / 100;
+  const b = applyStyleBias(style, rawAgg, rawDef, rawIntel);
 
-  const dist = opponent.x - self.x;
-  const abs = Math.abs(dist);
+  const selected = new Set(getSelectedAbilities());
 
-  const has = (ab) => ${JSON.stringify(abilities)}.includes(ab);
+  const closeMoves = [], midMoves = [], longMoves = [];
+  Object.keys(WEIGHT_FORMULAS).forEach(moveId => {
+    if (!selected.has(moveId)) return;
+    const w = Math.round(WEIGHT_FORMULAS[moveId](b) * 10) / 10;
+    const entry = { move: moveId, w };
+    const band = BAND_FOR_MOVE[moveId];
+    if (band === 'close') closeMoves.push(entry);
+    else if (band === 'mid') midMoves.push(entry);
+    else longMoves.push(entry);
+  });
 
-  const aggression = ${a} / 100;
-  const defense = ${d} / 100;
-  const intel = ${intel} / 100;
+  const hasMobility = { dash: selected.has('dash'), teleport: selected.has('teleport'), shadowStep: selected.has('shadowStep'), jump: selected.has('jump') };
+  const hasDefense = { block: selected.has('block'), shield: selected.has('shield'), healPulse: selected.has('healPulse'), rageMode: selected.has('rageMode') };
 
-  if (self.hitstun > 0) return 'idle';
+  const preferredDist = Math.round(70 + rawRng * 230);
+  const wantsSpace = rawRng > 0.55;
+  const isAdaptive = style === 'adaptive';
 
-  if (self.x < bounds.left) return 'moveRight';
-  if (self.x > bounds.right) return 'moveLeft';
+  const lines = [];
 
-  if (abs < 90) {
-    if (has("attack") && Math.random() < aggression) return 'attack';
-    if (has("dash") && Math.random() < 0.3) return 'dash';
-    return 'block';
+  lines.push(`export const name = "${displayName}";`);
+  lines.push(`export const characterIndex = ${char};`);
+  lines.push(`export const spriteSheetIndex = ${sheet};`);
+  lines.push('');
+  lines.push(`// Generated by AI Fight Lab — style: ${style}`);
+  lines.push(`// aggression=${Math.round(rawAgg*100)} defense=${Math.round(rawDef*100)} range=${Math.round(rawRng*100)} intelligence=${Math.round(rawIntel*100)}`);
+  lines.push('');
+
+  if (tauntsEnabled) {
+    lines.push('const memory = new WeakMap();');
+    lines.push('function getMem(self) {');
+    lines.push('  if (!memory.has(self)) memory.set(self, { tauntCooldown: 0 });');
+    lines.push('  return memory.get(self);');
+    lines.push('}');
+    lines.push('function taunt(msg, mem) {');
+    lines.push('  mem.tauntCooldown = 100;');
+    lines.push('  if (window.pushFightLog) window.pushFightLog(msg, "system");');
+    lines.push('}');
+    lines.push('');
   }
 
-  if (abs < 200) {
-    if (has("shoot") && Math.random() < 0.5) return 'shoot';
-    if (has("energyWave") && Math.random() < intel) return 'energyWave';
-    return dist > 0 ? 'moveRight' : 'moveLeft';
+  lines.push('function pickWeighted(list) {');
+  lines.push('  if (!list || list.length === 0) return null;');
+  lines.push('  const total = list.reduce((s, m) => s + m.w, 0);');
+  lines.push('  if (total <= 0) return null;');
+  lines.push('  let r = Math.random() * total;');
+  lines.push('  for (const m of list) {');
+  lines.push('    if (r < m.w) return m.move;');
+  lines.push('    r -= m.w;');
+  lines.push('  }');
+  lines.push('  return list[list.length - 1].move;');
+  lines.push('}');
+  lines.push('');
+  lines.push(`const CLOSE_MOVES = ${JSON.stringify(closeMoves)};`);
+  lines.push(`const MID_MOVES = ${JSON.stringify(midMoves)};`);
+  lines.push(`const LONG_MOVES = ${JSON.stringify(longMoves)};`);
+  lines.push('');
+
+  lines.push(`export default function ${fnName}(self, opponent, bounds) {`);
+  lines.push('  const dist = opponent.x - self.x;');
+  lines.push('  const abs = Math.abs(dist);');
+  lines.push('  const hpRatio = self.hp / self.maxHp;');
+  lines.push('  const enemyHpRatio = opponent.hp / opponent.maxHp;');
+  lines.push('  const left = bounds?.left ?? 40;');
+  lines.push('  const right = bounds?.right ?? 760;');
+  if (tauntsEnabled) {
+    lines.push('  const mem = getMem(self);');
+    lines.push('  if (mem.tauntCooldown > 0) mem.tauntCooldown--;');
+  }
+  lines.push('');
+  lines.push('  if (self.hitstun > 0) return \'idle\';');
+  lines.push('  if (self.x <= left) return \'moveRight\';');
+  lines.push('  if (self.x >= right) return \'moveLeft\';');
+  lines.push('');
+
+  if (isAdaptive) {
+    lines.push('  // ADAPTIVE: reads the fight live and adjusts');
+    lines.push('  const losing = hpRatio < enemyHpRatio - 0.15;');
+    lines.push('  const dominating = hpRatio > enemyHpRatio + 0.25;');
+    lines.push('');
   }
 
-  return dist > 0 ? 'moveRight' : 'moveLeft';
+  // --- survival priority checks ---
+  if (hasDefense.healPulse) {
+    const base = 0.25 + b.def * 0.25;
+    const cond = isAdaptive
+      ? `hpRatio < ${base.toFixed(2)} || (losing && hpRatio < ${(base + 0.15).toFixed(2)})`
+      : `hpRatio < ${base.toFixed(2)}`;
+    lines.push(`  if (self.cooldown === 0 && (${cond})) {`);
+    if (tauntsEnabled) {
+      lines.push('    if (mem.tauntCooldown === 0) taunt(`${self.name} channels a healing pulse.`, mem);');
+    }
+    lines.push('    return \'healPulse\';');
+    lines.push('  }');
+    lines.push('');
+  }
+  if (hasDefense.shield) {
+    const thresh = (0.3 + b.def * 0.3).toFixed(2);
+    const chance = (0.3 + b.def * 0.4).toFixed(2);
+    lines.push(`  if (self.cooldown === 0 && hpRatio < ${thresh} && abs < 160 && Math.random() < ${chance}) {`);
+    lines.push('    return \'shield\';');
+    lines.push('  }');
+    lines.push('');
+  }
+  if (hasDefense.rageMode) {
+    const chance = (0.06 + b.agg * 0.12).toFixed(2);
+    const cond = isAdaptive ? 'hpRatio < 0.5 || dominating' : 'hpRatio < 0.5';
+    lines.push(`  if (self.cooldown === 0 && Math.random() < ${chance} && (${cond})) {`);
+    if (tauntsEnabled) {
+      lines.push('    if (mem.tauntCooldown === 0) taunt(`${self.name} flies into a rage!`, mem);');
+    }
+    lines.push('    return \'rageMode\';');
+    lines.push('  }');
+    lines.push('');
+  }
+
+  // --- mobility / range management ---
+  lines.push(`  const preferredDist = ${preferredDist};`);
+  lines.push('  if (abs > preferredDist + 40) {');
+  if (hasMobility.shadowStep) lines.push('    if (self.cooldown === 0 && Math.random() < 0.3) return \'shadowStep\';');
+  if (hasMobility.teleport)   lines.push('    if (self.cooldown === 0 && Math.random() < 0.3) return \'teleport\';');
+  if (hasMobility.dash)       lines.push('    if (Math.random() < 0.5) return \'dash\';');
+  lines.push('    return dist > 0 ? \'moveRight\' : \'moveLeft\';');
+  lines.push('  }');
+  if (wantsSpace) {
+    lines.push('  if (abs < preferredDist - 60) {');
+    lines.push('    return dist > 0 ? \'moveLeft\' : \'moveRight\'; // kite away, this fighter wants range');
+    lines.push('  }');
+  }
+  lines.push('');
+
+  if (hasMobility.jump) {
+    lines.push('  if (abs < 150 && self.cooldown === 0 && Math.random() < 0.05) return \'jump\';');
+    lines.push('');
+  }
+
+  if (isAdaptive && closeMoves.length > 0) {
+    lines.push('  // punish a turtling opponent');
+    lines.push('  if (opponent.isBlocking && abs < 100 && self.cooldown === 0 && Math.random() < 0.5) {');
+    lines.push('    const punish = pickWeighted(CLOSE_MOVES);');
+    lines.push('    if (punish) return punish;');
+    lines.push('  }');
+    lines.push('');
+  }
+
+  lines.push('  if (self.cooldown === 0) {');
+  lines.push('    let list;');
+  lines.push('    if (abs < 90) list = CLOSE_MOVES;');
+  lines.push('    else if (abs < 250) list = MID_MOVES;');
+  lines.push('    else list = LONG_MOVES;');
+  lines.push('    const pick = pickWeighted(list);');
+  lines.push('    if (pick) return pick;');
+  lines.push('  }');
+  lines.push('');
+
+  if (hasDefense.block) {
+    const chance = (0.15 + b.def * 0.35).toFixed(2);
+    lines.push(`  if (Math.random() < ${chance}) return 'block';`);
+  }
+  lines.push('  return dist > 0 ? \'moveRight\' : \'moveLeft\';');
+  lines.push('}');
+  lines.push('');
+
+  return lines.join('\n');
 }
-`;
-}
+
+let generated = '';
 
 function generate() {
-  const name = document.getElementById("aiName").value;
-  const fnName = document.getElementById("functionName").value;
-
-  const a = +document.getElementById("aggression").value;
-  const d = +document.getElementById("defense").value;
-  const r = +document.getElementById("rangePref").value;
-  const intel = +document.getElementById("intelligence").value;
-
-  const sheet = +document.getElementById("spriteSheet").value;
-  const char = +document.getElementById("characterIndex").value;
-
-  const abilities = getAbilities();
-
-  generated =
-`export const name = "${name}";
-export const characterIndex = ${char};
-export const spriteSheetIndex = ${sheet};
-
-${buildLogic(abilities, a, d, r, intel, fnName)}
-`;
-
-  document.getElementById("output").textContent = generated;
+  generated = buildGeneratedCode();
+  document.getElementById('output').textContent = generated;
 }
 
-function download() {
+function downloadFile() {
   if (!generated) generate();
-
-  const blob = new Blob([generated], { type: "text/javascript" });
+  const fnName = sanitizeIdentifier(document.getElementById('functionName').value, 'customAI');
+  const blob = new Blob([generated], { type: 'text/javascript' });
   const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
-  a.download = "customAI.js";
+  a.download = `${fnName}.js`;
   a.click();
-
   URL.revokeObjectURL(url);
 }
 
+function copyCode() {
+  if (!generated) generate();
+  navigator.clipboard?.writeText(generated).then(() => {
+    const btns = document.querySelectorAll('.btnRow button.secondary');
+    const copyBtn = btns[1];
+    const original = copyBtn.textContent;
+    copyBtn.textContent = '✓ Copied';
+    setTimeout(() => (copyBtn.textContent = original), 1200);
+  });
+}
+
 /* init */
-updatePreview();
+renderAbilityGroups();
+updateCardChips();
+onSheetChange();
+onSliderChange();
+generate();
 </script>
 
 </body>
