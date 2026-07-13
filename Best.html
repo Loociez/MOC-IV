@@ -298,6 +298,8 @@ button:disabled {
   <div><button id="generateBtn" disabled aria-label="Generate Build Options">Generate Build Options</button></div>
 </div>
 
+<div id="classInfoPanel" style="display:none;max-width:800px;background:var(--bg-panel);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:0.9rem;"></div>
+
 <div id="slotsContainer" aria-live="polite" aria-atomic="true"></div>
 
 <h2>Build Summary</h2>
@@ -309,6 +311,26 @@ const ITEMS_JSON_URL = "https://loociez.github.io/MOC-IV/last.json";
 const classBits = {
   0: "Samurai",1: "Warlock",2: "Cleric",3: "Assassin",4: "Barbarian",
   5: "Marksman",6: "Necromancer",7: "Bard",8: "Dragoon",9: "Jester",10: "Vampire"
+};
+
+/* -------------------------
+   Class metadata — sourced from the MOC-W class pages (base stat tables +
+   ability descriptions). Used to suggest a sensible default "stat to
+   maximize" and to filter the spell-amp dropdown to only that class's
+   relevant amps, instead of showing all ~60 amps from every class.
+   ------------------------- */
+const classMeta = {
+  Samurai:     { primaryStat: 'atk', role: 'Tank',              blurb: "High HP/ATK bruiser. Counterattack deals damage over time back to whoever hits you first." },
+  Warlock:     { primaryStat: 'mat', role: 'Ranged Magic',      blurb: "AoE cast off minimum MAT, costs MP. Can target self or an enemy." },
+  Cleric:      { primaryStat: 'mat', role: 'Support',           blurb: "Single-target heal scales off Magic Attack. Highest MP pool of any class; can also revive." },
+  Assassin:    { primaryStat: 'atk', role: 'Melee',             blurb: "High ATK melee. Cloaks briefly, then strikes with a poison damage-over-time on reappear." },
+  Barbarian:   { primaryStat: 'atk', role: 'Melee',             blurb: "Highest raw ATK/HP of any class, no active ability — pure stick-based damage." },
+  Marksman:    { primaryStat: 'rat', role: 'Ranged',            blurb: "Highest RAT of any class. Shotgun blast AoE scales off minimum RAT." },
+  Necromancer: { primaryStat: 'mat', role: 'Summoner',          blurb: "Summons a minion that fights using 65% of your MAT; costs MP while active." },
+  Bard:        { primaryStat: 'mat', role: 'Support',           blurb: "Map-wide ally buff (Hero's Song). Balanced ATK/MAT, costs SP." },
+  Dragoon:     { primaryStat: 'atk', role: 'Offensive Tank',    blurb: "High ATK/HP with a jump AoE that stuns on landing. Costs SP." },
+  Jester:      { primaryStat: 'atk', role: 'Support',           blurb: "Tankiest support class. Confuses/stuns enemies rather than dealing damage." },
+  Vampire:     { primaryStat: 'atk', role: 'Melee Lifesteal',   blurb: "Highest ATK in the game. Life Steal heals you on every successful hit." },
 };
 
 const SLOT_TYPE_WEAPON_1H = 1;
@@ -522,18 +544,68 @@ function populateStatDropdown() {
   statSelect.disabled = false;
 }
 
-function populateSpellAmpDropdown() {
+function populateSpellAmpDropdown(clsName) {
   const select = document.getElementById('spellAmpSelect');
   if (!select) return;
 
+  const prevValue = select.value;
   select.innerHTML = '<option value="">-- None --</option>';
 
-  Object.entries(spellAmpLabels).forEach(([key, label]) => {
+  const clsPrefix = clsName ? clsName.toLowerCase() + '_' : null;
+  const keys = Object.keys(spellAmpLabels).filter(key => {
+    const stripped = key.slice(1); // drop leading "!"
+    if (stripped.startsWith('all_')) return true; // universal amps always shown
+    return clsPrefix ? stripped.startsWith(clsPrefix) : false;
+  });
+
+  keys.forEach(key => {
     const opt = document.createElement('option');
     opt.value = key;
-    opt.textContent = label;
+    opt.textContent = spellAmpLabels[key];
     select.appendChild(opt);
   });
+
+  if (keys.includes(prevValue)) {
+    select.value = prevValue;
+  } else {
+    select.value = '';
+    selectedSpellAmp = '';
+  }
+}
+
+/* -------------------------
+   Class info panel + smart stat suggestion
+   ------------------------- */
+function updateClassInfoPanel(clsName) {
+  const panel = document.getElementById('classInfoPanel');
+  if (!panel) return;
+  const meta = classMeta[clsName];
+  if (!meta) {
+    panel.style.display = 'none';
+    panel.innerHTML = '';
+    return;
+  }
+  panel.style.display = 'block';
+  panel.innerHTML = `<strong>${clsName}</strong> — <span style="color:var(--text-dim);">${meta.role}</span><br>${meta.blurb}<br><span style="color:var(--text-dim);font-size:0.85rem;">Suggested stat to maximize: <strong>${meta.primaryStat.toUpperCase()}</strong> (you can still pick a different one below).</span>`;
+}
+
+function applyClassStatSuggestion(clsName) {
+  const statSelect = document.getElementById('statSelect');
+  if (!statSelect) return;
+  const meta = classMeta[clsName];
+
+  // Reset all option labels to plain form first
+  Array.from(statSelect.options).forEach(opt => {
+    if (opt.value) opt.textContent = opt.value.toUpperCase();
+  });
+
+  if (meta) {
+    const recommendedOpt = Array.from(statSelect.options).find(o => o.value === meta.primaryStat);
+    if (recommendedOpt) {
+      recommendedOpt.textContent = `${meta.primaryStat.toUpperCase()} — Recommended`;
+      statSelect.value = meta.primaryStat;
+    }
+  }
 }
 
 function filterItemsByClass(cls) {
@@ -994,6 +1066,13 @@ function loadItems() {
       if (retryBtn) retryBtn.addEventListener('click', loadItems);
     });
 }
+document.getElementById('classSelect').addEventListener('change', (e) => {
+  const cls = e.target.value;
+  updateClassInfoPanel(cls);
+  populateSpellAmpDropdown(cls);
+  applyClassStatSuggestion(cls);
+});
+
 document.getElementById('spellAmpSelect').addEventListener('change', (e) => {
   selectedSpellAmp = e.target.value;
 
