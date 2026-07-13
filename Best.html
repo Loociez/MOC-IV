@@ -247,7 +247,7 @@ button:disabled {
 </style>
 </head>
 <body>
-<div style="background:#ede9fe;border:1px solid #ffeeba;color:#856404;padding:15px 25px;border-radius:5px;max-width:90vw;min-width:300px;font-family:Arial, sans-serif;line-height:1.5;box-sizing:border-box;margin-bottom:16px;">
+<div style="background:var(--bg-panel);border:1px solid var(--border);border-left:4px solid var(--accent);color:var(--text-main);padding:15px 25px;border-radius:5px;max-width:90vw;min-width:300px;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;line-height:1.5;box-sizing:border-box;margin-bottom:16px;">
   <strong>Instructions</strong>
   <ul style="margin:10px 0 15px 20px;padding:0;list-style-type:decimal;">
     <li>Enter your character's base stats (without items).</li>
@@ -255,10 +255,11 @@ button:disabled {
     <li>Click <strong>Generate</strong> and fine tune your build from the drop down menus.</li>
     <li>View your build's stats.</li>
   </ul>
-  <strong>Issues:</strong>
-  <ul style="margin:10px 0 0 20px;padding:0;list-style-type:disc;">
+  <strong style="color:var(--text-dim);">Issues:</strong>
+  <ul style="margin:10px 0 0 20px;padding:0;list-style-type:disc;color:var(--text-dim);">
     <li>Now accounts for Enchants. However not all are included yet (Work in progress)</li>
     <li>Not all god/misc items removed from the pool.</li>
+    <li>Two-handed weapons now automatically disable the shield/offhand slot.</li>
   </ul>
 </div>
 <h1>Loocie's Build Helper.</h1>
@@ -542,10 +543,19 @@ function filterItemsByClass(cls) {
   });
 }
 
+function isNonEquippableEntity(item) {
+  // "Projectile"/"trap" entries under the weapon type codes are visual or
+  // environmental-hazard entities (spell effects, floor traps), not real
+  // player gear — always hide them, independent of the ignore-toggle.
+  if (!item || !item.name) return false;
+  const name = item.name.toLowerCase();
+  return name.includes('projectile') || name.includes('trap');
+}
+
 function getItemsForSlot(slotKey) {
   switch (slotKey) {
     case 'weapon':
-      return filteredItemsByClass.filter(item => (item.type === SLOT_TYPE_WEAPON_1H || item.type === SLOT_TYPE_WEAPON_2H) && !isAdminItem(item));
+      return filteredItemsByClass.filter(item => (item.type === SLOT_TYPE_WEAPON_1H || item.type === SLOT_TYPE_WEAPON_2H) && !isAdminItem(item) && !isNonEquippableEntity(item));
     case 'helm':
       return filteredItemsByClass.filter(item => item.type === SLOT_TYPE_HELM && !isAdminItem(item));
     case 'armor':
@@ -787,7 +797,10 @@ function createSlotDropdown(slotKey) {
 
   if (slotItems.length) select.selectedIndex = 1;
 
-  select.addEventListener('change', updateBuildSummary);
+  select.addEventListener('change', () => {
+    if (slotKey === 'weapon') updateShieldAvailability();
+    updateBuildSummary();
+  });
 
   // enchant select
   const enchantSelect = document.createElement('select');
@@ -818,6 +831,51 @@ function createSlotDropdown(slotKey) {
   container.appendChild(label);
   container.appendChild(controls);
   return container;
+}
+
+/* -------------------------
+   Two-handed weapon <-> shield exclusivity
+   NOTE: item.type (1 vs 2) is NOT a 1H/2H indicator in the source data —
+   both weapon types contain a mix of one- and two-handed items. The real
+   signal is item.data.two_handed.
+   ------------------------- */
+function isTwoHandedWeapon(item) {
+  if (!item || !item.data) return false;
+  const v = item.data.two_handed;
+  return v === true || v === "true" || v === "True";
+}
+
+function updateShieldAvailability() {
+  const weaponSelect = document.getElementById('slot-select-weapon');
+  const shieldSelect = document.getElementById('slot-select-shield');
+  const shieldEnchant = document.getElementById('enchant-select-shield');
+  if (!weaponSelect || !shieldSelect) return;
+
+  const weaponItem = items.find(i => i.name === weaponSelect.value);
+  const isTwoHanded = isTwoHandedWeapon(weaponItem);
+
+  const shieldContainer = shieldSelect.closest('.slot-container');
+  let note = shieldContainer ? shieldContainer.querySelector('#shield-2h-note') : null;
+
+  if (isTwoHanded) {
+    if (shieldSelect.value !== '__NONE__') shieldSelect.value = '__NONE__';
+    shieldSelect.disabled = true;
+    if (shieldEnchant) {
+      shieldEnchant.value = 'none';
+      shieldEnchant.disabled = true;
+    }
+    if (!note && shieldContainer) {
+      note = document.createElement('div');
+      note.id = 'shield-2h-note';
+      note.style.cssText = 'font-size:0.8rem;color:var(--text-dim);margin-top:6px;';
+      note.textContent = 'Two-handed weapon equipped — shield/offhand disabled.';
+      shieldContainer.appendChild(note);
+    }
+  } else {
+    shieldSelect.disabled = false;
+    if (shieldEnchant) shieldEnchant.disabled = false;
+    if (note) note.remove();
+  }
 }
 
 /* -------------------------
@@ -909,18 +967,31 @@ function enableUI() {
 }
 
 function loadItems() {
+  const buildOutput = document.getElementById('buildOutput');
+  buildOutput.textContent = "Loading items, please wait...";
+
   fetch(ITEMS_JSON_URL)
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      return res.json();
+    })
     .then(data => {
       items = data;
       populateClassDropdown();
-populateStatDropdown();
-populateSpellAmpDropdown();
-enableUI();;
-      document.getElementById('buildOutput').textContent = "Items loaded! Select class and stat, then click Generate.";
+      populateStatDropdown();
+      populateSpellAmpDropdown();
+      enableUI();
+      buildOutput.textContent = "Items loaded! Select class and stat, then click Generate.";
     })
     .catch(err => {
-      alert("Failed to load items JSON: " + err.message);
+      buildOutput.innerHTML = `
+        <div style="color:#f87171;">
+          <strong>Failed to load item data.</strong><br>
+          ${err.message}<br>
+          <button id="retryLoadBtn" style="margin-top:10px;">Retry</button>
+        </div>`;
+      const retryBtn = document.getElementById('retryLoadBtn');
+      if (retryBtn) retryBtn.addEventListener('click', loadItems);
     });
 }
 document.getElementById('spellAmpSelect').addEventListener('change', (e) => {
@@ -949,6 +1020,7 @@ function generateBuildUI() {
     const dropdown = createSlotDropdown(slotKey);
     container.appendChild(dropdown);
   });
+  updateShieldAvailability();
   updateBuildSummary();
 }
 
@@ -963,18 +1035,26 @@ loadItems();
 let ignoreGodMiscItems = false;
 
 function isIgnoredItemByName(item) {
-  if (!item || !item.name) return false;
+  if (!item) return false;
+
+  // Prefer data-driven flags if the item source ever adds them —
+  // far more reliable than matching on name text.
+  if (item.hidden === true || item.disabled === true || item.test === true) return true;
+
+  if (!item.name) return false;
   const name = item.name.toLowerCase();
-  if (name === "god weapon") return true;
-  if (name === "god armor") return true;
-  if (name === "poseidon fire") return true;
-  if (name === "^ #2") return true;
-  if (name === "^ #3") return true;
-  if (name === "^ #4") return true;
-  if (name === "harls test") return true;
-  if (name === "test123") return true;
+  const ignoredExact = new Set([
+    "god weapon", "god armor", "poseidon fire",
+    "^ #2", "^ #3", "^ #4",
+    "harls test", "test123"
+  ]);
+  if (ignoredExact.has(name)) return true;
   if (name.includes("projectile")) return true;
   if (name.includes("trap")) return true;
+  // Word-boundary match for dev/test/debug items (e.g. "Custom Data Tester #1",
+  // "tester", "Rich's Test Counterattack"). Checked against the full item list
+  // with no false positives (doesn't catch things like "Tempest").
+  if (/\btest(er|ing)?\b|\bcustom data\b|\bdummy\b|\bdebug\b|\bsample\b|\bplaceholder\b/i.test(item.name)) return true;
   return false;
 }
 
