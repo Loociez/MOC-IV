@@ -2,27 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Loading game…</title>
-  <meta http-equiv="refresh" content="0; url=https://moc-iv.onrender.com" />
+  <title>MOC Community</title>
   <style>
     body {
       background: #111;
       color: #eee;
       font-family: system-ui, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 0 20px;
+      line-height: 1.6;
     }
+    a { color: #8ab4ff; }
+    code { background: #222; padding: 2px 6px; border-radius: 4px; }
+    ol { padding-left: 20px; }
   </style>
 </head>
 <body>
-  <p>
-    Redirecting…
-    <a href="https://moc-iv.onrender.com" style="color:#8ab4ff;">
-      Click here if you're not redirected automatically
-    </a>
-  </p>
+  <h1>Nova-Dust: Shared Account Access</h1>
+  <p>To play on the shared account without seeing the real password, install a small browser script:</p>
+  <ol>
+    <li>Install the <a href="https://www.tampermonkey.net/" target="_blank">Tampermonkey</a> browser extension.</li>
+    <li>Click here to install the script: <a href="./consty-autologin.user.js">consty-autologin.user.js</a>
+      (Tampermonkey should offer an install prompt automatically).</li>
+    <li>Go to <a href="https://play.consty.com" target="_blank">play.consty.com</a>.</li>
+    <li>You'll see an "Enter Access Code" prompt instead of the normal login screen.
+      Enter the access code you were given — the game will log in automatically.</li>
+  </ol>
+  <p>Don't have the access code? Ask whoever shared this page with you.</p>
 </body>
 </html>
