@@ -66,35 +66,49 @@ const AUTOLOGIN_SNIPPET = `
     '{display:none!important;}';
   document.documentElement.appendChild(style);
 
+  // Hard once-only flags. Set BEFORE clicking so a rapid re-fire of the
+  // observer (which happens a lot in this game's UI) can never queue a
+  // second click/connect attempt.
+  var loginClicked = false;
+  var playClicked = false;
+
   function tryLogin() {
+    if (loginClicked) return;
     var form = document.getElementById('winLogin');
     if (!form) return;
     var emailInput = form.querySelector('input[name="txtEmail"]');
     var passInput = form.querySelector('input[name="txtPassword"]');
     var loginBtn = form.querySelector('button[title="Login"]');
     if (!emailInput || !passInput || !loginBtn) return;
-    if (emailInput.value === EMAIL && passInput.value === PASSWORD) return;
+    loginClicked = true;
     emailInput.value = EMAIL;
     passInput.value = PASSWORD;
     loginBtn.click();
   }
 
   function tryPlay() {
+    if (playClicked) return;
     var form = document.getElementById('winSelectPlayer');
     if (!form) return;
     var playBtn = form.querySelector('button[title="Play player"]');
-    if (!playBtn || playBtn.dataset.autoClicked) return;
-    playBtn.dataset.autoClicked = '1';
+    if (!playBtn) return;
+    playClicked = true;
     playBtn.click();
   }
 
   var observer = new MutationObserver(function () {
     tryLogin();
     tryPlay();
+    if (loginClicked && playClicked) observer.disconnect();
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
+
   tryLogin();
   tryPlay();
+
+  // Safety net: stop watching the DOM after 30s no matter what, so a stuck
+  // state can't leave a heavy observer running indefinitely.
+  setTimeout(function () { observer.disconnect(); }, 30000);
 })();
 </script>
 `;
