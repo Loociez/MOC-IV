@@ -13,7 +13,7 @@
   'use strict';
 
   // Replace with your real Render URL
-  const CREDENTIALS_ENDPOINT = 'https://YOUR-RENDER-APP.onrender.com/credentials';
+  const CREDENTIALS_ENDPOINT = 'https://moc-iv.onrender.com';
 
   let loginClicked = false;
   let playClicked = false;
