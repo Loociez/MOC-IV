@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         TotalEnhanced for Mirage Online Classic
 // @namespace    http://tampermonkey.net/
-// @version      2026-06-03
-// @description  Enhanced modification tool for MoC!
+// @version      2026-07-09
+// @description  Enhanced modification tool for MoC! (fixed: overlay UI no longer blocks Map Editor buttons)
 // @author       Loocie
 // @match        https://play.consty.com/
 // @match        https://play.mirageonlineclassic.com
@@ -15,19 +15,14 @@
     'use strict';
 
 // === Ctrl+K MASTER TOGGLE (Hard On / Off) ===
+
 let __TE_ENABLED = true;
 const __TE_NODES = new Set();
 
-// Track everything this script adds to the DOM
-const __origAppend = Element.prototype.appendChild;
-Element.prototype.appendChild = function (node) {
-    if (__TE_ENABLED) {
-        __TE_NODES.add(node);
-        return __origAppend.call(this, node);
-    } else {
-        return node; // silently block inserts
-    }
-};
+function teTrack(node) {
+    if (node) __TE_NODES.add(node);
+    return node;
+}
 
 // Keyboard toggle
 window.addEventListener('keydown', e => {
@@ -36,7 +31,7 @@ window.addEventListener('keydown', e => {
         __TE_ENABLED = !__TE_ENABLED;
 
         if (!__TE_ENABLED) {
-            // Disable: remove all injected nodes
+            // Disable: remove all injected nodes we know about
             __TE_NODES.forEach(node => {
                 if (node && node.parentNode) {
                     node.parentNode.removeChild(node);
@@ -50,211 +45,70 @@ window.addEventListener('keydown', e => {
     }
 });
 
+// === Auto-hide overlay UI while the Map Editor is open ===
+
+const TE_OVERLAY_CLASS = 'te-overlay';
+const __TE_hiddenDisplay = new Map();
+let __TE_editorOpen = false;
+
+function teMarkOverlay(el) {
+    if (el) el.classList.add(TE_OVERLAY_CLASS);
+    return teTrack(el);
+}
+
+function getMapEditorElement() {
+    let editor = document.getElementById('winMapEditor');
+    if (editor) return editor;
+    // Fallback: some builds may use a different id. Look for any game
+    // window whose header reads "Map Editor".
+    editor = [...document.querySelectorAll('[class*="gameWindow"], [id^="win"]')]
+        .find(el => /map\s*editor/i.test(el.querySelector('h1,h2,h3,.winTitle')?.textContent || ''));
+    return editor || null;
+}
+
+function isMapEditorOpen() {
+    const editor = getMapEditorElement();
+    if (!editor) return false;
+    const style = window.getComputedStyle(editor);
+    if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) return false;
+    // NOTE: do not use `editor.offsetParent !== null` here - offsetParent is
+    // ALWAYS null for position:fixed elements (which game windows commonly
+    // are), so that check silently made this function return false forever
+    // and the whole overlay-hiding fix never actually ran.
+    const rect = editor.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+}
+
+function setOverlaysHidden(hidden) {
+    document.querySelectorAll('.' + TE_OVERLAY_CLASS).forEach(el => {
+        if (hidden) {
+            if (!__TE_hiddenDisplay.has(el)) __TE_hiddenDisplay.set(el, el.style.display);
+            el.style.display = 'none';
+        } else if (__TE_hiddenDisplay.has(el)) {
+            el.style.display = __TE_hiddenDisplay.get(el);
+            __TE_hiddenDisplay.delete(el);
+        }
+    });
+}
+
+function checkMapEditorState() {
+    const open = isMapEditorOpen();
+    if (open !== __TE_editorOpen) {
+        __TE_editorOpen = open;
+        setOverlaysHidden(open);
+
+        console.log(open
+            ? "[TotalEnhanced] Map Editor opened - overlay UI hidden so it won't block editor buttons."
+            : '[TotalEnhanced] Map Editor closed - overlay UI restored.');
+    }
+}
+setInterval(checkMapEditorState, 300);
+
 
 
   // Combined Enhancer Script
 
-// Includes: Vitals, Skill Enhancer, Guild Enhancer, Bank Enhancer and QoL settings
-
-(() => {
-  let barsEnabled = false;
-  let barsLocked = false;
-  let barsContainer;
-  let hpBar, spBar, mpBar, tpBar, xpBar;
-  let hpTextSpan, spTextSpan, mpTextSpan, tpTextSpan, xpTextSpan;
-  let intervalId;
-
-  const oldVitals = document.getElementById("winVitals");
-
-  const lockBtn = document.createElement("button");
-  lockBtn.textContent = "🔓";
-  lockBtn.title = "Lock/Unlock Bars Position";
-  Object.assign(lockBtn.style, {
-    position: "fixed",
-    top: "4px",
-    left: "36px",
-    zIndex: 99999,
-    fontSize: "10px",
-    padding: "2px 4px",
-    borderRadius: "4px",
-    border: "1px solid #888",
-    background: "#111",
-    color: "lightgreen",
-    cursor: "pointer",
-    lineHeight: "1",
-    width: "auto",
-    height: "auto",
-    display: "none",
-    userSelect: "none",
-  });
-  lockBtn.onclick = () => {
-    barsLocked = !barsLocked;
-    updateLockState();
-  };
-  document.body.appendChild(lockBtn);
-
-  function createBar(color, tooltipCallback) {
-    const barBg = document.createElement("div");
-    Object.assign(barBg.style, {
-      width: "150px",
-      height: "14px",
-      backgroundColor: "#222",
-      borderRadius: "7px",
-      boxShadow: `0 0 8px ${color}`,
-      marginBottom: "6px",
-      overflow: "hidden",
-      position: "relative",
-      display: "flex",
-      alignItems: "center",
-    });
-
-    const barFill = document.createElement("div");
-    Object.assign(barFill.style, {
-      height: "100%",
-      width: "0%",
-      background: `linear-gradient(90deg, ${color} 0%, #000 70%)`,
-      borderRadius: "7px",
-      boxShadow: `0 0 10px ${color}`,
-      transition: "width 0.2s ease-out",
-      position: "absolute",
-      top: "0",
-      left: "0",
-      filter: `drop-shadow(0 0 4px ${color})`,
-      zIndex: 1,
-    });
-
-    const textSpan = document.createElement("span");
-    Object.assign(textSpan.style, {
-      position: "relative",
-      zIndex: 2,
-      pointerEvents: "none",
-      userSelect: "none",
-      width: "100%",
-      textAlign: "center",
-      color: "white",
-      textShadow: "0 0 4px black",
-      fontWeight: "bold",
-      fontSize: "11px",
-      fontFamily: "Arial, sans-serif",
-    });
-
-    if (tooltipCallback) {
-      barBg.title = "";
-      barBg.onmouseenter = () => {
-        barBg.title = tooltipCallback();
-      };
-    }
-
-    barBg.appendChild(barFill);
-    barBg.appendChild(textSpan);
-    return { barBg, barFill, textSpan };
-  }
-
-  function parseValue(text) {
-    if (!text) return [0, 100];
-    const parts = text.split("/");
-    if (parts.length !== 2) return [0, 100];
-    return parts.map(s => parseInt(s.replace(/\D/g, ""), 10));
-  }
-
-  let pulse = 0;
-  let lastVals = {};
-
-  function updateBars() {
-    if (!barsEnabled) return;
-
-    // fresh lookups each tick so bars always see live data
-    const txtHP = document.getElementById("txtHP");
-    const txtSP = document.getElementById("txtSP");
-    const txtMP = document.getElementById("txtMP");
-    const txtTP = document.getElementById("txtTP");
-    const txtXP = document.getElementById("txtXP");
-
-    const updateStat = (txtNode, bar, span, color, offset, key) => {
-      if (!txtNode || !bar) return;
-      const raw = txtNode.textContent;
-      if (!raw) return;
-      if (lastVals[key] === raw) return; // skip unchanged
-      lastVals[key] = raw;
-
-      const [cur, max] = parseValue(raw);
-      if (!max) return;
-      const percent = Math.min(cur / max, 1);
-      bar.style.width = `${percent * 100}%`;
-      bar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + offset))}px ${color}`;
-      span.textContent = `${cur.toLocaleString()} / ${max.toLocaleString()}`;
-    };
-
-    updateStat(txtHP, hpBar, hpTextSpan, "red", 0, "hp");
-    updateStat(txtSP, spBar, spTextSpan, "lime", 1, "sp");
-    updateStat(txtMP, mpBar, mpTextSpan, "deepskyblue", 2, "mp");
-    updateStat(txtTP, tpBar, tpTextSpan, "#a64ca6", 3, "tp");
-
-    if (txtXP && xpBar) {
-      const match = txtXP.textContent.match(/(\d+)\s*\/\s*(\d+)/);
-      if (match) {
-        const cur = parseInt(match[1]), max = parseInt(match[2]);
-        const raw = `${cur}/${max}`;
-        if (lastVals["xp"] !== raw) {
-          lastVals["xp"] = raw;
-          const percent = Math.min(cur / max, 1);
-          xpBar.style.width = `${percent * 100}%`;
-          xpBar.style.boxShadow = `0 0 ${4 + 2 * Math.abs(Math.sin(pulse + 4))}px goldenrod`;
-          xpTextSpan.textContent = `${cur.toLocaleString()} / ${max.toLocaleString()}`;
-        }
-      }
-    }
-
-    pulse += 0.2; // slower pulse
-  }
-
-  function startUpdating() {
-    clearInterval(intervalId);
-    intervalId = setInterval(updateBars, 100); // update every 100ms
-  }
-
-  function updateLockState() {
-    if (!barsContainer) return;
-    if (barsLocked) {
-      lockBtn.textContent = "🔒";
-      lockBtn.style.color = "red";
-      barsContainer.style.cursor = "default";
-      barsContainer.style.pointerEvents = "auto";
-    } else {
-      lockBtn.textContent = "🔓";
-      lockBtn.style.color = "lightgreen";
-      barsContainer.style.cursor = "move";
-      barsContainer.style.pointerEvents = "auto";
-    }
-  }
-
-  function makeDraggable(element) {
-    let pos = { x: 0, y: 0, left: 0, top: 0 };
-    function onMouseDown(e) {
-      if (barsLocked) return;
-      pos.x = e.clientX;
-      pos.y = e.clientY;
-      pos.left = parseInt(element.style.left) || 0;
-      pos.top = parseInt(element.style.top) || 0;
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-      e.preventDefault();
-    }
-    function onMouseMove(e) {
-      const dx = e.clientX - pos.x;
-      const dy = e.clientY - pos.y;
-      element.style.left = pos.left + dx + "px";
-      element.style.top = pos.top + dy + "px";
-    }
-    function onMouseUp() {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    }
-    element.addEventListener("mousedown", onMouseDown);
-  }
-})();
-
-
+// Includes: Skill Enhancer, Guild Enhancer, Bank Enhancer and QoL settings
 
 (function enhanceSkillsWindow() {
   const winSkills = document.querySelector('#winSkills');
@@ -349,151 +203,1048 @@ window.addEventListener('keydown', e => {
   const panelId = 'winGuildEditor';
   let intervalId = null;
 
+  // =====================================================================
+  // Guild Charter
+  // =====================================================================
+  if (!document.getElementById('moc-guild-overhaul-styles')) {
+    const style = document.createElement('style');
+    style.id = 'moc-guild-overhaul-styles';
+    style.textContent = `
+      #${panelId} {
+        --ink:        #0f1115;
+        --panel:      #171a21;
+        --panel-alt:  #1c202a;
+        --line:       rgba(201,168,110,0.16);
+        --line-soft:  rgba(255,255,255,0.06);
+        --brass:      #c9a86e;
+        --brass-hi:   #e8c988;
+        --crimson:    #c1524d;
+        --emerald:    #5aa876;
+        --slate:      #9aa0ac;
+        --text:       #ebe7e0;
+        --danger-bg:  rgba(179,65,62,0.15);
+        --serif:      Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+        --sans:       -apple-system, 'Segoe UI', Arial, sans-serif;
+        --mono:       'SF Mono', 'Consolas', 'Menlo', monospace;
+
+        /* IMPORTANT: never force the display property here. The game
+           toggles this form's own inline style.display between 'none' and
+           'grid' to open/close the window. Overriding display with
+           !important would beat that inline style and leave the panel
+           visually "open" and still polling after the player closes it.
+           We only neutralize the game's default grid/box chrome (non-
+           display props are safe) and put all real layout on the
+           .moc-shell wrapper we insert inside instead. */
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        font-family: var(--sans) !important;
+        color: var(--text) !important;
+
+        /* ---------- Resolution-independent placement ----------
+           The game positions/sizes this window itself, apparently assuming
+           a fixed reference resolution - on a smaller display (e.g.
+           1600x900) that ran the bottom of the window off the bottom of
+           the screen, and on a larger one (e.g. 2560x1440) it left it
+           looking small/off-center. We take over position + size only
+           (never display, see above) so it's always centered and always
+           fits the viewport, on any screen. .moc-shell then scrolls
+           internally if it still doesn't fit at a sane minimum size. */
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: min(92vw, 900px) !important;
+        height: auto !important;
+        max-height: 92vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        scrollbar-width: thin;
+        scrollbar-color: #c9a86e #1c202a;
+      }
+      #${panelId}::-webkit-scrollbar { width: 9px; }
+      #${panelId}::-webkit-scrollbar-track { background: #1c202a; border-radius: 8px; }
+      #${panelId}::-webkit-scrollbar-thumb { background: rgba(201,168,110,0.16); border-radius: 8px; }
+      #${panelId}::-webkit-scrollbar-thumb:hover { background: #c9a86e; }
+
+      /* neutralize the game's native structural wrapper divs */
+      #${panelId} > div { display: contents !important; }
+
+      /* ---------- Shell (all real chrome lives here, not on the panel) ---------- */
+      .moc-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        padding: 14px;
+        width: 100%;
+        max-width: 100%;
+        max-height: 92vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 15% 0%, rgba(201,168,110,0.06), transparent 40%),
+          linear-gradient(180deg, #14161c, var(--ink));
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.02);
+        box-sizing: border-box;
+        scrollbar-width: thin;
+        scrollbar-color: var(--brass) var(--panel-alt);
+      }
+      .moc-shell::-webkit-scrollbar { width: 9px; }
+      .moc-shell::-webkit-scrollbar-track { background: var(--panel-alt); border-radius: 8px; }
+      .moc-shell::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+      .moc-shell::-webkit-scrollbar-thumb:hover { background: var(--brass); }
+
+      /* ---------- Header ---------- */
+      .moc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #14161c;
+        margin: -4px -4px 0;
+        padding: 4px 4px 12px;
+      }
+      .moc-header-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .moc-header-title svg { flex-shrink: 0; }
+      .moc-header h3 {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        font-weight: 400;
+        letter-spacing: 0.05em;
+        color: var(--brass-hi);
+        text-transform: uppercase;
+      }
+      .moc-header-sub {
+        font-family: var(--mono);
+        font-size: 0.6rem;
+        color: var(--slate);
+        letter-spacing: 0.08em;
+        margin-top: 1px;
+      }
+
+      /* ---------- Layout skeleton ---------- */
+      .moc-body {
+        display: grid;
+        grid-template-columns: clamp(150px, 20vw, 200px) 1fr;
+        gap: 11px;
+        align-items: start;
+      }
+      .moc-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .moc-main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px;
+        align-items: start;
+      }
+      .moc-col {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .moc-span2 { grid-column: 1 / -1; }
+
+      /* ---------- Card shell ---------- */
+      .moc-card {
+        background: var(--panel);
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        padding: 11px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      }
+      .moc-card-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: var(--serif);
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--brass);
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      .moc-card-title svg { opacity: 0.85; }
+      .moc-card-title .moc-count {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        color: var(--slate);
+        letter-spacing: normal;
+        text-transform: none;
+      }
+
+      /* ---------- Form grid (label / field pairs) ---------- */
+      .moc-grid-form {
+        display: grid;
+        grid-template-columns: 78px 1fr;
+        gap: 7px 10px;
+        align-items: center;
+      }
+      .moc-grid-form > .moc-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--slate);
+        letter-spacing: 0.02em;
+      }
+
+      /* ---------- Inputs ---------- */
+      #${panelId} input[type="text"],
+      #${panelId} input[type="number"],
+      #${panelId} input[type="date"],
+      #${panelId} input:not([type]),
+      #${panelId} select,
+      #${panelId} textarea {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        background: var(--panel-alt) !important;
+        border: 1px solid var(--line) !important;
+        color: var(--text) !important;
+        border-radius: 5px !important;
+        padding: 6px 8px !important;
+        font-family: var(--sans) !important;
+        font-size: 0.82rem !important;
+        transition: border-color .15s, box-shadow .15s;
+      }
+      #${panelId} input:focus,
+      #${panelId} select:focus,
+      #${panelId} textarea:focus {
+        border-color: var(--brass) !important;
+        box-shadow: 0 0 0 3px rgba(201,168,110,0.15) !important;
+        outline: none !important;
+      }
+      #${panelId} textarea { resize: none !important; font-family: var(--sans) !important; }
+      #${panelId} input[type="number"] { font-family: var(--mono) !important; }
+
+      /* list boxes */
+      #${panelId} select[size] {
+        min-height: 96px !important;
+        font-size: 0.78rem !important;
+        line-height: 1.6 !important;
+        scrollbar-width: thin;
+        scrollbar-color: var(--brass) var(--panel-alt);
+      }
+      #${panelId} select[size]::-webkit-scrollbar { width: 8px; }
+      #${panelId} select[size]::-webkit-scrollbar-track { background: var(--panel-alt); }
+      #${panelId} select[size]::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+
+      /* filter boxes above lists */
+      .moc-filter {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        background: var(--ink) !important;
+        border: 1px solid var(--line-soft) !important;
+        color: var(--slate) !important;
+        border-radius: 5px !important;
+        padding: 5px 8px !important;
+        font-size: 0.72rem !important;
+        margin-bottom: 2px;
+      }
+      .moc-filter::placeholder { color: #565b66; }
+      .moc-filter:focus { color: var(--text) !important; border-color: var(--brass) !important; outline: none; }
+
+      /* ---------- Ledger (activity + payments, merged) ---------- */
+      .moc-ledger-list {
+        background: var(--panel-alt);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        height: 116px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        font-size: 0.72rem;
+        line-height: 1.55;
+        scrollbar-width: thin;
+        scrollbar-color: var(--brass) var(--panel-alt);
+      }
+      .moc-ledger-list::-webkit-scrollbar { width: 8px; }
+      .moc-ledger-list::-webkit-scrollbar-track { background: var(--panel-alt); }
+      .moc-ledger-list::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+      .moc-ledger-group {
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: #20242e;
+        color: var(--brass);
+        font-family: var(--mono);
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 4px 8px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .moc-ledger-hint {
+        text-transform: none;
+        letter-spacing: normal;
+        color: var(--slate);
+        font-family: var(--sans);
+        font-size: 0.62rem;
+        cursor: help;
+      }
+      .moc-ledger-row {
+        padding: 3px 8px;
+        color: var(--text);
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+      }
+      .moc-ledger-time {
+        font-family: var(--mono);
+        color: var(--slate);
+        margin-right: 4px;
+      }
+      .moc-ledger-empty {
+        padding: 10px 8px;
+        color: var(--slate);
+        font-style: italic;
+      }
+
+      /* ---------- Buttons ---------- */
+      #${panelId} button {
+        background: linear-gradient(180deg, #262a34, #1a1d24) !important;
+        border: 1px solid var(--line) !important;
+        color: var(--text) !important;
+        padding: 7px 10px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: 34px !important;
+        line-height: 1.2 !important;
+        font-size: 0.74rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        white-space: nowrap;
+        transition: all .15s ease !important;
+        font-family: var(--sans) !important;
+      }
+      #${panelId} button:hover {
+        border-color: var(--brass) !important;
+        color: var(--brass-hi) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.35) !important;
+      }
+      #${panelId} button:active { transform: translateY(1px); }
+
+      .moc-btn-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .moc-btn-row button { flex: 1 1 auto; }
+      .moc-btn-end { display: flex; justify-content: flex-end; }
+
+      .moc-btn-primary {
+        background: linear-gradient(180deg, #d9bb84, var(--brass)) !important;
+        border-color: var(--brass) !important;
+        color: #1a1508 !important;
+      }
+      .moc-btn-primary:hover {
+        background: linear-gradient(180deg, var(--brass-hi), #d9bb84) !important;
+        color: #14100a !important;
+      }
+      .moc-btn-ghost {
+        background: transparent !important;
+        border-color: var(--line) !important;
+        color: var(--slate) !important;
+      }
+      .moc-btn-ghost:hover { color: var(--crimson) !important; border-color: var(--crimson) !important; }
+
+      /* ---------- Identity card specifics ---------- */
+      .moc-identity-layout {
+        display: grid;
+        grid-template-columns: 108px 1fr;
+        gap: 14px;
+      }
+      .moc-emblem-plaque {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 10px;
+        background: var(--panel-alt);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      .moc-emblem-plaque canvas {
+        border: 2px solid var(--brass) !important;
+        border-radius: 4px !important;
+        background: var(--ink) !important;
+        box-shadow: 0 0 12px rgba(201,168,110,0.15);
+      }
+      .moc-emblem-label {
+        font-family: var(--mono);
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        color: var(--slate);
+        text-transform: uppercase;
+      }
+      .moc-emblem-plaque input[type="number"] { text-align: center !important; }
+
+      /* ---------- Treasury ---------- */
+      .moc-delinquent-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 9px;
+        background: var(--panel-alt);
+        border: 1px solid var(--line-soft);
+        border-radius: 5px;
+        font-size: 0.74rem;
+        color: var(--slate);
+      }
+      .moc-delinquent-row input { width: auto !important; accent-color: var(--crimson); }
+      .moc-delinquent-row.is-active {
+        color: var(--crimson);
+        border-color: var(--crimson);
+        background: var(--danger-bg);
+        font-weight: 600;
+      }
+      .moc-due-badge {
+        font-family: var(--mono);
+        font-size: 0.65rem;
+        color: var(--slate);
+        margin-top: 3px;
+      }
+      .moc-due-badge.is-overdue { color: var(--crimson); font-weight: 700; }
+
+      /* ---------- Legend / pills ---------- */
+      .moc-legend {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: 0.64rem;
+        color: var(--slate);
+        letter-spacing: 0.02em;
+      }
+      .moc-legend span { display: inline-flex; align-items: center; gap: 4px; }
+      .moc-legend i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+      /* ---------- Experience bar ---------- */
+      .moc-xp-card {
+        background: var(--panel);
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .moc-xp-label {
+        font-family: var(--serif);
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--brass);
+        flex-shrink: 0;
+      }
+      .moc-xp-track { flex: 1; position: relative; }
+      #${panelId} .barTotal {
+        background: var(--ink) !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 7px !important;
+        height: 16px !important;
+        width: 100% !important;
+      }
+      #${panelId} .barValue {
+        background: linear-gradient(90deg, #4a2545, var(--brass)) !important;
+        box-shadow: 0 0 10px rgba(201,168,110,0.35) !important;
+        border-radius: 6px !important;
+        height: 14px !important;
+        top: 1px !important;
+        left: 1px !important;
+      }
+      #${panelId} .barText {
+        font-family: var(--mono) !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        color: #fff !important;
+        text-shadow: 0 1px 3px #000 !important;
+        line-height: 16px !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // =====================================================================
+  // Minimal inline icon set (1.6px stroke, currentColor) — no external deps
+  // =====================================================================
+  const ICON = {
+    seal: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="6"/><path d="M8 14.5 6 21l6-3 6 3-2-6.5"/></svg>`,
+    back: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>`,
+    directory: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg>`,
+    identity: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>`,
+    roster: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M16 8a3 3 0 110-6M17 14c2.8.5 5 2.5 5 6"/></svg>`,
+    diplomacy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4v16M4 5h10l-2 3 2 3H4"/></svg>`,
+    treasury: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 9.5h3.2a1.8 1.8 0 010 3.6H9.8a1.8 1.8 0 000 3.6h3.5"/></svg>`,
+    hall: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 10v10h14V10"/></svg>`,
+    save: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg>`,
+    plus: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`,
+    door: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 21V3h9v18M14 12v.01M14 3l5 2v16h-5"/></svg>`,
+  };
+  const icon = (name) => `<span style="display:inline-flex">${ICON[name] || ''}</span>`;
+
+
+  // Guild Ledger: merges the server's payment log with a browser-tracked
+
+  const LEDGER_PREFIX = 'mocGuildActivity:';
+
+  function currentGuildKey(panel) {
+    const selGuild = panel.querySelector('select[name="selGuild"]');
+    return LEDGER_PREFIX + (selGuild ? selGuild.value : 'unknown');
+  }
+  function loadActivity(panel) {
+    try {
+      const raw = localStorage.getItem(currentGuildKey(panel));
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function saveActivity(panel, list) {
+    try { localStorage.setItem(currentGuildKey(panel), JSON.stringify(list.slice(0, 60))); } catch (e) { /* storage unavailable, skip */ }
+  }
+  function logActivity(panel, action, detail) {
+    const now = new Date();
+    const date = `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} `
+      + `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const list = loadActivity(panel);
+    list.unshift({ actor: 'You', action, detail: detail || '', date });
+    saveActivity(panel, list);
+    renderLedger(panel);
+  }
+
+  function ledgerRow(text, time) {
+    const row = document.createElement('div');
+    row.className = 'moc-ledger-row';
+    if (time) {
+      const t = document.createElement('span');
+      t.className = 'moc-ledger-time';
+      t.textContent = time;
+      row.appendChild(t);
+    }
+    row.appendChild(document.createTextNode(text));
+    return row;
+  }
+
+  function renderLedger(panel) {
+    const listEl = panel.querySelector('.moc-ledger-list');
+    if (!listEl) return;
+    const query = (panel.querySelector('.moc-ledger-filter')?.value || '').trim().toLowerCase();
+    const src = panel.querySelector('select[name="cmbBalanceLog"]');
+    const activity = loadActivity(panel);
+    const prevScroll = listEl.scrollTop;
+
+    listEl.innerHTML = '';
+    let shown = 0;
+
+    if (activity.length) {
+      const group = document.createElement('div');
+      group.className = 'moc-ledger-group';
+      group.innerHTML = `<span>Activity</span><span class="moc-ledger-hint" title="Actions taken through this browser only. The game does not expose other members' action history, so this can't show what other officers did.">(this browser)</span>`;
+      listEl.appendChild(group);
+      activity.forEach(a => {
+        const text = `${a.actor} ${a.action}${a.detail ? ' ' + a.detail : ''}`;
+        if (query && !text.toLowerCase().includes(query)) return;
+        listEl.appendChild(ledgerRow(text, a.date));
+        shown++;
+      });
+    }
+
+    if (src) {
+      const group = document.createElement('div');
+      group.className = 'moc-ledger-group';
+      group.textContent = 'Payments';
+      listEl.appendChild(group);
+      Array.from(src.options).forEach(opt => {
+        if (query && !opt.text.toLowerCase().includes(query)) return;
+        listEl.appendChild(ledgerRow(opt.text));
+        shown++;
+      });
+    }
+
+    if (!shown) {
+      const empty = document.createElement('div');
+      empty.className = 'moc-ledger-empty';
+      empty.textContent = query ? 'No matching entries.' : 'No entries yet.';
+      listEl.appendChild(empty);
+    }
+    listEl.scrollTop = prevScroll;
+  }
+
+
+  // takes priority over the pre-click detail when present.
+  function wrapActionButton(panel, btn, action, getDetail) {
+    if (!btn || btn.dataset.mocLogWrapped === 'true') return;
+    const original = btn.onclick;
+    btn.onclick = function (evt) {
+      const preDetail = getDetail ? getDetail() : '';
+      let capturedPrompt = null;
+      const origPrompt = window.prompt;
+      window.prompt = function (...args) {
+        const v = origPrompt.apply(window, args);
+        if (capturedPrompt === null && v) capturedPrompt = v;
+        return v;
+      };
+      let result;
+      try {
+        result = original ? original.call(btn, evt) : undefined;
+      } finally {
+        window.prompt = origPrompt;
+      }
+      logActivity(panel, action, capturedPrompt || preDetail);
+      return result;
+    };
+    btn.dataset.mocLogWrapped = 'true';
+  }
+
+  function selectedOptionLabel(selectEl) {
+    if (!selectEl) return '';
+    const opt = selectEl.selectedOptions && selectEl.selectedOptions[0];
+    return opt ? opt.text.replace(/\s*\((Founder|Officer|Soldier|Alliance|War|Neutral)\)\s*$/i, '') : '';
+  }
+
+  // =====================================================================
+  // Build
+  // =====================================================================
+  function structureGuildUI() {
+    const panel = document.getElementById(panelId);
+    if (!panel || panel.dataset.restructured === 'true') return;
+
+    const titleEl = panel.querySelector('h3');
+    const txtName = panel.querySelector('input[name="txtName"]');
+    const txtAcronym = panel.querySelector('input[name="txtAcronym"]');
+    const txtDesc = panel.querySelector('textarea[name="txtDesc"]');
+    const cvsGuild = panel.querySelector('#cvsGuild');
+    const txtLevel = panel.querySelector('input[name="txtLevel"]');
+    const numSprite = panel.querySelector('input[name="numSprite"]');
+    const selMembers = panel.querySelector('select[name="selMembers"]');
+    const selDeclarations = panel.querySelector('select[name="selDeclarations"]');
+    const numBalance = panel.querySelector('input[name="numBalance"]');
+    const txtBalanceDue = panel.querySelector('input[name="txtBalanceDue"]');
+    const chkDelinquent = panel.querySelector('input[name="chkDelinquent"]');
+    const cmbHall = panel.querySelector('select[name="cmbHall"]');
+    const cmbBalanceLog = panel.querySelector('select[name="cmbBalanceLog"]');
+    const selGuild = panel.querySelector('select[name="selGuild"]');
+    const xpContainer = panel.querySelector('.barTotal')?.parentElement;
+
+    const btnByTitleFrag = (frag) =>
+      Array.from(panel.querySelectorAll('button')).find(b => (b.title || '').toLowerCase().includes(frag.toLowerCase()));
+    const btnSave = btnByTitleFrag('save guild');
+    const btnCreate = btnByTitleFrag('create new guild');
+    const btnAccept = btnByTitleFrag('accept guild');
+    const btnInvite = btnByTitleFrag('add member');
+    const btnRemove = btnByTitleFrag('remove member');
+    const btnToggleRank = btnByTitleFrag('toggle rank');
+    const btnToggleDecl = btnByTitleFrag('toggle declaration');
+    const btnPayBalance = btnByTitleFrag('pay balance');
+    const btnHalls = btnByTitleFrag('hall editor');
+    const btnBack = btnByTitleFrag('back to game');
+
+    if (!selGuild || !txtName) return;
+
+    // strip every element out of its native <li>/<div> wrappers, then wipe
+    const keep = [titleEl, txtName, txtAcronym, txtDesc, cvsGuild, txtLevel, numSprite,
+      selMembers, selDeclarations, numBalance, txtBalanceDue, chkDelinquent, cmbHall,
+      cmbBalanceLog, selGuild, xpContainer, btnSave, btnCreate, btnAccept, btnInvite,
+      btnRemove, btnToggleRank, btnToggleDecl, btnPayBalance, btnHalls, btnBack]
+      .filter(Boolean);
+    keep.forEach(el => el.parentElement && el.parentElement.removeChild(el));
+    panel.innerHTML = '';
+
+    // All real layout/chrome lives on this wrapper, not on the panel itself,
+    // so the game's own open/close toggle (panel.style.display) keeps working.
+    const shell = document.createElement('div');
+    shell.className = 'moc-shell';
+    panel.appendChild(shell);
+
+    const el = (tag, cls, html) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html !== undefined) n.innerHTML = html;
+      return n;
+    };
+    const cardTitle = (label, iconName, countEl) => {
+      const t = el('div', 'moc-card-title', `${icon(iconName)}<span>${label}</span>`);
+      if (countEl) t.appendChild(countEl);
+      return t;
+    };
+    const gridRow = (grid, label, field) => {
+      if (!field) return;
+      grid.appendChild(el('div', 'moc-label', label));
+      const wrap = el('div');
+      wrap.appendChild(field);
+      grid.appendChild(wrap);
+    };
+    const addFilter = (selectEl, placeholder) => {
+      if (!selectEl) return null;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'moc-filter';
+      input.placeholder = placeholder;
+      input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        Array.from(selectEl.options).forEach(opt => {
+          opt.style.display = !q || opt.text.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+      return input;
+    };
+
+    // ---------------- Header ----------------
+    const header = el('div', 'moc-header');
+    const titleWrap = el('div', 'moc-header-title');
+    const sealTitle = el('div');
+    sealTitle.style.color = 'var(--brass)';
+    sealTitle.innerHTML = icon('seal');
+    titleWrap.appendChild(sealTitle);
+    const titleTextWrap = el('div');
+    titleTextWrap.appendChild(titleEl || el('h3', null, 'Player Guilds'));
+    titleTextWrap.appendChild(el('div', 'moc-header-sub', 'GUILD MANAGEMENT CHARTER'));
+    titleWrap.appendChild(titleTextWrap);
+    header.appendChild(titleWrap);
+    if (btnBack) {
+      btnBack.className = 'moc-btn-ghost';
+      btnBack.innerHTML = `${icon('back')}<span>Back to Game</span>`;
+      header.appendChild(btnBack);
+    }
+    shell.appendChild(header);
+
+    // ---------------- Body: sidebar + main ----------------
+    const body = el('div', 'moc-body');
+
+    // -- Sidebar: Directory --
+    const sidebar = el('div', 'moc-sidebar');
+    const dirCard = el('div', 'moc-card');
+    dirCard.appendChild(cardTitle('Guild Directory', 'directory'));
+    const dirFilter = addFilter(selGuild, 'Filter guilds\u2026');
+    if (dirFilter) dirCard.appendChild(dirFilter);
+    if (selGuild) { selGuild.setAttribute('size', '7'); dirCard.appendChild(selGuild); }
+    const dirBtns = el('div', 'moc-btn-row');
+    if (btnCreate) { btnCreate.innerHTML = `${icon('plus')}<span>Create Guild</span>`; dirBtns.appendChild(btnCreate); }
+    if (btnAccept) { btnAccept.innerHTML = `${icon('door')}<span>Accept Invite</span>`; dirBtns.appendChild(btnAccept); }
+    dirCard.appendChild(dirBtns);
+    sidebar.appendChild(dirCard);
+
+    // -- Sidebar: Guild Hall --
+    const hallCard = el('div', 'moc-card');
+    hallCard.appendChild(cardTitle('Guild Hall', 'hall'));
+    if (cmbHall) hallCard.appendChild(cmbHall);
+    if (btnHalls) {
+      btnHalls.innerHTML = `${icon('hall')}<span>Hall Editor</span>`;
+      const row = el('div', 'moc-btn-row');
+      row.appendChild(btnHalls);
+      hallCard.appendChild(row);
+    }
+    sidebar.appendChild(hallCard);
+    body.appendChild(sidebar);
+
+    // -- Main --
+    const main = el('div', 'moc-main');
+    const colLeft = el('div', 'moc-col');
+    const colRight = el('div', 'moc-col');
+
+    // Identity card
+    const idCard = el('div', 'moc-card');
+    idCard.appendChild(cardTitle('Guild Identity', 'identity'));
+    const idLayout = el('div', 'moc-identity-layout');
+    const plaque = el('div', 'moc-emblem-plaque');
+    plaque.appendChild(el('div', 'moc-emblem-label', 'Guild Sprite'));
+    if (cvsGuild) plaque.appendChild(cvsGuild);
+    if (numSprite) {
+      numSprite.title = 'Sprite index';
+      plaque.appendChild(numSprite);
+    }
+    if (txtLevel) {
+      const lvlWrap = el('div');
+      lvlWrap.style.cssText = 'display:flex;align-items:center;gap:5px;margin-top:2px;';
+      lvlWrap.appendChild(el('span', null, 'Lv'));
+      lvlWrap.firstChild.style.cssText = 'font-family:var(--mono);font-size:0.65rem;color:var(--slate);';
+      lvlWrap.appendChild(txtLevel);
+      plaque.appendChild(lvlWrap);
+    }
+    idLayout.appendChild(plaque);
+
+    const idFields = el('div');
+    const idGrid = el('div', 'moc-grid-form');
+    gridRow(idGrid, 'Name', txtName);
+    gridRow(idGrid, 'Acronym', txtAcronym);
+    idFields.appendChild(idGrid);
+    const descWrap = el('div');
+    descWrap.style.marginTop = '8px';
+    descWrap.appendChild(el('div', 'moc-label', 'Description'));
+    descWrap.firstChild.style.marginBottom = '4px';
+    if (txtDesc) { txtDesc.rows = 2; descWrap.appendChild(txtDesc); }
+    idFields.appendChild(descWrap);
+    idLayout.appendChild(idFields);
+    idCard.appendChild(idLayout);
+
+    if (btnSave) {
+      btnSave.className = 'moc-btn-primary';
+      btnSave.innerHTML = `${icon('save')}<span>Save Changes</span>`;
+      const saveRow = el('div', 'moc-btn-end');
+      saveRow.appendChild(btnSave);
+      idCard.appendChild(saveRow);
+    }
+    colLeft.appendChild(idCard);
+
+    // Treasury card (guild balance) — paired with Identity in row one so it's
+    // always visible on open, never buried below the fold.
+    const treasCard = el('div', 'moc-card');
+    treasCard.appendChild(cardTitle('Treasury', 'treasury'));
+
+    const treasGrid = el('div', 'moc-grid-form');
+    gridRow(treasGrid, 'Balance', numBalance);
+    if (txtBalanceDue) {
+      const dueWrap = el('div');
+      dueWrap.appendChild(txtBalanceDue);
+      dueWrap.appendChild(el('div', 'moc-due-badge', ''));
+      treasGrid.appendChild(el('div', 'moc-label', 'Due Date'));
+      treasGrid.appendChild(dueWrap);
+    }
+    treasCard.appendChild(treasGrid);
+
+    if (chkDelinquent) {
+      const drow = el('label', 'moc-delinquent-row');
+      drow.appendChild(chkDelinquent);
+      drow.appendChild(document.createTextNode('Delinquent \u2014 upkeep or membership in breach'));
+      treasCard.appendChild(drow);
+    }
+
+    treasCard.appendChild(el('div', 'moc-label', 'Ledger'));
+    const ledgerFilter = document.createElement('input');
+    ledgerFilter.type = 'text';
+    ledgerFilter.className = 'moc-filter moc-ledger-filter';
+    ledgerFilter.placeholder = 'Filter ledger\u2026';
+    ledgerFilter.addEventListener('input', () => renderLedger(panel));
+    treasCard.appendChild(ledgerFilter);
+    const ledgerList = el('div', 'moc-ledger-list');
+    treasCard.appendChild(ledgerList);
+    if (cmbBalanceLog) {
+      // Kept in the DOM (hidden) so the game's own polling/refresh logic
+      // can keep writing new payment entries into it — we just read from
+      // it into the merged ledger view instead of displaying it directly.
+      cmbBalanceLog.style.display = 'none';
+      treasCard.appendChild(cmbBalanceLog);
+    }
+
+    if (btnPayBalance) {
+      btnPayBalance.className = 'moc-btn-primary';
+      btnPayBalance.innerHTML = `${icon('treasury')}<span>Pay Balance</span>`;
+      wrapActionButton(panel, btnPayBalance, 'paid', () => numBalance ? `${numBalance.value} Gold Coins` : '');
+      const row = el('div', 'moc-btn-end');
+      row.appendChild(btnPayBalance);
+      treasCard.appendChild(row);
+    }
+    colRight.appendChild(treasCard);
+
+    // Roster card
+    const rosterCard = el('div', 'moc-card');
+    const rosterCount = selMembers ? el('span', 'moc-count', `${selMembers.options.length} members`) : null;
+    rosterCard.appendChild(cardTitle('Roster', 'roster', rosterCount));
+    const rosterFilter = addFilter(selMembers, 'Filter members\u2026');
+    if (rosterFilter) rosterCard.appendChild(rosterFilter);
+    if (selMembers) { selMembers.setAttribute('size', '6'); rosterCard.appendChild(selMembers); }
+    const rosterBtns = el('div', 'moc-btn-row');
+    if (btnInvite) {
+      btnInvite.innerHTML = `${icon('plus')}<span>Invite</span>`;
+      wrapActionButton(panel, btnInvite, 'invited', () => '');
+      rosterBtns.appendChild(btnInvite);
+    }
+    if (btnRemove) {
+      btnRemove.innerHTML = `<span>Remove</span>`;
+      wrapActionButton(panel, btnRemove, 'removed', () => selectedOptionLabel(selMembers));
+      rosterBtns.appendChild(btnRemove);
+    }
+    if (btnToggleRank) {
+      btnToggleRank.innerHTML = `<span>Toggle Rank</span>`;
+      wrapActionButton(panel, btnToggleRank, 'changed the rank of', () => selectedOptionLabel(selMembers));
+      rosterBtns.appendChild(btnToggleRank);
+    }
+    rosterCard.appendChild(rosterBtns);
+    colLeft.appendChild(rosterCard);
+
+    // Diplomacy card
+    const diploCard = el('div', 'moc-card');
+    const diploCount = selDeclarations ? el('span', 'moc-count', `${selDeclarations.options.length} guilds`) : null;
+    diploCard.appendChild(cardTitle('Diplomacy', 'diplomacy', diploCount));
+    if (selDeclarations) { selDeclarations.setAttribute('size', '6'); diploCard.appendChild(selDeclarations); }
+    if (btnToggleDecl) {
+      btnToggleDecl.innerHTML = `<span>Toggle Declaration</span>`;
+      wrapActionButton(panel, btnToggleDecl, 'toggled declaration with', () => selectedOptionLabel(selDeclarations));
+      const row = el('div', 'moc-btn-row');
+      row.appendChild(btnToggleDecl);
+      diploCard.appendChild(row);
+    }
+    const legend = el('div', 'moc-legend',
+      `<span><i style="background:var(--crimson)"></i>War</span>
+       <span><i style="background:var(--emerald)"></i>Alliance</span>
+       <span><i style="background:var(--slate)"></i>Neutral</span>`);
+    diploCard.appendChild(legend);
+    colRight.appendChild(diploCard);
+    main.appendChild(colLeft);
+    main.appendChild(colRight);
+
+    body.appendChild(main);
+    shell.appendChild(body);
+
+    // ---------------- Experience ----------------
+    if (xpContainer) {
+      const xpCard = el('div', 'moc-xp-card');
+      xpCard.appendChild(el('div', 'moc-xp-label', 'Guild Experience'));
+      const track = el('div', 'moc-xp-track');
+      track.appendChild(xpContainer);
+      xpCard.appendChild(track);
+      shell.appendChild(xpCard);
+    }
+
+    panel.dataset.restructured = 'true';
+    renderLedger(panel);
+    updateGuildColors();
+    hookGuildSelection();
+  }
+
+  // =====================================================================
+  // Live refresh: colors, badges, due-date countdown
+  // =====================================================================
   function updateGuildColors() {
     const panel = document.getElementById(panelId);
     if (!panel) return;
 
-    // Color declarations
+    renderLedger(panel);
+
     const selDeclarations = panel.querySelector('select[name="selDeclarations"]');
     if (selDeclarations) {
       Array.from(selDeclarations.options).forEach(option => {
         const text = option.text.toLowerCase();
         if (text.endsWith('(war)')) {
-          option.style.color = 'red';
-          option.title = 'This guild is at war with yours';
+          option.style.color = 'var(--crimson)'; option.style.fontWeight = 'bold';
+          option.title = 'At war with your guild';
         } else if (text.endsWith('(alliance)')) {
-          option.style.color = 'green';
-          option.title = 'This guild is an ally';
+          option.style.color = 'var(--emerald)'; option.style.fontWeight = 'bold';
+          option.title = 'Allied with your guild';
         } else if (text.endsWith('(neutral)')) {
-          option.style.color = 'gray';
-          option.title = 'This guild is neutral';
+          option.style.color = 'var(--slate)'; option.style.fontWeight = '';
+          option.title = 'Neutral standing';
         } else {
-          option.style.color = '';
-          option.title = '';
+          option.style.color = ''; option.style.fontWeight = ''; option.title = '';
         }
       });
     }
 
-    // Highlight balance due (instead of .guildFee)
     const balanceInput = panel.querySelector('input[name="numBalance"]');
-    if (balanceInput && parseInt(balanceInput.value, 10) > 0) {
-      balanceInput.style.color = 'orange';
-      balanceInput.style.fontWeight = 'bold';
-    } else if (balanceInput) {
-      balanceInput.style.color = '';
-      balanceInput.style.fontWeight = '';
+    if (balanceInput) {
+      const owed = parseInt(balanceInput.value, 10) > 0;
+      balanceInput.style.color = owed ? 'var(--brass-hi)' : '';
+      balanceInput.style.fontWeight = owed ? 'bold' : '';
+      balanceInput.style.borderColor = owed ? 'var(--brass)' : '';
     }
 
-    // Highlight founder members
     const memberSelect = panel.querySelector('select[name="selMembers"]');
     if (memberSelect) {
       Array.from(memberSelect.options).forEach(opt => {
         const text = opt.text.toLowerCase();
-        if (text.includes('(founder)')) {
-          opt.style.color = 'gold';
-          opt.style.fontWeight = 'bold';
-        } else if (text.includes('(soldier)')) {
-          opt.style.color = 'silver';
-          opt.style.fontWeight = '';
-        } else {
-          opt.style.color = '';
-          opt.style.fontWeight = '';
-        }
+        if (text.includes('(founder)')) { opt.style.color = 'var(--brass-hi)'; opt.style.fontWeight = 'bold'; }
+        else if (text.includes('(officer)')) { opt.style.color = '#8fd0e8'; opt.style.fontWeight = 'bold'; }
+        else if (text.includes('(soldier)')) { opt.style.color = 'var(--slate)'; opt.style.fontWeight = ''; }
+        else { opt.style.color = ''; opt.style.fontWeight = ''; }
       });
     }
 
-    // Add balance due countdown tooltip
     const dueInput = panel.querySelector('input[name="txtBalanceDue"]');
-    if (dueInput && dueInput.value) {
+    const dueBadge = panel.querySelector('.moc-due-badge');
+    if (dueInput && dueInput.value && dueBadge) {
       const dueDate = new Date(dueInput.value);
       const now = new Date();
       const diffDays = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-      dueInput.title = `Balance due in ${diffDays} day(s)`;
+      dueBadge.textContent = diffDays >= 0 ? `Due in ${diffDays} day(s)` : `Overdue by ${Math.abs(diffDays)} day(s)`;
+      dueBadge.classList.toggle('is-overdue', diffDays < 0);
+      dueInput.title = dueBadge.textContent;
     }
 
-    // Add inline legend in title
-    insertLegend();
-  }
+    const chk = panel.querySelector('input[name="chkDelinquent"]');
+    const drow = panel.querySelector('.moc-delinquent-row');
+    if (chk && drow) drow.classList.toggle('is-active', chk.checked);
 
-  function insertLegend() {
-    const panel = document.getElementById(panelId);
-    if (!panel) return;
-
-    const header = panel.querySelector('h3');
-    if (!header || header.querySelector('.legendInline')) return;
-
-    const span = document.createElement('span');
-    span.className = 'legendInline';
-    span.style.fontSize = '0.7rem';
-    span.style.marginLeft = '1rem';
-    span.innerHTML = `
-      <span style="color:red;">War</span> |
-      <span style="color:green;">Alliance</span> |
-      <span style="color:gray;">Neutral</span> |
-      <span style="color:gold;">Founder</span> |
-      <span style="color:orange;">Fee</span>
-    `;
-
-    header.appendChild(span);
+    const rosterCount = panel.querySelector('.moc-card-title .moc-count');
+    if (memberSelect && rosterCount) rosterCount.textContent = `${memberSelect.options.length} members`;
   }
 
   function hookGuildSelection() {
     const panel = document.getElementById(panelId);
     if (!panel) return;
-
     const guildSelect = panel.querySelector('select[name="selGuild"]');
     if (!guildSelect) return;
-
     guildSelect.removeEventListener('change', onGuildChange);
     guildSelect.addEventListener('change', onGuildChange);
+    const chk = panel.querySelector('input[name="chkDelinquent"]');
+    if (chk) {
+      chk.removeEventListener('change', updateGuildColors);
+      chk.addEventListener('change', updateGuildColors);
+    }
   }
 
   function onGuildChange() {
     setTimeout(updateGuildColors, 200);
   }
 
+  // The panel can be present in the DOM but closed (game sets
+  // style.display = 'none', or it sits with zero layout box). Treat that as
+  // "not open" so we never keep computing/writing to a closed window.
+  function isPanelOpen() {
+    const panel = document.getElementById(panelId);
+    if (!panel) return false;
+    if (getComputedStyle(panel).display === 'none') return false;
+    if (panel.offsetParent === null && getComputedStyle(panel).position !== 'fixed') return false;
+    return true;
+  }
+
+  function startPolling() {
+    if (intervalId) clearInterval(intervalId);
+    intervalId = setInterval(() => {
+      if (isPanelOpen()) {
+        updateGuildColors();
+      } else {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }, 1000);
+  }
+
   function hookGuildsButton() {
     const guildsBtn = document.querySelector('button[title="Guilds"]');
-    if (!guildsBtn) {
-      console.warn('Guilds button not found');
-      return;
-    }
-
+    if (!guildsBtn) return;
     guildsBtn.addEventListener('click', () => {
       setTimeout(() => {
-        updateGuildColors();
-        hookGuildSelection();
-
-        if (intervalId) clearInterval(intervalId);
-
-        intervalId = setInterval(() => {
-          if (document.getElementById(panelId)) {
-            updateGuildColors();
-          } else {
-            clearInterval(intervalId);
-            intervalId = null;
-          }
-        }, 30000);
+        structureGuildUI();
+        if (isPanelOpen()) startPolling();
       }, 500);
     });
   }
 
+  // --- Init ---
   hookGuildsButton();
-
-  if (document.getElementById(panelId)) {
-    updateGuildColors();
-    hookGuildSelection();
-
-    if (!intervalId) {
-      intervalId = setInterval(() => {
-        if (document.getElementById(panelId)) {
-          updateGuildColors();
-        } else {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
-      }, 30000);
-    }
+  if (isPanelOpen()) {
+    structureGuildUI();
+    startPolling();
   }
 })();
 
@@ -506,11 +1257,45 @@ window.addEventListener('keydown', e => {
     valueCache: {},
     colorCache: {},
     statsCache: {},
+    typeCache: {},
+    classCache: {},
+    knownNames: new Set(),
+  };
+
+  // Item "type" flag -> label, as used by the item JSON's `type` field.
+  const ITEM_TYPES = {
+    "": "All",
+    "0": "Item",
+    "1": "Weapon",
+    "2": "Weapon Projectile",
+    "3": "Armor",
+    "4": "Helm",
+    "5": "Offhand/Shield",
+    "6": "Consumable",
+    "7": "Warp",
+    "11": "Accessory"
+  };
+
+  // Class bit positions used in each item's `prof_req_flags` bitmask.
+  // A set bit means that class is allowed to use the item (prof_req_flags
+  // of -1 has every bit set, i.e. usable by all classes).
+  const CLASS_BITS = {
+    0: "Samurai",
+    1: "Warlock",
+    2: "Cleric",
+    3: "Assassin",
+    4: "Barbarian",
+    5: "Marksman",
+    6: "Necromancer",
+    7: "Bard",
+    8: "Dragoon",
+    9: "Jester",
+    10: "Vampire"
   };
 
   const persistentSettings = {
-    currentInv: { filter: '', sort: 'name' },
-    bankInv: { filter: '', sort: 'name' }
+    currentInv: { filter: '', sort: 'name', type: '', classFilter: '' },
+    bankInv: { filter: '', sort: 'name', type: '', classFilter: '' }
   };
 
   const SPELL_AMP_KEYS = {
@@ -568,11 +1353,87 @@ window.addEventListener('keydown', e => {
           if (typeof item.recycle_value === 'number') config.valueCache[lower] = item.recycle_value;
           if (item.color) config.colorCache[lower] = item.color;
           if (item.data) config.statsCache[lower] = item.data;
+          if (typeof item.type === 'number') config.typeCache[lower] = item.type;
+          if (typeof item.prof_req_flags === 'number') config.classCache[lower] = item.prof_req_flags;
+          config.knownNames.add(lower);
         }
       });
       enhanceBankWindow();
     })
     .catch(console.error);
+
+  // Display names aren't always the raw DB name: items can carry a leading
+  // enchant/quality word ("Decayed Hand of Roog", "Magi Hand of Roog",
+  // "Hardened Hand of Roog") and/or a player-tag possessive ("Rich's Hand
+  // of Roog", "Aphelion's Skull" for the base item "Player's Skull") -
+  // sometimes both stacked together. Every one of those is still the same
+  // base item underneath, just displayed with extra words in front, so
+  // this ignores any prefix entirely by repeatedly stripping the leading
+  // token (either a plain word, or a whole "Somebody's " tag) in every
+  // possible order until what's left matches a real name in the DB. It
+  // always checks the least-stripped candidates first, so the closest/
+  // longest match wins instead of over-stripping down to a shorter item
+  // that happens to also exist.
+  function resolveItemKey(rawText) {
+    const lower = rawText.replace(/\(x\d+\)/, '').trim().toLowerCase();
+    if (config.knownNames.has(lower)) return lower;
+
+    const stripPossessive = (str) => {
+      const m = str.match(/^\S+'s\s+(.+)$/);
+      return m ? m[1] : null;
+    };
+
+    let frontier = [lower];
+    const seen = new Set(frontier);
+    const maxPeels = 4; // generous cap against runaway/garbage input
+
+    for (let step = 0; step < maxPeels; step++) {
+      const next = [];
+      for (const candidate of frontier) {
+        const words = candidate.split(/\s+/);
+        if (words.length <= 1) continue;
+
+        // This candidate starts with "Somebody's " - try dropping the tag
+        // entirely, and also try it as the literal "player's " placeholder
+        // some base items use (e.g. "Player's Skull").
+        const possessiveRest = stripPossessive(candidate);
+        if (possessiveRest) {
+          if (!seen.has(possessiveRest)) { seen.add(possessiveRest); next.push(possessiveRest); }
+          const asPlayer = "player's " + possessiveRest;
+          if (!seen.has(asPlayer)) { seen.add(asPlayer); next.push(asPlayer); }
+        }
+
+        // Just a plain leading word (enchant/quality prefix).
+        const plainRest = words.slice(1).join(' ');
+        if (!seen.has(plainRest)) { seen.add(plainRest); next.push(plainRest); }
+      }
+
+      for (const candidate of next) {
+        if (config.knownNames.has(candidate)) return candidate;
+      }
+      if (!next.length) break;
+      frontier = next;
+    }
+
+    return lower; // unresolved - fall back to the raw name (old behavior)
+  }
+
+  // True if the item is usable by the selected class. An empty selection
+  // means no class filter is applied. An item we have no class data for is
+  // treated as unrestricted so items missing from the DB aren't hidden.
+  function itemMatchesClass(itemKey, selectedClassBit) {
+    if (selectedClassBit === '' || selectedClassBit === undefined || selectedClassBit === null) return true;
+    const flags = config.classCache[itemKey];
+    if (flags === undefined) return true;
+    return (flags & (1 << selectedClassBit)) !== 0;
+  }
+
+  function itemMatchesType(itemKey, selectedType) {
+    if (selectedType === '' || selectedType === undefined || selectedType === null) return true;
+    const type = config.typeCache[itemKey];
+    if (type === undefined) return true;
+    return String(type) === String(selectedType);
+  }
 
   function expandBankView(compact = false) {
     const size = compact ? config.minItemCount : config.visibleItemCount;
@@ -596,8 +1457,8 @@ window.addEventListener('keydown', e => {
         return descending ? qtyB - qtyA : qtyA - qtyB;
       } else if (by.startsWith("stat:")) {
         const stat = by.split(":")[1];
-        const aStat = config.statsCache[nameA]?.[stat] || 0;
-        const bStat = config.statsCache[nameB]?.[stat] || 0;
+        const aStat = config.statsCache[resolveItemKey(a.text)]?.[stat] || 0;
+        const bStat = config.statsCache[resolveItemKey(b.text)]?.[stat] || 0;
         return descending ? bStat - aStat : aStat - bStat;
       }
       return descending ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
@@ -608,17 +1469,21 @@ window.addEventListener('keydown', e => {
     otherOptions.forEach(opt => selectEl.appendChild(opt));
   }
 
-  function filterSelectOptions(selectEl, query) {
+  function filterSelectOptions(selectEl, query, selectedType, selectedClassBit) {
     const lowerQuery = query.toLowerCase();
     Array.from(selectEl.options).forEach(option => {
-      option.hidden = !option.text.toLowerCase().includes(lowerQuery);
+      const itemKey = resolveItemKey(option.text);
+      const matchesText = !lowerQuery || option.text.toLowerCase().includes(lowerQuery);
+      const matchesType = itemMatchesType(itemKey, selectedType);
+      const matchesClass = itemMatchesClass(itemKey, selectedClassBit);
+      option.hidden = !(matchesText && matchesType && matchesClass);
     });
   }
 
   function updateValueDisplay(selectEl, valueBox) {
     const selected = selectEl.options[selectEl.selectedIndex];
     if (!selected) return (valueBox.textContent = '');
-    const itemName = selected.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+    const itemName = resolveItemKey(selected.text);
     const quantity = parseInt(selected.text.match(/x(\d+)/)?.[1] || '1');
     const value = config.valueCache[itemName];
     if (value !== undefined) {
@@ -633,7 +1498,7 @@ window.addEventListener('keydown', e => {
   let total = 0;
   Array.from(selectEl.options).forEach(option => {
     if (option.hidden) return;
-    const itemName = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+    const itemName = resolveItemKey(option.text);
     const quantity = parseInt(option.text.match(/x(\d+)/)?.[1] || '1');
 
     if (itemName.includes('gold coin')) {
@@ -661,7 +1526,7 @@ window.addEventListener('keydown', e => {
 
   function addTooltips(selectEl) {
     Array.from(selectEl.options).forEach(option => {
-      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+      const name = resolveItemKey(option.text);
       const stats = config.statsCache[name];
       if (!stats) return;
 
@@ -685,6 +1550,15 @@ window.addEventListener('keydown', e => {
     const id = selectEl.name === 'selCurrentInv' ? 'currentInv' : 'bankInv';
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '5px';
+
+    const typeOptionsHtml = Object.entries(ITEM_TYPES)
+      .map(([value, label]) => `<option value="${value}">${label}</option>`)
+      .join('');
+
+    const classOptionsHtml = `<option value="">All</option>` + Object.entries(CLASS_BITS)
+      .map(([bit, className]) => `<option value="${bit}">${className}</option>`)
+      .join('');
+
     wrapper.innerHTML = `
       <label style="color: white; font-size: 12px;">
         ${labelText} Filter:
@@ -708,12 +1582,22 @@ window.addEventListener('keydown', e => {
           <option value="stat:max_sp">Stamina</option>
         </select>
       </label>
+      <label style="color: white; font-size: 12px; margin-left: 10px;">
+        Type:
+        <select class="inv-type-filter">${typeOptionsHtml}</select>
+      </label>
+      <label style="color: white; font-size: 12px; margin-left: 10px;">
+        Class:
+        <select class="inv-class-filter">${classOptionsHtml}</select>
+      </label>
     `;
 
     selectEl.parentElement.prepend(wrapper);
 
     const input = wrapper.querySelector('.inv-filter');
     const sortDropdown = wrapper.querySelector('.inv-sort');
+    const typeDropdown = wrapper.querySelector('.inv-type-filter');
+    const classDropdown = wrapper.querySelector('.inv-class-filter');
 
     const totalBox = document.createElement('div');
     totalBox.style.color = 'gold';
@@ -724,11 +1608,15 @@ window.addEventListener('keydown', e => {
 
     input.value = persistentSettings[id].filter;
     sortDropdown.value = persistentSettings[id].sort;
+    typeDropdown.value = persistentSettings[id].type;
+    classDropdown.value = persistentSettings[id].classFilter;
 
     function applySortAndFilter() {
       const sortValue = sortDropdown.value;
       persistentSettings[id].sort = sortValue;
       persistentSettings[id].filter = input.value;
+      persistentSettings[id].type = typeDropdown.value;
+      persistentSettings[id].classFilter = classDropdown.value;
 
       const sortMap = {
         "name": { by: "name", desc: false },
@@ -741,8 +1629,10 @@ window.addEventListener('keydown', e => {
       const sortBy = isStat ? sortValue : (sortMap[sortValue]?.by || "name");
       const descending = isStat ? true : (sortMap[sortValue]?.desc ?? false);
 
+      const selectedClassBit = classDropdown.value === '' ? '' : parseInt(classDropdown.value, 10);
+
       sortSelectOptions(selectEl, sortBy, descending);
-      filterSelectOptions(selectEl, input.value);
+      filterSelectOptions(selectEl, input.value, typeDropdown.value, selectedClassBit);
       colorizeOptions(selectEl);
       calculateTotalValue(selectEl, totalBox);
       addTooltips(selectEl);
@@ -750,6 +1640,8 @@ window.addEventListener('keydown', e => {
 
     input.addEventListener('input', applySortAndFilter);
     sortDropdown.addEventListener('change', applySortAndFilter);
+    typeDropdown.addEventListener('change', applySortAndFilter);
+    classDropdown.addEventListener('change', applySortAndFilter);
     expandBankView(true);
     applySortAndFilter();
     attachValueTracker(selectEl);
@@ -757,7 +1649,7 @@ window.addEventListener('keydown', e => {
 
   function colorizeOptions(selectEl) {
     Array.from(selectEl.options).forEach(option => {
-      const name = option.text.replace(/\(x\d+\)/, '').trim().toLowerCase();
+      const name = resolveItemKey(option.text);
       const color = config.colorCache[name];
       if (color) option.style.color = color;
     });
@@ -965,7 +1857,7 @@ function startBankRecolorLoop() {
         });
       }
 
-      document.body.appendChild(container);
+      document.body.appendChild(teMarkOverlay(container));
     }
 
     // Hook into select changes
@@ -1253,12 +2145,23 @@ if (shopSelect) {
 
 // UI + Vitals
 (function() {
+    // Scale everything relative to a 1600px-wide reference viewport (chosen
+    // to match a "normal" sized display) so the inventory grid and vitals
+    // bars stay proportionally the same size across resolutions instead of
+    // being a fixed pixel size that looks tiny on a big screen or oversized
+    // on a small one.
+    function getResScale() {
+        return Math.min(1.7, Math.max(0.75, window.innerWidth / 1600));
+    }
+
+    function applySizing() {
+    const resScale = getResScale();
     // --- Inventory ---
     const inv = document.getElementById('winInventory');
     if (inv) {
         const slotsPerRow = 5;
-        const slotSize = 42;
-        const horizontalGap = 25;
+        const slotSize = 42 * resScale;
+        const horizontalGap = 25 * resScale;
         const verticalGap = horizontalGap * 0.1; // ~2.5px
 
         const baseWidth = (slotsPerRow * slotSize) + (horizontalGap * (slotsPerRow - 1));
@@ -1301,12 +2204,15 @@ if (shopSelect) {
                 c.style.border = '2px solid green';
             }
 
-            ['mouseenter','mouseleave','mousedown','mouseup'].forEach(evt => c.addEventListener(evt, () => {
-                if(evt==='mouseenter'){c.style.transform='scale(1.1)'; c.style.boxShadow='0 0 6px rgba(255,255,255,0.6)';}
-                if(evt==='mouseleave'){c.style.transform='scale(1)'; c.style.boxShadow='inset 0 0 3px rgba(255,255,255,0.1)';}
-                if(evt==='mousedown'){c.style.transform='scale(1.2)'; c.style.boxShadow='0 0 10px rgba(255,255,255,0.8)';}
-                if(evt==='mouseup'){c.style.transform='scale(1.1)'; c.style.boxShadow='0 0 6px rgba(255,255,255,0.6)';}
-            }));
+            if (!c.dataset.teHoverBound) {
+                c.dataset.teHoverBound = 'true';
+                ['mouseenter','mouseleave','mousedown','mouseup'].forEach(evt => c.addEventListener(evt, () => {
+                    if(evt==='mouseenter'){c.style.transform='scale(1.1)'; c.style.boxShadow='0 0 6px rgba(255,255,255,0.6)';}
+                    if(evt==='mouseleave'){c.style.transform='scale(1)'; c.style.boxShadow='inset 0 0 3px rgba(255,255,255,0.1)';}
+                    if(evt==='mousedown'){c.style.transform='scale(1.2)'; c.style.boxShadow='0 0 10px rgba(255,255,255,0.8)';}
+                    if(evt==='mouseup'){c.style.transform='scale(1.1)'; c.style.boxShadow='0 0 6px rgba(255,255,255,0.6)';}
+                }));
+            }
         });
     }
 
@@ -1315,7 +2221,7 @@ if (shopSelect) {
     if (vitals) {
         Object.assign(vitals.style, {
             display: 'grid',
-            gridTemplateColumns: '50px 1fr',
+            gridTemplateColumns: `${Math.round(50 * resScale)}px 1fr`,
             gridAutoRows: '1.3rem',
             gap: '4px 6px',
             padding: '2px 6px',
@@ -1327,7 +2233,7 @@ if (shopSelect) {
             fontFamily: 'Arial, sans-serif',
             fontSize: '0.8rem',
             margin: '0 auto 6px auto',
-            width: '360px',
+            width: `${Math.round(360 * resScale)}px`,
             boxSizing: 'border-box',
         });
 
@@ -1382,15 +2288,29 @@ if (shopSelect) {
 
         ['barHP','barMP','barSP','barXP','barTP'].forEach(updateBar);
 
-        ['txtHP','txtMP','txtSP','txtXP','txtTP'].forEach(txtId => {
-            const txtNode = document.getElementById(txtId);
-            if(!txtNode) return;
-            const observer = new MutationObserver(() => updateBar('bar'+txtId.slice(3)));
-            observer.observe(txtNode, { characterData: true, subtree: true, childList: true });
-        });
+        if (!vitals.dataset.teObserversBound) {
+            vitals.dataset.teObserversBound = 'true';
+            ['txtHP','txtMP','txtSP','txtXP','txtTP'].forEach(txtId => {
+                const txtNode = document.getElementById(txtId);
+                if(!txtNode) return;
+                const observer = new MutationObserver(() => updateBar('bar'+txtId.slice(3)));
+                observer.observe(txtNode, { characterData: true, subtree: true, childList: true });
+            });
+        }
+    }
     }
 
+    applySizing();
     console.log('Inventory and vitals initialized with live updating bars, bottom row gold trim applied.');
+
+    // Re-apply sizing on window resize (debounced) so the UI keeps
+    // matching the viewport instead of staying locked to whatever
+    // resolution was active when the page first loaded.
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(applySizing, 150);
+    });
 })();
 
 (function() {
@@ -1405,7 +2325,9 @@ if (shopSelect) {
     container.style.alignItems = "center";
     container.style.gap = "6px"; // gap between buttons and headings
     container.style.zIndex = "9999";
-    document.body.appendChild(container);
+    container.style.width = "72px";        // fixed width - keeps every button
+    container.style.boxSizing = "border-box"; // the same size regardless of content
+    document.body.appendChild(teMarkOverlay(container));
 
     // --- Potion Section ---
     const potionHeading = document.createElement("div");
@@ -1425,6 +2347,8 @@ if (shopSelect) {
         const btn = document.createElement("button");
         btn.textContent = data.text;
         btn.style.padding = "6px 10px";
+        btn.style.width = "100%";
+        btn.style.boxSizing = "border-box";
         btn.style.background = "#222";
         btn.style.color = "#fff";
         btn.style.border = "1px solid #666";
@@ -1450,6 +2374,8 @@ if (shopSelect) {
     const claimBtn = document.createElement("button");
     claimBtn.textContent = "Claim";
     claimBtn.style.padding = "6px 10px";
+    claimBtn.style.width = "100%";
+    claimBtn.style.boxSizing = "border-box";
     claimBtn.style.background = "#222";
     claimBtn.style.color = "#fff";
     claimBtn.style.border = "1px solid #666";
@@ -1457,6 +2383,55 @@ if (shopSelect) {
     claimBtn.style.cursor = "pointer";
     claimBtn.onclick = runClaimSequence;
     container.appendChild(claimBtn);
+
+    // --- Gap before Skills/Quit buttons ---
+    const sectionGap2 = document.createElement("div");
+    sectionGap2.style.height = "10px";
+    container.appendChild(sectionGap2);
+
+    // --- Skills button (no heading icon - just the button, per request) ---
+    const skillsBtn = document.createElement("button");
+    skillsBtn.textContent = "Skills";
+    skillsBtn.title = "Open Skills Window";
+    skillsBtn.style.padding = "6px 10px";
+    skillsBtn.style.width = "100%";
+    skillsBtn.style.boxSizing = "border-box";
+    skillsBtn.style.background = "#222";
+    skillsBtn.style.color = "#fff";
+    skillsBtn.style.border = "1px solid #666";
+    skillsBtn.style.borderRadius = "6px";
+    skillsBtn.style.cursor = "pointer";
+    skillsBtn.onclick = () => {
+        clickButtonByTitle("Statistics");
+        setTimeout(() => {
+            clickButtonByTitle("Show player skills");
+            setTimeout(() => {
+                clickButtonByText("Skills");
+            }, 250);
+        }, 250);
+    };
+    container.appendChild(skillsBtn);
+
+    // --- Quit button, right under Skills ---
+    const quitBtn = document.createElement("button");
+    quitBtn.textContent = "Quit";
+    quitBtn.title = "Quit Game";
+    quitBtn.style.padding = "6px 10px";
+    quitBtn.style.width = "100%";
+    quitBtn.style.boxSizing = "border-box";
+    quitBtn.style.background = "#8b0000";
+    quitBtn.style.color = "#ffd6d6";
+    quitBtn.style.border = "1px solid #ff4d4d";
+    quitBtn.style.borderRadius = "6px";
+    quitBtn.style.cursor = "pointer";
+    quitBtn.onclick = () => {
+        if (typeof GUI === "function") {
+            GUI("winGame", "Quit");
+        } else {
+            console.warn("GUI function not available.");
+        }
+    };
+    container.appendChild(quitBtn);
 
     // --- Utility Functions ---
     function clickButtonByText(text) {
@@ -1551,93 +2526,61 @@ function runClaimSequence() {
     // --- Dynamic Positioning ---
     function updatePosition() {
         const rect = inv.getBoundingClientRect();
-        // Buttons stacked at right edge
-        container.style.top = window.scrollY + rect.top + "px";
-        container.style.left = window.scrollX + rect.left + rect.width * 1.0 + "px";
+        const chatBox = document.getElementById("winGameChatbox");
+
+        // Match the same resolution scale used for the inventory/vitals grid
+        // so this panel grows/shrinks with the rest of the game's UI instead
+        // of staying a fixed 72px (which looked squished on high-res screens
+        // and oversized on low-res ones).
+        const resScale = Math.min(1.7, Math.max(0.75, window.innerWidth / 1600));
+        container.style.width = Math.round(72 * resScale) + "px";
+        container.style.fontSize = Math.round(13 * resScale) + "px";
+
+        // Measure the panel's natural (unscaled) size first.
+        container.style.transform = "none";
+        const containerWidth = container.offsetWidth || 72;
+        const naturalHeight = container.scrollHeight || container.offsetHeight || 0;
+
+        // Figure out how much vertical room is actually available before we'd
+        // start drawing over the chat log, and shrink the whole panel to fit
+        // instead of overlapping it.
+        let availableHeight = window.innerHeight - rect.top - 8;
+        if (chatBox) {
+            const chatRect = chatBox.getBoundingClientRect();
+            if (chatRect.height > 0 && chatRect.top > rect.top) {
+                availableHeight = Math.min(availableHeight, chatRect.top - rect.top - 8);
+            }
+        }
+
+        let scale = 1;
+        if (naturalHeight > 0 && availableHeight > 0 && naturalHeight > availableHeight) {
+            scale = Math.max(0.55, availableHeight / naturalHeight); // never shrink past 55%
+        }
+        container.style.transform = scale < 1 ? `scale(${scale})` : "none";
+        container.style.transformOrigin = "top left";
+
+        const scaledWidth = containerWidth * scale;
+        const scaledHeight = naturalHeight * scale;
+
+        // Buttons stacked at right edge of the inventory window...
+        let left = window.scrollX + rect.left + rect.width;
+        let top = window.scrollY + rect.top;
+
+        // ...but never past the edge of the viewport, on any screen size.
+        const maxLeft = window.scrollX + window.innerWidth - scaledWidth - 4;
+        const maxTop = window.scrollY + window.innerHeight - scaledHeight - 4;
+        left = Math.min(left, Math.max(maxLeft, window.scrollX + 4));
+        top = Math.min(Math.max(top, window.scrollY + 4), Math.max(maxTop, window.scrollY + 4));
+
+        container.style.left = left + "px";
+        container.style.top = top + "px";
         requestAnimationFrame(updatePosition);
     }
 
     updatePosition();
 })();
-// === Quick-Skills Button (Matches small UI button style) ===
-(function () {
-
-    // Reusable helpers
-    function clickButtonByText(text) {
-        const btn = [...document.querySelectorAll("button")]
-            .find(b => b.textContent.trim() === text);
-        if (btn) btn.click();
-    }
-    function clickButtonByTitle(title) {
-        const btn = [...document.querySelectorAll("button")]
-            .find(b => b.title === title);
-        if (btn) btn.click();
-    }
-
-    // Create button
-    const skillBtn = document.createElement("button");
-    skillBtn.textContent = "🛡️";
-    skillBtn.title = "Open Skills Window";
-    Object.assign(skillBtn.style, {
-        position: "fixed",
-        left: "4px",
-        zIndex: 99999,
-        width: "28px",
-        height: "28px",
-        fontSize: "15px",
-        background: "#111",
-        color: "#fff",
-        border: "1px solid #666",
-        borderRadius: "6px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0",
-        userSelect: "none"
-    });
-
-    // Automatically place button directly under the existing left quick-buttons
-    function positionSkillButton() {
-        // Find all fixed buttons located at the left area
-        const leftButtons = [...document.querySelectorAll("button")]
-            .filter(b => b.style.position === "fixed" && b.style.left === "4px");
-
-        if (leftButtons.length === 0) {
-            skillBtn.style.top = "150px"; // fallback
-            return;
-        }
-
-        // Find lowest button
-        let lowest = 0;
-        leftButtons.forEach(b => {
-            const rect = b.getBoundingClientRect();
-            if (rect.bottom > lowest) lowest = rect.bottom;
-        });
-
-        // Place new button directly below it
-        skillBtn.style.top = (window.scrollY + lowest + 6) + "px";
-    }
-
-    // Click logic
-    skillBtn.onclick = () => {
-        clickButtonByTitle("Statistics");
-        setTimeout(() => {
-            clickButtonByTitle("Show player skills");
-            setTimeout(() => {
-                clickButtonByText("Skills");
-            }, 250);
-        }, 250);
-    };
-
-    // Insert & position
-    document.body.appendChild(skillBtn);
-    positionSkillButton();
-
-    // Maintain position when screen resizes
-    window.addEventListener("resize", positionSkillButton);
-
-})();
+// (Quick-Skills button now lives inside the potion/claim panel above, for
+// visual continuity - see "Skills Section" in that block.)
 
 // New item Sparkle
 // === InvGlow (Sparkles) — settings-aware ===
@@ -1861,7 +2804,7 @@ const INV_GLOW_CONFIG = {
     zIndex: 99999,
     display: "none"
   });
-  document.body.appendChild(fpsDiv);
+  document.body.appendChild(teMarkOverlay(fpsDiv));
 
   function updateFpsPosition() {
     const pos = qolSettings.fpsPosition || "top-right";
@@ -1932,9 +2875,7 @@ const INV_GLOW_CONFIG = {
 
   // --- Add QoL setting checkbox ---
   const optDiv = document.createElement("div");
-  optDiv.style.display = "block";  // ensures full-width
-  optDiv.style.width = "100%";
-  optDiv.style.marginTop = "4px";  // slight spacing from previous element
+  optDiv.className = "te-settings-row";
   optDiv.innerHTML = `<label><input type="checkbox" name="chkQuickDrop1"> Enable Shift+RightClick Drop-1</label>`;
 
   // Append to the bottom
@@ -1996,9 +2937,7 @@ const INV_GLOW_CONFIG = {
   let row = settingsForm.querySelector("input[name='chkRevertUiVitals']")?.closest("div");
   if (!row) {
     row = document.createElement("div");
-    row.style.display = "block";
-    row.style.width = "100%";
-    row.style.marginTop = "6px";
+    row.className = "te-settings-row";
     row.innerHTML = `<label><input type="checkbox" name="chkRevertUiVitals"> Revert UI + Vitals to Default</label>`;
     qolContainer.appendChild(row); // ensures last position
   }
@@ -2024,6 +2963,12 @@ const INV_GLOW_CONFIG = {
   function applyNewUI() {
     const inv = document.getElementById("winInventory");
     if (!inv) return;
+    const resScale = Math.min(1.7, Math.max(0.75, window.innerWidth / 1600));
+    const slotsPerRow = 5;
+    const slotSize = 42 * resScale;
+    const horizontalGap = 25 * resScale;
+    const verticalGap = horizontalGap * 0.1;
+    const finalWidth = ((slotsPerRow * slotSize) + (horizontalGap * (slotsPerRow - 1))) * 1.15;
   Object.assign(inv.style, {
     display: 'grid',
     gridTemplateColumns: `repeat(${slotsPerRow}, ${slotSize}px)`,
@@ -2046,9 +2991,10 @@ const INV_GLOW_CONFIG = {
   function applyNewVitals() {
     const vitals = document.getElementById("winVitals");
     if (!vitals) return;
+    const resScale = Math.min(1.7, Math.max(0.75, window.innerWidth / 1600));
     Object.assign(vitals.style, {
       display: 'grid',
-      gridTemplateColumns: '50px 1fr',
+      gridTemplateColumns: `${Math.round(50 * resScale)}px 1fr`,
       gridAutoRows: '1.3rem',
       gap: '4px 6px',
       padding: '2px 6px',
@@ -2060,8 +3006,9 @@ const INV_GLOW_CONFIG = {
       fontFamily: 'Arial, sans-serif',
       fontSize: '0.8rem',
       margin: '0 auto 6px auto',
-      width: '360px',
+      width: `${Math.round(360 * resScale)}px`,
       boxSizing: 'border-box',
+
     });
   }
 
@@ -2110,11 +3057,9 @@ const INV_GLOW_CONFIG = {
   let row = settingsForm.querySelector("input[name='bgColorPicker']")?.closest("div");
   if (!row) {
     row = document.createElement("div");
-    row.style.display = "block";         // full width
-    row.style.width = "100%";
-    row.style.marginTop = "6px";
+    row.className = "te-settings-row";
     row.innerHTML = `
-      <label style="display:flex; align-items:center; gap:6px;">
+      <label>
         Background Color:
         <input type="color" name="bgColorPicker" value="${q.bgColor}">
       </label>`;
@@ -2259,7 +3204,7 @@ const INV_GLOW_CONFIG = {
 
   // --- Insert theme selector BELOW existing settings ---
   const themeDiv = document.createElement("div");
-  themeDiv.style.marginTop = "6px";
+  themeDiv.className = "te-settings-row";
   themeDiv.innerHTML = `
     <label>UI Theme:
       <select name="selUiTheme">
@@ -2281,11 +3226,13 @@ const INV_GLOW_CONFIG = {
 
   // --- Insert Brightness control ---
   const brightnessDiv = document.createElement("div");
-  brightnessDiv.style.marginTop = "6px";
+  brightnessDiv.className = "te-settings-row";
   brightnessDiv.innerHTML = `
     <label>Game Brightness:
-      <input type="range" name="rngBrightness" min="50" max="150" step="10">
-      <span class="brightnessVal"></span>%
+      <span style="display:flex; align-items:center; gap:6px;">
+        <input type="range" name="rngBrightness" min="50" max="150" step="10">
+        <span class="brightnessVal"></span>%
+      </span>
     </label>
   `;
   qolContainer.appendChild(brightnessDiv);
@@ -2754,7 +3701,7 @@ function formatNumber(num) {
         form.appendChild(headerDiv);
         form.appendChild(gridDiv);
         form.appendChild(btnDiv);
-        document.body.appendChild(form);
+        document.body.appendChild(teMarkOverlay(form));
 
         // --- Update display ---
         const updateDisplay = () => {
@@ -2827,13 +3774,27 @@ function formatNumber(num) {
 })();
 //background Color
 
-(async function() {
+(function() {
   'use strict';
 
-  // Load items JSON data
-  const response = await fetch("https://loociez.github.io/MOC-IV/last.json");
-  const itemsData = await response.json();
+  // Load item DB in the background - a failed/slow fetch should degrade
+  // gracefully (tooltips just show less detail) instead of disabling the
+  // whole item-link feature.
+  let itemsData = [];
+  fetch("https://loociez.github.io/MOC-IV/last.json")
+    .then(r => r.json())
+    .then(data => { itemsData = data; })
+    .catch(err => console.error("[TotalEnhanced] Item database failed to load, tooltips will be limited:", err));
 
+  // The chat box / inventory window don't exist until the player has
+  // actually logged into the game, so retry setup instead of giving up
+  // permanently if they're missing the first time this runs.
+  const readyPoll = setInterval(() => {
+    if (trySetup()) clearInterval(readyPoll);
+  }, 1000);
+  trySetup();
+
+  function trySetup() {
   // Elements
   const inventory = document.getElementById("winInventory");
   const chatInput = document.getElementById("txtChatMessage");
@@ -2841,9 +3802,9 @@ function formatNumber(num) {
   const txtInvDesc = document.getElementById("txtInvDesc");
 
   if (!inventory || !chatInput || !chatBox || !txtInvDesc) {
-    console.warn("Required elements missing: #winInventory, #txtChatMessage, #winGameChatbox, #txtInvDesc");
-    return;
+    return false;
   }
+  if (chatBox.dataset.teItemLinkInit) return true; // already set up
 
   // Insert text at cursor helper
   function insertTextAtCursor(el, text) {
@@ -2980,7 +3941,7 @@ function formatNumber(num) {
     boxShadow: "0 0 10px #0f0",
     userSelect: "none",
   });
-  document.body.appendChild(tooltip);
+  document.body.appendChild(teMarkOverlay(tooltip));
 
   function showTooltipAtPosition(html, x, y) {
     tooltip.innerHTML = html;
@@ -3070,6 +4031,10 @@ function formatNumber(num) {
     if (!tooltip.contains(e.target)) hideTooltip();
   });
 
+  chatBox.dataset.teItemLinkInit = "true";
+  return true;
+  } // end trySetup
+
 })();
 // Utility function to apply the glass style
 function applyGlassStyle(element) {
@@ -3099,6 +4064,7 @@ function applyGlassStyle(element) {
 ].forEach(id => {
     applyGlassStyle(document.getElementById(id));
 });
+
 const css = `
 .emojiImg {
     filter: none !important;
@@ -3111,101 +4077,11 @@ style.textContent = css;
 document.head.appendChild(style);
 
 })();
-(function () {
-    let modPaused = false;
-
-    // Cache mod-related UI elements and buttons that should be hidden/disabled
-    // Adjust selectors to match all your mod buttons/UI elements
-    const modUISelectors = [
-        ".mod-ui",
-        ".inv-sparkle",
-        ".inv-pop",
-        "#quickButton1", // example buttons - add your real ones here
-        "#quickButton2",
-        ".custom-mod-button",
-        // Add more selectors as needed for your mod UI/buttons
-    ];
-
-    // Store references to elements to hide and their original display style
-    const elementsToHide = [];
-
-    // Store event listeners or flags to disable mod functionality here
-    // Example: your mod might have interval timers or event handlers that you can enable/disable
-
-    // Helper: Hide mod UI elements and stop mod functionality
-    function pauseMod() {
-        if (modPaused) return;
-        modPaused = true;
-        console.log("[TotalEnhanced] Mod paused (Map Editor Open).");
-
-        // Hide elements and save original display styles so we can restore later
-        elementsToHide.length = 0;
-        modUISelectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                elementsToHide.push({ el, originalDisplay: el.style.display });
-                el.style.display = "none";
-            });
-        });
-
-        // Stop sparkle scanner if present
-        if (window.InvGlow && InvGlow.stop) InvGlow.stop();
-
-        // Stop other intervals/event listeners your mod uses (add your own here)
-        if (window.TotalEnhanced && window.TotalEnhanced.disable) window.TotalEnhanced.disable();
-
-        // Optionally: disable mod event handlers or block input on mod UI (example below)
-        // document.body.style.pointerEvents = "none"; // <-- be careful, might block everything
-    }
-
-    // Helper: Restore mod UI elements and resume mod functionality
-    function resumeMod() {
-        if (!modPaused) return;
-        modPaused = false;
-        console.log("[TotalEnhanced] Mod resumed.");
-
-        // Restore display styles for all hidden elements
-        elementsToHide.forEach(({ el, originalDisplay }) => {
-            el.style.display = originalDisplay || "";
-        });
-        elementsToHide.length = 0;
-
-        // Restart sparkle system if enabled
-        if (window.InvGlow && InvGlow.setEnabled) {
-            InvGlow.setEnabled(true);
-        }
-
-        // Restart other mod intervals/event listeners (add your own here)
-        if (window.TotalEnhanced && window.TotalEnhanced.enable) window.TotalEnhanced.enable();
-
-        // Restore pointer events if you disabled them
-        // document.body.style.pointerEvents = "";
-    }
-
-    // Observe all changes on the Map Editor window: style and class attribute changes
-    const editor = document.getElementById("winMapEditor");
-    if (!editor) {
-        console.warn("[TotalEnhanced] Map Editor window (#winMapEditor) not found!");
-        return;
-    }
-
-    const observer = new MutationObserver(() => {
-        // Check visibility by computed style (works even if visibility toggled by classes)
-        const isVisible = window.getComputedStyle(editor).display !== "none";
-
-        if (isVisible) {
-            pauseMod();
-        } else {
-            resumeMod();
-        }
-    });
-
-    observer.observe(editor, { attributes: true, attributeFilter: ["style", "class"] });
-
-    // Also check initial state on load
-    if (window.getComputedStyle(editor).display !== "none") {
-        pauseMod();
-    }
-})();
+// NOTE: Map Editor handling now lives at the very top of this file
+// (see "Auto-hide overlay UI while the Map Editor is open"). It hides every
+// element tagged with the "te-overlay" class whenever #winMapEditor is open,
+// which is what actually stops TotalEnhanced's buttons from covering the
+// tileset viewer's up/down controls.
 (() => {
   // Prevent duplicates
   if (document.getElementById("moc-quick-quit")) return;
@@ -3258,5 +4134,5 @@ document.head.appendChild(style);
     }
   };
 
-  document.body.appendChild(btn);
+  document.body.appendChild(teMarkOverlay(btn));
 })();
