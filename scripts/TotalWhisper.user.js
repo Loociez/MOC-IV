@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MOC Whisper Manager
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Saves and organizes private whispers per-person so nothing gets lost when you're AFK, on a different chat tab, or the chat log fills up.
 // @author       Loocie
 // @match        https://play.consty.com/
@@ -72,8 +72,8 @@
   }
 
 
-  const IN_RE = /^(.+?)\s+tells you,\s*'([\s\S]*)'$/i;
-  const OUT_RE = /^You tell\s+(.+?),\s*'([\s\S]*)'$/i;
+  const IN_RE = /^([^#:()]+?)\s+tells you,\s*'([\s\S]*)'$/i;
+  const OUT_RE = /^You tell\s+([^#:()]+?),\s*'([\s\S]*)'$/i;
 
   const onmsgDesc = Object.getOwnPropertyDescriptor(WebSocket.prototype, 'onmessage');
   if (onmsgDesc && onmsgDesc.set) {
@@ -95,6 +95,10 @@
     try { data = JSON.parse(raw); } catch (e) { return; }
     if (!data || data.type !== 117) return;
     const text = String(data.text || '');
+
+    // Ignore public channel lines (e.g. "#sgod camcard: ...") even if their
+    // contents happen to contain a quoted "X tells you, '...'" whisper.
+    if (/^#\S/.test(text)) return;
 
     let m = text.match(IN_RE);
     if (m) {
