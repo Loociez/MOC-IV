@@ -67783,14 +67783,14 @@
         "chance": 0
       },
       {
-        "item_id": 745,
-        "amount": 1,
-        "chance": 5
-      },
-      {
         "item_id": -1,
         "amount": 0,
         "chance": 0
+      },
+      {
+        "item_id": 745,
+        "amount": 1,
+        "chance": 8
       },
       {
         "item_id": -1,
@@ -88230,22 +88230,22 @@
     ]
   },
   {
-    "name": "",
+    "name": "Battle Jim",
     "desc": "",
-    "tag": "",
-    "pursue_run": false,
+    "tag": "☢️",
+    "pursue_run": true,
     "equip_drops": false,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
-    "show_name": false,
+    "show_name": true,
     "attack_say": "",
     "death_say": "",
     "kill_verb": "killed",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 26,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -88260,13 +88260,13 @@
     "move_amount": 1,
     "attack_delay": 100,
     "flee_threshold": 10,
-    "behavior": 0,
+    "behavior": 1,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 5,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 5000,
       "mp": 0,
       "sp": 0
     },
@@ -90372,43 +90372,43 @@
     ]
   },
   {
-    "name": "",
+    "name": "Lord V'drazzig",
     "desc": "",
-    "tag": "",
+    "tag": "☠",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
-    "show_name": false,
+    "show_name": true,
     "attack_say": "",
     "death_say": "",
-    "kill_verb": "killed",
+    "kill_verb": "murdered",
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 63,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "hue": 90,
+      "saturation": 75,
+      "brightness": 125
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 1.75,
+    "color": "#FFD700",
     "spawn_delay": 1,
-    "move_chance": 25,
+    "move_chance": 0,
     "move_delay": 100,
     "move_amount": 1,
-    "attack_delay": 100,
+    "attack_delay": 50,
     "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
+    "behavior": 1,
+    "targeting": 9,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 50000,
       "mp": 0,
       "sp": 0
     },
@@ -90417,12 +90417,12 @@
       "def": 0,
       "rat": 0,
       "rdf": 0,
-      "mat": 0,
+      "mat": 5000,
       "mdf": 0
     },
     "drop_items": [
       {
-        "item_id": -1,
+        "item_id": 1247,
         "amount": 0,
         "chance": 0
       },
@@ -90500,27 +90500,27 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 85,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 50,
+    "flee_threshold": 0,
     "behavior": 1,
     "targeting": 9,
     "sight_range": 4,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 4000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 500,
+      "def": 300,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 600,
       "mat": 0,
-      "mdf": 0
+      "mdf": 600
     },
     "drop_items": [
       {
@@ -90612,12 +90612,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 9000,
+      "hp": 4000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 700,
+      "atk": 750,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -90681,7 +90681,7 @@
     "name": "V'drazzig's Madness",
     "desc": "",
     "tag": "",
-    "pursue_run": true,
+    "pursue_run": false,
     "equip_drops": false,
     "spawn_day": true,
     "spawn_night": true,
@@ -90704,7 +90704,7 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 90,
     "move_amount": 1,
     "attack_delay": 25,
     "flee_threshold": 0,
@@ -90714,12 +90714,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 1,
+      "hp": 2000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 250,
+      "atk": 625,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -90908,17 +90908,17 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 100,
-    "move_delay": 100,
+    "move_delay": 85,
     "move_amount": 1,
-    "attack_delay": 50,
+    "attack_delay": 15,
     "flee_threshold": 0,
-    "behavior": 1,
+    "behavior": 2,
     "targeting": 9,
     "sight_range": 4,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 500,
+      "hp": 2000,
       "mp": 0,
       "sp": 0
     },
@@ -90926,9 +90926,9 @@
       "atk": 100,
       "def": 0,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 200,
       "mat": 0,
-      "mdf": 0
+      "mdf": 200
     },
     "drop_items": [
       {
@@ -90988,7 +90988,7 @@
     "desc": "",
     "tag": "",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": true,
     "spawn_night": true,
     "spawn_weather": 0,
@@ -91010,31 +91010,31 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 75,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 50,
+    "flee_threshold": 0,
     "behavior": 1,
     "targeting": 9,
     "sight_range": 4,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 2000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
       "atk": 0,
-      "def": 0,
+      "def": 250,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 500,
       "mat": 0,
-      "mdf": 0
+      "mdf": 500
     },
     "drop_items": [
       {
-        "item_id": -1,
+        "item_id": 1248,
         "amount": 0,
         "chance": 0
       },
@@ -91224,7 +91224,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 1000,
+      "hp": 2000,
       "mp": 0,
       "sp": 0
     },

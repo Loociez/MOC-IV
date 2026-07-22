@@ -10641,8 +10641,8 @@
     "transferable": true,
     "data": {
       "hp": 0,
-      "mp": 15,
-      "sp": 15
+      "mp": 0,
+      "sp": 0
     }
   },
   {
@@ -10677,8 +10677,8 @@
     "transferable": true,
     "data": {
       "hp": 0,
-      "mp": 25,
-      "sp": 25
+      "mp": 0,
+      "sp": 0
     }
   },
   {
@@ -10713,8 +10713,8 @@
     "transferable": true,
     "data": {
       "hp": 0,
-      "mp": 50,
-      "sp": 50
+      "mp": 0,
+      "sp": 0
     }
   },
   {
@@ -14308,7 +14308,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe:  Sushi",
     "desc": "",
     "revision": 1,
     "sprite": 0,
@@ -14322,7 +14322,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -14332,13 +14332,57 @@
     "recycle_value": 1,
     "level_req": 1,
     "prof_req_flags": -1,
-    "skill_id": -1,
+    "skill_id": 6,
     "skill_level_req": 0,
-    "skill_exp": 0,
+    "skill_exp": 500000,
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 1249,
+      "recipe_items": [
+        {
+          "amount": 1500,
+          "item_id": 300
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
@@ -28852,7 +28896,7 @@
     "break_chance": 2,
     "recycle_value": 5500,
     "level_req": 40,
-    "prof_req_flags": -988,
+    "prof_req_flags": -476,
     "skill_id": -1,
     "skill_level_req": 0,
     "skill_exp": 0,
@@ -38729,8 +38773,8 @@
     "transferable": true,
     "data": {
       "max_hp": 250,
-      "max_mp": -10,
-      "max_sp": -20,
+      "max_mp": 10,
+      "max_sp": 10,
       "max_atk": 285,
       "max_def": 0,
       "max_mat": 0,
@@ -53240,13 +53284,13 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 50,
+      "max_atk": 35,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 50,
+      "min_atk": 35,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -54153,23 +54197,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "max_hp": "100",
-      "max_mp": "0",
-      "max_sp": "0",
-      "max_atk": "35",
-      "max_def": "0",
-      "max_mat": "35",
-      "max_mdf": "0",
-      "max_rat": "35",
-      "max_rdf": "0",
-      "min_atk": "35",
-      "min_def": "0",
-      "min_mat": "35",
-      "min_mdf": "0",
-      "min_rat": "35",
-      "min_rdf": "0",
-      "damage_stat": 1,
-      "!bard_buff_distance": "2"
+      "!bard_buff_distance": "2",
+      "min_atk": 20,
+      "max_atk": 30,
+      "min_def": 10,
+      "max_def": 10,
+      "min_rat": 1,
+      "max_rat": 20,
+      "min_rdf": 10,
+      "max_rdf": 10,
+      "min_mat": 1,
+      "max_mat": 20,
+      "min_mdf": 10,
+      "max_mdf": 10,
+      "max_hp": 0,
+      "max_mp": 15,
+      "max_sp": 0,
+      "damage_stat": 1
     }
   },
   {
@@ -55460,13 +55504,13 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 50,
+      "max_atk": 25,
       "max_def": 0,
       "max_mat": 0,
       "max_mdf": 0,
       "max_rat": 0,
       "max_rdf": 0,
-      "min_atk": 50,
+      "min_atk": 25,
       "min_def": 0,
       "min_mat": 0,
       "min_mdf": 0,
@@ -56983,17 +57027,17 @@
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 5,
+      "max_atk": 0,
       "max_def": 10,
-      "max_mat": 20,
+      "max_mat": 0,
       "max_mdf": 10,
-      "max_rat": 5,
+      "max_rat": 0,
       "max_rdf": 10,
-      "min_atk": 5,
+      "min_atk": 0,
       "min_def": 10,
-      "min_mat": 20,
+      "min_mat": 0,
       "min_mdf": 10,
-      "min_rat": 5,
+      "min_rat": 0,
       "min_rdf": 10,
       "damage_stat": 1,
       "!cleric_allheal_hotpertick": "50"
@@ -57030,23 +57074,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!bard_buff_tickheal": "30",
+      "min_atk": 20,
+      "max_atk": 20,
+      "min_def": 10,
+      "max_def": 10,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 10,
+      "max_rdf": 10,
+      "min_mat": 20,
+      "max_mat": 20,
+      "min_mdf": 10,
+      "max_mdf": 10,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 20,
-      "max_def": 10,
-      "max_mat": 20,
-      "max_mdf": 10,
-      "max_rat": 0,
-      "max_rdf": 10,
-      "min_atk": 20,
-      "min_def": 10,
-      "min_mat": 20,
-      "min_mdf": 10,
-      "min_rat": 0,
-      "min_rdf": 10,
-      "damage_stat": 0,
-      "!bard_buff_tickheal": "40"
+      "damage_stat": 0
     }
   },
   {
@@ -57495,7 +57539,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Duck Spit Projectile",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -57507,9 +57551,9 @@
     },
     "scale": 1,
     "color": "#008b8b",
-    "show_name": false,
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 2,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -57525,29 +57569,56 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 270,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.25,
+      "speed": 0.1,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 2007,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 600,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 400,
+      "min_rdf": 0,
+      "brightness": 250,
+      "saturation": 100,
+      "tile_range": 2,
+      "two_handed": false,
+      "damage_stat": 2,
+      "sprite_rotation": 315
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Sushi",
+    "desc": "+400 HP every second for 20 total seconds while out of combat.",
+    "revision": 1,
+    "sprite": 390,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.4,
     "color": "#008b8b",
-    "show_name": false,
+    "show_name": true,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 6,
+    "uses": 500,
     "limit": 0,
     "cooldown_delay": 0,
-    "cooldown_id": -1,
+    "cooldown_id": 456,
     "repair_cost": 0,
     "break_chance": 50,
     "recycle_value": 1,
@@ -57559,7 +57630,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hp": 0,
+      "mp": 0,
+      "sp": 0
     }
   },
   {
