@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -169,39 +168,70 @@ function showBoard(board){
  });
 }
 
+// Escapes special regex characters so the search term is treated literally.
+function escapeRegex(str){
+ return str.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+}
+
+// Builds a whole-word matcher: "Athena" matches "Athena" or "Athena Blade"
+// but NOT "NotAthena" or "AthenaX".
+function buildWordMatcher(term){
+ const escaped=escapeRegex(term);
+ return new RegExp("(^|[^a-z0-9])"+escaped+"($|[^a-z0-9])","i");
+}
+
 function searchPlayer(){
- const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ const q=document.getElementById("searchInput").value.trim();
  if(!q) return;
+
+ const matcher=buildWordMatcher(q);
 
  document.getElementById("searchCard").classList.remove("hidden");
 
- const body=document.getElementById("searchBody");
- body.innerHTML="";
- let found=0;
+ const results=[];
 
  Object.entries(db).forEach(([board,rows])=>{
    if(board==="last_updated") return;
 
    rows.forEach((row,index)=>{
-      const match=Object.values(row).some(v=>String(v).toLowerCase().includes(q));
+      const match=Object.values(row).some(v=>matcher.test(String(v)));
 
       if(match){
-        found++;
         const keys=Object.keys(row);
-
-        body.innerHTML += `
-        <tr>
-          <td>${board.replace(/_/g," ").toUpperCase()}</td>
-          <td>#${index+1}</td>
-          <td>${row[keys[0]]??""}</td>
-          <td>${row[keys[1]]??""}</td>
-        </tr>`;
+        results.push({
+          board,
+          rank:index+1, // rank is always the board position, 1-based
+          player:row[keys[0]]??"",
+          value:row[keys[1]]??""
+        });
       }
    });
  });
 
- if(!found){
+ // Sort by rank ascending (rank 1 first). Anything without a usable
+ // numeric rank is pushed to the bottom and shown as N/A.
+ results.sort((a,b)=>{
+   const ar=Number.isFinite(a.rank)?a.rank:Infinity;
+   const br=Number.isFinite(b.rank)?b.rank:Infinity;
+   return ar-br;
+ });
+
+ const body=document.getElementById("searchBody");
+ body.innerHTML="";
+
+ if(!results.length){
    body.innerHTML='<tr><td colspan="4">No results found.</td></tr>';
+ } else {
+   results.forEach(r=>{
+     const rankLabel=Number.isFinite(r.rank) ? "#"+r.rank : "N/A";
+     body.innerHTML += `
+     <tr>
+       <td>${r.board.replace(/_/g," ").toUpperCase()}</td>
+       <td>${rankLabel}</td>
+       <td>${r.player}</td>
+       <td>${r.value}</td>
+     </tr>`;
+   });
  }
 
  window.scrollTo({top:0,behavior:"smooth"});
