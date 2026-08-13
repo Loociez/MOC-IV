@@ -28800,16 +28800,16 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 100000,
+      "hp": 50000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 800,
+      "atk": 700,
       "def": 0,
-      "rat": 800,
+      "rat": 700,
       "rdf": 0,
-      "mat": 800,
+      "mat": 700,
       "mdf": 0
     },
     "drop_items": [
@@ -28902,16 +28902,16 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 75000,
+      "hp": 25000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 750,
+      "atk": 500,
       "def": 0,
-      "rat": 750,
+      "rat": 500,
       "rdf": 0,
-      "mat": 750,
+      "mat": 500,
       "mdf": 0
     },
     "drop_items": [
@@ -36210,7 +36210,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Icey Raft",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -36225,10 +36225,10 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 434,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
       "brightness": 100
     },
@@ -36238,23 +36238,23 @@
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
+    "attack_delay": 66,
+    "flee_threshold": 0,
+    "behavior": 1,
+    "targeting": 9,
+    "sight_range": 4,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 1,
+      "hp": 1000,
       "mp": 1,
       "sp": 1
     },
     "stats": {
-      "atk": 0,
+      "atk": 600,
       "def": 0,
-      "rat": 0,
-      "rdf": 0,
+      "rat": 200,
+      "rdf": 200,
       "mat": 0,
       "mdf": 0
     },
@@ -90398,7 +90398,7 @@
     "color": "#FFD700",
     "spawn_delay": 1,
     "move_chance": 0,
-    "move_delay": 100,
+    "move_delay": 150,
     "move_amount": 1,
     "attack_delay": 50,
     "flee_threshold": 10,
@@ -90408,16 +90408,16 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 50000,
+      "hp": 100000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 600,
       "def": 0,
-      "rat": 0,
+      "rat": 1000,
       "rdf": 0,
-      "mat": 5000,
+      "mat": 2500,
       "mdf": 0
     },
     "drop_items": [
