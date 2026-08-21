@@ -69512,14 +69512,14 @@
     },
     "drop_items": [
       {
-        "item_id": 736,
-        "amount": 10,
-        "chance": 50
-      },
-      {
         "item_id": -1,
         "amount": 0,
         "chance": 0
+      },
+      {
+        "item_id": 736,
+        "amount": 3,
+        "chance": 50
       },
       {
         "item_id": -1,
@@ -89760,7 +89760,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Draco Tonitrus",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -89775,38 +89775,38 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 553,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 1,
+      "saturation": 255,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 2,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 100,
+    "move_delay": 80,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
+    "attack_delay": 90,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
-    "sight_range": 1,
+    "sight_range": 3,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 150000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
-      "def": 0,
+      "atk": 1400,
+      "def": 100,
       "rat": 0,
-      "rdf": 0,
+      "rdf": -20,
       "mat": 0,
-      "mdf": 0
+      "mdf": 80
     },
     "drop_items": [
       {
@@ -90396,24 +90396,24 @@
     },
     "scale": 1.75,
     "color": "#FFD700",
-    "spawn_delay": 1,
+    "spawn_delay": 0,
     "move_chance": 0,
     "move_delay": 150,
     "move_amount": 1,
     "attack_delay": 50,
-    "flee_threshold": 10,
+    "flee_threshold": 0,
     "behavior": 1,
     "targeting": 9,
     "sight_range": 1,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 100000,
+      "hp": 90000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 600,
+      "atk": 2000,
       "def": 0,
       "rat": 1000,
       "rdf": 0,
@@ -90510,17 +90510,17 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 4000,
+      "hp": 6000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 500,
+      "atk": 800,
       "def": 300,
       "rat": 0,
-      "rdf": 600,
+      "rdf": 300,
       "mat": 0,
-      "mdf": 600
+      "mdf": 300
     },
     "drop_items": [
       {
@@ -90602,7 +90602,7 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 0,
-    "move_delay": 95,
+    "move_delay": 80,
     "move_amount": 1,
     "attack_delay": 95,
     "flee_threshold": 0,
@@ -90612,17 +90612,17 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 4000,
+      "hp": 8000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 750,
-      "def": 0,
+      "atk": 1250,
+      "def": 50,
       "rat": 0,
-      "rdf": 0,
+      "rdf": 25,
       "mat": 0,
-      "mdf": 0
+      "mdf": 25
     },
     "drop_items": [
       {
@@ -90714,12 +90714,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 2000,
+      "hp": 5000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 625,
+      "atk": 975,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -90816,7 +90816,7 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 1000,
+      "hp": 1100,
       "mp": 0,
       "sp": 0
     },
@@ -90910,7 +90910,7 @@
     "move_chance": 100,
     "move_delay": 85,
     "move_amount": 1,
-    "attack_delay": 15,
+    "attack_delay": 30,
     "flee_threshold": 0,
     "behavior": 2,
     "targeting": 9,
@@ -90923,12 +90923,12 @@
       "sp": 0
     },
     "stats": {
-      "atk": 100,
-      "def": 0,
+      "atk": 400,
+      "def": 25,
       "rat": 0,
-      "rdf": 200,
+      "rdf": 125,
       "mat": 0,
-      "mdf": 200
+      "mdf": 125
     },
     "drop_items": [
       {
@@ -91028,9 +91028,9 @@
       "atk": 0,
       "def": 250,
       "rat": 0,
-      "rdf": 500,
+      "rdf": 400,
       "mat": 0,
-      "mdf": 500
+      "mdf": 400
     },
     "drop_items": [
       {
@@ -91122,12 +91122,12 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 25000,
+      "hp": 50000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 3000,
+      "atk": 4000,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -91214,9 +91214,9 @@
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
-    "move_delay": 75,
+    "move_delay": 60,
     "move_amount": 1,
-    "attack_delay": 5,
+    "attack_delay": 20,
     "flee_threshold": 0,
     "behavior": 1,
     "targeting": 9,
@@ -91229,7 +91229,7 @@
       "sp": 0
     },
     "stats": {
-      "atk": 125,
+      "atk": 300,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -91433,7 +91433,7 @@
       "sp": 0
     },
     "stats": {
-      "atk": 5000,
+      "atk": 3500,
       "def": 0,
       "rat": 500,
       "rdf": 0,
@@ -91494,7 +91494,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Rockjaw",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -91509,33 +91509,33 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 616,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 250,
+      "brightness": 150
     },
-    "scale": 1,
+    "scale": 1.5,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
+    "flee_threshold": 0,
+    "behavior": 1,
+    "targeting": 9,
+    "sight_range": 5,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 10000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 1500,
       "def": 0,
       "rat": 0,
       "rdf": 0,
