@@ -295,6 +295,7 @@ margin-top:4px;
         <th>Description</th>
         <th>Stats</th>
         <th>Repair Cost</th>
+        <th>Break Chance</th>
         <th>Uses</th>
         <th>Sell Value</th>
         <th>Handedness</th>
@@ -647,8 +648,9 @@ formattedLines.push(`Item ID: ${index}`);
             dataCell.classList.add('data');
             row.appendChild(dataCell);
 
-            // Repair, Uses, Sell, Handedness, Favorite
+            // Repair, Break Chance, Uses, Sell, Handedness, Favorite
             const repairCostCell = document.createElement('td'); repairCostCell.textContent = item.repair_cost || 'No repair cost'; row.appendChild(repairCostCell);
+            const breakChanceCell = document.createElement('td'); breakChanceCell.textContent = (item.break_chance !== undefined && item.break_chance !== null) ? `${item.break_chance}%` : 'No break chance'; row.appendChild(breakChanceCell);
             const usesCell = document.createElement('td'); usesCell.textContent = item.uses || 'No uses data'; row.appendChild(usesCell);
             const sellValueCell = document.createElement('td'); sellValueCell.textContent = item.recycle_value || 'No sell value'; row.appendChild(sellValueCell);
             const handednessCell = document.createElement('td'); handednessCell.textContent = item.data && item.data.two_handed ? 'Two Handed' : 'One Handed'; row.appendChild(handednessCell);
