@@ -87618,7 +87618,7 @@
     ]
   },
   {
-    "name": "",
+    "name": "Shockwave",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -87633,11 +87633,11 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 207,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 270,
+      "saturation": 200,
       "brightness": 100
     },
     "scale": 1,
@@ -87654,16 +87654,16 @@
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 100000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 1000,
       "def": 0,
       "rat": 0,
       "rdf": 0,
-      "mat": 0,
+      "mat": 1000,
       "mdf": 0
     },
     "drop_items": [
@@ -89805,7 +89805,7 @@
       "def": 100,
       "rat": 0,
       "rdf": -20,
-      "mat": 0,
+      "mat": 1099,
       "mdf": 80
     },
     "drop_items": [
@@ -97920,13 +97920,13 @@
     ]
   },
   {
-    "name": "",
+    "name": "Rammy",
     "desc": "",
     "tag": "",
     "pursue_run": false,
     "equip_drops": false,
     "spawn_day": true,
-    "spawn_night": true,
+    "spawn_night": false,
     "spawn_weather": 0,
     "show_name": false,
     "attack_say": "",
@@ -97935,11 +97935,11 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 184,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 180,
+      "saturation": 200,
       "brightness": 100
     },
     "scale": 1,
@@ -97949,7 +97949,7 @@
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 10,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
@@ -98022,13 +98022,13 @@
     ]
   },
   {
-    "name": "",
+    "name": "Weasel",
     "desc": "",
     "tag": "",
     "pursue_run": false,
     "equip_drops": false,
     "spawn_day": true,
-    "spawn_night": true,
+    "spawn_night": false,
     "spawn_weather": 0,
     "show_name": false,
     "attack_say": "",
@@ -98037,11 +98037,11 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 180,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 300,
+      "saturation": 150,
       "brightness": 100
     },
     "scale": 1,
@@ -98051,7 +98051,7 @@
     "move_delay": 100,
     "move_amount": 1,
     "attack_delay": 100,
-    "flee_threshold": 10,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
@@ -98124,12 +98124,12 @@
     ]
   },
   {
-    "name": "",
+    "name": "Sucka",
     "desc": "",
     "tag": "",
     "pursue_run": false,
     "equip_drops": false,
-    "spawn_day": true,
+    "spawn_day": false,
     "spawn_night": true,
     "spawn_weather": 0,
     "show_name": false,
@@ -98139,21 +98139,21 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 181,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
-      "brightness": 100
+      "saturation": 400,
+      "brightness": 400
     },
-    "scale": 1,
+    "scale": 0.8,
     "color": "#008b8b",
     "spawn_delay": 1,
-    "move_chance": 25,
-    "move_delay": 100,
-    "move_amount": 1,
+    "move_chance": 100,
+    "move_delay": 80,
+    "move_amount": 3,
     "attack_delay": 100,
-    "flee_threshold": 10,
+    "flee_threshold": 0,
     "behavior": 0,
     "targeting": 0,
     "sight_range": 1,
@@ -98226,12 +98226,12 @@
     ]
   },
   {
-    "name": "",
+    "name": "Taker",
     "desc": "",
     "tag": "",
     "pursue_run": false,
     "equip_drops": false,
-    "spawn_day": true,
+    "spawn_day": false,
     "spawn_night": true,
     "spawn_weather": 0,
     "show_name": false,
@@ -98241,14 +98241,14 @@
     "attack_sound_id": 1,
     "death_sound_id": 2,
     "mapswitch_radius": 0,
-    "sprite": 0,
+    "sprite": 374,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 270,
+      "saturation": 250,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.9,
     "color": "#008b8b",
     "spawn_delay": 1,
     "move_chance": 25,
