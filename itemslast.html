@@ -76,6 +76,14 @@ background:rgba(0,0,0,.4);
 color:var(--text);
 }
 
+.filter-row{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+row-gap:10px;
+margin-top:10px;
+}
+
 table{
 width:95%;
 margin:25px auto;
@@ -208,7 +216,7 @@ margin-top:4px;
     background-color: #222;      /* subtle hover effect */
   }
 </style></center>
-  <h1 id="itemListHeading">Last Known 08/24/26 - Item List</h1>
+  <h1 id="itemListHeading">Last Known 08/21/26 - Item List</h1>
   <label for="themeSelector" style="margin-left: 10px;">Theme:</label>
 <select id="themeSelector">
   <option value="theme-default">MoC (Default)</option>
@@ -226,6 +234,7 @@ margin-top:4px;
     placeholder="Search for an item..."
     oninput="filterTable()"
   />
+  <div class="filter-row">
   <label style="margin-left: 10px;" id="weaponFilterLabel"
     ><input type="checkbox" id="weaponFilter" onclick="filterTable()" />
     Weapons Only</label
@@ -248,7 +257,9 @@ margin-top:4px;
       onclick="filterTable()"
     /> Show Favorites Only</label
   >
+  </div>
 
+  <div class="filter-row">
   <label for="sortStat" style="margin-left: 10px;">Sort by:</label>
   <select id="sortStat" onchange="filterTable()">
     <option value="">-- None --</option>
@@ -284,10 +295,11 @@ margin-top:4px;
 <select id="classFilter" onchange="filterTable()">
   <option value="">All Classes</option>
 </select>
-<br></br>
+  </div>
   <button onclick="clearComparison()">Clear Comparison</button>
   <button onclick="clearFavorites()">Clear Favorites</button>
   <button onclick="generateShareLink()">Share Comparison</button>
+  <button onclick="copyFilterLink()">Copy Filter Link</button>
   <button onclick="copyStats()">Copy Stats</button>
   <button onclick="copyDescription()">Copy Description</button>
 
@@ -810,6 +822,52 @@ function highlightStats(stats1, stats2, statsCell1, statsCell2) {
     });
 }
 
+// --- URL state / shareable filters ---
+function applyFiltersFromURL() {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('q')) document.getElementById('searchBar').value = params.get('q');
+    if (params.has('weapon')) document.getElementById('weaponFilter').checked = params.get('weapon') === '1';
+    if (params.has('pet')) document.getElementById('petFilter').checked = params.get('pet') === '1';
+    if (params.has('recipe')) document.getElementById('recipeFilter').checked = params.get('recipe') === '1';
+    if (params.has('rare')) document.getElementById('rareFilter').checked = params.get('rare') === '1';
+    if (params.has('fav')) document.getElementById('favoritesFilter').checked = params.get('fav') === '1';
+    if (params.has('sort')) document.getElementById('sortStat').value = params.get('sort');
+    if (params.has('amp')) document.getElementById('spellAmpFilter').value = params.get('amp');
+    if (params.has('type')) document.getElementById('typeFilter').value = params.get('type');
+    if (params.has('class')) document.getElementById('classFilter').value = params.get('class');
+}
+
+function updateURLFromFilters() {
+    const params = new URLSearchParams();
+
+    const q = document.getElementById('searchBar').value;
+    if (q) params.set('q', q);
+    if (document.getElementById('weaponFilter').checked) params.set('weapon', '1');
+    if (document.getElementById('petFilter').checked) params.set('pet', '1');
+    if (document.getElementById('recipeFilter').checked) params.set('recipe', '1');
+    if (document.getElementById('rareFilter').checked) params.set('rare', '1');
+    if (document.getElementById('favoritesFilter').checked) params.set('fav', '1');
+
+    const sort = document.getElementById('sortStat').value;
+    if (sort) params.set('sort', sort);
+    const amp = document.getElementById('spellAmpFilter').value;
+    if (amp) params.set('amp', amp);
+    const type = document.getElementById('typeFilter').value;
+    if (type) params.set('type', type);
+    const cls = document.getElementById('classFilter').value;
+    if (cls) params.set('class', cls);
+
+    const query = params.toString();
+    const newUrl = window.location.pathname + (query ? '?' + query : '') + window.location.hash;
+    window.history.replaceState({}, '', newUrl);
+}
+
+function copyFilterLink() {
+    updateURLFromFilters();
+    navigator.clipboard.writeText(window.location.href).then(() => alert("Filter link copied to clipboard!"));
+}
+
 function clearComparison() {
     selectedItems = [];
     document.querySelectorAll('#itemTable input[type="checkbox"]').forEach(cb => cb.checked = false);
@@ -855,6 +913,8 @@ const isFavoriteItem = isFavorite(itemName);
 
         row.style.display = (matchesSearch && matchesWeaponFilter && matchesPetFilter && matchesRecipeFilter && matchesRareFilter && matchesSpellAmp && matchesType && matchesClass && (!favoritesFilter || isFavoriteItem)) ? '' : 'none';
     });
+
+    updateURLFromFilters();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -862,6 +922,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     populateSpellAmpDropdown();
     populateClassDropdown();
     await fetchItemIds();
+    applyFiltersFromURL();
 
     document.getElementById("sortStat")?.addEventListener("change", fetchAndDisplayItems);
 
