@@ -157,20 +157,20 @@ CUSTOM MATERIAL RECIPES
 --------------------------- */
 
 const materialRecipes={
-"Beginner's Axe":{"Wood Billet":1, "Metal Bars":2},
-"Spade":{"Metal Bars":60},
-"Hunter's Knife":{"Metal Bars":2000},
-"Hunter's Machete":{"Metal Bars":5000},
-"Hatchet":{"Wood Billet":2, "Metal Bars":10},
-"Specialized Edge":{"Wood Billet":6, "Metal Bars":40},
-"Double-Bitted Axe":{"Wood Billet":6, "Metal Bars":36},
-"Beginner's Pick":{"Wood Billet":1, "Metal Bars":2},
-"Mattock":{"Wood Billet":2, "Metal Bars":10},
-"Rock Smasher":{"Wood Billet":6, "Metal Bars":40},
-"Miner's Pick":{"Wood Billet":6, "Metal Bars":36},
+"Beginner's Axe":{"Wood Billet":1, "Metal Bar":2},
+"Spade":{"Metal Bar":60},
+"Hunter's Knife":{"Metal Bar":2000},
+"Hunter's Machete":{"Metal Bar":5000},
+"Hatchet":{"Wood Billet":2, "Metal Bar":10},
+"Specialized Edge":{"Wood Billet":6, "Metal Bar":40},
+"Double-Bitted Axe":{"Wood Billet":6, "Metal Bar":36},
+"Beginner's Pick":{"Wood Billet":1, "Metal Bar":2},
+"Mattock":{"Wood Billet":2, "Metal Bar":10},
+"Rock Smasher":{"Wood Billet":6, "Metal Bar":40},
+"Miner's Pick":{"Wood Billet":6, "Metal Bar":36},
 "Metal Bar":{"Ore":10},
 "Thick Copper Ring":{"Metal Bar":500},
-"Thick Copper Ring":{"Metal Bar":1000,"Ruby":10},
+"Thick Ruby Ring":{"Metal Bar":1000,"Ruby":10},
 "Golden Sapphire Ring":{"Metal Bar":2000,"Sapphire":10},
 "Sparring Platemail":{"Metal Bar": 100},
 "Slayer's Bloodmail":{"Metal Bar": 500},
@@ -255,7 +255,7 @@ function getSpriteElement(id){
 
 const item = itemsData[id]
 
-if(typeof item.sprite !== "number") return null
+if(!item || typeof item.sprite !== "number") return null
 
 const SPRITE_SIZE = 32
 const SPRITES_PER_SHEET = 1024
@@ -335,9 +335,28 @@ renderTotals(totals)
 
 }
 
-function expandRecipe(id,qty,totals){
+function expandRecipe(id,qty,totals,missingName){
 
 const item=itemsData[id]
+
+/* SAFETY GUARD: id could not be resolved to a real item — most often
+   because a material name in materialRecipes doesn't exactly match an
+   item name in last.json (casing, singular/plural, typo, etc).
+   Track it by name instead of crashing, and warn in the console so
+   it's easy to spot and fix the recipe entry. */
+if(!item){
+
+const label = missingName || `Unknown item (id ${id})`
+const key = "missing::" + label
+
+totals[key] = (totals[key] || 0) + qty
+
+console.warn(`Craft Tree Planner: no item found matching "${label}". Check its spelling/casing in materialRecipes against last.json.`)
+
+return
+
+}
+
 const name=item.name
 
 /* CHECK CUSTOM MATERIAL RECIPES */
@@ -349,7 +368,7 @@ for(const mat in materialRecipes[name]){
 const matId=nameToId[mat]
 const amount=materialRecipes[name][mat]
 
-expandRecipe(matId,amount*qty,totals)
+expandRecipe(matId,amount*qty,totals,mat)
 
 }
 
@@ -382,12 +401,24 @@ function renderTotals(totals){
 const tbody=document.getElementById("totalsTable")
 tbody.innerHTML=""
 
-Object.entries(totals).forEach(([id,amt])=>{
+Object.entries(totals).forEach(([key,amt])=>{
 
 const tr=document.createElement("tr")
-
 const td1=document.createElement("td")
-td1.appendChild(createItemCell(id,itemNames[id]))
+
+if(key.startsWith("missing::")){
+
+const label=key.substring("missing::".length)
+const span=document.createElement("span")
+span.textContent=`⚠ ${label} (no matching item found)`
+span.style.color="#ff6b6b"
+td1.appendChild(span)
+
+}else{
+
+td1.appendChild(createItemCell(key,itemNames[key]))
+
+}
 
 const td2=document.createElement("td")
 td2.textContent=amt
