@@ -3,931 +3,434 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Mirage Online Classic - Modded (With Tools)</title>
-<!-- Content identical to uploaded, no focus hide UI (already removed) -->
+<title>Mirage Companion — Tools for Mirage Online Classic</title>
+<meta name="description" content="A fan-made companion hub for Mirage Online Classic: item, NPC and build lookups, plus a quick launcher into the game."/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  /* ---- Base from your original file (kept look) ---- */
-  body, html {
-    margin: 0; padding: 0; height: 100%; overflow: hidden;
-    background: #000; font-family: Arial, sans-serif; color: #0f0;
-  }
-  /* wrapper so scaling is easier */
-  #iframeWrapper {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    overflow: hidden;
-    transform-origin: center center;
-    transition: transform 0.12s linear;
-    z-index: 0;
-  }
-  iframe.gameIframe {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    border: none; pointer-events: auto; visibility: visible;
-    transform-origin: center center;
-    will-change: transform, filter;
-    z-index: 0;
+  :root{
+    --bg: #0a0d0a;
+    --bg-raised: #10140f;
+    --panel: #12160f;
+    --line: #23301f;
+    --line-bright: #3a5233;
+    --ink: #dcf3df;
+    --ink-dim: #8aa38c;
+    --phosphor: #55e07a;
+    --phosphor-dim: #2f8a49;
+    --amber: #e0b355;
+    --radius: 3px;
   }
 
-  /* Toggle button always visible top-left */
-  #toggleBarBtn {
-    position: fixed; top: 6px; left: 6px;
-    width: 32px; height: 32px;
-    background: rgba(0,0,0,0.7); border: none; color: #0f0;
-    font-size: 22px; cursor: pointer; user-select: none;
-    border-radius: 6px; z-index: 100004;
-    display: flex; align-items: center; justify-content: center;
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ink);
+  }
+  a{ color: inherit; }
+  ::selection{ background: var(--phosphor-dim); color: #04140a; }
+
+  /* subtle scanline + vignette texture on the whole page */
+  body::before{
+    content:"";
+    position: fixed; inset:0; pointer-events:none; z-index: 500;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.018) 0px,
+      rgba(255,255,255,0.018) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+  body::after{
+    content:"";
+    position: fixed; inset:0; pointer-events:none; z-index: 499;
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.65);
   }
 
-  /* System time right of toggle button */
-  #systemTime {
-    position: fixed; top: 8px; left: 46px;
-    font-family: monospace; font-size: 16px;
-    z-index: 100004; user-select: none; color: #0f0;
+  .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* -------- Header -------- */
+  header{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(10,13,10,0.86);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 24px; max-width: 1080px; margin:0 auto;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:0.2px; }
+  .brand-mark{
+    width:9px; height:9px; background: var(--phosphor);
+    box-shadow: 0 0 8px var(--phosphor), 0 0 2px var(--phosphor);
+    border-radius: 1px; flex-shrink:0;
+  }
+  .brand small{ color: var(--ink-dim); font-family:'JetBrains Mono',monospace; font-weight:400; font-size:12px; margin-left:6px; }
+  nav{ display:flex; gap: 22px; font-size: 13px; color: var(--ink-dim); }
+  nav a{ text-decoration:none; transition: color .15s ease; }
+  nav a:hover{ color: var(--phosphor); }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--phosphor); color: #05170b;
+    border: none; padding: 9px 16px; font-weight:600;
+    font-family:'JetBrains Mono',monospace; font-size: 13px;
+    border-radius: var(--radius); cursor:pointer; text-decoration:none;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{ box-shadow: 0 0 0 1px var(--phosphor), 0 0 18px rgba(85,224,122,0.35); }
+  .btn:active{ transform: translateY(1px); }
+  .btn-ghost{
+    background: transparent; color: var(--ink); border: 1px solid var(--line-bright);
+  }
+  .btn-ghost:hover{ border-color: var(--phosphor); color: var(--phosphor); box-shadow:none; }
+
+  /* -------- Hero -------- */
+  .hero{ padding: 74px 0 56px; }
+  .hero-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items:center; }
+  .kicker{ color: var(--phosphor-dim); font-size: 13px; margin-bottom: 14px; }
+  .kicker strong{ color: var(--phosphor); font-weight:600; }
+  .hero h1{ font-size: 40px; line-height:1.12; margin-bottom: 18px; max-width: 15ch; }
+  .hero p{ color: var(--ink-dim); font-size: 15px; max-width: 46ch; margin-bottom: 28px; }
+  .hero-actions{ display:flex; gap: 12px; flex-wrap:wrap; }
+
+  /* CRT monitor mockup */
+  .crt{
+    position: relative; border-radius: 14px; padding: 14px;
+    background: linear-gradient(180deg,#1a1f18,#0c0f0b);
+    border: 1px solid var(--line-bright);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7);
+  }
+  .crt-screen{
+    position: relative; aspect-ratio: 4/3; border-radius: 4px; overflow:hidden;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(85,224,122,0.10), transparent 55%),
+      #05130a;
+    border: 1px solid #1c2618;
+    display:flex; flex-direction:column; padding: 16px; font-size: 12px;
+  }
+  .crt-screen .line{ color: var(--phosphor); opacity:0; white-space:pre; }
+  .crt-dim{ color: var(--ink-dim); }
+  .crt-cursor{ display:inline-block; width:7px; height:13px; background:var(--phosphor); vertical-align:-2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .crt-screen::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 2px);
+  }
+  .crt-led{ position:absolute; bottom:-1px; right:16px; display:flex; align-items:center; gap:6px; font-size:10px; color:var(--ink-dim); transform:translateY(100%); padding-top:6px; }
+  .crt-led i{ width:6px; height:6px; border-radius:50%; background: var(--phosphor); box-shadow:0 0 6px var(--phosphor); display:inline-block; }
+
+  @media (prefers-reduced-motion: no-preference){
+    .crt-screen .line{ animation: reveal .01s linear forwards; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .crt-screen .line{ opacity:1 !important; }
+  }
+  @keyframes reveal{ to{ opacity:1; } }
+
+  /* -------- Section shell -------- */
+  section{ padding: 56px 0; border-top: 1px solid var(--line); }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom: 26px; flex-wrap:wrap; }
+  .section-head h2{ font-size: 22px; }
+  .section-head p{ color: var(--ink-dim); font-size: 13.5px; margin:4px 0 0; }
+
+  /* -------- Tool panels (bracketed terminal cards, not SaaS cards) -------- */
+  .tools-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .tool{
+    position: relative; padding: 22px 20px; background: var(--panel);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    cursor:pointer; text-align:left; color: inherit; font-family:inherit;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .tool:hover{ border-color: var(--phosphor-dim); background: #141a11; }
+  .tool:hover .tool-go{ color: var(--phosphor); transform: translateX(2px); }
+  .tool-index{ font-size: 11px; color: var(--phosphor-dim); margin-bottom: 12px; letter-spacing: 0.5px; }
+  .tool h3{ font-size: 16px; margin-bottom: 8px; }
+  .tool p{ color: var(--ink-dim); font-size: 13px; margin: 0 0 16px; }
+  .tool-go{ font-size: 12.5px; color: var(--ink-dim); transition: color .15s ease, transform .15s ease; }
+
+  /* -------- Companion strip (music) -------- */
+  .strip{
+    display:flex; align-items:center; gap: 18px; padding: 16px 20px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    flex-wrap:wrap;
+  }
+  .strip-meta{ flex:1; min-width: 180px; }
+  .strip-meta .label{ font-size: 11px; color: var(--phosphor-dim); margin-bottom: 3px; }
+  .strip-meta .track{ font-size: 13.5px; color: var(--ink); }
+  .strip-controls{ display:flex; align-items:center; gap: 8px; }
+  .icon-btn{
+    width: 34px; height: 34px; display:flex; align-items:center; justify-content:center;
+    background: transparent; border: 1px solid var(--line-bright); border-radius: var(--radius);
+    color: var(--ink); cursor:pointer; font-size: 13px;
+  }
+  .icon-btn:hover{ border-color: var(--phosphor); color: var(--phosphor); }
+  .file-btn{
+    font-size: 12.5px; color: var(--ink-dim); border:1px dashed var(--line-bright);
+    padding: 8px 12px; border-radius: var(--radius); cursor:pointer; position:relative; overflow:hidden;
+  }
+  .file-btn:hover{ border-color: var(--phosphor-dim); color: var(--ink); }
+  .file-btn input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+
+  /* -------- Footer -------- */
+  footer{ border-top: 1px solid var(--line); padding: 32px 0 44px; }
+  .footer-row{ display:flex; justify-content:space-between; align-items:flex-start; gap: 24px; flex-wrap:wrap; }
+  .disclaimer{ color: var(--ink-dim); font-size: 12px; max-width: 52ch; line-height:1.7; }
+  .footer-links{ display:flex; gap:16px; font-size:12.5px; color: var(--ink-dim); }
+  .footer-links a{ text-decoration:none; } .footer-links a:hover{ color: var(--phosphor); }
+
+  /* -------- Overlay (lookup pages) -------- */
+  .overlay{
+    position: fixed; inset: 0; z-index: 200; display:none;
+    background: rgba(4,6,4,0.82); backdrop-filter: blur(3px);
+    align-items:center; justify-content:center; padding: 24px;
+  }
+  .overlay.open{ display:flex; }
+  .overlay-card{
+    width: min(1000px, 100%); height: min(760px, 100%);
+    background: var(--bg-raised); border: 1px solid var(--line-bright);
+    border-radius: 6px; display:flex; flex-direction:column; overflow:hidden;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
+  }
+  .overlay-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 13px;
+  }
+  .overlay-bar .dot{ width:7px; height:7px; border-radius:50%; background: var(--phosphor); display:inline-block; margin-right:8px; box-shadow:0 0 6px var(--phosphor); }
+  .overlay-close{ background:none; border:none; color: var(--ink-dim); font-size: 18px; cursor:pointer; line-height:1; padding:4px 8px; }
+  .overlay-close:hover{ color: var(--phosphor); }
+  .overlay-card iframe{ flex:1; border:none; width:100%; background:#fff; }
+
+  /* -------- Responsive -------- */
+  @media (max-width: 860px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero{ padding-top: 48px; }
+    .hero h1{ font-size: 30px; max-width: none; }
+    .tools-grid{ grid-template-columns: 1fr; }
+    nav{ display:none; }
   }
 
-  /* Top bar */
-  #topBar {
-    position: fixed; top: 40px; left: 46px; right: 6px; height: 36px;
-    background: rgba(0,0,0,0.6); display: none;
-    align-items: center; gap: 8px; padding: 0 10px;
-    font-size: 14px; color: #0f0; user-select: none; z-index: 100002;
-    border-radius: 6px;
-    transform: translateY(-150%); transition: transform 0.3s ease;
-  }
-  #topBar.visible { display:flex; transform: translateY(0); }
-
-  /* Tab buttons */
-  #tabButtons { display:flex; gap:8px; }
-  .tab-button { background: transparent; border:1px solid #0f0; color:#0f0; padding:3px 8px; cursor:pointer; border-radius:5px; user-select:none; font-size:14px; }
-  .tab-button.active { background:#0f0; color:#000; }
-
-  /* Wiki & settings buttons container */
-  #wikiButtons { display:flex; gap:8px; margin-left:auto; }
-  #wikiButtons button { background:#111; border:1px solid #0f0; border-radius:6px; color:#0f0; padding:6px 10px; cursor:pointer; font-size:14px; user-select:none; }
-  #wikiButtons button:hover { background:#0f0; color:#000; }
-
-  /* Wiki overlay */
-  #wikiOverlay { position: fixed; top:10%; left:10%; width:80%; height:80%; background:#111; border:2px solid #0f0; border-radius:10px; box-shadow:0 0 30px #0f0; z-index:100003; display:none; flex-direction:column; }
-  #wikiOverlay iframe { flex:1; border:none; width:100%; height:100%; pointer-events:auto; border-radius:0 0 10px 10px; }
-  #wikiOverlay #wikiCloseBtn { background:#000; color:#0f0; border:none; font-size:20px; cursor:pointer; padding:4px 12px; border-radius:10px 10px 0 0; user-select:none; }
-  #wikiOverlay #wikiCloseBtn:hover { background:#0f0; color:#000; }
-
-  /* Settings overlay (centralized) */
-  #settingsOverlay {
-    position: fixed; top: 8%; left: 50%; transform: translateX(-50%); width: 720px;
-    max-width: calc(100% - 40px); max-height: 84%; overflow:auto;
-    background: #111; border: 2px solid #0f0; border-radius: 12px; box-shadow: 0 0 30px #0f0; padding: 18px; z-index: 100005;
-    display: none; color: #0f0; font-family: monospace; pointer-events: auto;
-  }
-  #settingsOverlay h2 { margin: 0 0 12px 0; text-align:center; }
-  .settings-row { display:flex; gap:12px; align-items:center; margin:8px 0; flex-wrap:wrap; }
-  .settings-col { flex:1; min-width:220px; }
-  label { display:block; font-size:13px; margin-bottom:6px; }
-
-  /* small widgets that appear only when enabled */
-  .widget {
-    position: fixed; z-index: 100006; background: rgba(0,0,0,0.5); color: #0f0; border:1px solid #0f0; border-radius:6px; padding:6px 8px; font-family: monospace; font-size:13px; user-select:none;
-    display:none; pointer-events: auto;
-  }
-  #fpsWidget { top: 8px; right: 8px; width:110px; text-align:center; }
-  #zoomWidget { bottom: 8px; right: 8px; width:170px; text-align:center; }
-  #filtersWidget { top: 54px; right: 8px; width:170px; text-align:center; }
-
-  /* canvas for fps graph (shown when toggled) */
-  #fpsCanvas {
-    position: fixed; right: 8px; top: 56px; width: 220px; height: 80px; z-index:100006; border:1px solid rgba(15,255,15,0.25); background: rgba(0,0,0,0.5);
-    display:none; border-radius:6px; pointer-events:none;
-  }
-
-  /* Music player mini overlay (hidden until enabled) */
-  #musicWidget {
-    position: fixed; bottom: 8px; left: 8px; z-index:100006; background: rgba(0,0,0,0.6); border:1px solid #0f0; border-radius:8px; padding:8px; display:none;
-    min-width: 220px; font-family: monospace;
-  }
-
-  /* small helper styles */
-  input[type=range] { width: 100%; }
-  button.small { padding:6px 8px; font-size:13px; border-radius:6px; background:#111; border:1px solid #0f0; color:#0f0; cursor:pointer; }
-  button.small:hover { background:#0f0; color:#000; }
-
-  /* Responsive tweak for small windows */
-  @media (max-width:760px) {
-    #settingsOverlay { width: 94%; left: 3%; transform:none; max-height:86%; }
-    #fpsCanvas { right: 6px; top: 120px; width: 44vw; height: 80px; }
-  }
+  :focus-visible{ outline: 2px solid var(--phosphor); outline-offset: 2px; }
 </style>
 </head>
 <body>
 
-<!-- Wrapper around iframes so we can scale & filter safely -->
-<div id="iframeWrapper">
-  <iframe id="iframeMain" class="gameIframe" src="https://play.freebrowsermmorpg.com/" sandbox="allow-scripts allow-same-origin allow-forms" style="display:block;"></iframe>
-  <iframe id="iframeAlt" class="gameIframe" src="https://play.freebrowsermmorpg.com/" sandbox="allow-scripts allow-same-origin allow-forms" style="display:none;"></iframe>
-</div>
-
-<!-- Toggle button -->
-<button id="toggleBarBtn" title="Toggle Controls" class="no-hide-when-focus">📚</button>
-<div id="systemTime" class="no-hide-when-focus">--:--:--</div>
-
-<!-- Top bar -->
-<div id="topBar" class="no-hide-when-focus">
-  <div id="tabButtons">
-    <button class="tab-button active" data-iframe="main" title="Main Account">Main</button>
-    <button class="tab-button" data-iframe="alt" title="Alt Account">Alt</button>
+<header>
+  <div class="header-inner">
+    <div class="brand"><span class="brand-mark"></span>Mirage Companion<small>unofficial</small></div>
+    <nav>
+      <a href="#tools">Lookup tools</a>
+      <a href="#music">Music</a>
+      <a href="#about">About</a>
+    </nav>
+    <a class="btn" id="playBtnTop" href="#" target="_blank" rel="noopener">Play now</a>
   </div>
-  <div id="wikiButtons" style="margin-left:auto;">
-    <button id="itemLookupBtn">Item Lookup</button>
-    <button id="npcLookupBtn">NPC Lookup</button>
-    <button id="buildLookupBtn">Build Lookup</button>
-    <button id="settingsBtn">Settings</button>
-  </div>
-</div>
+</header>
 
-<!-- Wiki overlay -->
-<div id="wikiOverlay" class="no-hide-when-focus">
-  <button id="wikiCloseBtn">✖</button>
-  <iframe src="" frameborder="0" scrolling="auto"></iframe>
-</div>
-
-<!-- Settings overlay (centralized) -->
-<div id="settingsOverlay" role="dialog" aria-modal="true" tabindex="-1" aria-label="Mod Settings">
-  <h2>Mod Tools — Settings</h2>
-
-  <!-- Row: Themes + Basic -->
-  <div class="settings-row">
-    <div class="settings-col">
-      <label>UI Theme</label>
-      <div id="themeButtons" role="radiogroup" aria-label="Select UI Theme">
-        <button type="button" data-theme="theme-dark" aria-checked="false" role="radio" class="theme-btn small">Dark</button>
-        <button type="button" data-theme="theme-light" aria-checked="false" role="radio" class="theme-btn small">Light</button>
-        <button type="button" data-theme="theme-green" aria-checked="false" role="radio" class="theme-btn small">Green</button>
-      </div>
-    </div>
-
-    <div class="settings-col">
-      <label>Show Widgets Only When Enabled</label>
+<main>
+  <section class="hero wrap" style="border-top:none;">
+    <div class="hero-grid">
       <div>
-        <small>All tools live here — enable to show their widget.</small>
-      </div>
-    </div>
-  </div>
-
-  <!-- Row: FPS -->
-  <div class="settings-row">
-    <div class="settings-col">
-      <label>FPS Counter</label>
-      <div>
-        <label><input type="checkbox" id="enableFPS"> Enable FPS counter (mini-widget)</label><br/>
-        <label><input type="checkbox" id="enableFPSGraph"> Show FPS graph</label><br/>
-        <label>Graph sample size: <input id="fpsSample" type="range" min="30" max="240" value="120"></label>
-      </div>
-    </div>
-
-    <div class="settings-col">
-      <label>Performance Profiler</label>
-      <div>
-        <label><input type="checkbox" id="enableFrameTime"> Show frame time (ms)</label><br/>
-        <label><input type="checkbox" id="enableHeap"> Show JS heap size approximation (may be unsupported)</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Row: Zoom & Filters -->
-  <div class="settings-row">
-    <div class="settings-col">
-      <label>Game Zoom</label>
-      <div>
-        <input id="zoomRange" type="range" min="0.6" max="1.6" step="0.01" value="1">
-        <div style="display:flex; gap:8px; margin-top:6px;">
-          <button class="small" id="zoomReset">Reset Zoom</button>
-          <span id="zoomVal" style="padding-left:6px">100%</span>
+        <div class="kicker">Fan-made companion for <strong>Mirage Online Classic</strong></div>
+        <h1>Everything you look up mid-game, in one place.</h1>
+        <p>Item stats, NPC details, and class builds — searchable without alt-tabbing out of your session. Launch the game whenever you're ready; the tools stay open beside it.</p>
+        <div class="hero-actions">
+          <a class="btn" id="playBtnHero" href="#" target="_blank" rel="noopener">Launch Mirage Online Classic</a>
+          <a class="btn btn-ghost" href="#tools">Browse the tools</a>
         </div>
       </div>
-    </div>
-
-    <div class="settings-col">
-      <label>Color Filters</label>
-      <div>
-        <label><input type="checkbox" id="filterEnabled"> Enable Filters</label><br/>
-        <label>Brightness <input id="filterBrightness" type="range" min="0.2" max="2" step="0.01" value="1"></label>
-        <label>Contrast <input id="filterContrast" type="range" min="0.2" max="2" step="0.01" value="1"></label>
-        <label>Saturation <input id="filterSaturate" type="range" min="0" max="2" step="0.01" value="1"></label>
-        <label>Grayscale <input id="filterGray" type="range" min="0" max="1" step="0.01" value="0"></label>
-        <label>Tint (hue-deg) <input id="filterHue" type="range" min="0" max="360" step="1" value="0"></label>
-        <div style="margin-top:6px;">
-          <button class="small" id="applyCRT">CRT Retro</button>
-          <button class="small" id="applyGreen">Green Mono</button>
-          <button class="small" id="clearFilters">Clear</button>
+      <div class="crt" aria-hidden="true">
+        <div class="crt-screen" id="crtScreen">
+          <span class="line crt-dim">mirage-companion boot v2</span>
+          <span class="line">&nbsp;</span>
+          <span class="line">&gt; loading item index<span class="crt-dim">........ ok</span></span>
+          <span class="line">&gt; loading npc index<span class="crt-dim"> ......... ok</span></span>
+          <span class="line">&gt; loading build index<span class="crt-dim">....... ok</span></span>
+          <span class="line">&nbsp;</span>
+          <span class="line">ready<span class="crt-cursor"></span></span>
         </div>
+        <div class="crt-led"><i></i>companion active</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Row: Music Player -->
-  <div class="settings-row">
-    <div class="settings-col">
-      <label>Music Player</label>
+  <section class="wrap" id="tools">
+    <div class="section-head">
       <div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <button class="small" id="musicToggle">Open Player</button>
-          <button class="small" id="musicPlay">Play</button>
-          <button class="small" id="musicPause">Pause</button>
-          <button class="small" id="musicNext">Next</button>
-        </div>
-        <div style="margin-top:8px;">
-          <input id="musicUpload" type="file" accept="audio/*" multiple />
-          <div id="playlistLabel" style="margin-top:6px;font-size:13px">Playlist: <span id="playlistCount">0</span> tracks</div>
-        </div>
+        <h2>Lookup tools</h2>
+        <p>Opens in a panel over this page — no need to leave and lose your place.</p>
       </div>
     </div>
-
+    <div class="tools-grid">
+      <button class="tool" data-url="https://loociez.github.io/MOC-IV/itemslast.html" data-title="Item lookup">
+        <div class="tool-index">01 / items</div>
+        <h3>Item lookup</h3>
+        <p>Search stats, requirements and drop sources for every item in the current build.</p>
+        <div class="tool-go">Open lookup →</div>
+      </button>
+      <button class="tool" data-url="https://loociez.github.io/MOC-IV/npclast.html" data-title="NPC lookup">
+        <div class="tool-index">02 / npcs</div>
+        <h3>NPC lookup</h3>
+        <p>Check monster stats, locations, and loot tables before you commit to a fight.</p>
+        <div class="tool-go">Open lookup →</div>
+      </button>
+      <button class="tool" data-url="https://loociez.github.io/MOC-IV/Best.html" data-title="Build lookup">
+        <div class="tool-index">03 / builds</div>
+        <h3>Build lookup</h3>
+        <p>Community-tested class builds and skill allocations, organized by playstyle.</p>
+        <div class="tool-go">Open lookup →</div>
+      </button>
     </div>
-  <!-- Row: Screenshot -->
-  <div class="settings-row">
-    <div class="settings-col">
-      <label>Screenshot Tool</label>
+  </section>
+
+  <section class="wrap" id="music">
+    <div class="section-head">
       <div>
-        <button class="small" id="screenshotBtn">Take Screenshot (share screen)</button>
-        <label><input type="checkbox" id="screenshotAutoCrop" checked> Attempt to crop to game iframe automatically</label>
-        <div style="margin-top:8px;"><small>After capturing, a new tab will open with the image. Choose the window that contains the game for best results.</small></div>
+        <h2>Background music</h2>
+        <p>Your own tracks, played from this tab while you game in the other one.</p>
       </div>
     </div>
+    <div class="strip">
+      <div class="strip-meta">
+        <div class="label">now playing</div>
+        <div class="track" id="trackName">No track loaded</div>
+      </div>
+      <div class="strip-controls">
+        <button class="icon-btn" id="prevBtn" title="Previous">⏮</button>
+        <button class="icon-btn" id="playPauseBtn" title="Play/Pause">▶</button>
+        <button class="icon-btn" id="nextBtn" title="Next">⏭</button>
+      </div>
+      <label class="file-btn">Add tracks
+        <input type="file" id="fileInput" accept="audio/*" multiple>
+      </label>
+    </div>
+    <audio id="audioPlayer" preload="metadata"></audio>
+  </section>
 
-    <div class="settings-col">
-      <label>Gamepad Support</label>
+  <section class="wrap" id="about">
+    <div class="section-head">
       <div>
-        <label><input type="checkbox" id="enableGamepad"> Enable Gamepad</label><br/>
-        <small>Default mapping: A=Space, B=KeyK, D-Pad => arrows. You can customize later.</small>
+        <h2>About this page</h2>
       </div>
     </div>
-  </div>
+    <p style="color:var(--ink-dim); font-size:13.5px; max-width:60ch;">
+      This is a companion reference hub, not a modified game client — the game itself opens directly on its
+      own site, in its own tab, so login and account features work exactly as the developers built them.
+      The lookup tools pull from community-maintained reference pages.
+    </p>
+  </section>
+</main>
 
-  <!-- Row: Controls Save -->
-  <div class="settings-row" style="margin-top:12px;">
-    <div style="margin-left:auto;">
-      <button class="small" id="settingsSaveBtn">Save Settings</button>
-      <button class="small" id="settingsCloseBtn">Close</button>
+<footer class="wrap">
+  <div class="footer-row">
+    <div class="disclaimer">
+      Mirage Companion is an independent, fan-made reference tool and is not affiliated with, endorsed by,
+      or operated by the developers of Mirage Online Classic. All game content, trademarks, and the game
+      client itself belong to their respective owners.
+    </div>
+    <div class="footer-links">
+      <a href="#tools">Lookup tools</a>
+      <a href="#music">Music</a>
     </div>
   </div>
+</footer>
 
-  <hr style="border-color: rgba(15,255,15,0.07); margin-top:12px;">
-
-  <!-- Advanced / debug -->
-  <div style="font-size:12px; opacity:0.9; margin-top:8px;">
-    <strong>Advanced notes</strong>: Gamepad & synthetic keyboard events may be blocked by some browsers or cross-origin restrictions. If a mapping does not work, try focusing the game window or enabling the small 'focus' button (click the game frame once).
+<!-- Lookup overlay -->
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="overlay-bar">
+      <div><span class="dot"></span><span id="overlayTitle">Lookup</span></div>
+      <button class="overlay-close" id="overlayClose" aria-label="Close">✕</button>
+    </div>
+    <iframe id="overlayFrame" src="" title="Lookup content"></iframe>
   </div>
 </div>
-
-<!-- Small widgets (appear only when toggled) -->
-<div id="fpsWidget" class="widget no-hide-when-focus">FPS: <span id="fpsVal">--</span><br/>MS: <span id="msVal">--</span></div>
-<canvas id="fpsCanvas" width="440" height="160"></canvas>
-
-<div id="zoomWidget" class="widget no-hide-when-focus">
-  Zoom: <span id="zoomWidgetVal">100%</span><br/>
-  <input id="zoomWidgetRange" type="range" min="0.6" max="1.6" step="0.01" value="1">
-</div>
-
-<div id="filtersWidget" class="widget no-hide-when-focus">
-  Filters <br/>
-  <button class="small" id="toggleFilterPanel">Open Filters</button>
-</div>
-
-<div id="musicWidget" class="no-hide-when-focus">
-  <div id="musicMeta">No track</div>
-  <div style="display:flex; gap:8px; margin-top:8px;">
-    <button class="small" id="musicPrevSmall">Prev</button>
-    <button class="small" id="musicPlaySmall">Play</button>
-    <button class="small" id="musicPauseSmall">Pause</button>
-    <button class="small" id="musicNextSmall">Next</button>
-  </div>
-</div>
-
-<!-- Hidden audio element & playlist -->
-<audio id="audioPlayer" preload="metadata"></audio>
 
 <script>
-/* ============================
-   Tools Integration Script
-   ============================ */
-
 (() => {
   "use strict";
 
-  /* -------------------------
-     Basic DOM references
-     ------------------------- */
-  const iframeMain = document.getElementById("iframeMain");
-  const iframeAlt  = document.getElementById("iframeAlt");
-  const iframeWrapper = document.getElementById("iframeWrapper");
+  // ---- Play links: real top-level navigation, no iframe embedding of the game ----
+  const GAME_URL = "https://play.freebrowsermmorpg.com/";
+  document.getElementById("playBtnTop").href = GAME_URL;
+  document.getElementById("playBtnHero").href = GAME_URL;
 
-  const toggleBarBtn = document.getElementById("toggleBarBtn");
-  const topBar = document.getElementById("topBar");
-  const systemTime = document.getElementById("systemTime");
-  const tabButtons = document.getElementById("tabButtons");
-  const wikiOverlay = document.getElementById("wikiOverlay");
-  const wikiCloseBtn = document.getElementById("wikiCloseBtn");
-  const wikiIframe = wikiOverlay.querySelector("iframe");
-  const itemLookupBtn = document.getElementById("itemLookupBtn");
-  const npcLookupBtn = document.getElementById("npcLookupBtn");
-  const buildLookupBtn = document.getElementById("buildLookupBtn");
-  const settingsBtn = document.getElementById("settingsBtn");
-  const settingsOverlay = document.getElementById("settingsOverlay");
-  const settingsCloseBtn = document.getElementById("settingsCloseBtn");
-  const settingsSaveBtn = document.getElementById("settingsSaveBtn");
-
-  const fpsWidget = document.getElementById("fpsWidget");
-  const fpsVal = document.getElementById("fpsVal");
-  const msVal = document.getElementById("msVal");
-  const fpsCanvas = document.getElementById("fpsCanvas");
-  const enableFPS = document.getElementById("enableFPS");
-  const enableFPSGraph = document.getElementById("enableFPSGraph");
-  const fpsSample = document.getElementById("fpsSample");
-  const enableFrameTime = document.getElementById("enableFrameTime");
-  const enableHeap = document.getElementById("enableHeap");
-
-  const zoomRange = document.getElementById("zoomRange");
-  const zoomVal = document.getElementById("zoomVal");
-  const zoomReset = document.getElementById("zoomReset");
-  const zoomWidget = document.getElementById("zoomWidget");
-  const zoomWidgetRange = document.getElementById("zoomWidgetRange");
-  const zoomWidgetVal = document.getElementById("zoomWidgetVal");
-
-  const filterEnabled = document.getElementById("filterEnabled");
-  const filterBrightness = document.getElementById("filterBrightness");
-  const filterContrast = document.getElementById("filterContrast");
-  const filterSaturate = document.getElementById("filterSaturate");
-  const filterGray = document.getElementById("filterGray");
-  const filterHue = document.getElementById("filterHue");
-  const applyCRT = document.getElementById("applyCRT");
-  const applyGreen = document.getElementById("applyGreen");
-  const clearFilters = document.getElementById("clearFilters");
-  const filtersWidget = document.getElementById("filtersWidget");
-  const toggleFilterPanel = document.getElementById("toggleFilterPanel");
-
-  const musicToggle = document.getElementById("musicToggle");
-  const musicPlay = document.getElementById("musicPlay");
-  const musicPause = document.getElementById("musicPause");
-  const musicNext = document.getElementById("musicNext");
-  const musicUpload = document.getElementById("musicUpload");
-  const playlistCount = document.getElementById("playlistCount");
-  const musicWidget = document.getElementById("musicWidget");
-  const musicPlaySmall = document.getElementById("musicPlaySmall");
-  const musicPauseSmall = document.getElementById("musicPauseSmall");
-  const musicPrevSmall = document.getElementById("musicPrevSmall");
-  const musicNextSmall = document.getElementById("musicNextSmall");
-  const musicMeta = document.getElementById("musicMeta");
-  const audioPlayer = document.getElementById("audioPlayer");
-
-  const screenshotBtn = document.getElementById("screenshotBtn");
-  const screenshotAutoCrop = document.getElementById("screenshotAutoCrop");
-
-  const enableGamepad = document.getElementById("enableGamepad");
-
-  /* -------------------------
-     Persistence (localStorage)
-     ------------------------- */
-  const STORAGE_KEY = "moc_mod_tools_v1";
-  const defaultSettings = {
-    theme: localStorage.getItem("mocTheme") || "theme-dark",
-    fpsEnabled: false,
-    fpsGraph: false,
-    fpsSampleSize: 120,
-    frameTime: false,
-    heap: false,
-    zoom: 1,
-    filters: {
-      enabled: false, brightness:1, contrast:1, saturate:1, gray:0, hue:0
-    },
-    musicVisible: false,
-    playlist: [], // array of {name,url}
-    focusMode: false,
-    gamepad: false
-  };
-  let settings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
-  // ensure nested defaults
-  settings.filters = Object.assign({}, defaultSettings.filters, (settings.filters||{}));
-
-  /* -------------------------
-     Initialize UI state from saved settings
-     ------------------------- */
-  function initUIFromSettings(){
-    document.body.className = settings.theme || "theme-dark";
-    enableFPS.checked = !!settings.fpsEnabled;
-    enableFPSGraph.checked = !!settings.fpsGraph;
-    fpsSample.value = settings.fpsSampleSize || 120;
-    enableFrameTime.checked = !!settings.frameTime;
-    enableHeap.checked = !!settings.heap;
-
-    zoomRange.value = settings.zoom || 1;
-    zoomWidgetRange.value = zoomRange.value;
-    zoomVal.textContent = Math.round(zoomRange.value*100) + "%";
-    zoomWidgetVal.textContent = zoomVal.textContent;
-
-    filterEnabled.checked = !!settings.filters.enabled;
-    filterBrightness.value = settings.filters.brightness;
-    filterContrast.value = settings.filters.contrast;
-    filterSaturate.value = settings.filters.saturate;
-    filterGray.value = settings.filters.gray;
-    filterHue.value = settings.filters.hue;
-
-    musicWidget.style.display = settings.musicVisible ? "block" : "none";
-    playlistCount.textContent = settings.playlist.length || 0;
-
-    enableGamepad.checked = !!settings.gamepad;
-  }
-  initUIFromSettings();
-
-  /* -------------------------
-     Save settings
-     ------------------------- */
-  function saveSettings(){
-    settings.theme = document.body.className || "theme-dark";
-    settings.fpsEnabled = enableFPS.checked;
-    settings.fpsGraph = enableFPSGraph.checked;
-    settings.fpsSampleSize = Number(fpsSample.value) || 120;
-    settings.frameTime = enableFrameTime.checked;
-    settings.heap = enableHeap.checked;
-    settings.zoom = parseFloat(zoomRange.value);
-    settings.filters.enabled = filterEnabled.checked;
-    settings.filters.brightness = parseFloat(filterBrightness.value);
-    settings.filters.contrast = parseFloat(filterContrast.value);
-    settings.filters.saturate = parseFloat(filterSaturate.value);
-    settings.filters.gray = parseFloat(filterGray.value);
-    settings.filters.hue = parseFloat(filterHue.value);
-    settings.musicVisible = musicWidget.style.display === "block";
-    settings.gamepad = enableGamepad.checked;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    // also store theme for older usage
-    localStorage.setItem("mocTheme", settings.theme);
-  }
-
-  /* -------------------------
-     Basic UI behaviour
-     ------------------------- */
-  // toggle topbar
-  let barVisible = false;
-  function showTopBar(){
-    barVisible = true;
-    topBar.style.display = "flex";
-    void topBar.offsetWidth;
-    topBar.style.transform = "translateY(0)";
-  }
-  function hideTopBar(){
-    barVisible = false;
-    topBar.style.transform = "translateY(-150%)";
-    const onTransitionEnd = () => { topBar.style.display = "none"; topBar.removeEventListener("transitionend", onTransitionEnd); };
-    topBar.addEventListener("transitionend", onTransitionEnd);
-  }
-  toggleBarBtn.addEventListener("click", () => {
-    if(barVisible) { hideTopBar(); closeSettings(); closeWiki(); }
-    else showTopBar();
+  // ---- CRT boot animation (one orchestrated reveal on load) ----
+  const lines = document.querySelectorAll("#crtScreen .line");
+  lines.forEach((el, i) => {
+    el.style.transitionDelay = (i * 160) + "ms";
+    el.style.transition = "opacity .25s ease";
+    requestAnimationFrame(() => { el.style.opacity = "1"; });
   });
 
-  // system time
-  function updateTime(){
-    const now = new Date();
-    const hh = now.getHours().toString().padStart(2,"0"), mm = now.getMinutes().toString().padStart(2,"0"), ss = now.getSeconds().toString().padStart(2,"0");
-    systemTime.textContent = `${hh}:${mm}:${ss}`;
-  }
-  setInterval(updateTime,1000); updateTime();
+  // ---- Lookup overlay ----
+  const overlay = document.getElementById("overlay");
+  const overlayFrame = document.getElementById("overlayFrame");
+  const overlayTitle = document.getElementById("overlayTitle");
+  const overlayClose = document.getElementById("overlayClose");
 
-  // tab switching
-  tabButtons.addEventListener("click", (e)=>{
-    const btn = e.target.closest(".tab-button");
-    if(!btn) return;
-    if(btn.classList.contains("active")) return;
-    [...tabButtons.children].forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    iframeMain.style.display = btn.dataset.iframe === "main" ? "block" : "none";
-    iframeAlt.style.display  = btn.dataset.iframe === "alt" ? "block" : "none";
-    closeWiki(); closeSettings();
-  });
-
-  // wiki openers
-  itemLookupBtn.addEventListener("click", ()=> openWikiPage("https://loociez.github.io/MOC-IV/itemslast.html"));
-  npcLookupBtn.addEventListener("click", ()=> openWikiPage("https://loociez.github.io/MOC-IV/npclast.html"));
-  buildLookupBtn.addEventListener("click", ()=> openWikiPage("https://loociez.github.io/MOC-IV/Best.html"));
-
-  function openWikiPage(url){
-    wikiIframe.src = url;
-    wikiOverlay.style.display = "flex";
-    // hide underlying iframe to prevent visual artifacts while wiki on top
-    iframeMain.style.visibility = "hidden"; iframeAlt.style.visibility = "hidden";
-    setTimeout(()=> wikiIframe.focus(), 120);
-  }
-  function closeWiki(){ wikiOverlay.style.display = "none"; wikiIframe.src = ""; iframeMain.style.visibility = "visible"; iframeAlt.style.visibility = "visible"; }
-  wikiCloseBtn.addEventListener("click", closeWiki);
-
-  // settings open/close
-  settingsBtn.addEventListener("click", ()=> {
-    settingsOverlay.style.display = "block";
-    settingsOverlay.focus();
-    initUIFromSettings();
-  });
-  settingsCloseBtn.addEventListener("click", ()=> {
-    settingsOverlay.style.display = "none";
-    saveSettings();
-  });
-  settingsSaveBtn.addEventListener("click", ()=>{
-    saveSettings();
-    settingsOverlay.style.display = "none";
-  });
-
-  document.addEventListener("keydown", e => {
-    if(e.key === "Escape"){
-      if(wikiOverlay.style.display === "flex") closeWiki();
-      else if(settingsOverlay.style.display === "block") { settingsOverlay.style.display = "none"; saveSettings(); }
-    }
-  });
-
-  /* -------------------------
-     Theme buttons
-     ------------------------- */
-  document.querySelectorAll("#themeButtons .theme-btn").forEach(btn => {
+  document.querySelectorAll(".tool").forEach(btn => {
     btn.addEventListener("click", () => {
-      const t = btn.dataset.theme;
-      document.body.className = t;
-      settings.theme = t;
-      document.querySelectorAll("#themeButtons .theme-btn").forEach(b=>b.classList.remove("selected"));
-      btn.classList.add("selected");
+      overlayFrame.src = btn.dataset.url;
+      overlayTitle.textContent = btn.dataset.title;
+      overlay.classList.add("open");
     });
   });
-
-  /* -------------------------
-     Zoom controls
-     ------------------------- */
-  function applyZoom(v){
-    iframeWrapper.style.transform = `scale(${v})`;
-    zoomVal.textContent = Math.round(v*100) + "%";
-    zoomWidgetVal.textContent = zoomVal.textContent;
-    zoomWidgetRange.value = v;
-    zoomRange.value = v;
+  function closeOverlay(){
+    overlay.classList.remove("open");
+    overlayFrame.src = "";
   }
-  zoomRange.addEventListener("input", (e)=> applyZoom(parseFloat(e.target.value)));
-  zoomWidgetRange.addEventListener("input", (e)=> applyZoom(parseFloat(e.target.value)));
-  zoomReset.addEventListener("click", ()=> applyZoom(1));
-  // init
-  applyZoom(parseFloat(settings.zoom || 1));
+  overlayClose.addEventListener("click", closeOverlay);
+  overlay.addEventListener("click", (e) => { if(e.target === overlay) closeOverlay(); });
+  document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeOverlay(); });
 
-  /* -------------------------
-     Filters (apply as CSS filter to iframeWrapper)
-     ------------------------- */
-  function updateFilterStyle(){
-    if(!filterEnabled.checked){
-      iframeWrapper.style.filter = "";
-      return;
-    }
-    const b = parseFloat(filterBrightness.value);
-    const c = parseFloat(filterContrast.value);
-    const s = parseFloat(filterSaturate.value);
-    const g = parseFloat(filterGray.value);
-    const hue = parseFloat(filterHue.value);
-    const filterStr = `brightness(${b}) contrast(${c}) saturate(${s}) grayscale(${g}) hue-rotate(${hue}deg)`;
-    iframeWrapper.style.filter = filterStr;
-  }
-  [filterEnabled, filterBrightness, filterContrast, filterSaturate, filterGray, filterHue].forEach(el => el.addEventListener("input", updateFilterStyle));
-  applyCRT.addEventListener("click", ()=>{
-    filterEnabled.checked = true;
-    filterBrightness.value = 1.05; filterContrast.value = 1.25; filterSaturate.value = 1.1; filterGray.value = 0; filterHue.value = 0;
-    // slight RGB split via drop-shadow on wrapper - purely visual
-    iframeWrapper.style.boxShadow = "0 0 12px rgba(0,255,0,0.04) inset";
-    updateFilterStyle();
-  });
-  applyGreen.addEventListener("click", ()=>{
-    filterEnabled.checked = true;
-    filterBrightness.value = 1; filterContrast.value = 1.2; filterSaturate.value = 0.7; filterGray.value = 0; filterHue.value = 90;
-    updateFilterStyle();
-  });
-  clearFilters.addEventListener("click", ()=>{
-    filterEnabled.checked = false;
-    filterBrightness.value = 1; filterContrast.value = 1; filterSaturate.value = 1; filterGray.value = 0; filterHue.value = 0;
-    updateFilterStyle();
-  });
-  // toggle open small filter widget
-  toggleFilterPanel.addEventListener("click", ()=> {
-    // open settings overlay to the filters area (quick UX)
-    settingsOverlay.style.display = "block";
-    window.scrollTo({top: settingsOverlay.offsetTop + 200, behavior: 'smooth'});
-  });
-  // apply saved filter state initially
-  updateFilterStyle();
+  // ---- Music player ----
+  const audio = document.getElementById("audioPlayer");
+  const fileInput = document.getElementById("fileInput");
+  const trackName = document.getElementById("trackName");
+  const playPauseBtn = document.getElementById("playPauseBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
 
-  /* -------------------------
-     FPS counter & graph
-     ------------------------- */
-  const ctx = fpsCanvas.getContext("2d");
-  let lastFrameTime = performance.now();
-  let frames = 0;
-  let fps = 0;
-  let fpsHistory = new Array(240).fill(0);
-  let msHistory = new Array(240).fill(0);
+  let playlist = [];
+  let index = 0;
 
-  function tickLoop(now){
-    // compute fps
-    const dt = now - lastFrameTime;
-    lastFrameTime = now;
-    const ms = dt;
-    frames++;
-    // update every 500ms for display but still record history each frame
-    fpsHistory.shift();
-    msHistory.shift();
-    fpsHistory.push(1000/dt);
-    msHistory.push(dt);
-
-    if(now % 500 < 16){ // roughly every 500ms update display
-      // compute rolling fps average of last 8 frames
-      const recent = fpsHistory.slice(-8).filter(Boolean);
-      fps = recent.length ? Math.round(recent.reduce((a,b)=>a+b,0)/recent.length) : Math.round(1000/dt);
-      fpsVal.textContent = fps;
-      msVal.textContent = Math.round(ms);
-    }
-
-    // draw graph if enabled
-    if(enableFPSGraph.checked && enableFPS.checked){
-      const w = fpsCanvas.width, h = fpsCanvas.height;
-      ctx.clearRect(0,0,w,h);
-      // background gradient
-      const grd = ctx.createLinearGradient(0,0,0,h);
-      grd.addColorStop(0, "rgba(0,255,0,0.06)");
-      grd.addColorStop(1, "rgba(0,0,0,0.04)");
-      ctx.fillStyle = grd;
-      ctx.fillRect(0,0,w,h);
-
-      // draw fps line
-      ctx.beginPath();
-      const sample = Math.min(fpsHistory.length, Number(fpsSample.value) || 120);
-      for(let i=0;i<sample;i++){
-        const val = fpsHistory[fpsHistory.length - sample + i] || 0;
-        const x = (i / (sample-1||1)) * w;
-        const y = h - Math.min(val / 120, 1) * h;
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      }
-      ctx.strokeStyle = "rgba(15,255,15,0.9)"; ctx.lineWidth = 1.6; ctx.stroke();
-
-      // draw ms line (thin)
-      ctx.beginPath();
-      for(let i=0;i<sample;i++){
-        const val = msHistory[msHistory.length - sample + i] || 0;
-        const x = (i / (sample-1||1)) * w;
-        const y = Math.min(h-2, (val/40) * h); // invert scale
-        if(i===0) ctx.moveTo(x,h - y); else ctx.lineTo(x,h - y);
-      }
-      ctx.strokeStyle = "rgba(255,200,40,0.9)"; ctx.lineWidth = 1; ctx.stroke();
-
-      // labels
-      ctx.fillStyle = "rgba(15,255,15,0.9)";
-      ctx.font = "12px monospace";
-      ctx.fillText(fps + " FPS", 6, 14);
-    }
-
-    // request next frame
-    requestAnimationFrame(tickLoop);
-  }
-  // start animation loop
-  requestAnimationFrame((t) => { lastFrameTime = t; tickLoop(t); });
-
-  // show/hide widgets based on toggles
-  function updateFPSWidgets(){
-    if(enableFPS.checked){
-      fpsWidget.style.display = "block";
-      if(enableFPSGraph.checked) { fpsCanvas.style.display = "block"; } else { fpsCanvas.style.display = "none"; }
-    } else { fpsWidget.style.display = "none"; fpsCanvas.style.display = "none"; }
-  }
-  enableFPS.addEventListener("change", updateFPSWidgets);
-  enableFPSGraph.addEventListener("change", updateFPSWidgets);
-  fpsSample.addEventListener("input", ()=>{/* nothing extra needed, read value live */});
-  updateFPSWidgets();
-
-  /* -------------------------
-     Music player
-     ------------------------- */
-  let playlist = settings.playlist || [];
-  let playlistIndex = 0;
-  function updatePlaylistUI(){
-    playlistCount.textContent = playlist.length;
-    if(playlist.length && playlistIndex >= playlist.length) playlistIndex = 0;
-    const meta = playlist[playlistIndex];
-    musicMeta.textContent = meta ? meta.name : "No track";
-  }
-  function playIndex(idx){
+  function loadTrack(i){
     if(!playlist.length) return;
-    playlistIndex = idx % playlist.length;
-    const track = playlist[playlistIndex];
-    audioPlayer.src = track.url;
-    audioPlayer.play().catch(()=>{ /* ignore autoplay block */ });
-    updatePlaylistUI();
+    index = ((i % playlist.length) + playlist.length) % playlist.length;
+    audio.src = playlist[index].url;
+    trackName.textContent = playlist[index].name;
   }
-  audioPlayer.addEventListener("ended", ()=> {
-    playIndex((playlistIndex+1)%playlist.length);
-  });
+  function play(){ if(!audio.src && playlist.length) loadTrack(0); audio.play().catch(()=>{}); playPauseBtn.textContent = "⏸"; }
+  function pause(){ audio.pause(); playPauseBtn.textContent = "▶"; }
 
-  musicToggle.addEventListener("click", ()=> {
-    musicWidget.style.display = musicWidget.style.display === "block" ? "none" : "block";
-    settings.musicVisible = musicWidget.style.display === "block";
-    saveSettings();
-  });
-  musicPlay.addEventListener("click", ()=> audioPlayer.play());
-  musicPause.addEventListener("click", ()=> audioPlayer.pause());
-  musicNext.addEventListener("click", ()=> playIndex((playlistIndex+1)%playlist.length));
-  musicPrevSmall.addEventListener("click", ()=> playIndex((playlistIndex-1+playlist.length)%playlist.length));
-  musicPlaySmall.addEventListener("click", ()=> audioPlayer.play());
-  musicPauseSmall.addEventListener("click", ()=> audioPlayer.pause());
-  musicNextSmall.addEventListener("click", ()=> playIndex((playlistIndex+1)%playlist.length));
-
-  // upload audio files to playlist (local blob URLs)
-  musicUpload.addEventListener("change", (e)=>{
+  fileInput.addEventListener("change", (e) => {
     const files = Array.from(e.target.files || []);
-    files.forEach(f=>{
-      const url = URL.createObjectURL(f);
-      playlist.push({name: f.name, url});
-    });
-    settings.playlist = playlist;
-    updatePlaylistUI();
-    saveSettings();
+    files.forEach(f => playlist.push({ name: f.name, url: URL.createObjectURL(f) }));
+    if(files.length && !audio.src) loadTrack(0);
   });
+  playPauseBtn.addEventListener("click", () => audio.paused ? play() : pause());
+  nextBtn.addEventListener("click", () => { loadTrack(index + 1); play(); });
+  prevBtn.addEventListener("click", () => { loadTrack(index - 1); play(); });
+  audio.addEventListener("ended", () => { loadTrack(index + 1); play(); });
 
-  // load initial playlist from settings
-  playlist = settings.playlist || [];
-  updatePlaylistUI();
-
-  
-  /* -------------------------
-     Screenshot using getDisplayMedia
-     ------------------------- */
-  screenshotBtn.addEventListener("click", async ()=>{
-    try{
-      const stream = await navigator.mediaDevices.getDisplayMedia({video:true});
-      const track = stream.getVideoTracks()[0];
-      const imageCapture = new ImageCapture(track);
-      const bitmap = await imageCapture.grabFrame();
-
-      // draw to canvas
-      const cv = document.createElement("canvas");
-      cv.width = bitmap.width; cv.height = bitmap.height;
-      const cctx = cv.getContext("2d");
-      cctx.drawImage(bitmap, 0, 0, cv.width, cv.height);
-
-      // attempt to crop to iframe rect if requested
-      if(screenshotAutoCrop.checked){
-        const rect = iframeWrapper.getBoundingClientRect();
-        const scaleX = bitmap.width / window.innerWidth;
-        const scaleY = bitmap.height / window.innerHeight;
-        const sx = Math.round(rect.left * scaleX);
-        const sy = Math.round(rect.top * scaleY);
-        const sw = Math.round(rect.width * scaleX);
-        const sh = Math.round(rect.height * scaleY);
-        // ensure bounds
-        const tmp = document.createElement("canvas");
-        tmp.width = Math.max(1, sw); tmp.height = Math.max(1, sh);
-        const tctx = tmp.getContext("2d");
-        tctx.drawImage(cv, sx, sy, sw, sh, 0, 0, tmp.width, tmp.height);
-        // open result
-        const url = tmp.toDataURL("image/png");
-        window.open(url, "_blank");
-      } else {
-        const url = cv.toDataURL("image/png");
-        window.open(url, "_blank");
-      }
-
-      // stop stream tracks
-      track.stop();
-      stream.getTracks().forEach(t=>t.stop());
-    }catch(err){
-      alert("Screenshot cancelled or failed: " + (err && err.message ? err.message : err));
-    }
-  });
-
-  /* -------------------------
-     Gamepad support (best-effort)
-     ------------------------- */
-  let gamepadActive = enableGamepad.checked;
-  let lastGamepadTimestamps = {};
-  const GAMEPAD_POLL_MS = 60;
-  const BUTTON_MAP = { 0:"Space", 1:"KeyK", 2:"KeyJ", 3:"KeyL" }; // default sample
-  const DPAD_MAP = { 12:"ArrowUp", 13:"ArrowDown", 14:"ArrowLeft", 15:"ArrowRight" };
-
-  enableGamepad.addEventListener("change", ()=> {
-    gamepadActive = enableGamepad.checked;
-    settings.gamepad = gamepadActive;
-    saveSettings();
-  });
-
-  function sendKeyToIframe(code, type="keydown"){
-    // best-effort: focus iframe and dispatch keyboard event to contentWindow
-    try {
-      iframeMain.focus();
-      const ev = new KeyboardEvent(type, {key: code === "Space" ? " " : "", code: code, keyCode: code === "Space" ? 32 : undefined, bubbles:true, cancelable:true});
-      // dispatch to the iframe window
-      if(iframeMain && iframeMain.contentWindow) {
-        iframeMain.contentWindow.dispatchEvent(ev);
-      } else {
-        window.dispatchEvent(ev);
-      }
-    } catch(e){
-      // swallow errors; some cross-origin restrictions may block behavior
-      console.warn("Could not dispatch synthetic key event to iframe:", e);
-    }
-  }
-
-  function pollGamepads(){
-    if(!gamepadActive){ setTimeout(pollGamepads, GAMEPAD_POLL_MS); return; }
-    const gps = navigator.getGamepads ? navigator.getGamepads() : [];
-    for(const gp of gps){
-      if(!gp) continue;
-      // buttons
-      gp.buttons.forEach((btn, idx) => {
-        if(btn.pressed){
-          // debounce based on timestamp
-          const key = BUTTON_MAP[idx] || null;
-          if(key){
-            const stamp = gp.timestamp || Date.now();
-            const last = lastGamepadTimestamps[`b${idx}`] || 0;
-            if(stamp !== last){
-              sendKeyToIframe(key, "keydown");
-              // schedule keyup shortly after to simulate press
-              setTimeout(()=> sendKeyToIframe(key, "keyup"), 80);
-              lastGamepadTimestamps[`b${idx}`] = stamp;
-            }
-          }
-        }
-      });
-      // dpad
-      [12,13,14,15].forEach(pin => {
-        const idx = pin;
-        const btn = gp.buttons[idx];
-        if(btn && btn.pressed){
-          const key = DPAD_MAP[idx];
-          const stamp = gp.timestamp || Date.now();
-          const last = lastGamepadTimestamps[`d${idx}`] || 0;
-          if(stamp !== last){
-            sendKeyToIframe(key, "keydown");
-            setTimeout(()=> sendKeyToIframe(key, "keyup"), 60);
-            lastGamepadTimestamps[`d${idx}`] = stamp;
-          }
-        }
-      });
-    }
-    setTimeout(pollGamepads, GAMEPAD_POLL_MS);
-  }
-  // start polling loop
-  pollGamepads();
-
-  /* -------------------------
-     Misc small controls and widgets behaviour
-     ------------------------- */
-  // show/hide widgets according to settings toggles
-  function refreshWidgetsFromSettings(){
-    // fps
-    if(enableFPS.checked) fpsWidget.style.display = "block"; else fpsWidget.style.display = "none";
-    if(enableFPSGraph.checked && enableFPS.checked) fpsCanvas.style.display = "block"; else fpsCanvas.style.display = "none";
-    // zoom
-    if(Number(zoomRange.value) !== 1) zoomWidget.style.display = "block"; else zoomWidget.style.display = "none";
-    // filters small widget
-    filtersWidget.style.display = filterEnabled.checked ? "block" : "none";
-    // music
-    musicWidget.style.display = settings.musicVisible ? "block" : "none";
-  }
-  // run periodically to keep widgets consistent
-  setInterval(refreshWidgetsFromSettings, 700);
-
-  /* -------------------------
-     Save before unload
-     ------------------------- */
-  window.addEventListener("beforeunload", ()=> {
-    saveSettings();
-    // revoke blob urls created? we keep them alive for session; revoking breaks playback
-  });
-
-  /* -------------------------
-     Initialize UI from settings on load
-     ------------------------- */
-  initUIFromSettings();
-  updateFilterStyle();
-  applyZoom(settings.zoom || 1);
-
-  /* -------------------------
-     Small helpful UX: click iframe to focus
-     ------------------------- */
-  iframeWrapper.addEventListener("click", ()=> {
-    try { iframeMain.focus(); } catch(e) {}
-  });
-
-  /* -------------------------
-     Expose a small API for debug (on window)
-     ------------------------- */
-  window.mocTools = {
-    settings,
-    saveSettings,
-    playIndex,
-    playlist,
-    applyZoom,
-    updateFilterStyle
-  };
-
-})(); // end main IIFE
-
+})();
 </script>
 
 </body>
