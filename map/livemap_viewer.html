@@ -1,58 +1,2108 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Interactive Livemap</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interactive Livemap</title>
+
 <style>
-:root{color-scheme:dark;--bg:#0e1014;--panel:#151922;--line:#343b49;--text:#e9edf5;--muted:#9da7b8;--accent:#65a9ff}
-*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:var(--bg);color:var(--text);font:14px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
-.app{height:100%;display:grid;grid-template-rows:auto 1fr}header{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#171b22;border-bottom:1px solid var(--line);z-index:20}header strong{font-size:16px}.status{color:#a9b7cc;margin-left:auto;white-space:nowrap}
-button,input,select{font:inherit;background:#252b35;color:var(--text);border:1px solid #454d5b;border-radius:5px;padding:6px 8px}button{cursor:pointer}button:hover{background:#303743}button.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}input[type=number]{width:90px}
-main{min-height:0;display:grid;grid-template-columns:300px 1fr}aside{overflow:auto;background:var(--panel);border-right:1px solid var(--line);padding:10px}section{margin-bottom:14px}h3{font-size:12px;color:#b5bfce;text-transform:uppercase;letter-spacing:.05em;margin:0 0 7px}.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:5px 0}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.small{font-size:11px;color:var(--muted)}
-.info{white-space:pre-wrap;background:#0b0d11;border:1px solid #2b3039;border-radius:5px;padding:7px;font:11px/1.45 ui-monospace,Consolas,monospace}.list{max-height:250px;overflow:auto;border:1px solid #2b3039;border-radius:5px;background:#0b0d11}.item{padding:7px;border-bottom:1px solid #242933;cursor:pointer}.item:last-child{border:0}.item:hover{background:#1d232c}
-#viewport{position:relative;overflow:auto;min-width:0;min-height:0;background:linear-gradient(45deg,#171a20 25%,transparent 25%),linear-gradient(-45deg,#171a20 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#171a20 75%),linear-gradient(-45deg,transparent 75%,#171a20 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}#canvasWrap{padding:50px;min-width:max-content;min-height:max-content}canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;background:#050608;box-shadow:0 0 0 1px #596171,0 10px 40px #0008}
-.modalBack{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:100}.modal{width:min(560px,calc(100vw - 30px));max-height:90vh;overflow:auto;background:#181d26;border:1px solid #4a5362;border-radius:8px;padding:14px;box-shadow:0 20px 70px #000}.modal h2{margin:0 0 10px;font-size:17px}.close{float:right}.hidden{display:none!important}
-</style></head><body><div class="app"><header><strong>🗺️ Interactive Livemap</strong><button id="worldBtn">World</button><button id="mapBtn">Map</button><label>Map <input id="mapId" type="number" min="0" value="0"></label><button id="goBtn">Go</button><button id="fitBtn">Fit</button><button id="toggleIds">Map IDs: ON</button><button id="toggleAnno">Labels: ON</button><input id="search" placeholder="Search labels / map IDs…" style="width:190px"><button id="searchBtn">Search</button><span id="status" class="status">Starting…</span></header>
-<main><aside>
-<section><h3>Map navigation</h3><div class="grid2"><button id="northBtn">▲ North</button><button id="southBtn">▼ South</button><button id="westBtn">◀ West</button><button id="eastBtn">East ▶</button></div><div class="row"><button id="firstBtn">Map 0</button><button id="randomBtn">Random</button></div></section>
-<section><h3>Zoom</h3><select id="zoom" style="width:100%"><option>.25</option><option>.5</option><option selected>1</option><option>1.5</option><option>2</option><option>3</option><option>4</option></select><div class="small" style="margin-top:6px">The world is rendered from the same six static layers as an individual room. At higher zoom the world preview becomes a detailed view of the actual rooms.</div></section>
-<section><h3>Map info</h3><div id="mapInfo" class="info">No map loaded.</div></section>
-<section><h3>Selected point</h3><div id="selectedInfo" class="info">Click a label or marker.</div></section>
-<section><h3>Search results</h3><div id="results" class="list"><div class="item small">Search a label, marker, or map ID.</div></div></section>
-<section><h3>Controls</h3><div class="small">Click a map in World view to open that room. Click a label/marker for its description. Map IDs can be hidden when you want a clean map.</div></section>
-</aside><div id="viewport"><div id="canvasWrap"><canvas id="canvas"></canvas></div></div></main></div>
-<div id="modalBack" class="modalBack"><div class="modal"><button id="modalClose" class="close">✕</button><h2 id="modalTitle">Location</h2><div id="modalBody" class="info"></div></div></div>
+:root{
+  color-scheme:dark;
+  --bg:#0e1014;
+  --panel:#151922;
+  --line:#343b49;
+  --text:#e9edf5;
+  --muted:#9da7b8;
+  --accent:#65a9ff
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  height:100%;
+  margin:0
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font:14px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;
+  overflow:hidden
+}
+
+.app{
+  height:100%;
+  display:grid;
+  grid-template-rows:auto 1fr
+}
+
+header{
+  display:flex;
+  gap:7px;
+  align-items:center;
+  flex-wrap:wrap;
+  padding:8px 10px;
+  background:#171b22;
+  border-bottom:1px solid var(--line);
+  z-index:20
+}
+
+header strong{
+  font-size:16px
+}
+
+.status{
+  color:#a9b7cc;
+  margin-left:auto;
+  white-space:nowrap
+}
+
+button,input,select{
+  font:inherit;
+  background:#252b35;
+  color:var(--text);
+  border:1px solid #454d5b;
+  border-radius:5px;
+  padding:6px 8px
+}
+
+button{
+  cursor:pointer
+}
+
+button:hover{
+  background:#303743
+}
+
+button.active{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent) inset
+}
+
+input[type=number]{
+  width:90px
+}
+
+main{
+  min-height:0;
+  display:grid;
+  grid-template-columns:300px 1fr
+}
+
+aside{
+  overflow:auto;
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  padding:10px
+}
+
+section{
+  margin-bottom:14px
+}
+
+h3{
+  font-size:12px;
+  color:#b5bfce;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin:0 0 7px
+}
+
+.row{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin:5px 0
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px
+}
+
+.small{
+  font-size:11px;
+  color:var(--muted)
+}
+
+.info{
+  white-space:pre-wrap;
+  background:#0b0d11;
+  border:1px solid #2b3039;
+  border-radius:5px;
+  padding:7px;
+  font:11px/1.45 ui-monospace,Consolas,monospace
+}
+
+.list{
+  max-height:250px;
+  overflow:auto;
+  border:1px solid #2b3039;
+  border-radius:5px;
+  background:#0b0d11
+}
+
+.item{
+  padding:7px;
+  border-bottom:1px solid #242933;
+  cursor:pointer
+}
+
+.item:last-child{
+  border:0
+}
+
+.item:hover{
+  background:#1d232c
+}
+
+#viewport{
+  position:relative;
+  overflow:auto;
+  min-width:0;
+  min-height:0;
+  background:
+    linear-gradient(45deg,#171a20 25%,transparent 25%),
+    linear-gradient(-45deg,#171a20 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#171a20 75%),
+    linear-gradient(-45deg,transparent 75%,#171a20 75%);
+  background-size:24px 24px;
+  background-position:0 0,0 12px,12px -12px,-12px 0
+}
+
+#canvasWrap{
+  padding:50px;
+  min-width:max-content;
+  min-height:max-content
+}
+
+canvas{
+  display:block;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+  background:#050608;
+  box-shadow:
+    0 0 0 1px #596171,
+    0 10px 40px #0008
+}
+
+.modalBack{
+  position:fixed;
+  inset:0;
+  background:#0009;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100
+}
+
+.modal{
+  width:min(560px,calc(100vw - 30px));
+  max-height:90vh;
+  overflow:auto;
+  background:#181d26;
+  border:1px solid #4a5362;
+  border-radius:8px;
+  padding:14px;
+  box-shadow:0 20px 70px #000
+}
+
+.modal h2{
+  margin:0 0 10px;
+  font-size:17px
+}
+
+.close{
+  float:right
+}
+
+.hidden{
+  display:none!important
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <strong>🗺️ Interactive Livemap</strong>
+
+  <button id="worldBtn">World</button>
+  <button id="mapBtn">Map</button>
+
+  <label>
+    Map
+    <input id="mapId" type="number" min="0" value="0">
+  </label>
+
+  <button id="goBtn">Go</button>
+  <button id="fitBtn">Fit</button>
+
+  <button id="toggleIds">Map IDs: ON</button>
+  <button id="toggleAnno">Labels: ON</button>
+
+  <input
+    id="search"
+    placeholder="Search labels / map IDs…"
+    style="width:190px"
+  >
+
+  <button id="searchBtn">Search</button>
+
+  <span id="status" class="status">Starting…</span>
+</header>
+
+<main>
+
+<aside>
+
+<section>
+  <h3>Map navigation</h3>
+
+  <div class="grid2">
+    <button id="northBtn">▲ North</button>
+    <button id="southBtn">▼ South</button>
+    <button id="westBtn">◀ West</button>
+    <button id="eastBtn">East ▶</button>
+  </div>
+
+  <div class="row">
+    <button id="firstBtn">Map 0</button>
+    <button id="randomBtn">Random</button>
+  </div>
+</section>
+
+<section>
+  <h3>Zoom</h3>
+
+  <select id="zoom" style="width:100%">
+    <option>.25</option>
+    <option>.5</option>
+    <option selected>1</option>
+    <option>1.5</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+  </select>
+
+  <div class="small" style="margin-top:6px">
+    The world is rendered from the same six static layers as an individual
+    room. At higher zoom the world preview becomes a detailed view of the
+    actual rooms.
+  </div>
+</section>
+
+<section>
+  <h3>Map info</h3>
+  <div id="mapInfo" class="info">No map loaded.</div>
+</section>
+
+<section>
+  <h3>Selected point</h3>
+  <div id="selectedInfo" class="info">
+    Click a label or marker.
+  </div>
+</section>
+
+<section>
+  <h3>Search results</h3>
+
+  <div id="results" class="list">
+    <div class="item small">
+      Search a label, marker, or map ID.
+    </div>
+  </div>
+</section>
+
+<section>
+  <h3>Controls</h3>
+
+  <div class="small">
+    Click a map in World view to open that room.
+    Click a label/marker for its description.
+    Map IDs can be hidden when you want a clean map.
+  </div>
+</section>
+
+</aside>
+
+<div id="viewport">
+  <div id="canvasWrap">
+    <canvas id="canvas"></canvas>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div id="modalBack" class="modalBack">
+
+  <div class="modal">
+
+    <button id="modalClose" class="close">✕</button>
+
+    <h2 id="modalTitle">Location</h2>
+
+    <div id="modalBody" class="info"></div>
+
+  </div>
+
+</div>
+
 <script>
 (()=>{
+
 "use strict";
-const TILE=32,MAP_W=16,MAP_H=12,SHEETS=19,TILES_PER_SHEET=1024,STATIC_LAYERS=[0,1,3,5,7,9];
-const MARKERS={town:"🏠",city:"🏰",dungeon:"☠️",boss:"💀",shop:"🛒",quest:"❗",portal:"🌀",danger:"⚠️",point:"📍"};
-let maps=[],currentMapId=0,tileSheets=Array(SHEETS).fill(null),worldPositions=new Map(),worldBounds=null,worldScale=8,mapCanvasCache=new Map(),mode="world",annotations={version:1,labels:[],markers:[],regions:[]},annotationsVisible=true,mapIdsVisible=true;
-const $=id=>document.getElementById(id),canvas=$("canvas"),ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=false;
-function status(s,c=""){$("status").textContent=s;$('status').style.color=c==="ok"?"#82e4a5":c==="warn"?"#ffd16a":""}
-function parseMapdumpText(text){text=text.trim();try{const x=JSON.parse(text);return Array.isArray(x)?x:(x.maps||[])}catch(e){if(text.startsWith("{")&&text.endsWith("]"))return JSON.parse("["+text);throw Error("Could not parse mapdump JSON.")}}
-function loadMapdumpText(text){const a=parseMapdumpText(text);maps=a.map(m=>({tiles:m.tiles,map_north_id:Number.isInteger(m.map_north_id)?m.map_north_id:-1,map_south_id:Number.isInteger(m.map_south_id)?m.map_south_id:-1,map_west_id:Number.isInteger(m.map_west_id)?m.map_west_id:-1,map_east_id:Number.isInteger(m.map_east_id)?m.map_east_id:-1}));if(!maps.length)throw Error("No maps found.");buildWorldPositions();currentMapId=Math.min(currentMapId,maps.length-1);render();status(`${maps.length.toLocaleString()} maps loaded`,"ok")}
-async function autoMap(){try{const r=await fetch("./mapdump.json",{cache:"no-store"});if(!r.ok)throw 0;loadMapdumpText(await r.text())}catch(e){status("mapdump.json could not be loaded","warn")}}
-function setSheet(i,src){return new Promise(resolve=>{const im=new Image();im.onload=()=>{tileSheets[i]=im;sheetReady[i]=true;mapCanvasCache.clear();resolve(true)};im.onerror=()=>{tileSheets[i]=null;sheetReady[i]=false;resolve(false)};im.src=src})}
-async function autoSheets(){const jobs=[];for(let i=0;i<SHEETS;i++){jobs.push((async()=>{try{const r=await fetch(`./assets/tiles${i}.png`,{cache:"force-cache"});if(!r.ok)return false;return await setSheet(i,URL.createObjectURL(await r.blob()))}catch(e){return false}})())}const results=await Promise.all(jobs);return results.filter(Boolean).length}
-function tileSource(id){const n=Number(id);if(!Number.isInteger(n)||n<0)return null;const sheet=Math.floor(n/TILES_PER_SHEET),local=n%TILES_PER_SHEET;if(sheet<0||sheet>=SHEETS||!tileSheets[sheet])return {sheet,local,missing:true};return{sheet,local,img:tileSheets[sheet]}}
-function drawTile(c,id,dx,dy,scale){const t=tileSource(id);if(!t)return;if(t.missing){c.fillStyle="#351b1b";c.fillRect(dx,dy,TILE*scale,TILE*scale);return}const sx=(t.local%32)*32,sy=Math.floor(t.local/32)*32;c.drawImage(t.img,sx,sy,32,32,dx,dy,32*scale,32*scale)}
-function renderMapTo(c,map,scale){c.canvas.width=MAP_W*TILE*scale;c.canvas.height=MAP_H*TILE*scale;c.clearRect(0,0,c.canvas.width,c.canvas.height);for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++){const layers=(map.tiles[x]||[])[y]||[];for(const k of STATIC_LAYERS)if(layers[k]>=0)drawTile(c,layers[k],x*TILE*scale,y*TILE*scale,scale)}}
-function getMapCanvas(id,scale=1){const key=id+"@"+scale;if(mapCanvasCache.has(key))return mapCanvasCache.get(key);const c=document.createElement("canvas"),cc=c.getContext("2d");renderMapTo(cc,maps[id],scale);mapCanvasCache.set(key,c);return c}
-function buildWorldPositions(){worldPositions=new Map();if(!maps.length){worldBounds=null;return}const q=[0],pos=new Map([[0,{x:0,y:0}]]);while(q.length){const id=q.shift(),p=pos.get(id),m=maps[id];for(const [key,dx,dy] of [["map_north_id",0,-1],["map_south_id",0,1],["map_west_id",-1,0],["map_east_id",1,0]]){const n=m[key];if(!Number.isInteger(n)||n<0||n>=maps.length||pos.has(n))continue;pos.set(n,{x:p.x+dx,y:p.y+dy});q.push(n)}}let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;for(const p of pos.values()){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}for(const [id,p] of pos)worldPositions.set(id,{x:p.x-minX,y:p.y-minY});worldBounds={minX:0,maxX:maxX-minX,minY:0,maxY:maxY-minY}}
-function getWorldScale(){return Math.max(1,Math.round(Number($("zoom").value)*2))}
-function drawAnnoWorld(id,x,y){if(!annotationsVisible)return;for(const r of annotations.regions.filter(a=>a.mapId===id)){ctx.fillStyle=hexAlpha(r.color,r.opacity);ctx.fillRect(x+r.x*worldScale,y+r.y*worldScale,r.w*worldScale,r.h*worldScale);ctx.strokeStyle=r.color;ctx.strokeRect(x+r.x*worldScale,y+r.y*worldScale,r.w*worldScale,r.h*worldScale)}for(const m of annotations.markers.filter(a=>a.mapId===id)){const mx=x+(m.x+.5)*worldScale,my=y+(m.y+.5)*worldScale;ctx.font=`${Math.max(10,m.size||18)*worldScale/32}px sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(MARKERS[m.type]||"📍",mx,my)}for(const l of annotations.labels.filter(a=>a.mapId===id)){const lx=x+l.x*worldScale+2,ly=y+l.y*worldScale+Math.max(12,l.size||16)*worldScale/32;ctx.font=`bold ${Math.max(9,(l.size||16)*worldScale/32)}px sans-serif`;ctx.textAlign="left";ctx.textBaseline="bottom";ctx.strokeStyle="#000";ctx.lineWidth=2;ctx.strokeText(l.text,lx,ly);ctx.fillStyle=l.color||"#fff";ctx.fillText(l.text,lx,ly)}}
-function renderWorld(){if(!maps.length||!worldBounds)return;mode="world";worldScale=getWorldScale();const PW=MAP_W*worldScale,PH=MAP_H*worldScale,cols=worldBounds.maxX+1,rows=worldBounds.maxY+1;canvas.width=cols*PW;canvas.height=rows*PH;ctx.imageSmoothingEnabled=false;ctx.fillStyle="#050608";ctx.fillRect(0,0,canvas.width,canvas.height);for(const [id,p] of worldPositions){const x=p.x*PW,y=p.y*PH;const thumb=getMapCanvas(id,worldScale<32?1:worldScale/32);ctx.drawImage(thumb,0,0,thumb.width,thumb.height,x,y,PW,PH);if(mapIdsVisible){ctx.font=`bold ${Math.max(7,Math.round(worldScale*.75))}px ui-monospace,Consolas,monospace`;ctx.textAlign="left";ctx.textBaseline="top";ctx.strokeStyle="#000";ctx.lineWidth=Math.max(1,worldScale*.08);ctx.strokeText(String(id),x+2,y+2);ctx.fillStyle="#fff";ctx.fillText(String(id),x+2,y+2)}drawAnnoWorld(id,x,y);ctx.strokeStyle=id===currentMapId?"#fff":"#46505e";ctx.lineWidth=id===currentMapId?Math.max(1,worldScale*.08):1;ctx.strokeRect(x+.5,y+.5,PW-1,PH-1)}applyZoom();status(`${worldPositions.size.toLocaleString()} connected maps · world preview · ${worldScale}px/tile`,"ok")}
-function drawAnnoMap(c,id){if(!annotationsVisible)return;for(const r of annotations.regions.filter(a=>a.mapId===id)){c.fillStyle=hexAlpha(r.color,r.opacity);c.fillRect(r.x*TILE,r.y*TILE,r.w*TILE,r.h*TILE);c.strokeStyle=r.color;c.strokeRect(r.x*TILE,r.y*TILE,r.w*TILE,r.h*TILE)}for(const m of annotations.markers.filter(a=>a.mapId===id)){const x=(m.x+.5)*TILE,y=(m.y+.5)*TILE;c.font=`${m.size||18}px sans-serif`;c.textAlign="center";c.textBaseline="middle";c.strokeStyle="#000";c.lineWidth=3;c.strokeText(MARKERS[m.type]||"📍",x,y);c.fillStyle="#fff";c.fillText(MARKERS[m.type]||"📍",x,y)}for(const l of annotations.labels.filter(a=>a.mapId===id)){const x=l.x*TILE+4,y=l.y*TILE+(l.size||16);c.font=`bold ${l.size||16}px sans-serif`;c.textAlign="left";c.textBaseline="alphabetic";c.strokeStyle="#000";c.lineWidth=3;c.strokeText(l.text,x,y);c.fillStyle=l.color||"#fff";c.fillText(l.text,x,y)}}
-function renderMap(){if(!maps.length)return;mode="map";const c=document.createElement("canvas"),cc=c.getContext("2d");renderMapTo(cc,maps[currentMapId],1);drawAnnoMap(cc,currentMapId);canvas.width=c.width;canvas.height=c.height;ctx.drawImage(c,0,0);applyZoom();updateMapInfo()}
-function render(){mode==="world"?renderWorld():renderMap()}
-function applyZoom(){const z=Number($("zoom").value);if(mode==="world"){canvas.style.width=canvas.width+"px";canvas.style.height=canvas.height+"px"}else{canvas.style.width=canvas.width*z+"px";canvas.style.height=canvas.height*z+"px"}$("canvasWrap").style.width=(canvas.clientWidth+100)+"px";$("canvasWrap").style.height=(canvas.clientHeight+100)+"px"}
-function go(id){id=Number(id);if(!Number.isInteger(id)||id<0||id>=maps.length)return;currentMapId=id;$("mapId").value=id;renderMap();location.hash=`map=${id}`}
-function neighbour(d){const k={N:"map_north_id",S:"map_south_id",W:"map_west_id",E:"map_east_id"}[d],n=maps[currentMapId]?.[k];if(Number.isInteger(n)&&n>=0)go(n)}
-function updateMapInfo(){if(!maps.length)return;const m=maps[currentMapId],p=worldPositions.get(currentMapId);$("mapInfo").textContent=`Map ID: ${currentMapId}\nSize: ${MAP_W} × ${MAP_H} tiles\nPixels: ${MAP_W*TILE} × ${MAP_H*TILE}\nWorld position: ${p?`${p.x}, ${p.y}`:"unknown"}\nNorth: ${m.map_north_id}\nSouth: ${m.map_south_id}\nWest: ${m.map_west_id}\nEast: ${m.map_east_id}`}
-function findAnnoAtMap(id,x,y){return [...annotations.labels,...annotations.markers].find(a=>a.mapId===id&&a.x===x&&a.y===y)}
-function openAnno(a){$("modalTitle").textContent=a.type?`${MARKERS[a.type]||"📍"} ${a.text||a.type}`:a.text||"Location";$("modalBody").textContent=`Map ${a.mapId} · tile ${a.x}, ${a.y}\n\n${a.description||""}`;$("modalBack").style.display="flex"}
-function search(){const q=$("search").value.trim().toLowerCase(),el=$("results");if(!q){el.innerHTML='<div class="item small">Enter a search term.</div>';return}const out=[];for(const a of [...annotations.labels,...annotations.markers])if((a.text||"").toLowerCase().includes(q)||(a.description||"").toLowerCase().includes(q)||String(a.mapId)===q)out.push(a);if(/^\d+$/.test(q)&&Number(q)<maps.length)out.unshift({id:"map:"+q,mapId:Number(q),text:"Open map "+q});el.innerHTML=out.length?out.slice(0,100).map(a=>`<div class="item" data-id="${a.id}">${a.type?MARKERS[a.type]:"🏷️"} <b>${String(a.text||"Untitled").replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]))}</b><div class="small">Map ${a.mapId} · ${a.x},${a.y}</div></div>`).join(""):'<div class="item small">No results.</div>';el.querySelectorAll(".item[data-id]").forEach(n=>n.onclick=()=>{const id=n.dataset.id;if(id.startsWith("map:"))go(Number(id.slice(4)));else{const a=[...annotations.labels,...annotations.markers].find(x=>x.id===id);if(a){go(a.mapId);openAnno(a)}}})}
-async function autoAnnotations(){try{const r=await fetch("./annotations.json",{cache:"no-store"});if(r.ok){const x=await r.json();if(x&&Array.isArray(x.labels))annotations={version:1,labels:x.labels,markers:Array.isArray(x.markers)?x.markers:[],regions:Array.isArray(x.regions)?x.regions:[]}}}catch(e){}}
-canvas.addEventListener("click",e=>{if(mode==="world"){const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,x=Math.floor((e.clientX-r.left)*sx),y=Math.floor((e.clientY-r.top)*sy),PW=MAP_W*worldScale,PH=MAP_H*worldScale,gx=Math.floor(x/PW)+(worldBounds?.minX||0),gy=Math.floor(y/PH)+(worldBounds?.minY||0);for(const [id,p] of worldPositions)if(p.x===gx&&p.y===gy){go(id);return}}else{const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,tx=Math.floor(((e.clientX-r.left)*sx)/TILE),ty=Math.floor(((e.clientY-r.top)*sy)/TILE),a=findAnnoAtMap(currentMapId,tx,ty);if(a)openAnno(a)}})
-$("worldBtn").onclick=renderWorld;$("mapBtn").onclick=renderMap;$("goBtn").onclick=()=>go($("mapId").value);$("mapId").onkeydown=e=>{if(e.key==="Enter")go($("mapId").value)};$("firstBtn").onclick=()=>go(0);$("randomBtn").onclick=()=>go(Math.floor(Math.random()*maps.length));$("northBtn").onclick=()=>neighbour("N");$("southBtn").onclick=()=>neighbour("S");$("westBtn").onclick=()=>neighbour("W");$("eastBtn").onclick=()=>neighbour("E");$("fitBtn").onclick=()=>{$("zoom").value=".5";render()};$("zoom").onchange=render;$("toggleIds").onclick=()=>{mapIdsVisible=!mapIdsVisible;$("toggleIds").textContent=`Map IDs: ${mapIdsVisible?"ON":"OFF"}`;render()};$("toggleAnno").onclick=()=>{annotationsVisible=!annotationsVisible;$("toggleAnno").textContent=`Labels: ${annotationsVisible?"ON":"OFF"}`;render()};$("searchBtn").onclick=search;$("search").onkeydown=e=>{if(e.key==="Enter")search()};$("modalClose").onclick=()=>$("modalBack").style.display="none";window.onresize=applyZoom;
-(async()=>{const h=location.hash.match(/map=(\d+)/);if(h)currentMapId=Number(h[1]);await autoAnnotations();await autoMap();const n=await autoSheets();if(maps.length){renderWorld();status(`${maps.length.toLocaleString()} maps loaded · ${n}/${SHEETS} tile sheets ready`,n===SHEETS?"ok":"warn")}})();
+
+const TILE=32;
+const MAP_W=16;
+const MAP_H=12;
+
+const SHEETS=19;
+const TILES_PER_SHEET=1024;
+
+const STATIC_LAYERS=[0,1,3,5,7,9];
+
+const MARKERS={
+  town:"🏠",
+  city:"🏰",
+  dungeon:"☠️",
+  boss:"💀",
+  shop:"🛒",
+  quest:"❗",
+  portal:"🌀",
+  danger:"⚠️",
+  point:"📍"
+};
+
+let maps=[];
+let currentMapId=0;
+
+let tileSheets=Array(SHEETS).fill(null);
+let sheetReady=Array(SHEETS).fill(false);
+
+let worldPositions=new Map();
+let worldBounds=null;
+
+let worldScale=8;
+
+let mapCanvasCache=new Map();
+
+let mode="world";
+
+let annotations={
+  version:1,
+  labels:[],
+  markers:[],
+  regions:[]
+};
+
+let annotationsVisible=true;
+let mapIdsVisible=true;
+
+const $=id=>document.getElementById(id);
+
+const canvas=$("canvas");
+const ctx=canvas.getContext("2d");
+
+ctx.imageSmoothingEnabled=false;
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function status(s,c=""){
+  $("status").textContent=s;
+
+  $("status").style.color=
+    c==="ok"
+      ? "#82e4a5"
+      : c==="warn"
+        ? "#ffd16a"
+        : "";
+}
+
+
+/* =========================================================
+   MAPDUMP
+========================================================= */
+
+function parseMapdumpText(text){
+
+  text=text.trim();
+
+  try{
+
+    const x=JSON.parse(text);
+
+    return Array.isArray(x)
+      ? x
+      : (x.maps||[]);
+
+  }catch(e){
+
+    if(text.startsWith("{") && text.endsWith("]"))
+      return JSON.parse("["+text);
+
+    throw Error("Could not parse mapdump JSON.");
+  }
+}
+
+
+function loadMapdumpText(text){
+
+  const a=parseMapdumpText(text);
+
+  maps=a.map(m=>({
+
+    tiles:m.tiles,
+
+    map_north_id:
+      Number.isInteger(m.map_north_id)
+        ? m.map_north_id
+        : -1,
+
+    map_south_id:
+      Number.isInteger(m.map_south_id)
+        ? m.map_south_id
+        : -1,
+
+    map_west_id:
+      Number.isInteger(m.map_west_id)
+        ? m.map_west_id
+        : -1,
+
+    map_east_id:
+      Number.isInteger(m.map_east_id)
+        ? m.map_east_id
+        : -1
+
+  }));
+
+  if(!maps.length)
+    throw Error("No maps found.");
+
+  buildWorldPositions();
+
+  currentMapId=
+    Math.min(
+      currentMapId,
+      maps.length-1
+    );
+
+  render();
+
+  status(
+    `${maps.length.toLocaleString()} maps loaded`,
+    "ok"
+  );
+}
+
+
+async function autoMap(){
+
+  try{
+
+    const r=await fetch(
+      "./mapdump.json",
+      {cache:"no-store"}
+    );
+
+    if(!r.ok)
+      throw 0;
+
+    loadMapdumpText(
+      await r.text()
+    );
+
+  }catch(e){
+
+    status(
+      "mapdump.json could not be loaded",
+      "warn"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TILE SHEETS
+========================================================= */
+
+function setSheet(i,src){
+
+  return new Promise(resolve=>{
+
+    const im=new Image();
+
+    im.onload=()=>{
+
+      tileSheets[i]=im;
+      sheetReady[i]=true;
+
+      /*
+       * A sheet becoming available changes all rendered
+       * maps, so invalidate the room cache.
+       */
+      mapCanvasCache.clear();
+
+      resolve(true);
+
+    };
+
+    im.onerror=()=>{
+
+      tileSheets[i]=null;
+      sheetReady[i]=false;
+
+      resolve(false);
+
+    };
+
+    im.src=src;
+
+  });
+
+}
+
+
+async function autoSheets(){
+
+  const jobs=[];
+
+  for(let i=0;i<SHEETS;i++){
+
+    jobs.push(
+
+      (async()=>{
+
+        try{
+
+          const r=await fetch(
+            `./assets/tiles${i}.png`,
+            {cache:"force-cache"}
+          );
+
+          if(!r.ok)
+            return false;
+
+          const blob=await r.blob();
+
+          return await setSheet(
+            i,
+            URL.createObjectURL(blob)
+          );
+
+        }catch(e){
+
+          return false;
+
+        }
+
+      })()
+
+    );
+
+  }
+
+  const results=
+    await Promise.all(jobs);
+
+  return results.filter(Boolean).length;
+}
+
+
+/* =========================================================
+   TILE LOOKUP
+========================================================= */
+
+function tileSource(id){
+
+  const n=Number(id);
+
+  if(!Number.isInteger(n)||n<0)
+    return null;
+
+  const sheet=
+    Math.floor(
+      n/TILES_PER_SHEET
+    );
+
+  const local=
+    n%TILES_PER_SHEET;
+
+  if(
+    sheet<0 ||
+    sheet>=SHEETS ||
+    !tileSheets[sheet]
+  ){
+
+    return{
+      sheet,
+      local,
+      missing:true
+    };
+
+  }
+
+  return{
+    sheet,
+    local,
+    img:tileSheets[sheet]
+  };
+
+}
+
+
+/* =========================================================
+   DRAW INDIVIDUAL TILE
+========================================================= */
+
+function drawTile(
+  c,
+  id,
+  dx,
+  dy,
+  scale
+){
+
+  const t=tileSource(id);
+
+  if(!t)
+    return;
+
+  if(t.missing){
+
+    c.fillStyle="#351b1b";
+
+    c.fillRect(
+      dx,
+      dy,
+      TILE*scale,
+      TILE*scale
+    );
+
+    return;
+  }
+
+  const sx=
+    (t.local%32)*32;
+
+  const sy=
+    Math.floor(t.local/32)*32;
+
+  c.drawImage(
+    t.img,
+    sx,
+    sy,
+    32,
+    32,
+    dx,
+    dy,
+    32*scale,
+    32*scale
+  );
+
+}
+
+
+/* =========================================================
+   NATIVE ROOM RENDERER
+========================================================= */
+
+function renderMapTo(c,map,scale){
+
+  c.canvas.width=
+    MAP_W*TILE*scale;
+
+  c.canvas.height=
+    MAP_H*TILE*scale;
+
+  c.clearRect(
+    0,
+    0,
+    c.canvas.width,
+    c.canvas.height
+  );
+
+  for(let y=0;y<MAP_H;y++){
+
+    for(let x=0;x<MAP_W;x++){
+
+      const layers=
+        (map.tiles[x]||[])[y]||[];
+
+      for(const k of STATIC_LAYERS){
+
+        if(layers[k]>=0){
+
+          drawTile(
+            c,
+            layers[k],
+            x*TILE*scale,
+            y*TILE*scale,
+            scale
+          );
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   NORMAL MAP CACHE
+========================================================= */
+
+function getMapCanvas(id,scale=1){
+
+  const key=id+"@"+scale;
+
+  if(mapCanvasCache.has(key))
+    return mapCanvasCache.get(key);
+
+  const c=
+    document.createElement("canvas");
+
+  const cc=
+    c.getContext("2d");
+
+  cc.imageSmoothingEnabled=false;
+
+  renderMapTo(
+    cc,
+    maps[id],
+    scale
+  );
+
+  mapCanvasCache.set(
+    key,
+    c
+  );
+
+  return c;
+
+}
+
+
+/* =========================================================
+   WORLD ROOM CACHE
+=========================================================
+
+   IMPORTANT FIX:
+
+   The world renderer used to do:
+
+       getMapCanvas(id,worldScale/32)
+
+   At the default 1x zoom this became:
+
+       2 / 32 = 0.0625
+
+   That meant the tile renderer was trying to draw individual
+   tiles at a fractional 1/16 scale.
+
+   Instead, every room is now rendered once at its known-good
+   native 512x384 resolution and the COMPLETE room is scaled
+   into the world canvas.
+
+========================================================= */
+
+function getWorldRoomCanvas(id){
+
+  const key=id+"@WORLD_NATIVE";
+
+  if(mapCanvasCache.has(key))
+    return mapCanvasCache.get(key);
+
+  const c=
+    document.createElement("canvas");
+
+  const cc=
+    c.getContext("2d");
+
+  cc.imageSmoothingEnabled=false;
+
+  /*
+   * ALWAYS render at native room resolution.
+   *
+   * 16 x 12 tiles
+   * 32 px per tile
+   * = 512 x 384
+   */
+  renderMapTo(
+    cc,
+    maps[id],
+    1
+  );
+
+  mapCanvasCache.set(
+    key,
+    c
+  );
+
+  return c;
+
+}
+
+
+/* =========================================================
+   BUILD WORLD POSITIONS
+========================================================= */
+
+function buildWorldPositions(){
+
+  worldPositions=new Map();
+
+  if(!maps.length){
+
+    worldBounds=null;
+
+    return;
+  }
+
+  const q=[0];
+
+  const pos=
+    new Map([
+      [0,{x:0,y:0}]
+    ]);
+
+  while(q.length){
+
+    const id=q.shift();
+
+    const p=pos.get(id);
+
+    const m=maps[id];
+
+    for(
+      const [
+        key,
+        dx,
+        dy
+      ]
+      of [
+        ["map_north_id",0,-1],
+        ["map_south_id",0,1],
+        ["map_west_id",-1,0],
+        ["map_east_id",1,0]
+      ]
+    ){
+
+      const n=m[key];
+
+      if(
+        !Number.isInteger(n) ||
+        n<0 ||
+        n>=maps.length ||
+        pos.has(n)
+      )
+        continue;
+
+      pos.set(
+        n,
+        {
+          x:p.x+dx,
+          y:p.y+dy
+        }
+      );
+
+      q.push(n);
+
+    }
+
+  }
+
+  let minX=Infinity;
+  let maxX=-Infinity;
+  let minY=Infinity;
+  let maxY=-Infinity;
+
+  for(const p of pos.values()){
+
+    minX=Math.min(minX,p.x);
+    maxX=Math.max(maxX,p.x);
+
+    minY=Math.min(minY,p.y);
+    maxY=Math.max(maxY,p.y);
+
+  }
+
+  for(const [id,p] of pos){
+
+    worldPositions.set(
+      id,
+      {
+        x:p.x-minX,
+        y:p.y-minY
+      }
+    );
+
+  }
+
+  worldBounds={
+    minX:0,
+    maxX:maxX-minX,
+    minY:0,
+    maxY:maxY-minY
+  };
+
+}
+
+
+/* =========================================================
+   WORLD SCALE
+========================================================= */
+
+function getWorldScale(){
+
+  return Math.max(
+    1,
+    Math.round(
+      Number($("zoom").value)*2
+    )
+  );
+
+}
+
+
+/* =========================================================
+   WORLD ANNOTATIONS
+========================================================= */
+
+function drawAnnoWorld(id,x,y){
+
+  if(!annotationsVisible)
+    return;
+
+  for(
+    const r
+    of annotations.regions.filter(
+      a=>a.mapId===id
+    )
+  ){
+
+    ctx.fillStyle=
+      hexAlpha(
+        r.color,
+        r.opacity
+      );
+
+    ctx.fillRect(
+      x+r.x*worldScale,
+      y+r.y*worldScale,
+      r.w*worldScale,
+      r.h*worldScale
+    );
+
+    ctx.strokeStyle=r.color;
+
+    ctx.strokeRect(
+      x+r.x*worldScale,
+      y+r.y*worldScale,
+      r.w*worldScale,
+      r.h*worldScale
+    );
+
+  }
+
+  for(
+    const m
+    of annotations.markers.filter(
+      a=>a.mapId===id
+    )
+  ){
+
+    const mx=
+      x+(m.x+.5)*worldScale;
+
+    const my=
+      y+(m.y+.5)*worldScale;
+
+    ctx.font=
+      `${Math.max(
+        10,
+        m.size||18
+      )*worldScale/32}px sans-serif`;
+
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    ctx.fillText(
+      MARKERS[m.type]||"📍",
+      mx,
+      my
+    );
+
+  }
+
+  for(
+    const l
+    of annotations.labels.filter(
+      a=>a.mapId===id
+    )
+  ){
+
+    const lx=
+      x+l.x*worldScale+2;
+
+    const ly=
+      y+l.y*worldScale+
+      Math.max(
+        12,
+        l.size||16
+      )*worldScale/32;
+
+    ctx.font=
+      `bold ${Math.max(
+        9,
+        (l.size||16)*worldScale/32
+      )}px sans-serif`;
+
+    ctx.textAlign="left";
+    ctx.textBaseline="bottom";
+
+    ctx.strokeStyle="#000";
+    ctx.lineWidth=2;
+
+    ctx.strokeText(
+      l.text,
+      lx,
+      ly
+    );
+
+    ctx.fillStyle=
+      l.color||"#fff";
+
+    ctx.fillText(
+      l.text,
+      lx,
+      ly
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   WORLD RENDERER
+========================================================= */
+
+function renderWorld(){
+
+  if(
+    !maps.length ||
+    !worldBounds
+  )
+    return;
+
+  mode="world";
+
+  worldScale=
+    getWorldScale();
+
+  const PW=
+    MAP_W*worldScale;
+
+  const PH=
+    MAP_H*worldScale;
+
+  const cols=
+    worldBounds.maxX+1;
+
+  const rows=
+    worldBounds.maxY+1;
+
+  canvas.width=
+    cols*PW;
+
+  canvas.height=
+    rows*PH;
+
+  ctx.imageSmoothingEnabled=false;
+
+  ctx.fillStyle="#050608";
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  /*
+   * Render every connected room.
+   *
+   * Each room comes from getWorldRoomCanvas(),
+   * which is ALWAYS rendered at native 1x.
+   *
+   * The completed room is then scaled into the
+   * world map.
+   */
+  for(
+    const [id,p]
+    of worldPositions
+  ){
+
+    const x=
+      p.x*PW;
+
+    const y=
+      p.y*PH;
+
+    const room=
+      getWorldRoomCanvas(id);
+
+
+    /*
+     * Keep nearest-neighbour rendering so the
+     * pixel-art tiles stay crisp.
+     */
+    ctx.imageSmoothingEnabled=false;
+
+    ctx.drawImage(
+      room,
+      0,
+      0,
+      room.width,
+      room.height,
+      x,
+      y,
+      PW,
+      PH
+    );
+
+
+    /*
+     * Map ID
+     */
+    if(mapIdsVisible){
+
+      ctx.font=
+        `bold ${Math.max(
+          7,
+          Math.round(worldScale*.75)
+        )}px ui-monospace,Consolas,monospace`;
+
+      ctx.textAlign="left";
+      ctx.textBaseline="top";
+
+      ctx.strokeStyle="#000";
+
+      ctx.lineWidth=
+        Math.max(
+          1,
+          worldScale*.08
+        );
+
+      ctx.strokeText(
+        String(id),
+        x+2,
+        y+2
+      );
+
+      ctx.fillStyle="#fff";
+
+      ctx.fillText(
+        String(id),
+        x+2,
+        y+2
+      );
+
+    }
+
+
+    /*
+     * Annotations
+     */
+    drawAnnoWorld(
+      id,
+      x,
+      y
+    );
+
+
+    /*
+     * Map border
+     */
+    ctx.strokeStyle=
+      id===currentMapId
+        ? "#fff"
+        : "#46505e";
+
+    ctx.lineWidth=
+      id===currentMapId
+        ? Math.max(
+            1,
+            worldScale*.08
+          )
+        : 1;
+
+    ctx.strokeRect(
+      x+.5,
+      y+.5,
+      PW-1,
+      PH-1
+    );
+
+  }
+
+  applyZoom();
+
+  status(
+    `${worldPositions.size.toLocaleString()} connected maps · world preview · ${worldScale}px/tile`,
+    "ok"
+  );
+
+}
+
+
+/* =========================================================
+   MAP ANNOTATIONS
+========================================================= */
+
+function drawAnnoMap(c,id){
+
+  if(!annotationsVisible)
+    return;
+
+  for(
+    const r
+    of annotations.regions.filter(
+      a=>a.mapId===id
+    )
+  ){
+
+    c.fillStyle=
+      hexAlpha(
+        r.color,
+        r.opacity
+      );
+
+    c.fillRect(
+      r.x*TILE,
+      r.y*TILE,
+      r.w*TILE,
+      r.h*TILE
+    );
+
+    c.strokeStyle=r.color;
+
+    c.strokeRect(
+      r.x*TILE,
+      r.y*TILE,
+      r.w*TILE,
+      r.h*TILE
+    );
+
+  }
+
+
+  for(
+    const m
+    of annotations.markers.filter(
+      a=>a.mapId===id
+    )
+  ){
+
+    const x=
+      (m.x+.5)*TILE;
+
+    const y=
+      (m.y+.5)*TILE;
+
+    c.font=
+      `${m.size||18}px sans-serif`;
+
+    c.textAlign="center";
+    c.textBaseline="middle";
+
+    c.strokeStyle="#000";
+    c.lineWidth=3;
+
+    c.strokeText(
+      MARKERS[m.type]||"📍",
+      x,
+      y
+    );
+
+    c.fillStyle="#fff";
+
+    c.fillText(
+      MARKERS[m.type]||"📍",
+      x,
+      y
+    );
+
+  }
+
+
+  for(
+    const l
+    of annotations.labels.filter(
+      a=>a.mapId===id
+    )
+  ){
+
+    const x=
+      l.x*TILE+4;
+
+    const y=
+      l.y*TILE+(l.size||16);
+
+    c.font=
+      `bold ${l.size||16}px sans-serif`;
+
+    c.textAlign="left";
+    c.textBaseline="alphabetic";
+
+    c.strokeStyle="#000";
+    c.lineWidth=3;
+
+    c.strokeText(
+      l.text,
+      x,
+      y
+    );
+
+    c.fillStyle=
+      l.color||"#fff";
+
+    c.fillText(
+      l.text,
+      x,
+      y
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   MAP RENDER
+========================================================= */
+
+function renderMap(){
+
+  if(!maps.length)
+    return;
+
+  mode="map";
+
+  const c=
+    document.createElement("canvas");
+
+  const cc=
+    c.getContext("2d");
+
+  cc.imageSmoothingEnabled=false;
+
+  renderMapTo(
+    cc,
+    maps[currentMapId],
+    1
+  );
+
+  drawAnnoMap(
+    cc,
+    currentMapId
+  );
+
+  canvas.width=c.width;
+  canvas.height=c.height;
+
+  ctx.imageSmoothingEnabled=false;
+
+  ctx.drawImage(
+    c,
+    0,
+    0
+  );
+
+  applyZoom();
+
+  updateMapInfo();
+
+}
+
+
+/* =========================================================
+   GENERAL RENDER
+========================================================= */
+
+function render(){
+
+  if(mode==="world")
+    renderWorld();
+  else
+    renderMap();
+
+}
+
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+function applyZoom(){
+
+  const z=
+    Number($("zoom").value);
+
+  /*
+   * World zoom is represented by the actual internal
+   * world canvas resolution.
+   *
+   * Normal map mode continues using CSS scaling.
+   */
+  if(mode==="world"){
+
+    canvas.style.width=
+      canvas.width+"px";
+
+    canvas.style.height=
+      canvas.height+"px";
+
+  }else{
+
+    canvas.style.width=
+      canvas.width*z+"px";
+
+    canvas.style.height=
+      canvas.height*z+"px";
+
+  }
+
+  $("canvasWrap").style.width=
+    (canvas.clientWidth+100)+"px";
+
+  $("canvasWrap").style.height=
+    (canvas.clientHeight+100)+"px";
+
+}
+
+
+/* =========================================================
+   OPEN MAP
+========================================================= */
+
+function go(id){
+
+  id=Number(id);
+
+  if(
+    !Number.isInteger(id) ||
+    id<0 ||
+    id>=maps.length
+  )
+    return;
+
+  currentMapId=id;
+
+  $("mapId").value=id;
+
+  renderMap();
+
+  location.hash=
+    `map=${id}`;
+
+}
+
+
+/* =========================================================
+   NEIGHBOURS
+========================================================= */
+
+function neighbour(d){
+
+  const k={
+    N:"map_north_id",
+    S:"map_south_id",
+    W:"map_west_id",
+    E:"map_east_id"
+  }[d];
+
+  const n=
+    maps[currentMapId]?.[k];
+
+  if(
+    Number.isInteger(n) &&
+    n>=0
+  )
+    go(n);
+
+}
+
+
+/* =========================================================
+   MAP INFO
+========================================================= */
+
+function updateMapInfo(){
+
+  if(!maps.length)
+    return;
+
+  const m=
+    maps[currentMapId];
+
+  const p=
+    worldPositions.get(
+      currentMapId
+    );
+
+  $("mapInfo").textContent=
+`Map ID: ${currentMapId}
+Size: ${MAP_W} × ${MAP_H} tiles
+Pixels: ${MAP_W*TILE} × ${MAP_H*TILE}
+World position: ${p?`${p.x}, ${p.y}`:"unknown"}
+North: ${m.map_north_id}
+South: ${m.map_south_id}
+West: ${m.map_west_id}
+East: ${m.map_east_id}`;
+
+}
+
+
+/* =========================================================
+   ANNOTATION SEARCH
+========================================================= */
+
+function findAnnoAtMap(
+  id,
+  x,
+  y
+){
+
+  return [
+    ...annotations.labels,
+    ...annotations.markers
+  ].find(
+    a=>
+      a.mapId===id &&
+      a.x===x &&
+      a.y===y
+  );
+
+}
+
+
+function openAnno(a){
+
+  $("modalTitle").textContent=
+    a.type
+      ? `${MARKERS[a.type]||"📍"} ${a.text||a.type}`
+      : a.text||"Location";
+
+  $("modalBody").textContent=
+`Map ${a.mapId} · tile ${a.x}, ${a.y}
+
+${a.description||""}`;
+
+  $("modalBack").style.display=
+    "flex";
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function search(){
+
+  const q=
+    $("search").value
+      .trim()
+      .toLowerCase();
+
+  const el=
+    $("results");
+
+  if(!q){
+
+    el.innerHTML=
+      '<div class="item small">Enter a search term.</div>';
+
+    return;
+  }
+
+  const out=[];
+
+  for(
+    const a
+    of [
+      ...annotations.labels,
+      ...annotations.markers
+    ]
+  ){
+
+    if(
+      (a.text||"")
+        .toLowerCase()
+        .includes(q) ||
+
+      (a.description||"")
+        .toLowerCase()
+        .includes(q) ||
+
+      String(a.mapId)===q
+    ){
+
+      out.push(a);
+
+    }
+
+  }
+
+
+  if(
+    /^\d+$/.test(q) &&
+    Number(q)<maps.length
+  ){
+
+    out.unshift({
+      id:"map:"+q,
+      mapId:Number(q),
+      text:"Open map "+q
+    });
+
+  }
+
+
+  el.innerHTML=
+    out.length
+      ? out
+        .slice(0,100)
+        .map(a=>`
+
+<div class="item" data-id="${a.id}">
+  ${a.type?MARKERS[a.type]:"🏷️"}
+  <b>
+    ${String(a.text||"Untitled").replace(
+      /[&<>]/g,
+      m=>({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;"
+      }[m])
+    )}
+  </b>
+
+  <div class="small">
+    Map ${a.mapId} · ${a.x},${a.y}
+  </div>
+
+</div>
+
+        `)
+        .join("")
+      :
+        '<div class="item small">No results.</div>';
+
+
+  el
+    .querySelectorAll(".item[data-id]")
+    .forEach(n=>{
+
+      n.onclick=()=>{
+
+        const id=
+          n.dataset.id;
+
+        if(
+          id.startsWith("map:")
+        ){
+
+          go(
+            Number(
+              id.slice(4)
+            )
+          );
+
+        }else{
+
+          const a=
+            [
+              ...annotations.labels,
+              ...annotations.markers
+            ].find(
+              x=>x.id===id
+            );
+
+          if(a){
+
+            go(a.mapId);
+
+            openAnno(a);
+
+          }
+
+        }
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   ANNOTATIONS FILE
+========================================================= */
+
+async function autoAnnotations(){
+
+  try{
+
+    const r=
+      await fetch(
+        "./annotations.json",
+        {cache:"no-store"}
+      );
+
+    if(r.ok){
+
+      const x=
+        await r.json();
+
+      if(
+        x &&
+        Array.isArray(x.labels)
+      ){
+
+        annotations={
+          version:1,
+          labels:x.labels,
+          markers:
+            Array.isArray(x.markers)
+              ? x.markers
+              : [],
+          regions:
+            Array.isArray(x.regions)
+              ? x.regions
+              : []
+        };
+
+      }
+
+    }
+
+  }catch(e){}
+
+}
+
+
+/* =========================================================
+   WORLD / MAP CLICK
+========================================================= */
+
+canvas.addEventListener(
+  "click",
+  e=>{
+
+    if(mode==="world"){
+
+      const r=
+        canvas.getBoundingClientRect();
+
+      const sx=
+        canvas.width/r.width;
+
+      const sy=
+        canvas.height/r.height;
+
+      const x=
+        Math.floor(
+          (e.clientX-r.left)*sx
+        );
+
+      const y=
+        Math.floor(
+          (e.clientY-r.top)*sy
+        );
+
+      const PW=
+        MAP_W*worldScale;
+
+      const PH=
+        MAP_H*worldScale;
+
+      const gx=
+        Math.floor(x/PW)+
+        (worldBounds?.minX||0);
+
+      const gy=
+        Math.floor(y/PH)+
+        (worldBounds?.minY||0);
+
+
+      for(
+        const [id,p]
+        of worldPositions
+      ){
+
+        if(
+          p.x===gx &&
+          p.y===gy
+        ){
+
+          go(id);
+
+          return;
+
+        }
+
+      }
+
+    }else{
+
+      const r=
+        canvas.getBoundingClientRect();
+
+      const sx=
+        canvas.width/r.width;
+
+      const sy=
+        canvas.height/r.height;
+
+      const tx=
+        Math.floor(
+          ((e.clientX-r.left)*sx)/
+          TILE
+        );
+
+      const ty=
+        Math.floor(
+          ((e.clientY-r.top)*sy)/
+          TILE
+        );
+
+      const a=
+        findAnnoAtMap(
+          currentMapId,
+          tx,
+          ty
+        );
+
+      if(a)
+        openAnno(a);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+$("worldBtn").onclick=
+  renderWorld;
+
+$("mapBtn").onclick=
+  renderMap;
+
+$("goBtn").onclick=
+  ()=>go(
+    $("mapId").value
+  );
+
+$("mapId").onkeydown=
+  e=>{
+    if(e.key==="Enter")
+      go($("mapId").value);
+  };
+
+$("firstBtn").onclick=
+  ()=>go(0);
+
+$("randomBtn").onclick=
+  ()=>go(
+    Math.floor(
+      Math.random()*maps.length
+    )
+  );
+
+$("northBtn").onclick=
+  ()=>neighbour("N");
+
+$("southBtn").onclick=
+  ()=>neighbour("S");
+
+$("westBtn").onclick=
+  ()=>neighbour("W");
+
+$("eastBtn").onclick=
+  ()=>neighbour("E");
+
+
+/*
+ * Fit now uses the smallest available world zoom
+ * rather than the old .25 CSS scaling behaviour.
+ */
+$("fitBtn").onclick=()=>{
+
+  $("zoom").value=".25";
+
+  render();
+
+};
+
+
+$("zoom").onchange=
+  render;
+
+
+$("toggleIds").onclick=()=>{
+
+  mapIdsVisible=
+    !mapIdsVisible;
+
+  $("toggleIds").textContent=
+    `Map IDs: ${mapIdsVisible?"ON":"OFF"}`;
+
+  render();
+
+};
+
+
+$("toggleAnno").onclick=()=>{
+
+  annotationsVisible=
+    !annotationsVisible;
+
+  $("toggleAnno").textContent=
+    `Labels: ${annotationsVisible?"ON":"OFF"}`;
+
+  render();
+
+};
+
+
+$("searchBtn").onclick=
+  search;
+
+
+$("search").onkeydown=
+  e=>{
+
+    if(e.key==="Enter")
+      search();
+
+  };
+
+
+$("modalClose").onclick=
+  ()=>
+    $("modalBack").style.display=
+      "none";
+
+
+window.onresize=
+  applyZoom;
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+(async()=>{
+
+  const h=
+    location.hash.match(
+      /map=(\d+)/
+    );
+
+  if(h)
+    currentMapId=
+      Number(h[1]);
+
+
+  await autoAnnotations();
+
+  await autoMap();
+
+  const n=
+    await autoSheets();
+
+
+  /*
+   * Sheets are fully loaded before the first world
+   * render. This prevents the initial world from being
+   * generated while tile images are still loading.
+   */
+  if(maps.length){
+
+    renderWorld();
+
+    status(
+      `${maps.length.toLocaleString()} maps loaded · ${n}/${SHEETS} tile sheets ready`,
+      n===SHEETS
+        ? "ok"
+        : "warn"
+    );
+
+  }
+
 })();
-</script></body></html>
+
+
+/* =========================================================
+   ALPHA HELPER
+========================================================= */
+
+function hexAlpha(hex,opacity){
+
+  let h=
+    String(hex||"#ffffff")
+      .replace("#","");
+
+  if(h.length===3){
+
+    h=
+      h
+        .split("")
+        .map(x=>x+x)
+        .join("");
+
+  }
+
+  const n=
+    parseInt(h,16);
+
+  const r=
+    (n>>16)&255;
+
+  const g=
+    (n>>8)&255;
+
+  const b=
+    n&255;
+
+  return `rgba(${r},${g},${b},${opacity??.35})`;
+
+}
+
+})();
+</script>
+
+</body>
+</html>
