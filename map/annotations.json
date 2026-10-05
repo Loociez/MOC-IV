@@ -819,6 +819,94 @@
       "type": "shop",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "wbgvhau6zhamuvpthk6",
+      "mapId": 1203,
+      "x": 5,
+      "y": 5,
+      "text": "National Bank of Babylon",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "xs6esjsghlmmuvptxsr",
+      "mapId": 1203,
+      "x": 10,
+      "y": 3,
+      "text": "Emma's Potions",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "52wxl4bnantmuvpuai4",
+      "mapId": 1203,
+      "x": 12,
+      "y": 8,
+      "text": "Babylon Identification Co.",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kdnkupibkmuvpuqeh",
+      "mapId": 1204,
+      "x": 4,
+      "y": 2,
+      "text": "Alchemy & Fine dining",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "7skxs0n26uimuvpvi2t",
+      "mapId": 1204,
+      "x": 1,
+      "y": 5,
+      "text": "Verle brothers trading.",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "wr2wd5qj42jmuvpw0jr",
+      "mapId": 1204,
+      "x": 12,
+      "y": 4,
+      "text": "Tindall's Armor",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "erdwxd3amh5muvpw748",
+      "mapId": 1207,
+      "x": 7,
+      "y": 1,
+      "text": "Castle Babylon",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "Home Dungeons, Gambling and more.",
+      "size": 18
+    },
+    {
+      "id": "3fvfb7f8w66muvpws4m",
+      "mapId": 1207,
+      "x": 7,
+      "y": 2,
+      "text": "The Pits",
+      "color": "#ffffff",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
