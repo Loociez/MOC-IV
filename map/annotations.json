@@ -9,7 +9,7 @@
       "text": "Potion Shop",
       "color": "#ff0000",
       "size": 12,
-      "description": ""
+      "description": "Emma is here, for all your healing and mana needs!"
     },
     {
       "id": "tpnc02ulj2omuuqfh7y",
@@ -29,7 +29,7 @@
       "text": "Crendale Inn",
       "color": "#1d0dfd",
       "size": 12,
-      "description": ""
+      "description": "An Inn so you can rest easy."
     },
     {
       "id": "mbhjun2vykmuuqhe39",
@@ -39,7 +39,27 @@
       "text": "Down the Well",
       "color": "#ffffff",
       "size": 12,
-      "description": ""
+      "description": "Down the Well ( Normal Dungeon)\nWiki URL: https://loociez.github.io/MOC-W/dungeons/down-the-well.html"
+    },
+    {
+      "id": "083c09q8jbsmuuqoqcb",
+      "mapId": 1,
+      "x": 4,
+      "y": 2,
+      "text": "Bank",
+      "color": "#ff0000",
+      "size": 12,
+      "description": "To withdraw or deposit."
+    },
+    {
+      "id": "fidqz4cjcsmuuqp4m1",
+      "mapId": 1,
+      "x": 1,
+      "y": 7,
+      "text": "Erlington's",
+      "color": "#ff0000",
+      "size": 12,
+      "description": "Erlington's bay, the one stop fishing shop."
     }
   ],
   "markers": [],
