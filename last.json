@@ -8090,7 +8090,7 @@
   },
   {
     "name": "Will of Wardos",
-    "desc": "A unique upgraded weapon from Shrine of Lavos. Increase WL AoE Dmg [ 6% ] Reduces Cleric Heal C/D [ 10% ] Increase range of Cleric Heal [ 1 ] Reduces Minion Cost [ 8% ] Increase Minion DMG [ 5% ].  [ 2% Break chance on repair ]",
+    "desc": "A unique upgraded weapon from Shrine of Lavos. Increase WL AoE Dmg [ 6% ] Reduces Cleric Heal C/D [ 10% ] Increase range of Cleric Heal [ 1 ] Reduces Minion Cost [ 8% ] Increase Minion DMG [ 5% ] Increase Minion Attack Speed [10].  [ 2% Break chance on repair ]",
     "revision": 3,
     "sprite": 152,
     "sprite_color": {
@@ -8125,6 +8125,7 @@
       "!necromancer_minion_damage": "5",
       "!warlock_npcaoe_damage": "7",
       "!warlock_playeraoe_damage": "7",
+      "!necromancer_minion_attackspeed": "10",
       "min_atk": 0,
       "max_atk": 0,
       "min_def": 0,
