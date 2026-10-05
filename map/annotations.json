@@ -19,7 +19,7 @@
       "text": "Gandalf's House",
       "color": "#d99608",
       "size": 12,
-      "description": ""
+      "description": "Home to two dungeons:\n- Gandalf's magicbook\n- Sewers"
     },
     {
       "id": "47p3zlp0ln6muuqgp8g",
@@ -57,16 +57,6 @@
       "x": 7,
       "y": 0,
       "text": "Town of Crendale",
-      "color": "#ffffff",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "oltygnoawtfmuurcqhz",
-      "mapId": 96,
-      "x": 7,
-      "y": 0,
-      "text": "Vicinity of Crendale",
       "color": "#ffffff",
       "size": 12,
       "description": ""
@@ -168,6 +158,76 @@
       "y": 0,
       "text": "Dragonia",
       "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "sl56ae0patsmuvhsmvz",
+      "mapId": 36,
+      "x": 7,
+      "y": 7,
+      "text": "Enchanter",
+      "color": "#e50af5",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "ullp88u0rmemuvht19t",
+      "mapId": 36,
+      "x": 13,
+      "y": 2,
+      "text": "Potions",
+      "color": "#ff0000",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "brnunjclwamuvhyzbb",
+      "mapId": 1632,
+      "x": 13,
+      "y": 5,
+      "text": "Potions",
+      "color": "#ff0000",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "jmh4z87lytbmuvhzb95",
+      "mapId": 1632,
+      "x": 1,
+      "y": 1,
+      "text": "Bank",
+      "color": "#ff0000",
+      "size": 12,
+      "description": "Bank of Dragonia"
+    },
+    {
+      "id": "latgf7b9l6pmuvhzy61",
+      "mapId": 143,
+      "x": 5,
+      "y": 9,
+      "text": "Potions",
+      "color": "#ff0000",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "j3hywqyenfdmuvi06un",
+      "mapId": 143,
+      "x": 7,
+      "y": 3,
+      "text": "Bank",
+      "color": "#ff0000",
+      "size": 12,
+      "description": "Bank of Draconis"
+    },
+    {
+      "id": "5pqfjq93lmkmuvi0pjj",
+      "mapId": 1656,
+      "x": 7,
+      "y": 3,
+      "text": "Potions",
+      "color": "#ff0000",
       "size": 12,
       "description": ""
     }
@@ -302,6 +362,146 @@
       "type": "dungeon",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "gzffztgyfb7muvhhqjk",
+      "mapId": 95,
+      "x": 12,
+      "y": 1,
+      "text": "Abyss",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "mt90ldj5oucmuvhidti",
+      "mapId": 1065,
+      "x": 11,
+      "y": 3,
+      "text": "Spiral of madness &",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "fkybx5dyz0umuvhkn04",
+      "mapId": 0,
+      "x": 3,
+      "y": 1,
+      "text": "Gandalfs magicbook & Sewers",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "1q11b1lislmmuvhly2k",
+      "mapId": 53,
+      "x": 7,
+      "y": 2,
+      "text": "3 bears",
+      "type": "boss",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "s9h8hj0w39gmuvhm8no",
+      "mapId": 41,
+      "x": 6,
+      "y": 4,
+      "text": "Nibbles",
+      "type": "boss",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "1s53cyjtcrvmuvhmjpi",
+      "mapId": 36,
+      "x": 2,
+      "y": 1,
+      "text": "Alone Graveyard",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "4gtjwdhng4omuvhneig",
+      "mapId": 1083,
+      "x": 8,
+      "y": 9,
+      "text": "Nightmare Gardens",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "2awo64he9lcmuvhnz8m",
+      "mapId": 159,
+      "x": 7,
+      "y": 8,
+      "text": "Von the Isolated",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "y9ksntlb6dqmuvhohwg",
+      "mapId": 1067,
+      "x": 6,
+      "y": 3,
+      "text": "Skogtroll Fortress",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "1reoagndk8vmuvhpb38",
+      "mapId": 96,
+      "x": 6,
+      "y": 5,
+      "text": "Hidden Lair of the Norax",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kdvrcv90mgpmuvhrmye",
+      "mapId": 46,
+      "x": 11,
+      "y": 10,
+      "text": "Alter of Norax",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "hkmcf84hdp5muvhrxqb",
+      "mapId": 40,
+      "x": 2,
+      "y": 10,
+      "text": "Rift",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "rqm5a0h8w5lmuvhtqdz",
+      "mapId": 94,
+      "x": 8,
+      "y": 5,
+      "text": "Tower of V'drazzig",
+      "type": "dungeon",
+      "description": "Low Tower\nV'drazzig Depths\nMiddle Tower\nUpper Tower",
+      "size": 18
+    },
+    {
+      "id": "z7mb5es6r6rmuvhws5b",
+      "mapId": 1080,
+      "x": 9,
+      "y": 4,
+      "text": "Zeigfried (Easy)",
+      "type": "boss",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
@@ -336,7 +536,7 @@
       "y": 0,
       "w": 16,
       "h": 12,
-      "text": "Crendale",
+      "text": "Crendale - Vicinity of Crendale",
       "color": "#ffcc66",
       "opacity": 0.18,
       "size": 14
@@ -530,6 +730,42 @@
       "h": 12,
       "text": "North Coast",
       "color": "#a3ff66",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "zmegsyfn52pmuvhg4xk",
+      "mapId": 1570,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#66b0ff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "3q8m7l52ek2muvhgety",
+      "mapId": 1571,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#66b0ff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "ipm1atwfayemuvhgvhe",
+      "mapId": 1080,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#66a8ff",
       "opacity": 0.18,
       "size": 14
     }
