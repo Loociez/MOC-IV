@@ -60,6 +60,156 @@
       "color": "#ff0000",
       "size": 12,
       "description": "Erlington's bay, the one stop fishing shop."
+    },
+    {
+      "id": "2x02s02ax9imuurce8w",
+      "mapId": 1,
+      "x": 7,
+      "y": 0,
+      "text": "Town of Crendale",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "oltygnoawtfmuurcqhz",
+      "mapId": 96,
+      "x": 7,
+      "y": 0,
+      "text": "Vicinity of Crendale",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "4pgktq6ko04muure1xu",
+      "mapId": 54,
+      "x": 5,
+      "y": 4,
+      "text": "Church / Class Changer",
+      "color": "#ed0c0c",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "vg0maoqjndmuurekwb",
+      "mapId": 845,
+      "x": 7,
+      "y": 0,
+      "text": "Lavos",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "wm0wxw4dammmuureumq",
+      "mapId": 1656,
+      "x": 8,
+      "y": 0,
+      "text": "Rido",
+      "color": "#ffffff",
+      "size": 16,
+      "description": ""
+    },
+    {
+      "id": "zsx36zrr83muurffgx",
+      "mapId": 1392,
+      "x": 6,
+      "y": 0,
+      "text": "Entrance to Bog",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "x5380mz94umuurg08u",
+      "mapId": 1205,
+      "x": 6,
+      "y": 0,
+      "text": "Babylon",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "mxwepcl9idemuurgglq",
+      "mapId": 2216,
+      "x": 3,
+      "y": 3,
+      "text": "Hell Well",
+      "color": "#ffa200",
+      "size": 16,
+      "description": ""
+    },
+    {
+      "id": "hulk3th5kcmuurgvqs",
+      "mapId": 131,
+      "x": 8,
+      "y": 7,
+      "text": "N / NM Haunted House",
+      "color": "#f25a07",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "jzkqiakqi9mmuurhk2c",
+      "mapId": 1589,
+      "x": 6,
+      "y": 0,
+      "text": "Brackish isle",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "1wlxpvwsbe1hmuurisr8",
+      "mapId": 41,
+      "x": 8,
+      "y": 0,
+      "text": "Guild Fort",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "3g1vb1mi5ppmuurj736",
+      "mapId": 37,
+      "x": 7,
+      "y": 0,
+      "text": "Alephvale",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "73otqnx7t9lmuurjijk",
+      "mapId": 143,
+      "x": 7,
+      "y": 0,
+      "text": "Draconis",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "oqxfkuzmr1kmuurjto9",
+      "mapId": 1632,
+      "x": 8,
+      "y": 0,
+      "text": "Dragonia",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "eltygctikfwmuurkfqo",
+      "mapId": 1490,
+      "x": 10,
+      "y": 2,
+      "text": "Emerald Corruption",
+      "color": "#ff8800",
+      "size": 12,
+      "description": ""
     }
   ],
   "markers": [],
