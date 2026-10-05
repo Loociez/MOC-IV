@@ -2,72 +2,12 @@
   "version": 1,
   "labels": [
     {
-      "id": "1egj3yifdckmuuqev6g",
-      "mapId": 0,
-      "x": 10,
-      "y": 3,
-      "text": "Potion Shop",
-      "color": "#ff0000",
-      "size": 12,
-      "description": "Emma is here, for all your healing and mana needs!"
-    },
-    {
-      "id": "tpnc02ulj2omuuqfh7y",
-      "mapId": 0,
-      "x": 4,
-      "y": 2,
-      "text": "Gandalf's House",
-      "color": "#d99608",
-      "size": 12,
-      "description": "Home to two dungeons:\n- Gandalf's magicbook\n- Sewers"
-    },
-    {
-      "id": "47p3zlp0ln6muuqgp8g",
-      "mapId": 0,
-      "x": 2,
-      "y": 6,
-      "text": "Crendale Inn",
-      "color": "#1d0dfd",
-      "size": 12,
-      "description": "An Inn so you can rest easy."
-    },
-    {
-      "id": "083c09q8jbsmuuqoqcb",
-      "mapId": 1,
-      "x": 4,
-      "y": 2,
-      "text": "Bank",
-      "color": "#ff0000",
-      "size": 12,
-      "description": "To withdraw or deposit."
-    },
-    {
-      "id": "fidqz4cjcsmuuqp4m1",
-      "mapId": 1,
-      "x": 1,
-      "y": 7,
-      "text": "Erlington's",
-      "color": "#ff0000",
-      "size": 12,
-      "description": "Erlington's bay, the one stop fishing shop."
-    },
-    {
       "id": "2x02s02ax9imuurce8w",
       "mapId": 1,
       "x": 7,
       "y": 0,
       "text": "Town of Crendale",
       "color": "#ffffff",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "4pgktq6ko04muure1xu",
-      "mapId": 54,
-      "x": 5,
-      "y": 4,
-      "text": "Church / Class Changer",
-      "color": "#ed0c0c",
       "size": 12,
       "description": ""
     },
@@ -158,76 +98,6 @@
       "y": 0,
       "text": "Dragonia",
       "color": "#ffffff",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "sl56ae0patsmuvhsmvz",
-      "mapId": 36,
-      "x": 7,
-      "y": 7,
-      "text": "Enchanter",
-      "color": "#e50af5",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "ullp88u0rmemuvht19t",
-      "mapId": 36,
-      "x": 13,
-      "y": 2,
-      "text": "Potions",
-      "color": "#ff0000",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "brnunjclwamuvhyzbb",
-      "mapId": 1632,
-      "x": 13,
-      "y": 5,
-      "text": "Potions",
-      "color": "#ff0000",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "jmh4z87lytbmuvhzb95",
-      "mapId": 1632,
-      "x": 1,
-      "y": 1,
-      "text": "Bank",
-      "color": "#ff0000",
-      "size": 12,
-      "description": "Bank of Dragonia"
-    },
-    {
-      "id": "latgf7b9l6pmuvhzy61",
-      "mapId": 143,
-      "x": 5,
-      "y": 9,
-      "text": "Potions",
-      "color": "#ff0000",
-      "size": 12,
-      "description": ""
-    },
-    {
-      "id": "j3hywqyenfdmuvi06un",
-      "mapId": 143,
-      "x": 7,
-      "y": 3,
-      "text": "Bank",
-      "color": "#ff0000",
-      "size": 12,
-      "description": "Bank of Draconis"
-    },
-    {
-      "id": "5pqfjq93lmkmuvi0pjj",
-      "mapId": 1656,
-      "x": 7,
-      "y": 3,
-      "text": "Potions",
-      "color": "#ff0000",
       "size": 12,
       "description": ""
     }
@@ -552,6 +422,347 @@
       "type": "dungeon",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "i59uultx4rmuvlbnzl",
+      "mapId": 1,
+      "x": 8,
+      "y": 5,
+      "text": "Town of Crendale",
+      "color": "#e6c25a",
+      "type": "town",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "hks7z291yhmuvlc2co",
+      "mapId": 37,
+      "x": 9,
+      "y": 7,
+      "text": "Alephvale",
+      "color": "#e6c25a",
+      "type": "town",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "bege65xfhximuvlcco1",
+      "mapId": 22,
+      "x": 9,
+      "y": 5,
+      "text": "North Coast",
+      "color": "#e6c25a",
+      "type": "town",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "4hswr0lk659muvlcsrl",
+      "mapId": 143,
+      "x": 6,
+      "y": 5,
+      "text": "Draconis",
+      "color": "#e6c25a",
+      "type": "town",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "to557u05njgmuvld1e9",
+      "mapId": 1632,
+      "x": 3,
+      "y": 7,
+      "text": "Dragonia",
+      "color": "#e6c25a",
+      "type": "town",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "0jxlua4xwhpvmuvld90v",
+      "mapId": 1205,
+      "x": 7,
+      "y": 6,
+      "text": "Babylon",
+      "color": "#e6c25a",
+      "type": "town",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "28bqaj3lithmuvlnvx2",
+      "mapId": 41,
+      "x": 6,
+      "y": 7,
+      "text": "PK AREA",
+      "color": "#ff0000",
+      "type": "danger",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "vte0f0pmr8muvlteyk",
+      "mapId": 143,
+      "x": 7,
+      "y": 3,
+      "text": "Bank of Draconis",
+      "color": "#6551fb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "6hekisxvb68muvltrm6",
+      "mapId": 143,
+      "x": 5,
+      "y": 7,
+      "text": "Emma's Potions",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "4wr68vc3zhmuvlvbak",
+      "mapId": 0,
+      "x": 11,
+      "y": 3,
+      "text": "Emma's Potions",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "r6exu0uisramuvlvo9k",
+      "mapId": 1,
+      "x": 4,
+      "y": 1,
+      "text": "Bank of Crendale",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "r6kbyb2liw8muvlw8x6",
+      "mapId": 96,
+      "x": 1,
+      "y": 3,
+      "text": "Arena / Bank / Potions",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "7q41pkvgof5muvlwmcf",
+      "mapId": 96,
+      "x": 13,
+      "y": 0,
+      "text": "Pet vendor",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "8s1wcd19w44muvlwz4k",
+      "mapId": 1,
+      "x": 1,
+      "y": 7,
+      "text": "Erlingtons",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "For all your fishing needs.",
+      "size": 18
+    },
+    {
+      "id": "kx5ltxwr7zmuvly2p4",
+      "mapId": 0,
+      "x": 2,
+      "y": 6,
+      "text": "Crendale Inn",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "110ywneaqjhlmuvlyjxa",
+      "mapId": 96,
+      "x": 8,
+      "y": 4,
+      "text": "Chef",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "30syeinefzvmuvlyvlu",
+      "mapId": 1,
+      "x": 13,
+      "y": 3,
+      "text": "Forge & Gems",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "zbfg70dtsysmuvlza06",
+      "mapId": 54,
+      "x": 5,
+      "y": 4,
+      "text": "Church / Class Changer",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "zdtjnyxirgomuvm00wr",
+      "mapId": 1632,
+      "x": 1,
+      "y": 1,
+      "text": "Bank of Dragonia",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "c3y5xzvuk1emuvm08y0",
+      "mapId": 1632,
+      "x": 13,
+      "y": 4,
+      "text": "Emma's Potions",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "07uboky9owk3muvm2ay3",
+      "mapId": 1632,
+      "x": 11,
+      "y": 2,
+      "text": "Alchemist",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "Also home to the Worm skill mission.",
+      "size": 18
+    },
+    {
+      "id": "y5fclev1bjmuvm2u8d",
+      "mapId": 1632,
+      "x": 6,
+      "y": 5,
+      "text": "Pet vendor",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "z6b5zkz3o6cmuvm3jya",
+      "mapId": 36,
+      "x": 11,
+      "y": 2,
+      "text": "Emma's Potions",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kbuozlfdifmuvm3q83",
+      "mapId": 36,
+      "x": 7,
+      "y": 7,
+      "text": "Enchanter",
+      "color": "#147ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ixhnx0iv1nrmuvm47rc",
+      "mapId": 1,
+      "x": 14,
+      "y": 6,
+      "text": "Daventry Tavern",
+      "color": "#eb1414",
+      "type": "danger",
+      "description": "PVP / GVG World event.",
+      "size": 18
+    },
+    {
+      "id": "uty07wmpzndmuvm5v3b",
+      "mapId": 37,
+      "x": 4,
+      "y": 4,
+      "text": "Bank of Aleph",
+      "color": "#145ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "4a73oxfz5qxmuvm6jfr",
+      "mapId": 143,
+      "x": 13,
+      "y": 2,
+      "text": "Verle",
+      "color": "#145ceb",
+      "type": "shop",
+      "description": "Trading skill items for Verle notes, and also purchase new equipment... if you have enough Verles that is.",
+      "size": 18
+    },
+    {
+      "id": "3egt26xpotsmuvm86yl",
+      "mapId": 1398,
+      "x": 6,
+      "y": 4,
+      "text": "Potions Vendor",
+      "color": "#145ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "aoy8jw0of7smuvm8job",
+      "mapId": 1068,
+      "x": 5,
+      "y": 2,
+      "text": "Bank (PVP)",
+      "color": "#145ceb",
+      "type": "danger",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "vd4ntn08t3muvm9opv",
+      "mapId": 1202,
+      "x": 4,
+      "y": 0,
+      "text": "Babylon Inn",
+      "color": "#145ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "aekhl2mg8dgmuvmafhf",
+      "mapId": 1656,
+      "x": 7,
+      "y": 3,
+      "text": "Emma's Potions",
+      "color": "#145ceb",
+      "type": "shop",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
@@ -818,6 +1029,19 @@
       "color": "#66a8ff",
       "opacity": 0.18,
       "size": 14
+    },
+    {
+      "id": "l92qtqucsnmuvlnelj",
+      "mapId": 41,
+      "x": 0,
+      "y": 0,
+      "w": 15,
+      "h": 12,
+      "text": "PVP / Guild V Guild",
+      "color": "#ff0000",
+      "opacity": 0.18,
+      "size": 14
     }
-  ]
+  ],
+  "legend": {}
 }
