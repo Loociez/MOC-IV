@@ -2,13 +2,14 @@
 <html lang="en" data-mode="edit">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1a0d38">
 <title>Mirage Livemap Editor</title>
 <style>
 :root{color-scheme:dark;--bg:#0b0518;--p1:#1a0d38;--p2:#251350;--p3:#35206e;--line:#4a2c8a;--gold:#e6c25a;--text:#f0eaff;--mut:#a899cf;--danger:#ff7b8f}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+body{overscroll-behavior:none;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
 button,input,select,textarea{font:inherit;color:var(--text);background:var(--p2);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
 button{cursor:pointer}button:hover:not(:disabled){background:var(--p3)}
 button.active,button.on{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
@@ -17,15 +18,15 @@ button.primary{background:#6d3fd8;border-color:var(--gold)}button.danger{color:v
 :focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 input[type=color]{padding:2px;width:48px;height:34px}input[type=range]{padding:0;width:100%}
 textarea{width:100%;min-height:80px;resize:vertical}input,select{max-width:100%}
-.app{height:100%;display:grid;grid-template-rows:auto 1fr}
+.app{height:100%;height:100dvh;display:grid;grid-template-rows:auto 1fr}
 header{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:var(--p1);border-bottom:1px solid var(--gold);z-index:20}
 .brand{font:700 20px Georgia,serif;color:var(--gold);margin-right:6px}.brand span{color:var(--text);font-weight:400}
 .seg{display:flex}.seg button:first-child{border-radius:6px 0 0 6px}.seg button:last-child{border-radius:0 6px 6px 0;margin-left:-1px}
 .go{display:flex;gap:4px}.go input{width:78px}
 .searchbox{flex:1 1 200px;max-width:340px}.searchbox input{width:100%}
 .status{margin-left:auto;color:var(--mut);font-size:12px}.status.ok{color:#8fe3ae}.status.warn{color:var(--gold)}.status.danger{color:var(--danger)}
-main{min-height:0;display:grid;grid-template-columns:auto 1fr;position:relative}
-aside{width:320px;overflow:auto;background:var(--p1);border-right:1px solid var(--line);padding:12px}
+main{min-height:0;display:flex;position:relative}
+aside{flex:none;width:320px;overflow:auto;background:var(--p1);border-right:1px solid var(--line);padding:12px}
 .noside aside{display:none}
 section{margin-bottom:16px}
 h3{font:700 15px Georgia,serif;color:var(--gold);margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
@@ -37,8 +38,8 @@ h3{font:700 15px Georgia,serif;color:var(--gold);margin:0 0 8px;padding-bottom:4
 .ctitle{font:700 16px Georgia,serif;color:var(--gold)}.desc{white-space:pre-wrap;margin:8px 0}
 a{color:#b9a2ff}pre{margin:0;white-space:pre-wrap;font:11px/1.5 ui-monospace,Consolas,monospace;color:var(--mut)}
 label{display:block}label.chk{display:flex;gap:6px;align-items:center;margin:4px 0}label.chk input{width:auto}
-#stage{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 50% 35%,#2a1559,#0b0518 75%);touch-action:none}
-#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#stage{flex:1;position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 50% 35%,#2a1559,#0b0518 75%);touch-action:none}
+#cv{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;position:absolute;inset:0;width:100%;height:100%;display:block}
 #hud{position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none}
 #hud>*{pointer-events:auto}.zoombar{display:flex;flex-direction:column}.zoombar button{width:36px;height:36px;padding:0;font-size:18px;border-radius:0}
 .zoombar button:first-child{border-radius:6px 6px 0 0}.zoombar button:last-child{border-radius:0 0 6px 6px}.zoombar button+button{margin-top:-1px}
@@ -53,8 +54,11 @@ label{display:block}label.chk{display:flex;gap:6px;align-items:center;margin:4px
 .modal h2{margin:0 0 10px;font:700 19px Georgia,serif;color:var(--gold)}
 .modal .f{margin:8px 0}.modal .f>label{color:var(--mut);font-size:12px}.modal input:not([type=color]):not([type=range]),.modal select{width:100%}
 .frow{display:flex;gap:10px}.frow>.f{flex:1}.actions{display:flex;gap:6px;margin-top:14px}.sp{flex:1}.hidden{display:none!important}
+#legend{display:grid;gap:2px}.leg{display:flex;gap:9px;align-items:flex-start;padding:6px 8px;border-radius:8px;cursor:pointer}.leg:hover{background:var(--p2)}.leg.off{opacity:.4}.leg b{font-weight:600}
+.leg .li{width:28px;height:28px;border-radius:50%;background:#2a1558;border:2px solid var(--gold);display:grid;place-items:center;font-size:14px;flex:none}.leg button{margin-left:auto;padding:0 7px}
 kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:11px}
-@media(max-width:820px){aside{position:absolute;z-index:30;height:100%;width:min(88vw,330px);box-shadow:8px 0 30px #000a}.status{display:none}}
+#sheet{position:absolute;left:8px;right:64px;bottom:8px;max-height:45%;overflow:auto;background:#12082af2;border:1px solid var(--gold);border-radius:12px;padding:10px 12px;z-index:4;display:none}
+@media(max-width:820px){aside{position:absolute;z-index:30;top:0;bottom:0;left:0;width:min(88vw,340px);box-shadow:8px 0 30px #000a}.status,#coords{display:none}header{gap:6px;padding:6px 8px}.brand{font-size:16px;margin:0}.brand span{display:none}.searchbox{flex:1 1 120px}html[data-mode=view] .go{display:none}input,select,textarea{font-size:16px}.zoombar button{width:44px;height:44px}}
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
@@ -75,7 +79,11 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 <div class="g2"><button id="t_select" class="active">Select <kbd>1</kbd></button><button id="t_label">Label <kbd>2</kbd></button><button id="t_marker">Marker <kbd>3</kbd></button><button id="t_region">Region <kbd>4</kbd></button></div>
 <div class="row"><select id="markerType" style="flex:1" aria-label="Default marker type"></select></div>
 <div class="row"><button id="undoBtn">Undo</button><button id="redoBtn">Redo</button></div>
+<div class="row"><label class="muted">Colour for new items <input id="penColor" type="color"></label></div>
+<label class="chk"><input id="quick" type="checkbox">Quick place (no dialog for markers and regions)</label>
+<p class="muted">New items reuse your last colour, size and marker type until you change them. Region tool: drag across several maps to make one region.</p>
 <p class="muted">Click the map to place. Drag a region to size it. Drag a selected item to move it. Double-click to edit.</p></section>
+<section><h3>Legend</h3><div id="legend"></div></section>
 <section><h3>Selected</h3><div id="card" class="card"></div></section>
 <section><h3>On this map</h3><div id="mapList" class="list"></div></section>
 <section><h3>Show on map</h3>
@@ -89,23 +97,23 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 <input id="annFile" type="file" accept=".json" class="hidden">
 <p class="muted">Edits autosave in this browser. Export, then replace <code>annotations.json</code> to publish them.</p></section>
 <section class="eo"><h3>Data and rendering</h3>
-<div class="row"><label class="muted">Mapdump <input id="jsonFile" type="file" accept=".json"></label></div>
+<div class="row"><label class="muted">Mapdump <input id="jsonFile" type="file" accept=".json,.bin"></label></div>
 <div class="row"><label class="muted">Tile assets folder <input id="assetFolder" type="file" webkitdirectory multiple></label></div>
 <div class="row"><label>Tile IDs <select id="offset"><option value="0">0-based</option><option value="1">1-based</option></select></label><label class="chk"><input id="reverse" type="checkbox">Reverse layers</label></div></section>
 <p class="muted">Scroll to zoom, drag to pan, double-click a map to fit it. <kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd> <kbd>W</kbd> and arrow keys also work.</p>
 </aside>
-<div id="stage"><canvas id="cv"></canvas><div id="tip"></div><div id="loading">Loading map data…</div>
+<div id="stage"><canvas id="cv"></canvas><div id="sheet"></div><div id="tip"></div><div id="loading">Loading map data…</div>
 <div id="hud"><div id="coords">–</div><div class="zoombar"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zFit" aria-label="Fit map" title="Fit map">⤢</button></div></div></div>
 </main></div>
 <div id="toast" role="status"></div>
 <div id="mb" class="mb"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt"></h2>
 <div class="f" data-k="label marker region"><label for="fText">Name</label><input id="fText"></div>
 <div class="f" data-k="marker"><label for="fType">Marker type</label><select id="fType"></select></div>
-<div class="frow"><div class="f" data-k="label region"><label for="fColor">Colour</label><input id="fColor" type="color"></div>
+<div class="frow"><div class="f" data-k="label marker region"><label for="fColor">Colour</label><input id="fColor" type="color"></div>
 <div class="f" data-k="label"><label for="fSize">Size</label><select id="fSize"><option value="12">Small</option><option value="16">Medium</option><option value="22">Large</option><option value="30">Huge</option></select></div>
 <div class="f" data-k="region"><label for="fOp">Fill opacity</label><input id="fOp" type="range" min="0" max=".6" step=".02"></div></div>
 <div class="f" data-k="label marker"><label for="fDesc">Description</label><textarea id="fDesc" placeholder="Shown to players. Links are clickable."></textarea></div>
-<div class="frow"><div class="f"><label for="fX">Tile X</label><input id="fX" type="number" min="0" max="15"></div><div class="f"><label for="fY">Tile Y</label><input id="fY" type="number" min="0" max="11"></div>
+<div class="frow" id="coordRow"><div class="f"><label for="fX">Tile X</label><input id="fX" type="number" min="0" max="15"></div><div class="f"><label for="fY">Tile Y</label><input id="fY" type="number" min="0" max="11"></div>
 <div class="f" data-k="region"><label for="fW">Width</label><input id="fW" type="number" min="1" max="16"></div><div class="f" data-k="region"><label for="fH">Height</label><input id="fH" type="number" min="1" max="12"></div></div>
 <div class="actions"><button id="mDel" class="danger">Delete</button><span class="sp"></span><button id="mCancel">Cancel</button><button id="mOk" class="primary">Save</button></div></div></div>
 <script>
@@ -119,29 +127,41 @@ let maps=[],cur=0,sheets=Array(SHEETS).fill(null),pos=new Map(),grid=new Map(),w
 let ann={version:1,labels:[],markers:[],regions:[]},idx=new Map(),sel=null,tool="select",hist=[],redo=[];
 let cam={x:0,y:0,z:1},show={label:1,marker:1,region:1,ids:1,grid:1},S={offset:0,reverse:false};
 let hits=[],hover=null,drag=null,draft=null,pend=null,raf=0,anim=0,space=false,hashT=0,tt=0,camSet=false;
+const TYPES={town:["Town","Town or village"],city:["City","City or major hub"],dungeon:["Dungeon","Dungeon entrance"],boss:["Boss","Boss encounter"],shop:["Shop","Shop or vendor"],quest:["Quest","Quest giver or objective"],portal:["Portal","Portal or travel point"],danger:["Danger","Dangerous area"],point:["Point","Point of interest"]};
+const COARSE=matchMedia("(pointer:coarse)").matches;let failed=false,userMoved=false;
+const hiddenTypes=new Set();let lead=new Set();
+let last={label:"#ffffff",marker:"#e6c25a",region:"#ffcc66",size:16,opacity:.18,type:"point"};
+try{Object.assign(last,JSON.parse(localStorage.getItem("mirage-livemap-last")||"{}"))}catch(e){}
+const saveLast=()=>{try{localStorage.setItem("mirage-livemap-last",JSON.stringify(last))}catch(e){}};
 const c1=new Map(),cS=new Map(),ptrs=new Map();let pinch=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const linkify=s=>esc(s).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
 const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36),clone=o=>JSON.parse(JSON.stringify(o)),clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 function status(s,c=""){const e=$("status");e.textContent=s;e.className="status "+c}
 function toast(s){const e=$("toast");e.textContent=s;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),2200)}
-const norm=x=>({version:1,labels:Array.isArray(x.labels)?x.labels:[],markers:Array.isArray(x.markers)?x.markers:[],regions:Array.isArray(x.regions)?x.regions:[]});
+const norm=x=>({version:1,labels:Array.isArray(x.labels)?x.labels:[],markers:Array.isArray(x.markers)?x.markers:[],regions:Array.isArray(x.regions)?x.regions:[],legend:x.legend&&typeof x.legend==='object'?x.legend:{}});
 const KINDS=["label","marker","region"],list=k=>ann[k+"s"];
 
 /* ---------- data ---------- */
 function parseDump(t){t=t.trim();try{const x=JSON.parse(t);return Array.isArray(x)?x:(x.maps||[])}catch(e){if(t.startsWith("{")&&t.endsWith("]"))return JSON.parse("["+t);throw new Error("Could not parse mapdump JSON.")}}
-function loadDump(t){
- const a=parseDump(t),I=n=>Number.isInteger(n)?n:-1;
- maps=a.map(m=>({tiles:m.tiles,n:I(m.map_north_id),s:I(m.map_south_id),w:I(m.map_west_id),e:I(m.map_east_id)}));
+function pack(tiles){const t=new Int16Array(1152).fill(-1);for(let x=0;x<16;x++){const c=tiles[x]||[];for(let y=0;y<12;y++){const L=c[y]||[];for(let k=0;k<6;k++){const v=L[STATIC[k]];t[(x*12+y)*6+k]=v>=0&&v<32768?v:-1}}}return t}
+function loadBin(buf){const dv=new DataView(buf);if(dv.getUint32(0,false)!==0x4d4c4d31)throw Error("Bad mapdump.bin");const n=dv.getUint32(4,true),out=[];
+ for(let i=0;i<n;i++){const o=8+i*2320,t=new Int16Array(1152);for(let j=0;j<1152;j++)t[j]=dv.getInt16(o+16+j*2,true);out.push({n:dv.getInt32(o,true),s:dv.getInt32(o+4,true),w:dv.getInt32(o+8,true),e:dv.getInt32(o+12,true),t})}return out}
+function loadDump(t){const a=parseDump(t),I=n=>Number.isInteger(n)?n:-1;setMaps(a.map(m=>({t:pack(m.tiles),n:I(m.map_north_id),s:I(m.map_south_id),w:I(m.map_west_id),e:I(m.map_east_id)})))}
+function setMaps(arr){maps=arr;
  if(!maps.length)throw Error("No maps found.");
  c1.clear();cS.clear();buildWorld();cur=cur<maps.length?cur:0;setCur(cur);
  const h=new URLSearchParams(location.hash.slice(1)),x=+h.get("x"),y=+h.get("y"),z=+h.get("z");
  if(h.get("z")&&!camSet){const W=stage.clientWidth,H=stage.clientHeight;cam={z,x:x-W/2/z,y:y-H/2/z}}else Object.assign(cam,fitMapT(cur));
- camSet=true;$("loading").classList.add("hidden");status(`${maps.length.toLocaleString()} maps loaded`,"ok");schedule();
+ camSet=true;status(`${maps.length.toLocaleString()} maps loaded`,"ok");schedule();
 }
-async function autoMap(){try{const r=await fetch("./mapdump.json",{cache:"no-store"});if(!r.ok)throw 0;loadDump(await r.text())}catch(e){$("loading").textContent=EDIT?"Choose mapdump.json in the side panel":"Could not load mapdump.json";status("Map data missing","warn")}}
+async function autoMap(){
+ try{const r=await fetch("./mapdump.bin");if(r.ok&&!/html/.test(r.headers.get("content-type")||"")){setMaps(loadBin(await r.arrayBuffer()));return}}catch(e){console.warn(e)}
+ try{const r=await fetch("./mapdump.json",{cache:"no-store"});if(!r.ok)throw new Error("mapdump.json not found");loadDump(await r.text())}
+ catch(e){failed=true;$("loading").textContent=EDIT?"Choose mapdump.json or mapdump.bin in the side panel":"Could not load the map ("+(e.message||"error")+"). Please reload.";status("Map data missing","warn")}
+}
 function setSheet(i,src){return new Promise(res=>{const im=new Image();im.onload=()=>{sheets[i]=im;invalidate();res(1)};im.onerror=()=>res(0);im.src=src})}
-async function autoSheets(){const r=await Promise.all([...Array(SHEETS).keys()].map(async i=>{try{const r=await fetch(`./assets/tiles${i}.png`);return r.ok?await setSheet(i,URL.createObjectURL(await r.blob())):0}catch(e){return 0}}));return r.filter(Boolean).length}
+async function autoSheets(){let d=0;const r=await Promise.all([...Array(SHEETS).keys()].map(async i=>{let ok=0;try{const r=await fetch(`./assets/tiles${i}.png`);ok=r.ok?await setSheet(i,URL.createObjectURL(await r.blob())):0}catch(e){}d++;if(!failed)$("loading").textContent=`Loading tiles ${d}/${SHEETS}…`;return ok}));return r.filter(Boolean).length}
 function invalidate(){c1.clear();cS.clear();schedule()}
 function drawTile(c,id,dx,dy,sc){
  const n=id-S.offset;if(n<0)return;const sh=Math.floor(n/PER),l=n%PER;if(sh>=SHEETS)return;
@@ -150,12 +170,12 @@ function drawTile(c,id,dx,dy,sc){
 }
 function renderMap(m,sc){
  const c=document.createElement("canvas");c.width=MW*sc;c.height=MH*sc;const g=c.getContext("2d");g.imageSmoothingEnabled=sc<1;
- const order=S.reverse?[...STATIC].reverse():STATIC;
- for(let x=0;x<16;x++)for(let y=0;y<12;y++){const L=(m.tiles[x]||[])[y]||[];for(const k of order)if(L[k]>=0)drawTile(g,L[k],x*TILE*sc,y*TILE*sc,sc)}
+ const order=S.reverse?[5,4,3,2,1,0]:[0,1,2,3,4,5];
+ for(let x=0;x<16;x++)for(let y=0;y<12;y++){const b=(x*12+y)*6;for(const k of order){const v=m.t[b+k];if(v>=0)drawTile(g,v,x*TILE*sc,y*TILE*sc,sc)}}
  return c;
 }
 function mapImg(id,small){
- const C=small?cS:c1,cap=small?2500:160;let c=C.get(id);
+ const C=small?cS:c1,cap=small?(COARSE?700:2500):(COARSE?36:160);let c=C.get(id);
  if(c){C.delete(id)}else c=renderMap(maps[id],small?.25:1);
  C.set(id,c);if(C.size>cap)C.delete(C.keys().next().value);return c;
 }
@@ -174,13 +194,13 @@ function schedule(){if(!raf)raf=requestAnimationFrame(draw)}
 function rectT(x,y,w,h,pad=.92){const W=stage.clientWidth,H=stage.clientHeight,z=clamp(Math.min(W/w,H/h)*pad,.04,24);return{z,x:x+w/2-W/2/z,y:y+h/2-H/2/z}}
 function fitMapT(id){const o=origin(id);return rectT(o.x,o.y,MW,MH)}
 function fitWorldT(){return pos.has(cur)?rectT(0,0,worldB.w*MW,worldB.h*MH,.97):fitMapT(cur)}
-function flyTo(t,ms=420){
+function flyTo(t,ms=420){userMoved=true;
  const s={...cam},t0=performance.now(),id=++anim;
  (function step(n){if(id!==anim)return;let k=Math.min(1,(n-t0)/ms);k=1-Math.pow(1-k,3);
   cam.z=Math.exp(Math.log(s.z)+(Math.log(t.z)-Math.log(s.z))*k);cam.x=s.x+(t.x-s.x)*k;cam.y=s.y+(t.y-s.y)*k;schedule();
   if(k<1)requestAnimationFrame(step);else changed()})(t0);
 }
-function zoomAt(px,py,nz){nz=clamp(nz,.04,24);const wx=cam.x+px/cam.z,wy=cam.y+py/cam.z;cam.z=nz;cam.x=wx-px/nz;cam.y=wy-py/nz;changed()}
+function zoomAt(px,py,nz){userMoved=true;nz=clamp(nz,.04,24);const wx=cam.x+px/cam.z,wy=cam.y+py/cam.z;cam.z=nz;cam.x=wx-px/nz;cam.y=wy-py/nz;changed()}
 function zoomBtn(f){anim++;zoomAt(stage.clientWidth/2,stage.clientHeight/2,cam.z*f)}
 function changed(){schedule();clearTimeout(hashT);hashT=setTimeout(()=>{if(!maps.length)return;const cx=cam.x+stage.clientWidth/2/cam.z,cy=cam.y+stage.clientHeight/2/cam.z;history.replaceState(null,"",`#map=${cur}&x=${Math.round(cx)}&y=${Math.round(cy)}&z=${cam.z.toFixed(2)}`)},300)}
 function at(px,py){
@@ -195,12 +215,13 @@ function visible(W,H){
  const o=[],x1=cam.x+W/cam.z,y1=cam.y+H/cam.z;
  for(const [id,p] of pos){const ox=p.x*MW,oy=p.y*MH;if(ox<x1&&ox+MW>cam.x&&oy<y1&&oy+MH>cam.y)o.push(id)}return o;
 }
-function pill(x,y,w,h,r=4){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle="rgba(18,8,42,.72)";ctx.fill()}
-function draw(){
- raf=0;const W=stage.clientWidth,H=stage.clientHeight,d=devicePixelRatio||1;
+function pill(x,y,w,h,r=4){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();ctx.fillStyle="rgba(18,8,42,.72)";ctx.fill()}
+function draw(){raf=0;try{paint()}catch(e){console.error(e);status("Render error: "+e.message,"danger")}}
+function paint(){
+ const W=stage.clientWidth,H=stage.clientHeight,d=Math.min(devicePixelRatio||1,2);
  if(cv.width!==Math.round(W*d)||cv.height!==Math.round(H*d)){cv.width=Math.round(W*d);cv.height=Math.round(H*d)}
  ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,W,H);hits=[];if(!maps.length)return;
- const z=cam.z,ids=visible(W,H),small=z<.3;ctx.imageSmoothingEnabled=z<1;
+ const z=cam.z,ids=visible(W,H),small=z<(COARSE?.5:.3);ctx.imageSmoothingEnabled=z<1;
  for(const id of ids){const o=origin(id),sx=(o.x-cam.x)*z,sy=(o.y-cam.y)*z;
   ctx.drawImage(mapImg(id,small),sx,sy,MW*z,MH*z);
   ctx.strokeStyle=id===cur?"#e6c25a":"rgba(160,130,255,.25)";ctx.lineWidth=id===cur?2:1;ctx.strokeRect(sx,sy,MW*z,MH*z)}
@@ -212,22 +233,22 @@ function draw(){
  ctx.textBaseline="alphabetic";ctx.textAlign="left";
  for(const id of ids){const e=idx.get(id);if(!e)continue;
   if(show.region)for(const r of e.regions){const [x,y]=P(id,r.x,r.y),w=r.w*TILE*z,h=r.h*TILE*z;ctx.fillStyle=hexA(r.color,r.opacity);ctx.fillRect(x,y,w,h);ctx.strokeStyle=r.color;ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
-   if(r.text&&z>=.5){const fs=clamp(13*Math.max(z,.8),12,26);ctx.font=`bold ${fs}px system-ui,sans-serif`;ctx.fillStyle=r.color;ctx.fillText(r.text,x+5,y+fs+3,Math.max(20,w-8))}flag(r,"region",{x,y,w,h})}
-  if(show.marker)for(const m of e.markers){const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
-   ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle="#2a1558";ctx.fill();ctx.strokeStyle="#e6c25a";ctx.lineWidth=2;ctx.stroke();
+   if(r.text&&z>=.5&&(!r.group||lead.has(r.id))){const fs=clamp(13*Math.max(z,.8),12,26);ctx.font=`bold ${fs}px system-ui,sans-serif`;ctx.fillStyle=r.color;ctx.fillText(r.text,x+5,y+fs+3,Math.max(20,w-8))}flag(r,"region",{x,y,w,h})}
+  if(show.marker)for(const m of e.markers){if(hiddenTypes.has(m.type))continue;const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
+   const mc=m.color||"#e6c25a";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle="#2a1558";ctx.fill();ctx.fillStyle=hexA(mc,.4);ctx.fill();ctx.strokeStyle=mc;ctx.lineWidth=2.5;ctx.stroke();
    ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ICONS[m.type]||"📍",cx,cy+1);ctx.textAlign="left";ctx.textBaseline="alphabetic";
    let w=r*2;if(m.text&&z>=.5){const fs=clamp(12*z,12,20);ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(m.text).width;pill(cx+r+3,cy-fs/2-3,tw+10,fs+6);ctx.fillStyle="#fff";ctx.fillText(m.text,cx+r+8,cy+fs/2-2);w+=tw+14}
    flag(m,"marker",{x:cx-r,y:cy-r,w,h:r*2})}
   if(show.label&&z>=.1)for(const l of e.labels){const [x,y]=P(id,l.x,l.y),fs=Math.min(40,Math.max(11,(l.size||12)*z));ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(l.text).width;
    pill(x,y,tw+10,fs+7);ctx.fillStyle=l.color||"#fff";ctx.fillText(l.text,x+5,y+fs+1);flag(l,"label",{x,y,w:tw+10,h:fs+7})}
   if(show.ids&&z>=.2&&z<3){const [x,y]=P(id,0,0);ctx.font="bold 11px ui-monospace,Consolas,monospace";const t=String(id),tw=ctx.measureText(t).width;pill(x+3,y+3,tw+8,16);ctx.fillStyle="#cdbbff";ctx.fillText(t,x+7,y+15)}}
- if(draft){const [x,y]=P(draft.mapId,draft.x,draft.y);ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle="#e6c25a";ctx.lineWidth=2;ctx.fillStyle="rgba(230,194,90,.2)";ctx.fillRect(x,y,draft.w*TILE*z,draft.h*TILE*z);ctx.strokeRect(x,y,draft.w*TILE*z,draft.h*TILE*z);ctx.restore()}
+ if(draft){const x0=Math.min(draft.x0,draft.x1),y0=Math.min(draft.y0,draft.y1),w=Math.abs(draft.x1-draft.x0)+1,h=Math.abs(draft.y1-draft.y0)+1,x=(x0*TILE-cam.x)*z,y=(y0*TILE-cam.y)*z;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle="#e6c25a";ctx.lineWidth=2;ctx.fillStyle="rgba(230,194,90,.2)";ctx.fillRect(x,y,w*TILE*z,h*TILE*z);ctx.strokeRect(x,y,w*TILE*z,h*TILE*z);ctx.restore()}
 }
 function hexA(h,a){h=(h||"#fff").replace("#","");if(h.length===3)h=[...h].map(x=>x+x).join("");return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a??.18})`}
 const hitAt=(px,py)=>{for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(px>=h.x&&px<=h.x+h.w&&py>=h.y&&py<=h.y+h.h)return h}return null};
 
 /* ---------- state ---------- */
-function reindex(){idx=new Map();for(const k of KINDS)for(const a of list(k)){let e=idx.get(a.mapId);if(!e)idx.set(a.mapId,e={labels:[],markers:[],regions:[]});e[k+"s"].push(a)}}
+function reindex(){lead=new Set();const sg=new Set();for(const r of ann.regions)if(r.group&&!sg.has(r.group)){sg.add(r.group);lead.add(r.id)}idx=new Map();for(const k of KINDS)for(const a of list(k)){let e=idx.get(a.mapId);if(!e)idx.set(a.mapId,e={labels:[],markers:[],regions:[]});e[k+"s"].push(a)}}
 const getSel=()=>sel?list(sel.kind).find(x=>x.id===sel.id)||null:null;
 function select(a,k){sel=a?{kind:k,id:a.id}:null;updateCard();renderList();schedule()}
 function setCur(id){cur=id;$("mapId").value=id;$("mapBtn").disabled=false;updateInfo();renderList();for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]]){const n=maps[id]?.[k];$(b).disabled=!(n>=0&&n<maps.length)}changed()}
@@ -236,12 +257,22 @@ function focusAnn(a,k){setCur(a.mapId);select(a,k);const o=origin(a.mapId),z=Mat
  const w=k==="region"?a.w:1,h=k==="region"?a.h:1;flyTo({z,x:o.x+(a.x+w/2)*TILE-W/2/z,y:o.y+(a.y+h/2)*TILE-H/2/z})}
 function updateInfo(){const m=maps[cur];if(!m)return;const p=pos.get(cur),e=idx.get(cur)||{labels:[],markers:[],regions:[]};
  $("mapInfo").textContent=`Map ${cur}${p?`  ·  world ${p.x}, ${p.y}`:"  ·  not linked to the world"}\nN ${m.n}  S ${m.s}  W ${m.w}  E ${m.e}\n${e.labels.length} labels, ${e.markers.length} markers, ${e.regions.length} regions`}
-function updateCard(){
+function syncSheet(){const sh=$("sheet"),on=!!getSel()&&matchMedia("(max-width:820px)").matches&&document.body.classList.contains("noside");sh.style.display=on?"block":"none";if(on)sh.innerHTML='<button data-act="close" style="float:right" aria-label="Close">✕</button>'+$("card").innerHTML}
+function updateCard(){updateCard0();syncSheet()}
+function updateCard0(){
  const a=getSel(),el=$("card");
  if(!a){el.innerHTML='<span class="muted">Select a label, marker or region on the map.</span>';return}
- el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ICONS[a.type]||"📍":""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
+ el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ICONS[a.type]||"📍":""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}${a.group?' · part of a multi-map region':''}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
  <div class="row"><button data-act="fly">Show on map</button>${EDIT?'<button data-act="edit">Edit</button><button data-act="dup">Duplicate</button><button data-act="del" class="danger">Delete</button>':""}</div>`;
 }
+function renderLegend(){
+ const n={};for(const m of ann.markers)n[m.type]=(n[m.type]||0)+1;
+ $("legend").innerHTML=Object.entries(TYPES).map(([k,[name,def]])=>`<div class="leg${hiddenTypes.has(k)?" off":""}" data-t="${k}" tabindex="0" role="button" aria-pressed="${!hiddenTypes.has(k)}"><span class="li">${ICONS[k]}</span><span><b>${name}</b> <span class="muted">${n[k]||0}</span><div class="muted">${esc(ann.legend?.[k]||def)}</div></span>${EDIT?`<button data-e="${k}" title="Edit meaning" aria-label="Edit meaning">✎</button>`:""}</div>`).join("")+'<div class="muted" style="margin-top:6px">Click a type to show or hide it on the map.</div>';
+}
+$("legend").onclick=e=>{const b=e.target.closest("[data-e]");
+ if(b){const k=b.dataset.e,v=prompt(`What does "${TYPES[k][0]}" mean?`,ann.legend?.[k]||TYPES[k][1]);if(v!==null){hpush();ann.legend={...ann.legend,[k]:v.trim()||undefined};persist();renderLegend()}return}
+ const r=e.target.closest("[data-t]");if(!r)return;const k=r.dataset.t;hiddenTypes.has(k)?hiddenTypes.delete(k):hiddenTypes.add(k);renderLegend();schedule()};
+$("legend").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.target.click()}};
 function renderList(){
  const e=idx.get(cur),el=$("mapList"),rows=e?[...e.labels.map(a=>["label",a]),...e.markers.map(a=>["marker",a]),...e.regions.map(a=>["region",a])]:[];
  el.innerHTML=rows.length?rows.map(([k,a])=>`<div class="item${sel&&sel.id===a.id?" sel":""}" data-k="${k}" data-id="${esc(a.id)}">${k==="marker"?ICONS[a.type]||"📍":k==="label"?"🏷️":"▣"} <b>${esc(a.text||"Untitled")}</b></div>`).join(""):'<div class="item muted">Nothing here yet.</div>';
@@ -254,26 +285,37 @@ function search(){
  el.innerHTML=out.length?out.slice(0,40).map((r,i)=>r.map!=null?`<div class="item" data-r="${i}">🗺️ <b>Open map ${r.map}</b></div>`:`<div class="item" data-r="${i}">${r.k==="marker"?ICONS[r.a.type]||"📍":"🏷️"} <b>${esc(r.a.text||"Untitled")}</b><div class="muted">Map ${r.a.mapId}</div></div>`).join(""):'<div class="item muted">No matches.</div>';
  el._r=out;
 }
-$("results").onclick=e=>{const n=e.target.closest("[data-r]");if(!n)return;const r=$("results")._r[n.dataset.r];if(r.map!=null)go(r.map);else focusAnn(r.a,r.k);if(innerWidth<820)document.body.classList.add("noside")};
-$("search").oninput=search;$("search").onkeydown=e=>{if(e.key==="Enter"){const r=$("results")._r?.[0];if(r){r.map!=null?go(r.map):focusAnn(r.a,r.k)}}};
-$("mapList").onclick=e=>{const n=e.target.closest("[data-id]");if(!n)return;const a=list(n.dataset.k).find(x=>x.id===n.dataset.id);if(a)focusAnn(a,n.dataset.k)};
-$("card").onclick=e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=getSel();if(!a)return;
- ({fly:()=>focusAnn(a,sel.kind),edit:()=>openModal(sel.kind,a),dup:()=>{hpush();const c={...clone(a),id:uid(),x:Math.min(15,a.x+1)};list(sel.kind).push(c);after();select(c,sel.kind)},del:delSel})[b.dataset.act]()};
+$("results").onclick=e=>{const n=e.target.closest("[data-r]");if(!n)return;const r=$("results")._r[n.dataset.r];if(innerWidth<820)document.body.classList.add("noside");if(r.map!=null)go(r.map);else focusAnn(r.a,r.k)};
+$("search").oninput=()=>{if(innerWidth<820&&$("search").value.trim()){document.body.classList.remove("noside");syncSheet()}search()};$("search").onkeydown=e=>{if(e.key==="Enter"){const r=$("results")._r?.[0];if(r){r.map!=null?go(r.map):focusAnn(r.a,r.k)}}};
+$("mapList").onclick=e=>{const n=e.target.closest("[data-id]");if(!n)return;const a=list(n.dataset.k).find(x=>x.id===n.dataset.id);if(a){if(innerWidth<820)document.body.classList.add("noside");focusAnn(a,n.dataset.k)}};
+$("sheet").onclick=$("card").onclick=e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=getSel();if(!a)return;
+ ({close:()=>select(null),fly:()=>focusAnn(a,sel.kind),edit:()=>openModal(sel.kind,a),dup:()=>{hpush();const c={...clone(a),id:uid(),x:Math.min(15,a.x+1)};delete c.group;list(sel.kind).push(c);after();select(c,sel.kind)},del:delSel})[b.dataset.act]()};
 
 /* ---------- editing ---------- */
 function persist(t){if(!EDIT)return;try{localStorage.setItem("mirage-livemap-annotations",JSON.stringify(ann));if(t)toast("Saved in this browser")}catch(e){toast("Could not save in this browser")}}
-function after(){reindex();persist();if(sel&&!getSel())sel=null;updateCard();renderList();updateInfo();schedule()}
+function after(){reindex();persist();renderLegend();if(sel&&!getSel())sel=null;updateCard();renderList();updateInfo();schedule()}
 function hpush(){hist.push(JSON.stringify(ann));if(hist.length>80)hist.shift();redo=[]}
 function undo(){if(!hist.length)return toast("Nothing to undo");redo.push(JSON.stringify(ann));ann=norm(JSON.parse(hist.pop()));after()}
 function redoIt(){if(!redo.length)return toast("Nothing to redo");hist.push(JSON.stringify(ann));ann=norm(JSON.parse(redo.pop()));after()}
-function delSel(){const a=getSel();if(!a)return;hpush();const arr=list(sel.kind);arr.splice(arr.findIndex(x=>x.id===a.id),1);sel=null;after();toast("Deleted")}
-function setTool(t){tool=t;for(const k of ["select","label","marker","region"])$("t_"+k)?.classList.toggle("active",k===t);cv.style.cursor=t==="select"?"":"crosshair"}
+function delSel(){const a=getSel();if(!a)return;const arr=list(sel.kind),g=sel.kind==="region"&&a.group?arr.filter(r=>r.group===a.group):[a];if(g.length>1&&!confirm(`This region spans ${g.length} maps. Delete all of it?`))return;hpush();for(const r of g)arr.splice(arr.indexOf(r),1);sel=null;after();toast("Deleted")}
+function setTool(t){tool=t;for(const k of ["select","label","marker","region"])$("t_"+k)?.classList.toggle("active",k===t);cv.style.cursor=t==="select"?"":"crosshair";const pc=$("penColor");pc.disabled=t==="select";if(t!=="select")pc.value=last[t]}
+function placeRegion(r){
+ const x0=Math.min(r.x0,r.x1),x1=Math.max(r.x0,r.x1),y0=Math.min(r.y0,r.y1),y1=Math.max(r.y0,r.y1),P=[];
+ for(let cy=Math.floor(y0/12);cy<=Math.floor(y1/12);cy++)for(let cx=Math.floor(x0/16);cx<=Math.floor(x1/16);cx++){
+  const id=pos.has(cur)?grid.get(cx+","+cy):(cx===0&&cy===0?cur:undefined);if(id==null)continue;
+  const a=Math.max(x0,cx*16),b=Math.min(x1,cx*16+15),c=Math.max(y0,cy*12),d=Math.min(y1,cy*12+11);
+  P.push({id:uid(),mapId:id,x:a-cx*16,y:c-cy*12,w:b-a+1,h:d-c+1})}
+ if(!P.length)return;if(P.length>1){const g=uid();P.forEach(p=>p.group=g)}
+ if($("quick").checked){hpush();for(const p of P)ann.regions.push({...p,text:"",color:last.region,opacity:last.opacity,size:14});after();select(ann.regions[ann.regions.length-1],"region");toast(P.length>1?`Region added across ${P.length} maps`:"Region added");return}
+ openModal("region",{...P[0],_pieces:P});
+}
 function openModal(kind,data){
  pend={kind,data:clone(data),isNew:!list(kind).some(x=>x.id===data.id)};const d=pend.data;
  $("mt").textContent=`${pend.isNew?"Add":"Edit"} ${kind}`;$("mDel").classList.toggle("hidden",pend.isNew);
  document.querySelectorAll("#mb .f[data-k]").forEach(f=>f.classList.toggle("hidden",!f.dataset.k.split(" ").includes(kind)));
- $("fText").value=d.text||"";$("fColor").value=d.color||(kind==="region"?"#ffcc66":"#ffffff");$("fSize").value=String(d.size||16);$("fDesc").value=d.description||"";
- $("fType").value=d.type||$("markerType").value;$("fOp").value=d.opacity??.18;$("fX").value=d.x;$("fY").value=d.y;$("fW").value=d.w||1;$("fH").value=d.h||1;
+ $("fText").value=d.text||"";$("fColor").value=d.color||last[kind];$("fSize").value=String(pend.isNew?last.size:d.size||16);$("fDesc").value=d.description||"";
+ $("fType").value=d.type||$("markerType").value;$("fOp").value=d.opacity??last.opacity;$("fX").value=d.x;$("fY").value=d.y;$("fW").value=d.w||1;$("fH").value=d.h||1;
+ const multi=(d._pieces?.length||0)>1;$("coordRow").classList.toggle("hidden",multi);if(multi)$("mt").textContent=`Add region across ${d._pieces.length} maps`;
  $("mb").style.display="flex";setTimeout(()=>$("fText").focus(),20);
 }
 function closeModal(){$("mb").style.display="none";pend=null}
@@ -282,9 +324,13 @@ function saveModal(){
  a.text=$("fText").value.trim()||(kind==="region"?"Region":kind==="label"?"Label":"");
  a.x=clamp(+$("fX").value||0,0,15);a.y=clamp(+$("fY").value||0,0,11);
  if(kind==="label"){a.color=$("fColor").value;a.size=+$("fSize").value;a.description=$("fDesc").value}
- if(kind==="marker"){a.type=$("fType").value;a.description=$("fDesc").value;a.size=18}
+ if(kind==="marker"){a.color=$("fColor").value;a.type=$("fType").value;a.description=$("fDesc").value;a.size=18}
  if(kind==="region"){a.color=$("fColor").value;a.opacity=+$("fOp").value;a.size=14;a.w=clamp(+$("fW").value||1,1,16-a.x);a.h=clamp(+$("fH").value||1,1,12-a.y)}
- const arr=list(kind),i=arr.findIndex(x=>x.id===a.id);i>=0?arr[i]=a:arr.push(a);after();select(a,kind);closeModal();
+ last[kind]=$("fColor").value;if(kind==="label")last.size=a.size;if(kind==="region")last.opacity=a.opacity;if(kind==="marker"){last.type=a.type;$("markerType").value=a.type}saveLast();if(tool===kind)$("penColor").value=last[kind];
+ const arr=list(kind);
+ if(kind==="region"&&a._pieces){const P=a._pieces;delete a._pieces;if(P.length>1){for(const p of P)arr.push({...p,text:a.text,color:a.color,opacity:a.opacity,size:14});after();select(arr[arr.length-P.length],"region");closeModal();return}}
+ if(kind==="region"&&a.group)for(const r of arr)if(r.group===a.group&&r.id!==a.id){r.text=a.text;r.color=a.color;r.opacity=a.opacity}
+ delete a._pieces;const i=arr.findIndex(x=>x.id===a.id);i>=0?arr[i]=a:arr.push(a);after();select(a,kind);closeModal();
 }
 async function loadAnn(force){
  if(EDIT&&!force){try{const x=JSON.parse(localStorage.getItem("mirage-livemap-annotations")||"null");if(x){ann=norm(x);reindex();return"draft"}}catch(e){}}
@@ -293,24 +339,23 @@ async function loadAnn(force){
 
 /* ---------- pointer input ---------- */
 cv.addEventListener("pointerdown",e=>{
- cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY});anim++;
+ cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY});anim++;userMoved=true;if(innerWidth<820&&!document.body.classList.contains("noside")){document.body.classList.add("noside");syncSheet()}
  if(ptrs.size===2){drag=null;const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:cam.z};return}
  const h=hitAt(e.offsetX,e.offsetY),p=at(e.offsetX,e.offsetY);drag={sx:e.offsetX,sy:e.offsetY,cx:cam.x,cy:cam.y,moved:false,mode:"pan",h,p};
  if(EDIT&&e.button===0&&!space){
   if(tool==="select"&&h&&sel&&h.a.id===sel.id)drag.mode="move";
-  else if(tool==="region"&&p.id!=null){drag.mode="draw";draft={mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11),w:1,h:1}}
+  else if(tool==="region"&&p.id!=null){drag.mode="draw";const gx=Math.floor(p.wx/TILE),gy=Math.floor(p.wy/TILE);draft={x0:gx,y0:gy,x1:gx,y1:gy}}
  }
 });
 cv.addEventListener("pointermove",e=>{
  const px=e.offsetX,py=e.offsetY;if(ptrs.has(e.pointerId))ptrs.set(e.pointerId,{x:px,y:py});
  if(pinch&&ptrs.size===2){const [a,b]=[...ptrs.values()];zoomAt((a.x+b.x)/2,(a.y+b.y)/2,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d);return}
- const p=at(px,py);$("coords").textContent=p.id!=null?`Map ${p.id} · tile ${p.tx}, ${p.ty}`+(EDIT&&maps[p.id]?` · L: ${((maps[p.id].tiles[p.tx]||[])[p.ty]||[]).filter(v=>v>=0).join(",")}`:""):"–";
- if(drag){const dx=px-drag.sx,dy=py-drag.sy;if(!drag.moved&&Math.hypot(dx,dy)>4){drag.moved=true;if(drag.mode==="move")hpush()}
+ const p=at(px,py);$("coords").textContent=p.id!=null?`Map ${p.id} · tile ${p.tx}, ${p.ty}`+(EDIT&&maps[p.id]?` · L: ${Array.from(maps[p.id].t.subarray((p.tx*12+p.ty)*6,(p.tx*12+p.ty)*6+6)).filter(v=>v>=0).join(",")}`:""):"–";
+ if(drag){const dx=px-drag.sx,dy=py-drag.sy;if(!drag.moved&&Math.hypot(dx,dy)>(e.pointerType==="touch"?10:4)){drag.moved=true;if(drag.mode==="move")hpush()}
   if(!drag.moved)return;
   if(drag.mode==="pan"){cam.x=drag.cx-dx/cam.z;cam.y=drag.cy-dy/cam.z;cv.style.cursor="grabbing";changed()}
   else if(drag.mode==="move"){const a=getSel(),o=origin(a.mapId),w=a.w||1,h=a.h||1;a.x=clamp(Math.floor((p.wx-o.x)/TILE),0,16-w);a.y=clamp(Math.floor((p.wy-o.y)/TILE),0,12-h);reindex();schedule()}
-  else if(drag.mode==="draw"){const o=origin(draft.mapId),tx=clamp(Math.floor((p.wx-o.x)/TILE),0,15),ty=clamp(Math.floor((p.wy-o.y)/TILE),0,11),s=drag.p;
-   draft.x=Math.min(tx,clamp(s.tx,0,15));draft.y=Math.min(ty,clamp(s.ty,0,11));draft.w=Math.abs(tx-clamp(s.tx,0,15))+1;draft.h=Math.abs(ty-clamp(s.ty,0,11))+1;schedule()}
+  else if(drag.mode==="draw"){draft.x1=Math.floor(p.wx/TILE);draft.y1=Math.floor(p.wy/TILE);schedule()}
   return}
  const h=hitAt(px,py);if((h?.a.id||0)!==(hover?.a.id||0)){hover=h;schedule()}
  cv.style.cursor=h?"pointer":EDIT&&tool!=="select"?"crosshair":"";
@@ -319,32 +364,34 @@ cv.addEventListener("pointermove",e=>{
 cv.addEventListener("pointerleave",()=>{$("tip").style.display="none"});
 function pointerEnd(e){
  ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;if(!drag||ptrs.size)return;const d=drag;drag=null;cv.style.cursor="";
- if(d.mode==="draw"&&d.moved){const r=draft;draft=null;openModal("region",{id:uid(),...r});return}
+ if(d.mode==="draw"&&d.moved){const r=draft;draft=null;placeRegion(r);return}
  draft=null;if(d.mode==="move"&&d.moved){after();return}if(d.moved)return;
  const h=d.h,p=d.p;
- if(EDIT&&(tool==="label"||tool==="marker")&&p.id!=null){openModal(tool,{id:uid(),mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11)});return}
- if(EDIT&&tool==="region"&&p.id!=null){openModal("region",{id:uid(),mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11),w:1,h:1});return}
+ if(EDIT&&(tool==="label"||tool==="marker")&&p.id!=null){const d={id:uid(),mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11)};
+ if(tool==="marker"&&$("quick").checked){hpush();Object.assign(d,{type:$("markerType").value,text:"",description:"",size:18,color:last.marker});ann.markers.push(d);after();select(d,"marker");toast("Marker added");return}
+ openModal(tool,d);return}
+ if(EDIT&&tool==="region"&&p.id!=null){const g=Math.floor(p.wx/TILE),k=Math.floor(p.wy/TILE);placeRegion({x0:g,y0:k,x1:g,y1:k});return}
  if(h){select(h.a,h.kind)}else{select(null);if(p.id!=null&&p.id!==cur)setCur(p.id)}
 }
 cv.addEventListener("pointerup",pointerEnd);cv.addEventListener("pointercancel",pointerEnd);
 cv.addEventListener("dblclick",e=>{const h=hitAt(e.offsetX,e.offsetY);if(EDIT&&h){openModal(h.kind,h.a);return}
  if(h)return focusAnn(h.a,h.kind);const p=at(e.offsetX,e.offsetY);if(p.id!=null)go(p.id)});
 cv.addEventListener("wheel",e=>{e.preventDefault();anim++;zoomAt(e.offsetX,e.offsetY,cam.z*Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015)*(e.deltaMode===1?20:1)))},{passive:false});
-new ResizeObserver(schedule).observe(stage);
+new ResizeObserver(()=>{if(!userMoved&&maps.length&&camSet&&!location.hash.includes("z="))Object.assign(cam,fitMapT(cur));schedule()}).observe(stage);
 
 /* ---------- controls ---------- */
 const fit=()=>flyTo(fitMapT(cur));
 $("worldBtn").onclick=()=>flyTo(fitWorldT());$("mapBtn").onclick=fit;$("zFit").onclick=fit;$("zIn").onclick=()=>zoomBtn(1.5);$("zOut").onclick=()=>zoomBtn(1/1.5);
 $("goBtn").onclick=()=>go($("mapId").value);$("mapId").onkeydown=e=>{if(e.key==="Enter")go($("mapId").value)};
 for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]])$(b).onclick=()=>{const n=maps[cur]?.[k];if(n>=0&&n<maps.length)go(n)};
-$("menuBtn").onclick=()=>{document.body.classList.toggle("noside");setTimeout(schedule,30)};
+$("menuBtn").onclick=()=>{document.body.classList.toggle("noside");syncSheet();setTimeout(schedule,30)};
 $("shareBtn").onclick=async()=>{clearTimeout(hashT);changed();setTimeout(async()=>{try{await navigator.clipboard.writeText(location.href);toast("Link copied")}catch(e){toast("Copy the address bar link")}},350)};
 for(const [id,k] of [["cbLabel","label"],["cbMarker","marker"],["cbRegion","region"],["cbIds","ids"],["cbGrid","grid"]]){const n=$(id);if(n)n.onchange=()=>{show[k]=n.checked?1:0;schedule()}}
 $("mOk").onclick=saveModal;
 if(EDIT){
  $("markerType").innerHTML=$("fType").innerHTML=Object.entries(ICONS).map(([k,v])=>`<option value="${k}">${v} ${k}</option>`).join("");
  for(const k of ["select","label","marker","region"])$("t_"+k).onclick=()=>setTool(k);
- $("undoBtn").onclick=undo;$("redoBtn").onclick=redoIt;$("mCancel").onclick=closeModal;$("mDel").onclick=()=>{const a=pend.data;closeModal();sel={kind:pend.kind,id:a.id};delSel()};
+ $("undoBtn").onclick=undo;$("markerType").value=last.type;$("penColor").oninput=e=>{if(tool!=="select"){last[tool]=e.target.value;saveLast()}};setTool("select");$("redoBtn").onclick=redoIt;$("mCancel").onclick=closeModal;$("mDel").onclick=()=>{const a=pend.data;closeModal();sel={kind:pend.kind,id:a.id};delSel()};
  $("mb").onclick=e=>{if(e.target===$("mb"))closeModal()};
  $("saveBtn").onclick=()=>persist(true);$("importBtn").onclick=()=>$("annFile").click();
  $("exportBtn").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(ann,null,2)],{type:"application/json"}));a.download="annotations.json";a.click();toast("Exported annotations.json")};
@@ -352,7 +399,7 @@ if(EDIT){
  $("reloadBtn").onclick=async()=>{if(!confirm("Replace your browser draft with the published annotations.json?"))return;hpush();await loadAnn(true);after();toast("Reloaded annotations.json")};
  $("clearBtn").onclick=()=>{if(confirm("Delete every annotation? You can undo this.")){hpush();ann=norm({});after()}};
  $("pngBtn").onclick=()=>{const c=mapImg(cur,false),a=document.createElement("a");a.download=`map-${cur}.png`;a.href=c.toDataURL();a.click()};
- $("jsonFile").onchange=async e=>{try{loadDump(await e.target.files[0].text())}catch(x){status(x.message,"danger")}};
+ $("jsonFile").onchange=async e=>{try{const f=e.target.files[0];/\.bin$/i.test(f.name)?setMaps(loadBin(await f.arrayBuffer())):loadDump(await f.text());$("loading").classList.add("hidden")}catch(x){status(x.message,"danger")}};
  $("assetFolder").onchange=e=>{let n=0;for(const f of e.target.files){const m=f.name.match(/^tiles(\d+)\.png$/i);if(m&&+m[1]<SHEETS){setSheet(+m[1],URL.createObjectURL(f));n++}}toast(`Loaded ${n} tile sheets`)};
  $("offset").onchange=()=>{S.offset=+$("offset").value;invalidate()};$("reverse").onchange=()=>{S.reverse=$("reverse").checked;invalidate()};
  addEventListener("beforeunload",()=>persist());
@@ -374,9 +421,10 @@ document.addEventListener("keyup",e=>{if(e.key===" ")space=false});
 (async()=>{
  if(innerWidth<820)document.body.classList.add("noside");
  const h=new URLSearchParams(location.hash.slice(1));if(h.get("map")!=null)cur=+h.get("map")||0;
- const src=await loadAnn();updateCard();renderList();if(src==="draft")toast("Loaded your unsaved browser draft");
+ const src=await loadAnn();updateCard();renderList();renderLegend();if(src==="draft")toast("Loaded your unsaved browser draft");
+ setTimeout(()=>{if(maps.length)$("loading").classList.add("hidden")},15000);$("loading").onclick=()=>{if(maps.length)$("loading").classList.add("hidden")};
  const [,n]=await Promise.all([autoMap(),autoSheets()]);
- if(maps.length)status(`${maps.length.toLocaleString()} maps · ${n}/${SHEETS} tile sheets`,n===SHEETS?"ok":"warn");
+ if(maps.length){$("loading").classList.add("hidden");status(`${maps.length.toLocaleString()} maps · ${n}/${SHEETS} tile sheets`,n===SHEETS?"ok":"warn")}
 })();
 })();
 </script>
