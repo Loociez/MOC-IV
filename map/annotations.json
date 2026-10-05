@@ -32,16 +32,6 @@
       "description": "An Inn so you can rest easy."
     },
     {
-      "id": "mbhjun2vykmuuqhe39",
-      "mapId": 0,
-      "x": 1,
-      "y": 4,
-      "text": "Down the Well",
-      "color": "#ffffff",
-      "size": 12,
-      "description": "Down the Well ( Normal Dungeon)\nWiki URL: https://loociez.github.io/MOC-W/dungeons/down-the-well.html"
-    },
-    {
       "id": "083c09q8jbsmuuqoqcb",
       "mapId": 1,
       "x": 4,
@@ -132,26 +122,6 @@
       "description": ""
     },
     {
-      "id": "mxwepcl9idemuurgglq",
-      "mapId": 2216,
-      "x": 3,
-      "y": 3,
-      "text": "Hell Well",
-      "color": "#ffa200",
-      "size": 16,
-      "description": ""
-    },
-    {
-      "id": "hulk3th5kcmuurgvqs",
-      "mapId": 131,
-      "x": 8,
-      "y": 7,
-      "text": "N / NM Haunted House",
-      "color": "#f25a07",
-      "size": 12,
-      "description": ""
-    },
-    {
       "id": "jzkqiakqi9mmuurhk2c",
       "mapId": 1589,
       "x": 6,
@@ -200,18 +170,368 @@
       "color": "#ffffff",
       "size": 12,
       "description": ""
-    },
-    {
-      "id": "eltygctikfwmuurkfqo",
-      "mapId": 1490,
-      "x": 10,
-      "y": 2,
-      "text": "Emerald Corruption",
-      "color": "#ff8800",
-      "size": 12,
-      "description": ""
     }
   ],
-  "markers": [],
-  "regions": []
+  "markers": [
+    {
+      "id": "bk6545nlbslmuvahik5",
+      "mapId": 139,
+      "x": 7,
+      "y": 3,
+      "text": "Hall of Heroes",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "3ww17tdzspamuvai62i",
+      "mapId": 0,
+      "x": 2,
+      "y": 4,
+      "text": "Down the Well",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "mi0jmrgyhimuvakfyj",
+      "mapId": 2216,
+      "x": 3,
+      "y": 3,
+      "text": "Hell Well",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "xeo3iw8k8fmuvako9f",
+      "mapId": 1657,
+      "x": 7,
+      "y": 2,
+      "text": "Glacial",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "das2x9zpd1gmuvald4l",
+      "mapId": 1082,
+      "x": 8,
+      "y": 0,
+      "text": "Tombs",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "6osr0xlsblpmuvalkxc",
+      "mapId": 1082,
+      "x": 13,
+      "y": 3,
+      "text": "^ Catacombs",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "osckn8dgfnmuvam02d",
+      "mapId": 1490,
+      "x": 11,
+      "y": 2,
+      "text": "Emerald Corruption",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "nr9ktz19149muvamnqi",
+      "mapId": 131,
+      "x": 9,
+      "y": 7,
+      "text": "N / NM Haunted House",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "skwfk83rpynmuvan5a7",
+      "mapId": 143,
+      "x": 8,
+      "y": 11,
+      "text": "v DMC (N/NM/Hell)",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "gm0hz6dwpmjmuvanlkn",
+      "mapId": 154,
+      "x": 10,
+      "y": 7,
+      "text": "Pyramid",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "3p54bkuy3aimuvao0jl",
+      "mapId": 1639,
+      "x": 11,
+      "y": 3,
+      "text": "Syndicate",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "dxik9v0vyxmuvapk6a",
+      "mapId": 28,
+      "x": 4,
+      "y": 4,
+      "text": "Shoe full of sand",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "5wyioqsv2r8muvaptqh",
+      "mapId": 908,
+      "x": 9,
+      "y": 5,
+      "text": "Nightmare Well",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    }
+  ],
+  "regions": [
+    {
+      "id": "gzr274m1kodmuvabend",
+      "mapId": 0,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Crendale",
+      "color": "#ffcc66",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "oocliooumqmuvabqrf",
+      "mapId": 1,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Crendale",
+      "color": "#ffcc66",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "frxraha6jymuvabxw5",
+      "mapId": 96,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Crendale",
+      "color": "#ffcc66",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "nwqq9lnylwmuvac8zt",
+      "mapId": 1632,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#66a8ff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "snevdfa8bsqmuvacqyb",
+      "mapId": 1497,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#66c4ff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "aaf5xf43828muvad9c9",
+      "mapId": 1493,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#66ccff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "vc6jt7juoemuvadjdd",
+      "mapId": 1494,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#668cff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "4zlf0p9lydnmuvae03h",
+      "mapId": 126,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Dragonia",
+      "color": "#6685ff",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "0m8dz1k6wfymuvaeqln",
+      "mapId": 143,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Draconis",
+      "color": "#b3ff66",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "npwsjj47h7nmuvafktj",
+      "mapId": 1203,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Babylon",
+      "color": "#ff66de",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "mcsbq1nslkmuvafww1",
+      "mapId": 1206,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Babylon",
+      "color": "#ff66de",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "xg3yeu2ej6muvag8ov",
+      "mapId": 1205,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Babylon",
+      "color": "#ff66f2",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "l7tvdybr6v9muvagi7n",
+      "mapId": 1202,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Babylon",
+      "color": "#ff66fa",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "2te1nqu2rgnmuvagqq1",
+      "mapId": 1204,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Babylon",
+      "color": "#ff66f2",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "3zg62q9qkzwmuvagy1b",
+      "mapId": 1207,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Babylon",
+      "color": "#ff66d6",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "lo5y2ltbht8muvaiq0v",
+      "mapId": 37,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Alephvale",
+      "color": "#ff8566",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "va2qya83x2muvaj67d",
+      "mapId": 36,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Alephvale",
+      "color": "#ff9466",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "fr7b3krelzmuvaozuw",
+      "mapId": 22,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "North Coast",
+      "color": "#87ff66",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "ti4ydjywogmmuvapb5w",
+      "mapId": 23,
+      "x": 0,
+      "y": 0,
+      "w": 14,
+      "h": 12,
+      "text": "North Coast",
+      "color": "#a3ff66",
+      "opacity": 0.18,
+      "size": 14
+    }
+  ]
 }
