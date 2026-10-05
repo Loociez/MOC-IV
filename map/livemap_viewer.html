@@ -1,2108 +1,384 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mode="view">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Interactive Livemap</title>
-
+<title>Mirage Livemap</title>
 <style>
-:root{
-  color-scheme:dark;
-  --bg:#0e1014;
-  --panel:#151922;
-  --line:#343b49;
-  --text:#e9edf5;
-  --muted:#9da7b8;
-  --accent:#65a9ff
-}
-
+:root{color-scheme:dark;--bg:#0b0518;--p1:#1a0d38;--p2:#251350;--p3:#35206e;--line:#4a2c8a;--gold:#e6c25a;--text:#f0eaff;--mut:#a899cf;--danger:#ff7b8f}
 *{box-sizing:border-box}
-
-html,body{
-  height:100%;
-  margin:0
-}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font:14px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;
-  overflow:hidden
-}
-
-.app{
-  height:100%;
-  display:grid;
-  grid-template-rows:auto 1fr
-}
-
-header{
-  display:flex;
-  gap:7px;
-  align-items:center;
-  flex-wrap:wrap;
-  padding:8px 10px;
-  background:#171b22;
-  border-bottom:1px solid var(--line);
-  z-index:20
-}
-
-header strong{
-  font-size:16px
-}
-
-.status{
-  color:#a9b7cc;
-  margin-left:auto;
-  white-space:nowrap
-}
-
-button,input,select{
-  font:inherit;
-  background:#252b35;
-  color:var(--text);
-  border:1px solid #454d5b;
-  border-radius:5px;
-  padding:6px 8px
-}
-
-button{
-  cursor:pointer
-}
-
-button:hover{
-  background:#303743
-}
-
-button.active{
-  border-color:var(--accent);
-  box-shadow:0 0 0 1px var(--accent) inset
-}
-
-input[type=number]{
-  width:90px
-}
-
-main{
-  min-height:0;
-  display:grid;
-  grid-template-columns:300px 1fr
-}
-
-aside{
-  overflow:auto;
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  padding:10px
-}
-
-section{
-  margin-bottom:14px
-}
-
-h3{
-  font-size:12px;
-  color:#b5bfce;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  margin:0 0 7px
-}
-
-.row{
-  display:flex;
-  gap:6px;
-  align-items:center;
-  flex-wrap:wrap;
-  margin:5px 0
-}
-
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px
-}
-
-.small{
-  font-size:11px;
-  color:var(--muted)
-}
-
-.info{
-  white-space:pre-wrap;
-  background:#0b0d11;
-  border:1px solid #2b3039;
-  border-radius:5px;
-  padding:7px;
-  font:11px/1.45 ui-monospace,Consolas,monospace
-}
-
-.list{
-  max-height:250px;
-  overflow:auto;
-  border:1px solid #2b3039;
-  border-radius:5px;
-  background:#0b0d11
-}
-
-.item{
-  padding:7px;
-  border-bottom:1px solid #242933;
-  cursor:pointer
-}
-
-.item:last-child{
-  border:0
-}
-
-.item:hover{
-  background:#1d232c
-}
-
-#viewport{
-  position:relative;
-  overflow:auto;
-  min-width:0;
-  min-height:0;
-  background:
-    linear-gradient(45deg,#171a20 25%,transparent 25%),
-    linear-gradient(-45deg,#171a20 25%,transparent 25%),
-    linear-gradient(45deg,transparent 75%,#171a20 75%),
-    linear-gradient(-45deg,transparent 75%,#171a20 75%);
-  background-size:24px 24px;
-  background-position:0 0,0 12px,12px -12px,-12px 0
-}
-
-#canvasWrap{
-  padding:50px;
-  min-width:max-content;
-  min-height:max-content
-}
-
-canvas{
-  display:block;
-  image-rendering:pixelated;
-  image-rendering:crisp-edges;
-  background:#050608;
-  box-shadow:
-    0 0 0 1px #596171,
-    0 10px 40px #0008
-}
-
-.modalBack{
-  position:fixed;
-  inset:0;
-  background:#0009;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:100
-}
-
-.modal{
-  width:min(560px,calc(100vw - 30px));
-  max-height:90vh;
-  overflow:auto;
-  background:#181d26;
-  border:1px solid #4a5362;
-  border-radius:8px;
-  padding:14px;
-  box-shadow:0 20px 70px #000
-}
-
-.modal h2{
-  margin:0 0 10px;
-  font-size:17px
-}
-
-.close{
-  float:right
-}
-
-.hidden{
-  display:none!important
-}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+button,input,select,textarea{font:inherit;color:var(--text);background:var(--p2);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+button{cursor:pointer}button:hover:not(:disabled){background:var(--p3)}
+button.active,button.on{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:#6d3fd8;border-color:var(--gold)}button.danger{color:var(--danger)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+input[type=color]{padding:2px;width:48px;height:34px}input[type=range]{padding:0;width:100%}
+textarea{width:100%;min-height:80px;resize:vertical}input,select{max-width:100%}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr}
+header{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:var(--p1);border-bottom:1px solid var(--gold);z-index:20}
+.brand{font:700 20px Georgia,serif;color:var(--gold);margin-right:6px}.brand span{color:var(--text);font-weight:400}
+.seg{display:flex}.seg button:first-child{border-radius:6px 0 0 6px}.seg button:last-child{border-radius:0 6px 6px 0;margin-left:-1px}
+.go{display:flex;gap:4px}.go input{width:78px}
+.searchbox{flex:1 1 200px;max-width:340px}.searchbox input{width:100%}
+.status{margin-left:auto;color:var(--mut);font-size:12px}.status.ok{color:#8fe3ae}.status.warn{color:var(--gold)}.status.danger{color:var(--danger)}
+main{min-height:0;display:grid;grid-template-columns:auto 1fr;position:relative}
+aside{width:320px;overflow:auto;background:var(--p1);border-right:1px solid var(--line);padding:12px}
+.noside aside{display:none}
+section{margin-bottom:16px}
+h3{font:700 15px Georgia,serif;color:var(--gold);margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.muted{color:var(--mut);font-size:12px}
+.card,.list{background:#12082a;border:1px solid var(--line);border-radius:8px;padding:10px}
+.list{padding:0;max-height:220px;overflow:auto}
+.item{padding:7px 10px;border-bottom:1px solid #2a1858;cursor:pointer}.item:last-child{border:0}.item:hover,.item.sel{background:var(--p2)}
+.ctitle{font:700 16px Georgia,serif;color:var(--gold)}.desc{white-space:pre-wrap;margin:8px 0}
+a{color:#b9a2ff}pre{margin:0;white-space:pre-wrap;font:11px/1.5 ui-monospace,Consolas,monospace;color:var(--mut)}
+label{display:block}label.chk{display:flex;gap:6px;align-items:center;margin:4px 0}label.chk input{width:auto}
+#stage{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 50% 35%,#2a1559,#0b0518 75%);touch-action:none}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hud{position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none}
+#hud>*{pointer-events:auto}.zoombar{display:flex;flex-direction:column}.zoombar button{width:36px;height:36px;padding:0;font-size:18px;border-radius:0}
+.zoombar button:first-child{border-radius:6px 6px 0 0}.zoombar button:last-child{border-radius:0 0 6px 6px}.zoombar button+button{margin-top:-1px}
+#coords{background:#0b0518cc;border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:11px ui-monospace,Consolas,monospace;color:var(--mut)}
+#tip{position:absolute;display:none;max-width:260px;background:#12082aef;border:1px solid var(--gold);border-radius:8px;padding:8px 10px;pointer-events:none;z-index:5;font-size:12px}
+#tip b{font:700 14px Georgia,serif;color:var(--gold)}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:18px Georgia,serif;color:var(--gold);background:#0b0518cc;z-index:6}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--p3);border:1px solid var(--gold);padding:8px 14px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none;z-index:200}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.mb{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:100}
+.modal{width:min(480px,calc(100vw - 24px));max-height:92vh;overflow:auto;background:var(--p1);border:1px solid var(--gold);border-radius:12px;padding:16px;box-shadow:0 20px 70px #000}
+.modal h2{margin:0 0 10px;font:700 19px Georgia,serif;color:var(--gold)}
+.modal .f{margin:8px 0}.modal .f>label{color:var(--mut);font-size:12px}.modal input:not([type=color]):not([type=range]),.modal select{width:100%}
+.frow{display:flex;gap:10px}.frow>.f{flex:1}.actions{display:flex;gap:6px;margin-top:14px}.sp{flex:1}.hidden{display:none!important}
+kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:11px}
+@media(max-width:820px){aside{position:absolute;z-index:30;height:100%;width:min(88vw,330px);box-shadow:8px 0 30px #000a}.status{display:none}}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-
 <body>
-
 <div class="app">
-
 <header>
-  <strong>🗺️ Interactive Livemap</strong>
-
-  <button id="worldBtn">World</button>
-  <button id="mapBtn">Map</button>
-
-  <label>
-    Map
-    <input id="mapId" type="number" min="0" value="0">
-  </label>
-
-  <button id="goBtn">Go</button>
-  <button id="fitBtn">Fit</button>
-
-  <button id="toggleIds">Map IDs: ON</button>
-  <button id="toggleAnno">Labels: ON</button>
-
-  <input
-    id="search"
-    placeholder="Search labels / map IDs…"
-    style="width:190px"
-  >
-
-  <button id="searchBtn">Search</button>
-
-  <span id="status" class="status">Starting…</span>
+<button id="menuBtn" title="Toggle panel" aria-label="Toggle panel">☰</button>
+<div class="brand">Mirage <span>Livemap</span></div>
+<div class="seg"><button id="worldBtn">World</button><button id="mapBtn">This map</button></div>
+<div class="go"><input id="mapId" type="number" min="0" value="0" aria-label="Map ID"><button id="goBtn">Go</button></div>
+<div class="searchbox"><input id="search" type="search" placeholder="Search places or a map ID…" autocomplete="off" aria-label="Search"></div>
+<span id="status" class="status">Starting…</span>
 </header>
-
 <main>
-
-<aside>
-
-<section>
-  <h3>Map navigation</h3>
-
-  <div class="grid2">
-    <button id="northBtn">▲ North</button>
-    <button id="southBtn">▼ South</button>
-    <button id="westBtn">◀ West</button>
-    <button id="eastBtn">East ▶</button>
-  </div>
-
-  <div class="row">
-    <button id="firstBtn">Map 0</button>
-    <button id="randomBtn">Random</button>
-  </div>
-</section>
-
-<section>
-  <h3>Zoom</h3>
-
-  <select id="zoom" style="width:100%">
-    <option>.25</option>
-    <option>.5</option>
-    <option selected>1</option>
-    <option>1.5</option>
-    <option>2</option>
-    <option>3</option>
-    <option>4</option>
-  </select>
-
-  <div class="small" style="margin-top:6px">
-    The world is rendered from the same six static layers as an individual
-    room. At higher zoom the world preview becomes a detailed view of the
-    actual rooms.
-  </div>
-</section>
-
-<section>
-  <h3>Map info</h3>
-  <div id="mapInfo" class="info">No map loaded.</div>
-</section>
-
-<section>
-  <h3>Selected point</h3>
-  <div id="selectedInfo" class="info">
-    Click a label or marker.
-  </div>
-</section>
-
-<section>
-  <h3>Search results</h3>
-
-  <div id="results" class="list">
-    <div class="item small">
-      Search a label, marker, or map ID.
-    </div>
-  </div>
-</section>
-
-<section>
-  <h3>Controls</h3>
-
-  <div class="small">
-    Click a map in World view to open that room.
-    Click a label/marker for its description.
-    Map IDs can be hidden when you want a clean map.
-  </div>
-</section>
-
+<aside id="side">
+<section id="resBox" class="hidden"><h3>Search results</h3><div id="results" class="list"></div></section>
+<section class="eo"><h3>Tools</h3>
+<div class="g2"><button id="t_select" class="active">Select <kbd>1</kbd></button><button id="t_label">Label <kbd>2</kbd></button><button id="t_marker">Marker <kbd>3</kbd></button><button id="t_region">Region <kbd>4</kbd></button></div>
+<div class="row"><select id="markerType" style="flex:1" aria-label="Default marker type"></select></div>
+<div class="row"><button id="undoBtn">Undo</button><button id="redoBtn">Redo</button></div>
+<p class="muted">Click the map to place. Drag a region to size it. Drag a selected item to move it. Double-click to edit.</p></section>
+<section><h3>Selected</h3><div id="card" class="card"></div></section>
+<section><h3>On this map</h3><div id="mapList" class="list"></div></section>
+<section><h3>Show on map</h3>
+<label class="chk"><input id="cbLabel" type="checkbox" checked>Labels</label><label class="chk"><input id="cbMarker" type="checkbox" checked>Markers</label>
+<label class="chk"><input id="cbRegion" type="checkbox" checked>Regions</label><label class="chk"><input id="cbIds" type="checkbox" checked>Map IDs</label>
+<label class="chk eo"><input id="cbGrid" type="checkbox" checked>Tile grid when zoomed in</label></section>
+<section><h3>Neighbouring maps</h3><div class="g2"><button id="nN">▲ North</button><button id="nS">▼ South</button><button id="nW">◀ West</button><button id="nE">East ▶</button></div>
+<div class="row"><button id="shareBtn">Copy link</button><button id="pngBtn" class="eo">Save PNG</button></div><pre id="mapInfo"></pre></section>
+<section class="eo"><h3>Annotations</h3>
+<div class="row"><button id="saveBtn">Save in browser</button><button id="exportBtn">Export JSON</button><button id="importBtn">Import</button><button id="reloadBtn">Reload published</button><button id="clearBtn" class="danger">Clear all</button></div>
+<input id="annFile" type="file" accept=".json" class="hidden">
+<p class="muted">Edits autosave in this browser. Export, then replace <code>annotations.json</code> to publish them.</p></section>
+<section class="eo"><h3>Data and rendering</h3>
+<div class="row"><label class="muted">Mapdump <input id="jsonFile" type="file" accept=".json"></label></div>
+<div class="row"><label class="muted">Tile assets folder <input id="assetFolder" type="file" webkitdirectory multiple></label></div>
+<div class="row"><label>Tile IDs <select id="offset"><option value="0">0-based</option><option value="1">1-based</option></select></label><label class="chk"><input id="reverse" type="checkbox">Reverse layers</label></div></section>
+<p class="muted">Scroll to zoom, drag to pan, double-click a map to fit it. <kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd> <kbd>W</kbd> and arrow keys also work.</p>
 </aside>
-
-<div id="viewport">
-  <div id="canvasWrap">
-    <canvas id="canvas"></canvas>
-  </div>
-</div>
-
-</main>
-</div>
-
-<div id="modalBack" class="modalBack">
-
-  <div class="modal">
-
-    <button id="modalClose" class="close">✕</button>
-
-    <h2 id="modalTitle">Location</h2>
-
-    <div id="modalBody" class="info"></div>
-
-  </div>
-
-</div>
-
+<div id="stage"><canvas id="cv"></canvas><div id="tip"></div><div id="loading">Loading map data…</div>
+<div id="hud"><div id="coords">–</div><div class="zoombar"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zFit" aria-label="Fit map" title="Fit map">⤢</button></div></div></div>
+</main></div>
+<div id="toast" role="status"></div>
+<div id="mb" class="mb"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt"></h2>
+<div class="f" data-k="label marker region"><label for="fText">Name</label><input id="fText"></div>
+<div class="f" data-k="marker"><label for="fType">Marker type</label><select id="fType"></select></div>
+<div class="frow"><div class="f" data-k="label region"><label for="fColor">Colour</label><input id="fColor" type="color"></div>
+<div class="f" data-k="label"><label for="fSize">Size</label><select id="fSize"><option value="12">Small</option><option value="16">Medium</option><option value="22">Large</option><option value="30">Huge</option></select></div>
+<div class="f" data-k="region"><label for="fOp">Fill opacity</label><input id="fOp" type="range" min="0" max=".6" step=".02"></div></div>
+<div class="f" data-k="label marker"><label for="fDesc">Description</label><textarea id="fDesc" placeholder="Shown to players. Links are clickable."></textarea></div>
+<div class="frow"><div class="f"><label for="fX">Tile X</label><input id="fX" type="number" min="0" max="15"></div><div class="f"><label for="fY">Tile Y</label><input id="fY" type="number" min="0" max="11"></div>
+<div class="f" data-k="region"><label for="fW">Width</label><input id="fW" type="number" min="1" max="16"></div><div class="f" data-k="region"><label for="fH">Height</label><input id="fH" type="number" min="1" max="12"></div></div>
+<div class="actions"><button id="mDel" class="danger">Delete</button><span class="sp"></span><button id="mCancel">Cancel</button><button id="mOk" class="primary">Save</button></div></div></div>
 <script>
-(()=>{
+(()=>{"use strict";
+const EDIT=document.documentElement.dataset.mode==="edit";
+if(!EDIT)document.querySelectorAll(".eo").forEach(n=>n.remove());
+const TILE=32,MW=512,MH=384,SHEETS=19,PER=1024,STATIC=[0,1,3,5,7,9];
+const ICONS={town:"🏠",city:"🏰",dungeon:"☠️",boss:"💀",shop:"🛒",quest:"❗",portal:"🌀",danger:"⚠️",point:"📍"};
+const $=id=>document.getElementById(id),cv=$("cv"),ctx=cv.getContext("2d"),stage=$("stage");
+let maps=[],cur=0,sheets=Array(SHEETS).fill(null),pos=new Map(),grid=new Map(),worldB=null;
+let ann={version:1,labels:[],markers:[],regions:[]},idx=new Map(),sel=null,tool="select",hist=[],redo=[];
+let cam={x:0,y:0,z:1},show={label:1,marker:1,region:1,ids:1,grid:1},S={offset:0,reverse:false};
+let hits=[],hover=null,drag=null,draft=null,pend=null,raf=0,anim=0,space=false,hashT=0,tt=0,camSet=false;
+const c1=new Map(),cS=new Map(),ptrs=new Map();let pinch=null;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const linkify=s=>esc(s).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36),clone=o=>JSON.parse(JSON.stringify(o)),clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function status(s,c=""){const e=$("status");e.textContent=s;e.className="status "+c}
+function toast(s){const e=$("toast");e.textContent=s;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),2200)}
+const norm=x=>({version:1,labels:Array.isArray(x.labels)?x.labels:[],markers:Array.isArray(x.markers)?x.markers:[],regions:Array.isArray(x.regions)?x.regions:[]});
+const KINDS=["label","marker","region"],list=k=>ann[k+"s"];
 
-"use strict";
+/* ---------- data ---------- */
+function parseDump(t){t=t.trim();try{const x=JSON.parse(t);return Array.isArray(x)?x:(x.maps||[])}catch(e){if(t.startsWith("{")&&t.endsWith("]"))return JSON.parse("["+t);throw new Error("Could not parse mapdump JSON.")}}
+function loadDump(t){
+ const a=parseDump(t),I=n=>Number.isInteger(n)?n:-1;
+ maps=a.map(m=>({tiles:m.tiles,n:I(m.map_north_id),s:I(m.map_south_id),w:I(m.map_west_id),e:I(m.map_east_id)}));
+ if(!maps.length)throw Error("No maps found.");
+ c1.clear();cS.clear();buildWorld();cur=cur<maps.length?cur:0;setCur(cur);
+ const h=new URLSearchParams(location.hash.slice(1)),x=+h.get("x"),y=+h.get("y"),z=+h.get("z");
+ if(h.get("z")&&!camSet){const W=stage.clientWidth,H=stage.clientHeight;cam={z,x:x-W/2/z,y:y-H/2/z}}else Object.assign(cam,fitMapT(cur));
+ camSet=true;$("loading").classList.add("hidden");status(`${maps.length.toLocaleString()} maps loaded`,"ok");schedule();
+}
+async function autoMap(){try{const r=await fetch("./mapdump.json",{cache:"no-store"});if(!r.ok)throw 0;loadDump(await r.text())}catch(e){$("loading").textContent=EDIT?"Choose mapdump.json in the side panel":"Could not load mapdump.json";status("Map data missing","warn")}}
+function setSheet(i,src){return new Promise(res=>{const im=new Image();im.onload=()=>{sheets[i]=im;invalidate();res(1)};im.onerror=()=>res(0);im.src=src})}
+async function autoSheets(){const r=await Promise.all([...Array(SHEETS).keys()].map(async i=>{try{const r=await fetch(`./assets/tiles${i}.png`);return r.ok?await setSheet(i,URL.createObjectURL(await r.blob())):0}catch(e){return 0}}));return r.filter(Boolean).length}
+function invalidate(){c1.clear();cS.clear();schedule()}
+function drawTile(c,id,dx,dy,sc){
+ const n=id-S.offset;if(n<0)return;const sh=Math.floor(n/PER),l=n%PER;if(sh>=SHEETS)return;
+ if(!sheets[sh]){c.fillStyle="#351b1b";c.fillRect(dx,dy,TILE*sc,TILE*sc);return}
+ c.drawImage(sheets[sh],(l%32)*32,Math.floor(l/32)*32,32,32,dx,dy,32*sc,32*sc);
+}
+function renderMap(m,sc){
+ const c=document.createElement("canvas");c.width=MW*sc;c.height=MH*sc;const g=c.getContext("2d");g.imageSmoothingEnabled=sc<1;
+ const order=S.reverse?[...STATIC].reverse():STATIC;
+ for(let x=0;x<16;x++)for(let y=0;y<12;y++){const L=(m.tiles[x]||[])[y]||[];for(const k of order)if(L[k]>=0)drawTile(g,L[k],x*TILE*sc,y*TILE*sc,sc)}
+ return c;
+}
+function mapImg(id,small){
+ const C=small?cS:c1,cap=small?2500:160;let c=C.get(id);
+ if(c){C.delete(id)}else c=renderMap(maps[id],small?.25:1);
+ C.set(id,c);if(C.size>cap)C.delete(C.keys().next().value);return c;
+}
+function buildWorld(){
+ pos=new Map();grid=new Map();const q=[0],p=new Map([[0,{x:0,y:0}]]);
+ while(q.length){const id=q.shift(),a=p.get(id),m=maps[id];
+  for(const [k,dx,dy] of [["n",0,-1],["s",0,1],["w",-1,0],["e",1,0]]){const n=m[k];if(n<0||n>=maps.length||p.has(n))continue;p.set(n,{x:a.x+dx,y:a.y+dy});q.push(n)}}
+ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const a of p.values()){x0=Math.min(x0,a.x);y0=Math.min(y0,a.y);x1=Math.max(x1,a.x);y1=Math.max(y1,a.y)}
+ for(const [id,a] of p){const q2={x:a.x-x0,y:a.y-y0};pos.set(id,q2);grid.set(q2.x+","+q2.y,id)}
+ worldB={w:x1-x0+1,h:y1-y0+1};
+}
+const origin=id=>{const p=pos.get(id);return p?{x:p.x*MW,y:p.y*MH}:{x:0,y:0}};
 
-const TILE=32;
-const MAP_W=16;
-const MAP_H=12;
-
-const SHEETS=19;
-const TILES_PER_SHEET=1024;
-
-const STATIC_LAYERS=[0,1,3,5,7,9];
-
-const MARKERS={
-  town:"🏠",
-  city:"🏰",
-  dungeon:"☠️",
-  boss:"💀",
-  shop:"🛒",
-  quest:"❗",
-  portal:"🌀",
-  danger:"⚠️",
-  point:"📍"
-};
-
-let maps=[];
-let currentMapId=0;
-
-let tileSheets=Array(SHEETS).fill(null);
-let sheetReady=Array(SHEETS).fill(false);
-
-let worldPositions=new Map();
-let worldBounds=null;
-
-let worldScale=8;
-
-let mapCanvasCache=new Map();
-
-let mode="world";
-
-let annotations={
-  version:1,
-  labels:[],
-  markers:[],
-  regions:[]
-};
-
-let annotationsVisible=true;
-let mapIdsVisible=true;
-
-const $=id=>document.getElementById(id);
-
-const canvas=$("canvas");
-const ctx=canvas.getContext("2d");
-
-ctx.imageSmoothingEnabled=false;
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function status(s,c=""){
-  $("status").textContent=s;
-
-  $("status").style.color=
-    c==="ok"
-      ? "#82e4a5"
-      : c==="warn"
-        ? "#ffd16a"
-        : "";
+/* ---------- camera ---------- */
+function schedule(){if(!raf)raf=requestAnimationFrame(draw)}
+function rectT(x,y,w,h,pad=.92){const W=stage.clientWidth,H=stage.clientHeight,z=clamp(Math.min(W/w,H/h)*pad,.04,24);return{z,x:x+w/2-W/2/z,y:y+h/2-H/2/z}}
+function fitMapT(id){const o=origin(id);return rectT(o.x,o.y,MW,MH)}
+function fitWorldT(){return pos.has(cur)?rectT(0,0,worldB.w*MW,worldB.h*MH,.97):fitMapT(cur)}
+function flyTo(t,ms=420){
+ const s={...cam},t0=performance.now(),id=++anim;
+ (function step(n){if(id!==anim)return;let k=Math.min(1,(n-t0)/ms);k=1-Math.pow(1-k,3);
+  cam.z=Math.exp(Math.log(s.z)+(Math.log(t.z)-Math.log(s.z))*k);cam.x=s.x+(t.x-s.x)*k;cam.y=s.y+(t.y-s.y)*k;schedule();
+  if(k<1)requestAnimationFrame(step);else changed()})(t0);
+}
+function zoomAt(px,py,nz){nz=clamp(nz,.04,24);const wx=cam.x+px/cam.z,wy=cam.y+py/cam.z;cam.z=nz;cam.x=wx-px/nz;cam.y=wy-py/nz;changed()}
+function zoomBtn(f){anim++;zoomAt(stage.clientWidth/2,stage.clientHeight/2,cam.z*f)}
+function changed(){schedule();clearTimeout(hashT);hashT=setTimeout(()=>{if(!maps.length)return;const cx=cam.x+stage.clientWidth/2/cam.z,cy=cam.y+stage.clientHeight/2/cam.z;history.replaceState(null,"",`#map=${cur}&x=${Math.round(cx)}&y=${Math.round(cy)}&z=${cam.z.toFixed(2)}`)},300)}
+function at(px,py){
+ const wx=cam.x+px/cam.z,wy=cam.y+py/cam.z;let id=null;
+ if(!pos.has(cur)){if(maps.length&&wx>=0&&wx<MW&&wy>=0&&wy<MH)id=cur}else id=grid.get(Math.floor(wx/MW)+","+Math.floor(wy/MH))??null;
+ const o=id==null?{x:0,y:0}:origin(id);return{wx,wy,id,tx:Math.floor((wx-o.x)/TILE),ty:Math.floor((wy-o.y)/TILE)};
 }
 
-
-/* =========================================================
-   MAPDUMP
-========================================================= */
-
-function parseMapdumpText(text){
-
-  text=text.trim();
-
-  try{
-
-    const x=JSON.parse(text);
-
-    return Array.isArray(x)
-      ? x
-      : (x.maps||[]);
-
-  }catch(e){
-
-    if(text.startsWith("{") && text.endsWith("]"))
-      return JSON.parse("["+text);
-
-    throw Error("Could not parse mapdump JSON.");
-  }
+/* ---------- drawing ---------- */
+function visible(W,H){
+ if(!maps.length)return[];if(!pos.has(cur))return[cur];
+ const o=[],x1=cam.x+W/cam.z,y1=cam.y+H/cam.z;
+ for(const [id,p] of pos){const ox=p.x*MW,oy=p.y*MH;if(ox<x1&&ox+MW>cam.x&&oy<y1&&oy+MH>cam.y)o.push(id)}return o;
 }
-
-
-function loadMapdumpText(text){
-
-  const a=parseMapdumpText(text);
-
-  maps=a.map(m=>({
-
-    tiles:m.tiles,
-
-    map_north_id:
-      Number.isInteger(m.map_north_id)
-        ? m.map_north_id
-        : -1,
-
-    map_south_id:
-      Number.isInteger(m.map_south_id)
-        ? m.map_south_id
-        : -1,
-
-    map_west_id:
-      Number.isInteger(m.map_west_id)
-        ? m.map_west_id
-        : -1,
-
-    map_east_id:
-      Number.isInteger(m.map_east_id)
-        ? m.map_east_id
-        : -1
-
-  }));
-
-  if(!maps.length)
-    throw Error("No maps found.");
-
-  buildWorldPositions();
-
-  currentMapId=
-    Math.min(
-      currentMapId,
-      maps.length-1
-    );
-
-  render();
-
-  status(
-    `${maps.length.toLocaleString()} maps loaded`,
-    "ok"
-  );
+function pill(x,y,w,h,r=4){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle="rgba(18,8,42,.72)";ctx.fill()}
+function draw(){
+ raf=0;const W=stage.clientWidth,H=stage.clientHeight,d=devicePixelRatio||1;
+ if(cv.width!==Math.round(W*d)||cv.height!==Math.round(H*d)){cv.width=Math.round(W*d);cv.height=Math.round(H*d)}
+ ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,W,H);hits=[];if(!maps.length)return;
+ const z=cam.z,ids=visible(W,H),small=z<.3;ctx.imageSmoothingEnabled=z<1;
+ for(const id of ids){const o=origin(id),sx=(o.x-cam.x)*z,sy=(o.y-cam.y)*z;
+  ctx.drawImage(mapImg(id,small),sx,sy,MW*z,MH*z);
+  ctx.strokeStyle=id===cur?"#e6c25a":"rgba(160,130,255,.25)";ctx.lineWidth=id===cur?2:1;ctx.strokeRect(sx,sy,MW*z,MH*z)}
+ if(EDIT&&show.grid&&z>=1.5&&ids.includes(cur)){const o=origin(cur),sx=(o.x-cam.x)*z,sy=(o.y-cam.y)*z;ctx.strokeStyle="rgba(255,255,255,.16)";ctx.lineWidth=1;ctx.beginPath();
+  for(let i=1;i<16;i++){ctx.moveTo(sx+i*TILE*z,sy);ctx.lineTo(sx+i*TILE*z,sy+MH*z)}for(let j=1;j<12;j++){ctx.moveTo(sx,sy+j*TILE*z);ctx.lineTo(sx+MW*z,sy+j*TILE*z)}ctx.stroke()}
+ const P=(id,tx,ty)=>{const o=origin(id);return[(o.x+tx*TILE-cam.x)*z,(o.y+ty*TILE-cam.y)*z]};
+ const flag=(a,k,box)=>{hits.push({kind:k,a,...box});const on=sel&&sel.id===a.id,hv=hover&&hover.a.id===a.id;
+  if(on||hv){ctx.save();ctx.strokeStyle=on?"#e6c25a":"#fff";ctx.lineWidth=on?2:1;ctx.setLineDash(on?[5,3]:[]);ctx.strokeRect(box.x-3,box.y-3,box.w+6,box.h+6);ctx.restore()}};
+ ctx.textBaseline="alphabetic";ctx.textAlign="left";
+ for(const id of ids){const e=idx.get(id);if(!e)continue;
+  if(show.region)for(const r of e.regions){const [x,y]=P(id,r.x,r.y),w=r.w*TILE*z,h=r.h*TILE*z;ctx.fillStyle=hexA(r.color,r.opacity);ctx.fillRect(x,y,w,h);ctx.strokeStyle=r.color;ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
+   if(r.text&&z>=.5){const fs=clamp(13*Math.max(z,.8),12,26);ctx.font=`bold ${fs}px system-ui,sans-serif`;ctx.fillStyle=r.color;ctx.fillText(r.text,x+5,y+fs+3,Math.max(20,w-8))}flag(r,"region",{x,y,w,h})}
+  if(show.marker)for(const m of e.markers){const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
+   ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle="#2a1558";ctx.fill();ctx.strokeStyle="#e6c25a";ctx.lineWidth=2;ctx.stroke();
+   ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ICONS[m.type]||"📍",cx,cy+1);ctx.textAlign="left";ctx.textBaseline="alphabetic";
+   let w=r*2;if(m.text&&z>=.5){const fs=clamp(12*z,12,20);ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(m.text).width;pill(cx+r+3,cy-fs/2-3,tw+10,fs+6);ctx.fillStyle="#fff";ctx.fillText(m.text,cx+r+8,cy+fs/2-2);w+=tw+14}
+   flag(m,"marker",{x:cx-r,y:cy-r,w,h:r*2})}
+  if(show.label&&z>=.1)for(const l of e.labels){const [x,y]=P(id,l.x,l.y),fs=Math.min(40,Math.max(11,(l.size||12)*z));ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(l.text).width;
+   pill(x,y,tw+10,fs+7);ctx.fillStyle=l.color||"#fff";ctx.fillText(l.text,x+5,y+fs+1);flag(l,"label",{x,y,w:tw+10,h:fs+7})}
+  if(show.ids&&z>=.2&&z<3){const [x,y]=P(id,0,0);ctx.font="bold 11px ui-monospace,Consolas,monospace";const t=String(id),tw=ctx.measureText(t).width;pill(x+3,y+3,tw+8,16);ctx.fillStyle="#cdbbff";ctx.fillText(t,x+7,y+15)}}
+ if(draft){const [x,y]=P(draft.mapId,draft.x,draft.y);ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle="#e6c25a";ctx.lineWidth=2;ctx.fillStyle="rgba(230,194,90,.2)";ctx.fillRect(x,y,draft.w*TILE*z,draft.h*TILE*z);ctx.strokeRect(x,y,draft.w*TILE*z,draft.h*TILE*z);ctx.restore()}
 }
+function hexA(h,a){h=(h||"#fff").replace("#","");if(h.length===3)h=[...h].map(x=>x+x).join("");return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a??.18})`}
+const hitAt=(px,py)=>{for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(px>=h.x&&px<=h.x+h.w&&py>=h.y&&py<=h.y+h.h)return h}return null};
 
-
-async function autoMap(){
-
-  try{
-
-    const r=await fetch(
-      "./mapdump.json",
-      {cache:"no-store"}
-    );
-
-    if(!r.ok)
-      throw 0;
-
-    loadMapdumpText(
-      await r.text()
-    );
-
-  }catch(e){
-
-    status(
-      "mapdump.json could not be loaded",
-      "warn"
-    );
-
-  }
-
+/* ---------- state ---------- */
+function reindex(){idx=new Map();for(const k of KINDS)for(const a of list(k)){let e=idx.get(a.mapId);if(!e)idx.set(a.mapId,e={labels:[],markers:[],regions:[]});e[k+"s"].push(a)}}
+const getSel=()=>sel?list(sel.kind).find(x=>x.id===sel.id)||null:null;
+function select(a,k){sel=a?{kind:k,id:a.id}:null;updateCard();renderList();schedule()}
+function setCur(id){cur=id;$("mapId").value=id;$("mapBtn").disabled=false;updateInfo();renderList();for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]]){const n=maps[id]?.[k];$(b).disabled=!(n>=0&&n<maps.length)}changed()}
+function go(id,fly=true){id=Number(id);if(!Number.isInteger(id)||id<0||id>=maps.length){toast("No map with that ID");return}setCur(id);if(fly)flyTo(fitMapT(id));else schedule()}
+function focusAnn(a,k){setCur(a.mapId);select(a,k);const o=origin(a.mapId),z=Math.max(cam.z,2.5),W=stage.clientWidth,H=stage.clientHeight;
+ const w=k==="region"?a.w:1,h=k==="region"?a.h:1;flyTo({z,x:o.x+(a.x+w/2)*TILE-W/2/z,y:o.y+(a.y+h/2)*TILE-H/2/z})}
+function updateInfo(){const m=maps[cur];if(!m)return;const p=pos.get(cur),e=idx.get(cur)||{labels:[],markers:[],regions:[]};
+ $("mapInfo").textContent=`Map ${cur}${p?`  ·  world ${p.x}, ${p.y}`:"  ·  not linked to the world"}\nN ${m.n}  S ${m.s}  W ${m.w}  E ${m.e}\n${e.labels.length} labels, ${e.markers.length} markers, ${e.regions.length} regions`}
+function updateCard(){
+ const a=getSel(),el=$("card");
+ if(!a){el.innerHTML='<span class="muted">Select a label, marker or region on the map.</span>';return}
+ el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ICONS[a.type]||"📍":""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
+ <div class="row"><button data-act="fly">Show on map</button>${EDIT?'<button data-act="edit">Edit</button><button data-act="dup">Duplicate</button><button data-act="del" class="danger">Delete</button>':""}</div>`;
 }
-
-
-/* =========================================================
-   TILE SHEETS
-========================================================= */
-
-function setSheet(i,src){
-
-  return new Promise(resolve=>{
-
-    const im=new Image();
-
-    im.onload=()=>{
-
-      tileSheets[i]=im;
-      sheetReady[i]=true;
-
-      /*
-       * A sheet becoming available changes all rendered
-       * maps, so invalidate the room cache.
-       */
-      mapCanvasCache.clear();
-
-      resolve(true);
-
-    };
-
-    im.onerror=()=>{
-
-      tileSheets[i]=null;
-      sheetReady[i]=false;
-
-      resolve(false);
-
-    };
-
-    im.src=src;
-
-  });
-
+function renderList(){
+ const e=idx.get(cur),el=$("mapList"),rows=e?[...e.labels.map(a=>["label",a]),...e.markers.map(a=>["marker",a]),...e.regions.map(a=>["region",a])]:[];
+ el.innerHTML=rows.length?rows.map(([k,a])=>`<div class="item${sel&&sel.id===a.id?" sel":""}" data-k="${k}" data-id="${esc(a.id)}">${k==="marker"?ICONS[a.type]||"📍":k==="label"?"🏷️":"▣"} <b>${esc(a.text||"Untitled")}</b></div>`).join(""):'<div class="item muted">Nothing here yet.</div>';
 }
-
-
-async function autoSheets(){
-
-  const jobs=[];
-
-  for(let i=0;i<SHEETS;i++){
-
-    jobs.push(
-
-      (async()=>{
-
-        try{
-
-          const r=await fetch(
-            `./assets/tiles${i}.png`,
-            {cache:"force-cache"}
-          );
-
-          if(!r.ok)
-            return false;
-
-          const blob=await r.blob();
-
-          return await setSheet(
-            i,
-            URL.createObjectURL(blob)
-          );
-
-        }catch(e){
-
-          return false;
-
-        }
-
-      })()
-
-    );
-
-  }
-
-  const results=
-    await Promise.all(jobs);
-
-  return results.filter(Boolean).length;
-}
-
-
-/* =========================================================
-   TILE LOOKUP
-========================================================= */
-
-function tileSource(id){
-
-  const n=Number(id);
-
-  if(!Number.isInteger(n)||n<0)
-    return null;
-
-  const sheet=
-    Math.floor(
-      n/TILES_PER_SHEET
-    );
-
-  const local=
-    n%TILES_PER_SHEET;
-
-  if(
-    sheet<0 ||
-    sheet>=SHEETS ||
-    !tileSheets[sheet]
-  ){
-
-    return{
-      sheet,
-      local,
-      missing:true
-    };
-
-  }
-
-  return{
-    sheet,
-    local,
-    img:tileSheets[sheet]
-  };
-
-}
-
-
-/* =========================================================
-   DRAW INDIVIDUAL TILE
-========================================================= */
-
-function drawTile(
-  c,
-  id,
-  dx,
-  dy,
-  scale
-){
-
-  const t=tileSource(id);
-
-  if(!t)
-    return;
-
-  if(t.missing){
-
-    c.fillStyle="#351b1b";
-
-    c.fillRect(
-      dx,
-      dy,
-      TILE*scale,
-      TILE*scale
-    );
-
-    return;
-  }
-
-  const sx=
-    (t.local%32)*32;
-
-  const sy=
-    Math.floor(t.local/32)*32;
-
-  c.drawImage(
-    t.img,
-    sx,
-    sy,
-    32,
-    32,
-    dx,
-    dy,
-    32*scale,
-    32*scale
-  );
-
-}
-
-
-/* =========================================================
-   NATIVE ROOM RENDERER
-========================================================= */
-
-function renderMapTo(c,map,scale){
-
-  c.canvas.width=
-    MAP_W*TILE*scale;
-
-  c.canvas.height=
-    MAP_H*TILE*scale;
-
-  c.clearRect(
-    0,
-    0,
-    c.canvas.width,
-    c.canvas.height
-  );
-
-  for(let y=0;y<MAP_H;y++){
-
-    for(let x=0;x<MAP_W;x++){
-
-      const layers=
-        (map.tiles[x]||[])[y]||[];
-
-      for(const k of STATIC_LAYERS){
-
-        if(layers[k]>=0){
-
-          drawTile(
-            c,
-            layers[k],
-            x*TILE*scale,
-            y*TILE*scale,
-            scale
-          );
-
-        }
-
-      }
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   NORMAL MAP CACHE
-========================================================= */
-
-function getMapCanvas(id,scale=1){
-
-  const key=id+"@"+scale;
-
-  if(mapCanvasCache.has(key))
-    return mapCanvasCache.get(key);
-
-  const c=
-    document.createElement("canvas");
-
-  const cc=
-    c.getContext("2d");
-
-  cc.imageSmoothingEnabled=false;
-
-  renderMapTo(
-    cc,
-    maps[id],
-    scale
-  );
-
-  mapCanvasCache.set(
-    key,
-    c
-  );
-
-  return c;
-
-}
-
-
-/* =========================================================
-   WORLD ROOM CACHE
-=========================================================
-
-   IMPORTANT FIX:
-
-   The world renderer used to do:
-
-       getMapCanvas(id,worldScale/32)
-
-   At the default 1x zoom this became:
-
-       2 / 32 = 0.0625
-
-   That meant the tile renderer was trying to draw individual
-   tiles at a fractional 1/16 scale.
-
-   Instead, every room is now rendered once at its known-good
-   native 512x384 resolution and the COMPLETE room is scaled
-   into the world canvas.
-
-========================================================= */
-
-function getWorldRoomCanvas(id){
-
-  const key=id+"@WORLD_NATIVE";
-
-  if(mapCanvasCache.has(key))
-    return mapCanvasCache.get(key);
-
-  const c=
-    document.createElement("canvas");
-
-  const cc=
-    c.getContext("2d");
-
-  cc.imageSmoothingEnabled=false;
-
-  /*
-   * ALWAYS render at native room resolution.
-   *
-   * 16 x 12 tiles
-   * 32 px per tile
-   * = 512 x 384
-   */
-  renderMapTo(
-    cc,
-    maps[id],
-    1
-  );
-
-  mapCanvasCache.set(
-    key,
-    c
-  );
-
-  return c;
-
-}
-
-
-/* =========================================================
-   BUILD WORLD POSITIONS
-========================================================= */
-
-function buildWorldPositions(){
-
-  worldPositions=new Map();
-
-  if(!maps.length){
-
-    worldBounds=null;
-
-    return;
-  }
-
-  const q=[0];
-
-  const pos=
-    new Map([
-      [0,{x:0,y:0}]
-    ]);
-
-  while(q.length){
-
-    const id=q.shift();
-
-    const p=pos.get(id);
-
-    const m=maps[id];
-
-    for(
-      const [
-        key,
-        dx,
-        dy
-      ]
-      of [
-        ["map_north_id",0,-1],
-        ["map_south_id",0,1],
-        ["map_west_id",-1,0],
-        ["map_east_id",1,0]
-      ]
-    ){
-
-      const n=m[key];
-
-      if(
-        !Number.isInteger(n) ||
-        n<0 ||
-        n>=maps.length ||
-        pos.has(n)
-      )
-        continue;
-
-      pos.set(
-        n,
-        {
-          x:p.x+dx,
-          y:p.y+dy
-        }
-      );
-
-      q.push(n);
-
-    }
-
-  }
-
-  let minX=Infinity;
-  let maxX=-Infinity;
-  let minY=Infinity;
-  let maxY=-Infinity;
-
-  for(const p of pos.values()){
-
-    minX=Math.min(minX,p.x);
-    maxX=Math.max(maxX,p.x);
-
-    minY=Math.min(minY,p.y);
-    maxY=Math.max(maxY,p.y);
-
-  }
-
-  for(const [id,p] of pos){
-
-    worldPositions.set(
-      id,
-      {
-        x:p.x-minX,
-        y:p.y-minY
-      }
-    );
-
-  }
-
-  worldBounds={
-    minX:0,
-    maxX:maxX-minX,
-    minY:0,
-    maxY:maxY-minY
-  };
-
-}
-
-
-/* =========================================================
-   WORLD SCALE
-========================================================= */
-
-function getWorldScale(){
-
-  return Math.max(
-    1,
-    Math.round(
-      Number($("zoom").value)*2
-    )
-  );
-
-}
-
-
-/* =========================================================
-   WORLD ANNOTATIONS
-========================================================= */
-
-function drawAnnoWorld(id,x,y){
-
-  if(!annotationsVisible)
-    return;
-
-  for(
-    const r
-    of annotations.regions.filter(
-      a=>a.mapId===id
-    )
-  ){
-
-    ctx.fillStyle=
-      hexAlpha(
-        r.color,
-        r.opacity
-      );
-
-    ctx.fillRect(
-      x+r.x*worldScale,
-      y+r.y*worldScale,
-      r.w*worldScale,
-      r.h*worldScale
-    );
-
-    ctx.strokeStyle=r.color;
-
-    ctx.strokeRect(
-      x+r.x*worldScale,
-      y+r.y*worldScale,
-      r.w*worldScale,
-      r.h*worldScale
-    );
-
-  }
-
-  for(
-    const m
-    of annotations.markers.filter(
-      a=>a.mapId===id
-    )
-  ){
-
-    const mx=
-      x+(m.x+.5)*worldScale;
-
-    const my=
-      y+(m.y+.5)*worldScale;
-
-    ctx.font=
-      `${Math.max(
-        10,
-        m.size||18
-      )*worldScale/32}px sans-serif`;
-
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
-
-    ctx.fillText(
-      MARKERS[m.type]||"📍",
-      mx,
-      my
-    );
-
-  }
-
-  for(
-    const l
-    of annotations.labels.filter(
-      a=>a.mapId===id
-    )
-  ){
-
-    const lx=
-      x+l.x*worldScale+2;
-
-    const ly=
-      y+l.y*worldScale+
-      Math.max(
-        12,
-        l.size||16
-      )*worldScale/32;
-
-    ctx.font=
-      `bold ${Math.max(
-        9,
-        (l.size||16)*worldScale/32
-      )}px sans-serif`;
-
-    ctx.textAlign="left";
-    ctx.textBaseline="bottom";
-
-    ctx.strokeStyle="#000";
-    ctx.lineWidth=2;
-
-    ctx.strokeText(
-      l.text,
-      lx,
-      ly
-    );
-
-    ctx.fillStyle=
-      l.color||"#fff";
-
-    ctx.fillText(
-      l.text,
-      lx,
-      ly
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   WORLD RENDERER
-========================================================= */
-
-function renderWorld(){
-
-  if(
-    !maps.length ||
-    !worldBounds
-  )
-    return;
-
-  mode="world";
-
-  worldScale=
-    getWorldScale();
-
-  const PW=
-    MAP_W*worldScale;
-
-  const PH=
-    MAP_H*worldScale;
-
-  const cols=
-    worldBounds.maxX+1;
-
-  const rows=
-    worldBounds.maxY+1;
-
-  canvas.width=
-    cols*PW;
-
-  canvas.height=
-    rows*PH;
-
-  ctx.imageSmoothingEnabled=false;
-
-  ctx.fillStyle="#050608";
-
-  ctx.fillRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-
-  /*
-   * Render every connected room.
-   *
-   * Each room comes from getWorldRoomCanvas(),
-   * which is ALWAYS rendered at native 1x.
-   *
-   * The completed room is then scaled into the
-   * world map.
-   */
-  for(
-    const [id,p]
-    of worldPositions
-  ){
-
-    const x=
-      p.x*PW;
-
-    const y=
-      p.y*PH;
-
-    const room=
-      getWorldRoomCanvas(id);
-
-
-    /*
-     * Keep nearest-neighbour rendering so the
-     * pixel-art tiles stay crisp.
-     */
-    ctx.imageSmoothingEnabled=false;
-
-    ctx.drawImage(
-      room,
-      0,
-      0,
-      room.width,
-      room.height,
-      x,
-      y,
-      PW,
-      PH
-    );
-
-
-    /*
-     * Map ID
-     */
-    if(mapIdsVisible){
-
-      ctx.font=
-        `bold ${Math.max(
-          7,
-          Math.round(worldScale*.75)
-        )}px ui-monospace,Consolas,monospace`;
-
-      ctx.textAlign="left";
-      ctx.textBaseline="top";
-
-      ctx.strokeStyle="#000";
-
-      ctx.lineWidth=
-        Math.max(
-          1,
-          worldScale*.08
-        );
-
-      ctx.strokeText(
-        String(id),
-        x+2,
-        y+2
-      );
-
-      ctx.fillStyle="#fff";
-
-      ctx.fillText(
-        String(id),
-        x+2,
-        y+2
-      );
-
-    }
-
-
-    /*
-     * Annotations
-     */
-    drawAnnoWorld(
-      id,
-      x,
-      y
-    );
-
-
-    /*
-     * Map border
-     */
-    ctx.strokeStyle=
-      id===currentMapId
-        ? "#fff"
-        : "#46505e";
-
-    ctx.lineWidth=
-      id===currentMapId
-        ? Math.max(
-            1,
-            worldScale*.08
-          )
-        : 1;
-
-    ctx.strokeRect(
-      x+.5,
-      y+.5,
-      PW-1,
-      PH-1
-    );
-
-  }
-
-  applyZoom();
-
-  status(
-    `${worldPositions.size.toLocaleString()} connected maps · world preview · ${worldScale}px/tile`,
-    "ok"
-  );
-
-}
-
-
-/* =========================================================
-   MAP ANNOTATIONS
-========================================================= */
-
-function drawAnnoMap(c,id){
-
-  if(!annotationsVisible)
-    return;
-
-  for(
-    const r
-    of annotations.regions.filter(
-      a=>a.mapId===id
-    )
-  ){
-
-    c.fillStyle=
-      hexAlpha(
-        r.color,
-        r.opacity
-      );
-
-    c.fillRect(
-      r.x*TILE,
-      r.y*TILE,
-      r.w*TILE,
-      r.h*TILE
-    );
-
-    c.strokeStyle=r.color;
-
-    c.strokeRect(
-      r.x*TILE,
-      r.y*TILE,
-      r.w*TILE,
-      r.h*TILE
-    );
-
-  }
-
-
-  for(
-    const m
-    of annotations.markers.filter(
-      a=>a.mapId===id
-    )
-  ){
-
-    const x=
-      (m.x+.5)*TILE;
-
-    const y=
-      (m.y+.5)*TILE;
-
-    c.font=
-      `${m.size||18}px sans-serif`;
-
-    c.textAlign="center";
-    c.textBaseline="middle";
-
-    c.strokeStyle="#000";
-    c.lineWidth=3;
-
-    c.strokeText(
-      MARKERS[m.type]||"📍",
-      x,
-      y
-    );
-
-    c.fillStyle="#fff";
-
-    c.fillText(
-      MARKERS[m.type]||"📍",
-      x,
-      y
-    );
-
-  }
-
-
-  for(
-    const l
-    of annotations.labels.filter(
-      a=>a.mapId===id
-    )
-  ){
-
-    const x=
-      l.x*TILE+4;
-
-    const y=
-      l.y*TILE+(l.size||16);
-
-    c.font=
-      `bold ${l.size||16}px sans-serif`;
-
-    c.textAlign="left";
-    c.textBaseline="alphabetic";
-
-    c.strokeStyle="#000";
-    c.lineWidth=3;
-
-    c.strokeText(
-      l.text,
-      x,
-      y
-    );
-
-    c.fillStyle=
-      l.color||"#fff";
-
-    c.fillText(
-      l.text,
-      x,
-      y
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   MAP RENDER
-========================================================= */
-
-function renderMap(){
-
-  if(!maps.length)
-    return;
-
-  mode="map";
-
-  const c=
-    document.createElement("canvas");
-
-  const cc=
-    c.getContext("2d");
-
-  cc.imageSmoothingEnabled=false;
-
-  renderMapTo(
-    cc,
-    maps[currentMapId],
-    1
-  );
-
-  drawAnnoMap(
-    cc,
-    currentMapId
-  );
-
-  canvas.width=c.width;
-  canvas.height=c.height;
-
-  ctx.imageSmoothingEnabled=false;
-
-  ctx.drawImage(
-    c,
-    0,
-    0
-  );
-
-  applyZoom();
-
-  updateMapInfo();
-
-}
-
-
-/* =========================================================
-   GENERAL RENDER
-========================================================= */
-
-function render(){
-
-  if(mode==="world")
-    renderWorld();
-  else
-    renderMap();
-
-}
-
-
-/* =========================================================
-   ZOOM
-========================================================= */
-
-function applyZoom(){
-
-  const z=
-    Number($("zoom").value);
-
-  /*
-   * World zoom is represented by the actual internal
-   * world canvas resolution.
-   *
-   * Normal map mode continues using CSS scaling.
-   */
-  if(mode==="world"){
-
-    canvas.style.width=
-      canvas.width+"px";
-
-    canvas.style.height=
-      canvas.height+"px";
-
-  }else{
-
-    canvas.style.width=
-      canvas.width*z+"px";
-
-    canvas.style.height=
-      canvas.height*z+"px";
-
-  }
-
-  $("canvasWrap").style.width=
-    (canvas.clientWidth+100)+"px";
-
-  $("canvasWrap").style.height=
-    (canvas.clientHeight+100)+"px";
-
-}
-
-
-/* =========================================================
-   OPEN MAP
-========================================================= */
-
-function go(id){
-
-  id=Number(id);
-
-  if(
-    !Number.isInteger(id) ||
-    id<0 ||
-    id>=maps.length
-  )
-    return;
-
-  currentMapId=id;
-
-  $("mapId").value=id;
-
-  renderMap();
-
-  location.hash=
-    `map=${id}`;
-
-}
-
-
-/* =========================================================
-   NEIGHBOURS
-========================================================= */
-
-function neighbour(d){
-
-  const k={
-    N:"map_north_id",
-    S:"map_south_id",
-    W:"map_west_id",
-    E:"map_east_id"
-  }[d];
-
-  const n=
-    maps[currentMapId]?.[k];
-
-  if(
-    Number.isInteger(n) &&
-    n>=0
-  )
-    go(n);
-
-}
-
-
-/* =========================================================
-   MAP INFO
-========================================================= */
-
-function updateMapInfo(){
-
-  if(!maps.length)
-    return;
-
-  const m=
-    maps[currentMapId];
-
-  const p=
-    worldPositions.get(
-      currentMapId
-    );
-
-  $("mapInfo").textContent=
-`Map ID: ${currentMapId}
-Size: ${MAP_W} × ${MAP_H} tiles
-Pixels: ${MAP_W*TILE} × ${MAP_H*TILE}
-World position: ${p?`${p.x}, ${p.y}`:"unknown"}
-North: ${m.map_north_id}
-South: ${m.map_south_id}
-West: ${m.map_west_id}
-East: ${m.map_east_id}`;
-
-}
-
-
-/* =========================================================
-   ANNOTATION SEARCH
-========================================================= */
-
-function findAnnoAtMap(
-  id,
-  x,
-  y
-){
-
-  return [
-    ...annotations.labels,
-    ...annotations.markers
-  ].find(
-    a=>
-      a.mapId===id &&
-      a.x===x &&
-      a.y===y
-  );
-
-}
-
-
-function openAnno(a){
-
-  $("modalTitle").textContent=
-    a.type
-      ? `${MARKERS[a.type]||"📍"} ${a.text||a.type}`
-      : a.text||"Location";
-
-  $("modalBody").textContent=
-`Map ${a.mapId} · tile ${a.x}, ${a.y}
-
-${a.description||""}`;
-
-  $("modalBack").style.display=
-    "flex";
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
 function search(){
+ const q=$("search").value.trim().toLowerCase(),box=$("resBox"),el=$("results");if(!q){box.classList.add("hidden");return}
+ const out=[];if(/^\d+$/.test(q)&&Number(q)<maps.length)out.push({map:Number(q)});
+ for(const k of ["label","marker"])for(const a of list(k))if((a.text||"").toLowerCase().includes(q)||(a.description||"").toLowerCase().includes(q))out.push({k,a});
+ box.classList.remove("hidden");
+ el.innerHTML=out.length?out.slice(0,40).map((r,i)=>r.map!=null?`<div class="item" data-r="${i}">🗺️ <b>Open map ${r.map}</b></div>`:`<div class="item" data-r="${i}">${r.k==="marker"?ICONS[r.a.type]||"📍":"🏷️"} <b>${esc(r.a.text||"Untitled")}</b><div class="muted">Map ${r.a.mapId}</div></div>`).join(""):'<div class="item muted">No matches.</div>';
+ el._r=out;
+}
+$("results").onclick=e=>{const n=e.target.closest("[data-r]");if(!n)return;const r=$("results")._r[n.dataset.r];if(r.map!=null)go(r.map);else focusAnn(r.a,r.k);if(innerWidth<820)document.body.classList.add("noside")};
+$("search").oninput=search;$("search").onkeydown=e=>{if(e.key==="Enter"){const r=$("results")._r?.[0];if(r){r.map!=null?go(r.map):focusAnn(r.a,r.k)}}};
+$("mapList").onclick=e=>{const n=e.target.closest("[data-id]");if(!n)return;const a=list(n.dataset.k).find(x=>x.id===n.dataset.id);if(a)focusAnn(a,n.dataset.k)};
+$("card").onclick=e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=getSel();if(!a)return;
+ ({fly:()=>focusAnn(a,sel.kind),edit:()=>openModal(sel.kind,a),dup:()=>{hpush();const c={...clone(a),id:uid(),x:Math.min(15,a.x+1)};list(sel.kind).push(c);after();select(c,sel.kind)},del:delSel})[b.dataset.act]()};
 
-  const q=
-    $("search").value
-      .trim()
-      .toLowerCase();
-
-  const el=
-    $("results");
-
-  if(!q){
-
-    el.innerHTML=
-      '<div class="item small">Enter a search term.</div>';
-
-    return;
-  }
-
-  const out=[];
-
-  for(
-    const a
-    of [
-      ...annotations.labels,
-      ...annotations.markers
-    ]
-  ){
-
-    if(
-      (a.text||"")
-        .toLowerCase()
-        .includes(q) ||
-
-      (a.description||"")
-        .toLowerCase()
-        .includes(q) ||
-
-      String(a.mapId)===q
-    ){
-
-      out.push(a);
-
-    }
-
-  }
-
-
-  if(
-    /^\d+$/.test(q) &&
-    Number(q)<maps.length
-  ){
-
-    out.unshift({
-      id:"map:"+q,
-      mapId:Number(q),
-      text:"Open map "+q
-    });
-
-  }
-
-
-  el.innerHTML=
-    out.length
-      ? out
-        .slice(0,100)
-        .map(a=>`
-
-<div class="item" data-id="${a.id}">
-  ${a.type?MARKERS[a.type]:"🏷️"}
-  <b>
-    ${String(a.text||"Untitled").replace(
-      /[&<>]/g,
-      m=>({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;"
-      }[m])
-    )}
-  </b>
-
-  <div class="small">
-    Map ${a.mapId} · ${a.x},${a.y}
-  </div>
-
-</div>
-
-        `)
-        .join("")
-      :
-        '<div class="item small">No results.</div>';
-
-
-  el
-    .querySelectorAll(".item[data-id]")
-    .forEach(n=>{
-
-      n.onclick=()=>{
-
-        const id=
-          n.dataset.id;
-
-        if(
-          id.startsWith("map:")
-        ){
-
-          go(
-            Number(
-              id.slice(4)
-            )
-          );
-
-        }else{
-
-          const a=
-            [
-              ...annotations.labels,
-              ...annotations.markers
-            ].find(
-              x=>x.id===id
-            );
-
-          if(a){
-
-            go(a.mapId);
-
-            openAnno(a);
-
-          }
-
-        }
-
-      };
-
-    });
-
+/* ---------- editing ---------- */
+function persist(t){if(!EDIT)return;try{localStorage.setItem("mirage-livemap-annotations",JSON.stringify(ann));if(t)toast("Saved in this browser")}catch(e){toast("Could not save in this browser")}}
+function after(){reindex();persist();if(sel&&!getSel())sel=null;updateCard();renderList();updateInfo();schedule()}
+function hpush(){hist.push(JSON.stringify(ann));if(hist.length>80)hist.shift();redo=[]}
+function undo(){if(!hist.length)return toast("Nothing to undo");redo.push(JSON.stringify(ann));ann=norm(JSON.parse(hist.pop()));after()}
+function redoIt(){if(!redo.length)return toast("Nothing to redo");hist.push(JSON.stringify(ann));ann=norm(JSON.parse(redo.pop()));after()}
+function delSel(){const a=getSel();if(!a)return;hpush();const arr=list(sel.kind);arr.splice(arr.findIndex(x=>x.id===a.id),1);sel=null;after();toast("Deleted")}
+function setTool(t){tool=t;for(const k of ["select","label","marker","region"])$("t_"+k)?.classList.toggle("active",k===t);cv.style.cursor=t==="select"?"":"crosshair"}
+function openModal(kind,data){
+ pend={kind,data:clone(data),isNew:!list(kind).some(x=>x.id===data.id)};const d=pend.data;
+ $("mt").textContent=`${pend.isNew?"Add":"Edit"} ${kind}`;$("mDel").classList.toggle("hidden",pend.isNew);
+ document.querySelectorAll("#mb .f[data-k]").forEach(f=>f.classList.toggle("hidden",!f.dataset.k.split(" ").includes(kind)));
+ $("fText").value=d.text||"";$("fColor").value=d.color||(kind==="region"?"#ffcc66":"#ffffff");$("fSize").value=String(d.size||16);$("fDesc").value=d.description||"";
+ $("fType").value=d.type||$("markerType").value;$("fOp").value=d.opacity??.18;$("fX").value=d.x;$("fY").value=d.y;$("fW").value=d.w||1;$("fH").value=d.h||1;
+ $("mb").style.display="flex";setTimeout(()=>$("fText").focus(),20);
+}
+function closeModal(){$("mb").style.display="none";pend=null}
+function saveModal(){
+ if(!pend)return;const {kind,data:a}=pend;hpush();
+ a.text=$("fText").value.trim()||(kind==="region"?"Region":kind==="label"?"Label":"");
+ a.x=clamp(+$("fX").value||0,0,15);a.y=clamp(+$("fY").value||0,0,11);
+ if(kind==="label"){a.color=$("fColor").value;a.size=+$("fSize").value;a.description=$("fDesc").value}
+ if(kind==="marker"){a.type=$("fType").value;a.description=$("fDesc").value;a.size=18}
+ if(kind==="region"){a.color=$("fColor").value;a.opacity=+$("fOp").value;a.size=14;a.w=clamp(+$("fW").value||1,1,16-a.x);a.h=clamp(+$("fH").value||1,1,12-a.y)}
+ const arr=list(kind),i=arr.findIndex(x=>x.id===a.id);i>=0?arr[i]=a:arr.push(a);after();select(a,kind);closeModal();
+}
+async function loadAnn(force){
+ if(EDIT&&!force){try{const x=JSON.parse(localStorage.getItem("mirage-livemap-annotations")||"null");if(x){ann=norm(x);reindex();return"draft"}}catch(e){}}
+ try{const r=await fetch("./annotations.json",{cache:"no-store"});if(r.ok){ann=norm(await r.json());reindex();return"file"}}catch(e){}
 }
 
-
-/* =========================================================
-   ANNOTATIONS FILE
-========================================================= */
-
-async function autoAnnotations(){
-
-  try{
-
-    const r=
-      await fetch(
-        "./annotations.json",
-        {cache:"no-store"}
-      );
-
-    if(r.ok){
-
-      const x=
-        await r.json();
-
-      if(
-        x &&
-        Array.isArray(x.labels)
-      ){
-
-        annotations={
-          version:1,
-          labels:x.labels,
-          markers:
-            Array.isArray(x.markers)
-              ? x.markers
-              : [],
-          regions:
-            Array.isArray(x.regions)
-              ? x.regions
-              : []
-        };
-
-      }
-
-    }
-
-  }catch(e){}
-
+/* ---------- pointer input ---------- */
+cv.addEventListener("pointerdown",e=>{
+ cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY});anim++;
+ if(ptrs.size===2){drag=null;const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:cam.z};return}
+ const h=hitAt(e.offsetX,e.offsetY),p=at(e.offsetX,e.offsetY);drag={sx:e.offsetX,sy:e.offsetY,cx:cam.x,cy:cam.y,moved:false,mode:"pan",h,p};
+ if(EDIT&&e.button===0&&!space){
+  if(tool==="select"&&h&&sel&&h.a.id===sel.id)drag.mode="move";
+  else if(tool==="region"&&p.id!=null){drag.mode="draw";draft={mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11),w:1,h:1}}
+ }
+});
+cv.addEventListener("pointermove",e=>{
+ const px=e.offsetX,py=e.offsetY;if(ptrs.has(e.pointerId))ptrs.set(e.pointerId,{x:px,y:py});
+ if(pinch&&ptrs.size===2){const [a,b]=[...ptrs.values()];zoomAt((a.x+b.x)/2,(a.y+b.y)/2,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d);return}
+ const p=at(px,py);$("coords").textContent=p.id!=null?`Map ${p.id} · tile ${p.tx}, ${p.ty}`+(EDIT&&maps[p.id]?` · L: ${((maps[p.id].tiles[p.tx]||[])[p.ty]||[]).filter(v=>v>=0).join(",")}`:""):"–";
+ if(drag){const dx=px-drag.sx,dy=py-drag.sy;if(!drag.moved&&Math.hypot(dx,dy)>4){drag.moved=true;if(drag.mode==="move")hpush()}
+  if(!drag.moved)return;
+  if(drag.mode==="pan"){cam.x=drag.cx-dx/cam.z;cam.y=drag.cy-dy/cam.z;cv.style.cursor="grabbing";changed()}
+  else if(drag.mode==="move"){const a=getSel(),o=origin(a.mapId),w=a.w||1,h=a.h||1;a.x=clamp(Math.floor((p.wx-o.x)/TILE),0,16-w);a.y=clamp(Math.floor((p.wy-o.y)/TILE),0,12-h);reindex();schedule()}
+  else if(drag.mode==="draw"){const o=origin(draft.mapId),tx=clamp(Math.floor((p.wx-o.x)/TILE),0,15),ty=clamp(Math.floor((p.wy-o.y)/TILE),0,11),s=drag.p;
+   draft.x=Math.min(tx,clamp(s.tx,0,15));draft.y=Math.min(ty,clamp(s.ty,0,11));draft.w=Math.abs(tx-clamp(s.tx,0,15))+1;draft.h=Math.abs(ty-clamp(s.ty,0,11))+1;schedule()}
+  return}
+ const h=hitAt(px,py);if((h?.a.id||0)!==(hover?.a.id||0)){hover=h;schedule()}
+ cv.style.cursor=h?"pointer":EDIT&&tool!=="select"?"crosshair":"";
+ const t=$("tip");if(h){const a=h.a;t.innerHTML=`<b>${esc(a.text||"Untitled")}</b>${a.description?`<div>${esc(a.description.slice(0,160))}${a.description.length>160?"…":""}</div>`:""}`;t.style.display="block";t.style.left=Math.min(px+14,stage.clientWidth-270)+"px";t.style.top=Math.min(py+14,stage.clientHeight-80)+"px"}else t.style.display="none";
+});
+cv.addEventListener("pointerleave",()=>{$("tip").style.display="none"});
+function pointerEnd(e){
+ ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;if(!drag||ptrs.size)return;const d=drag;drag=null;cv.style.cursor="";
+ if(d.mode==="draw"&&d.moved){const r=draft;draft=null;openModal("region",{id:uid(),...r});return}
+ draft=null;if(d.mode==="move"&&d.moved){after();return}if(d.moved)return;
+ const h=d.h,p=d.p;
+ if(EDIT&&(tool==="label"||tool==="marker")&&p.id!=null){openModal(tool,{id:uid(),mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11)});return}
+ if(EDIT&&tool==="region"&&p.id!=null){openModal("region",{id:uid(),mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11),w:1,h:1});return}
+ if(h){select(h.a,h.kind)}else{select(null);if(p.id!=null&&p.id!==cur)setCur(p.id)}
 }
-
-
-/* =========================================================
-   WORLD / MAP CLICK
-========================================================= */
-
-canvas.addEventListener(
-  "click",
-  e=>{
-
-    if(mode==="world"){
-
-      const r=
-        canvas.getBoundingClientRect();
-
-      const sx=
-        canvas.width/r.width;
-
-      const sy=
-        canvas.height/r.height;
-
-      const x=
-        Math.floor(
-          (e.clientX-r.left)*sx
-        );
-
-      const y=
-        Math.floor(
-          (e.clientY-r.top)*sy
-        );
-
-      const PW=
-        MAP_W*worldScale;
-
-      const PH=
-        MAP_H*worldScale;
-
-      const gx=
-        Math.floor(x/PW)+
-        (worldBounds?.minX||0);
-
-      const gy=
-        Math.floor(y/PH)+
-        (worldBounds?.minY||0);
-
-
-      for(
-        const [id,p]
-        of worldPositions
-      ){
-
-        if(
-          p.x===gx &&
-          p.y===gy
-        ){
-
-          go(id);
-
-          return;
-
-        }
-
-      }
-
-    }else{
-
-      const r=
-        canvas.getBoundingClientRect();
-
-      const sx=
-        canvas.width/r.width;
-
-      const sy=
-        canvas.height/r.height;
-
-      const tx=
-        Math.floor(
-          ((e.clientX-r.left)*sx)/
-          TILE
-        );
-
-      const ty=
-        Math.floor(
-          ((e.clientY-r.top)*sy)/
-          TILE
-        );
-
-      const a=
-        findAnnoAtMap(
-          currentMapId,
-          tx,
-          ty
-        );
-
-      if(a)
-        openAnno(a);
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-$("worldBtn").onclick=
-  renderWorld;
-
-$("mapBtn").onclick=
-  renderMap;
-
-$("goBtn").onclick=
-  ()=>go(
-    $("mapId").value
-  );
-
-$("mapId").onkeydown=
-  e=>{
-    if(e.key==="Enter")
-      go($("mapId").value);
-  };
-
-$("firstBtn").onclick=
-  ()=>go(0);
-
-$("randomBtn").onclick=
-  ()=>go(
-    Math.floor(
-      Math.random()*maps.length
-    )
-  );
-
-$("northBtn").onclick=
-  ()=>neighbour("N");
-
-$("southBtn").onclick=
-  ()=>neighbour("S");
-
-$("westBtn").onclick=
-  ()=>neighbour("W");
-
-$("eastBtn").onclick=
-  ()=>neighbour("E");
-
-
-/*
- * Fit now uses the smallest available world zoom
- * rather than the old .25 CSS scaling behaviour.
- */
-$("fitBtn").onclick=()=>{
-
-  $("zoom").value=".25";
-
-  render();
-
-};
-
-
-$("zoom").onchange=
-  render;
-
-
-$("toggleIds").onclick=()=>{
-
-  mapIdsVisible=
-    !mapIdsVisible;
-
-  $("toggleIds").textContent=
-    `Map IDs: ${mapIdsVisible?"ON":"OFF"}`;
-
-  render();
-
-};
-
-
-$("toggleAnno").onclick=()=>{
-
-  annotationsVisible=
-    !annotationsVisible;
-
-  $("toggleAnno").textContent=
-    `Labels: ${annotationsVisible?"ON":"OFF"}`;
-
-  render();
-
-};
-
-
-$("searchBtn").onclick=
-  search;
-
-
-$("search").onkeydown=
-  e=>{
-
-    if(e.key==="Enter")
-      search();
-
-  };
-
-
-$("modalClose").onclick=
-  ()=>
-    $("modalBack").style.display=
-      "none";
-
-
-window.onresize=
-  applyZoom;
-
-
-/* =========================================================
-   STARTUP
-========================================================= */
+cv.addEventListener("pointerup",pointerEnd);cv.addEventListener("pointercancel",pointerEnd);
+cv.addEventListener("dblclick",e=>{const h=hitAt(e.offsetX,e.offsetY);if(EDIT&&h){openModal(h.kind,h.a);return}
+ if(h)return focusAnn(h.a,h.kind);const p=at(e.offsetX,e.offsetY);if(p.id!=null)go(p.id)});
+cv.addEventListener("wheel",e=>{e.preventDefault();anim++;zoomAt(e.offsetX,e.offsetY,cam.z*Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015)*(e.deltaMode===1?20:1)))},{passive:false});
+new ResizeObserver(schedule).observe(stage);
+
+/* ---------- controls ---------- */
+const fit=()=>flyTo(fitMapT(cur));
+$("worldBtn").onclick=()=>flyTo(fitWorldT());$("mapBtn").onclick=fit;$("zFit").onclick=fit;$("zIn").onclick=()=>zoomBtn(1.5);$("zOut").onclick=()=>zoomBtn(1/1.5);
+$("goBtn").onclick=()=>go($("mapId").value);$("mapId").onkeydown=e=>{if(e.key==="Enter")go($("mapId").value)};
+for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]])$(b).onclick=()=>{const n=maps[cur]?.[k];if(n>=0&&n<maps.length)go(n)};
+$("menuBtn").onclick=()=>{document.body.classList.toggle("noside");setTimeout(schedule,30)};
+$("shareBtn").onclick=async()=>{clearTimeout(hashT);changed();setTimeout(async()=>{try{await navigator.clipboard.writeText(location.href);toast("Link copied")}catch(e){toast("Copy the address bar link")}},350)};
+for(const [id,k] of [["cbLabel","label"],["cbMarker","marker"],["cbRegion","region"],["cbIds","ids"],["cbGrid","grid"]]){const n=$(id);if(n)n.onchange=()=>{show[k]=n.checked?1:0;schedule()}}
+$("mOk").onclick=saveModal;
+if(EDIT){
+ $("markerType").innerHTML=$("fType").innerHTML=Object.entries(ICONS).map(([k,v])=>`<option value="${k}">${v} ${k}</option>`).join("");
+ for(const k of ["select","label","marker","region"])$("t_"+k).onclick=()=>setTool(k);
+ $("undoBtn").onclick=undo;$("redoBtn").onclick=redoIt;$("mCancel").onclick=closeModal;$("mDel").onclick=()=>{const a=pend.data;closeModal();sel={kind:pend.kind,id:a.id};delSel()};
+ $("mb").onclick=e=>{if(e.target===$("mb"))closeModal()};
+ $("saveBtn").onclick=()=>persist(true);$("importBtn").onclick=()=>$("annFile").click();
+ $("exportBtn").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(ann,null,2)],{type:"application/json"}));a.download="annotations.json";a.click();toast("Exported annotations.json")};
+ $("annFile").onchange=async e=>{try{hpush();ann=norm(JSON.parse(await e.target.files[0].text()));after();toast("Imported")}catch(x){toast("That is not a valid annotations file")}};
+ $("reloadBtn").onclick=async()=>{if(!confirm("Replace your browser draft with the published annotations.json?"))return;hpush();await loadAnn(true);after();toast("Reloaded annotations.json")};
+ $("clearBtn").onclick=()=>{if(confirm("Delete every annotation? You can undo this.")){hpush();ann=norm({});after()}};
+ $("pngBtn").onclick=()=>{const c=mapImg(cur,false),a=document.createElement("a");a.download=`map-${cur}.png`;a.href=c.toDataURL();a.click()};
+ $("jsonFile").onchange=async e=>{try{loadDump(await e.target.files[0].text())}catch(x){status(x.message,"danger")}};
+ $("assetFolder").onchange=e=>{let n=0;for(const f of e.target.files){const m=f.name.match(/^tiles(\d+)\.png$/i);if(m&&+m[1]<SHEETS){setSheet(+m[1],URL.createObjectURL(f));n++}}toast(`Loaded ${n} tile sheets`)};
+ $("offset").onchange=()=>{S.offset=+$("offset").value;invalidate()};$("reverse").onchange=()=>{S.reverse=$("reverse").checked;invalidate()};
+ addEventListener("beforeunload",()=>persist());
+}
+document.addEventListener("keydown",e=>{
+ const typing=/INPUT|SELECT|TEXTAREA/.test(e.target.tagName);
+ if(e.key==="Escape"){if(pend)closeModal();else{select(null);$("search").blur()}return}
+ if(pend&&e.key==="Enter"&&(e.ctrlKey||e.metaKey))return saveModal();
+ if(e.key===" "&&!typing){space=true}
+ if(EDIT&&(e.ctrlKey||e.metaKey)){const k=e.key.toLowerCase();if(k==="z"&&!typing){e.preventDefault();e.shiftKey?redoIt():undo()}else if(k==="y"&&!typing){e.preventDefault();redoIt()}else if(k==="s"){e.preventDefault();persist(true)}return}
+ if(typing||pend)return;
+ const k=e.key.toLowerCase(),step=90/cam.z;
+ if(k==="+"||k==="="){zoomBtn(1.4)}else if(k==="-"){zoomBtn(1/1.4)}else if(k==="0"||k==="f")fit();else if(k==="w")flyTo(fitWorldT());
+ else if(k==="arrowleft"){cam.x-=step;changed()}else if(k==="arrowright"){cam.x+=step;changed()}else if(k==="arrowup"){cam.y-=step;changed()}else if(k==="arrowdown"){cam.y+=step;changed()}
+ else if(EDIT){if("1234".includes(k)&&k)setTool(["select","label","marker","region"][+k-1]);else if(k==="delete"||k==="backspace")delSel();else if(k==="g"){show.grid=show.grid?0:1;$("cbGrid").checked=!!show.grid;schedule()}}
+});
+document.addEventListener("keyup",e=>{if(e.key===" ")space=false});
 
 (async()=>{
-
-  const h=
-    location.hash.match(
-      /map=(\d+)/
-    );
-
-  if(h)
-    currentMapId=
-      Number(h[1]);
-
-
-  await autoAnnotations();
-
-  await autoMap();
-
-  const n=
-    await autoSheets();
-
-
-  /*
-   * Sheets are fully loaded before the first world
-   * render. This prevents the initial world from being
-   * generated while tile images are still loading.
-   */
-  if(maps.length){
-
-    renderWorld();
-
-    status(
-      `${maps.length.toLocaleString()} maps loaded · ${n}/${SHEETS} tile sheets ready`,
-      n===SHEETS
-        ? "ok"
-        : "warn"
-    );
-
-  }
-
+ if(innerWidth<820)document.body.classList.add("noside");
+ const h=new URLSearchParams(location.hash.slice(1));if(h.get("map")!=null)cur=+h.get("map")||0;
+ const src=await loadAnn();updateCard();renderList();if(src==="draft")toast("Loaded your unsaved browser draft");
+ const [,n]=await Promise.all([autoMap(),autoSheets()]);
+ if(maps.length)status(`${maps.length.toLocaleString()} maps · ${n}/${SHEETS} tile sheets`,n===SHEETS?"ok":"warn");
 })();
-
-
-/* =========================================================
-   ALPHA HELPER
-========================================================= */
-
-function hexAlpha(hex,opacity){
-
-  let h=
-    String(hex||"#ffffff")
-      .replace("#","");
-
-  if(h.length===3){
-
-    h=
-      h
-        .split("")
-        .map(x=>x+x)
-        .join("");
-
-  }
-
-  const n=
-    parseInt(h,16);
-
-  const r=
-    (n>>16)&255;
-
-  const g=
-    (n>>8)&255;
-
-  const b=
-    n&255;
-
-  return `rgba(${r},${g},${b},${opacity??.35})`;
-
-}
-
 })();
 </script>
-
 </body>
 </html>
