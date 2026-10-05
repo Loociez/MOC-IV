@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mirage Interactive Livemap</title>
+<style>
+:root{color-scheme:dark;--bg:#0e1014;--panel:#151922;--panel2:#1b202a;--line:#343b49;--text:#e9edf5;--muted:#9da7b8;--accent:#65a9ff;--danger:#ff7373}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+button,input,select,textarea{font:inherit;background:#252b35;color:var(--text);border:1px solid #454d5b;border-radius:5px;padding:6px 8px}
+button{cursor:pointer}button:hover{background:#303743}button.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+button:disabled{opacity:.45;cursor:not-allowed}
+input[type=number]{width:90px}input[type=file]{max-width:240px}
+textarea{width:100%;resize:vertical;min-height:70px}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr}
+header{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#171b22;border-bottom:1px solid var(--line);z-index:20}
+header strong{font-size:16px;margin-right:5px}.status{color:#a9b7cc;margin-left:auto;white-space:nowrap}
+main{min-height:0;display:grid;grid-template-columns:330px 1fr}
+aside{overflow:auto;background:var(--panel);border-right:1px solid var(--line);padding:10px}
+section{margin-bottom:14px}h3{font-size:12px;color:#b5bfce;text-transform:uppercase;letter-spacing:.05em;margin:0 0 7px}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:5px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.small{font-size:11px;color:var(--muted)}.pill{display:inline-block;padding:2px 6px;border-radius:10px;background:#2b313c;font-size:11px}
+.info{white-space:pre-wrap;background:#0b0d11;border:1px solid #2b3039;border-radius:5px;padding:7px;font:11px/1.45 ui-monospace,Consolas,monospace}
+.list{max-height:190px;overflow:auto;border:1px solid #2b3039;border-radius:5px;background:#0b0d11}
+.item{padding:6px 7px;border-bottom:1px solid #242933;cursor:pointer}.item:last-child{border:0}.item:hover{background:#1d232c}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+#viewport{position:relative;overflow:auto;min-width:0;min-height:0;background:
+linear-gradient(45deg,#171a20 25%,transparent 25%),linear-gradient(-45deg,#171a20 25%,transparent 25%),
+linear-gradient(45deg,transparent 75%,#171a20 75%),linear-gradient(-45deg,transparent 75%,#171a20 75%);
+background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+#canvasWrap{padding:50px;min-width:max-content;min-height:max-content}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;background:#050608;box-shadow:0 0 0 1px #596171,0 10px 40px #0008}
+#canvas{cursor:crosshair}
+.modalBack{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:100}
+.modal{width:min(560px,calc(100vw - 30px));max-height:90vh;overflow:auto;background:#181d26;border:1px solid #4a5362;border-radius:8px;padding:14px;box-shadow:0 20px 70px #000}
+.modal h2{margin:0 0 10px;font-size:17px}.modalActions{display:flex;justify-content:flex-end;gap:6px;margin-top:10px}
+.close{float:right}
+.color{width:45px;height:34px;padding:2px}.hidden{display:none!important}
+.annotationDot{font-size:11px}
+hr{border:0;border-top:1px solid #2c323d;margin:9px 0}
+kbd{background:#272d36;border:1px solid #454c58;border-radius:3px;padding:1px 4px;font-size:10px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <strong>🗺️ Interactive Livemap</strong>
+  <button id="worldBtn">World</button>
+  <button id="mapBtn">Map</button>
+  <label>Map <input id="mapId" type="number" min="0" value="0"></label>
+  <button id="goBtn">Go</button>
+  <input id="search" placeholder="Search labels / map IDs…" style="width:190px">
+  <button id="searchBtn">Search</button>
+  <button id="fitBtn">Fit</button><button id="toggleIds">Map IDs: ON</button>
+  <span id="status" class="status">Starting…</span>
+</header>
+
+<main>
+<aside>
+<section>
+<h3>Data</h3>
+<div class="row"><label>Mapdump <input id="jsonFile" type="file" accept=".json,application/json"></label></div>
+<div class="row"><label>Assets <input id="assetFolder" type="file" webkitdirectory directory multiple></label></div>
+<div class="small">For GitHub Pages, put <code>mapdump.json</code> beside this HTML and <code>assets/tiles0.png</code> … <code>tiles18.png</code> in <code>assets/</code>. An optional <code>annotations.json</code> is loaded automatically.</div>
+</section>
+
+<section>
+<h3>Annotations</h3>
+<div class="toolgrid">
+<button id="labelTool">🏷️ Label</button>
+<button id="markerTool">📍 Marker</button>
+<button id="regionTool">▣ Region</button>
+<button id="selectTool" class="active">↖ Select</button>
+</div>
+<div class="row">
+<button id="saveBtn">💾 Save locally</button>
+<button id="exportBtn">Export JSON</button>
+<button id="importBtn">Import JSON</button>
+<input id="annotationFile" type="file" accept=".json" class="hidden">
+</div>
+<div class="row"><button id="clearBtn">Clear all annotations</button><button id="toggleAnno">Hide annotations</button></div>
+<div class="small">Click the map with a tool selected. Labels and markers are attached to a map tile, so they remain in the correct place when maps are stitched into the world.</div>
+</section>
+
+<section>
+<h3>Marker type</h3>
+<select id="markerType" style="width:100%">
+<option value="town">🏠 Town</option><option value="city">🏰 City</option><option value="dungeon">☠️ Dungeon</option>
+<option value="boss">💀 Boss</option><option value="shop">🛒 Shop</option><option value="quest">❗ Quest</option>
+<option value="portal">🌀 Portal</option><option value="danger">⚠️ Danger</option><option value="point">📍 Point</option>
+</select>
+</section>
+
+<section>
+<h3>Rendering</h3>
+<div class="row"><label>Zoom <select id="zoom"><option>.5</option><option>1</option><option>1.5</option><option>2</option><option>3</option><option>4</option></select></label></div>
+<div class="row"><label><input id="reverseLayers" type="checkbox"> Reverse static layers</label></div>
+<div class="row"><label>Tile IDs <select id="offset"><option value="0">0-based</option><option value="1">1-based</option></select></label></div>
+<div class="small">Static layers: Ground → Mask → Mask 2 → Fringe → Fringe 2 → Roof. Animation layers are ignored.</div>
+</section>
+
+<section>
+<h3>Map navigation</h3>
+<div class="toolgrid">
+<button id="northBtn">▲ North</button><button id="southBtn">▼ South</button>
+<button id="westBtn">◀ West</button><button id="eastBtn">East ▶</button>
+</div>
+<div class="row"><button id="firstBtn">Map 0</button><button id="randomBtn">Random</button><button id="downloadBtn">Download PNG</button></div>
+</section>
+
+<section>
+<h3>Map info</h3><div id="mapInfo" class="info">No map loaded.</div>
+</section>
+
+<section>
+<h3>Selected annotation</h3><div id="selectedInfo" class="info">Nothing selected.</div>
+<button id="editSelected" disabled style="margin-top:6px">Edit selected</button>
+<button id="deleteSelected" disabled>Delete selected</button>
+</section>
+
+<section>
+<h3>Search results</h3><div id="results" class="list"><div class="item small">Search a label, marker, or map ID.</div></div>
+</section>
+
+<section>
+<h3>Tile inspector</h3><div id="tileInfo" class="info">Move over a map.</div>
+</section>
+</aside>
+
+<div id="viewport"><div id="canvasWrap"><canvas id="canvas"></canvas></div></div>
+</main>
+</div>
+
+<div id="modalBack" class="modalBack">
+<div class="modal">
+<button id="modalClose" class="close">✕</button>
+<h2 id="modalTitle">Annotation</h2>
+<div id="labelFields">
+  <label>Text<input id="annoText" style="width:100%" placeholder="e.g. Dragonia"></label>
+  <div class="grid2" style="margin-top:7px">
+    <label>Color<input id="annoColor" class="color" type="color" value="#ffffff"></label>
+    <label>Size<select id="annoSize"><option value="12">Small</option><option value="16" selected>Medium</option><option value="22">Large</option><option value="30">Huge</option></select></label>
+  </div>
+  <label style="display:block;margin-top:7px">Description<textarea id="annoDesc" placeholder="Optional notes…"></textarea></label>
+</div>
+<div id="markerFields" class="hidden">
+  <label>Marker type<select id="annoMarkerType" style="width:100%"></select></label>
+  <label style="display:block;margin-top:7px">Title<input id="markerText" style="width:100%" placeholder="e.g. Blacksmith"></label>
+  <label style="display:block;margin-top:7px">Description<textarea id="markerDesc"></textarea></label>
+</div>
+<div id="regionFields" class="hidden">
+  <label>Name<input id="regionText" style="width:100%" placeholder="Region name"></label>
+  <div class="grid2" style="margin-top:7px"><label>Border<input id="regionColor" class="color" type="color" value="#ffcc66"></label><label>Fill opacity<input id="regionOpacity" type="range" min="0" max="0.5" step=".05" value=".18"></label></div>
+</div>
+<div class="modalActions"><button id="modalCancel">Cancel</button><button id="modalOk">Save</button></div>
+</div>
+</div>
+
+<script>
+(()=>{"use strict";
+const TILE=32, MAP_W=16, MAP_H=12, SHEETS=19, TILES_PER_SHEET=1024;
+const STATIC_LAYERS=[0,1,3,5,7,9];
+const MARKERS={town:"🏠",city:"🏰",dungeon:"☠️",boss:"💀",shop:"🛒",quest:"❗",portal:"🌀",danger:"⚠️",point:"📍"};
+let maps=[], currentMapId=0, tileSheets=Array(SHEETS).fill(null), sheetReady=Array(SHEETS).fill(false);
+let mode="map", tool="select", annotations={version:1,labels:[],markers:[],regions:[]}, selected=null, pending=null;
+let worldPositions=new Map(), worldBounds=null, worldScale=8, mapCanvasCache=new Map(), renderedMapCanvas=null, annotationsVisible=true, mapIdsVisible=true;
+
+const $=id=>document.getElementById(id), canvas=$("canvas"), ctx=canvas.getContext("2d");
+ctx.imageSmoothingEnabled=false;
+
+function status(s,c=""){ $("status").textContent=s; $("status").style.color=c==="danger"?"#ff8888":c==="ok"?"#82e4a5":c==="warn"?"#ffd16a":""; }
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function parseMapdumpText(text){
+ text=text.trim();
+ try{const x=JSON.parse(text);return Array.isArray(x)?x:(x.maps||[])}catch(e){
+   if(text.startsWith("{")&&text.endsWith("]")) return JSON.parse("["+text);
+   throw new Error("Could not parse mapdump JSON.");
+ }
+}
+function loadMapdumpText(text){
+ const a=parseMapdumpText(text);
+ maps=a.map(m=>({tiles:m.tiles,map_north_id:Number.isInteger(m.map_north_id)?m.map_north_id:-1,map_south_id:Number.isInteger(m.map_south_id)?m.map_south_id:-1,map_west_id:Number.isInteger(m.map_west_id)?m.map_west_id:-1,map_east_id:Number.isInteger(m.map_east_id)?m.map_east_id:-1}));
+ if(!maps.length)throw Error("No maps found.");
+ currentMapId=Math.min(currentMapId,maps.length-1); $("mapId").value=currentMapId;
+ buildWorldPositions(); mapCanvasCache.clear(); render();
+ status(`${maps.length.toLocaleString()} maps loaded`,"ok");
+}
+async function autoMap(){try{const r=await fetch("./mapdump.json",{cache:"no-store"});if(!r.ok)throw 0;loadMapdumpText(await r.text())}catch(e){status("Choose mapdump.json below","warn")}}
+function setSheet(i,src){const im=new Image();im.onload=()=>{tileSheets[i]=im;sheetReady[i]=true;mapCanvasCache.clear();render()};im.onerror=()=>{tileSheets[i]=null;sheetReady[i]=false};im.src=src}
+async function autoSheets(){let n=0;for(let i=0;i<SHEETS;i++){try{const r=await fetch(`./assets/tiles${i}.png`);if(!r.ok)continue;setSheet(i,URL.createObjectURL(await r.blob()));n++}catch(e){}}if(n)status(`Loaded ${n}/${SHEETS} tile sheets`,"ok")}
+function tileSource(id){
+ let n=Number(id)-Number($("offset").value); if(!Number.isInteger(n)||n<0)return null;
+ const sheet=Math.floor(n/TILES_PER_SHEET),local=n%TILES_PER_SHEET;
+ if(sheet<0||sheet>=SHEETS||!tileSheets[sheet])return {sheet,local,missing:true};
+ return {sheet,local,img:tileSheets[sheet]};
+}
+function drawTile(c,id,dx,dy,scale){
+ const t=tileSource(id);if(!t)return;
+ if(t.missing){c.fillStyle="#351b1b";c.fillRect(dx,dy,TILE*scale,TILE*scale);return}
+ const sx=(t.local%32)*32,sy=Math.floor(t.local/32)*32;
+ c.drawImage(t.img,sx,sy,32,32,dx,dy,32*scale,32*scale);
+}
+function renderMapTo(c,map,scale){
+ c.canvas.width=MAP_W*TILE*scale;c.canvas.height=MAP_H*TILE*scale;c.clearRect(0,0,c.canvas.width,c.canvas.height);c.imageSmoothingEnabled=false;
+ const rev=$("reverseLayers").checked;
+ for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++){
+   const layers=(map.tiles[x]||[])[y]||[];
+   if(rev)for(let p=STATIC_LAYERS.length-1;p>=0;p--){const k=STATIC_LAYERS[p];if(layers[k]>=0)drawTile(c,layers[k],x*TILE*scale,y*TILE*scale,scale)}
+   else for(const k of STATIC_LAYERS)if(layers[k]>=0)drawTile(c,layers[k],x*TILE*scale,y*TILE*scale,scale)
+ }
+}
+function getMapCanvas(id,scale=1){
+ const key=id+"@"+scale+"@"+$("offset").value+"@"+$("reverseLayers").checked;
+ if(mapCanvasCache.has(key))return mapCanvasCache.get(key);
+ const c=document.createElement("canvas"),cc=c.getContext("2d");renderMapTo(cc,maps[id],scale);mapCanvasCache.set(key,c);return c;
+}
+
+function buildWorldPositions(){
+ worldPositions=new Map(); let remaining=new Set(maps.map((_,i)=>i)), components=[];
+ while(remaining.size){
+   const start=remaining.values().next().value, q=[start], pos=new Map([[start,{x:0,y:0}]]);
+   remaining.delete(start);
+   while(q.length){const id=q.shift(),p=pos.get(id),m=maps[id];
+     for(const [key,dx,dy] of [["map_north_id",0,-1],["map_south_id",0,1],["map_west_id",-1,0],["map_east_id",1,0]]){
+       const n=m[key];if(!Number.isInteger(n)||n<0||n>=maps.length)continue;
+       if(!pos.has(n)){pos.set(n,{x:p.x+dx,y:p.y+dy});remaining.delete(n);q.push(n)}
+     }
+   }
+   components.push(pos);
+ }
+ // Pack disconnected components into rows, preserving each component's internal N/E/S/W layout.
+ let cursorX=0,cursorY=0,rowH=0, GAP=3;
+ for(const comp of components){
+   let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+   for(const p of comp.values()){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}
+   const w=maxX-minX+1,h=maxY-minY+1;
+   if(cursorX&&cursorX+w>80){cursorX=0;cursorY+=rowH+GAP;rowH=0}
+   for(const [id,p] of comp)worldPositions.set(id,{x:p.x-minX+cursorX,y:p.y-minY+cursorY});
+   cursorX+=w+GAP;rowH=Math.max(rowH,h);
+ }
+ if(!worldPositions.size){worldBounds=null;return}
+ let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+ for(const p of worldPositions.values()){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}
+ worldBounds={minX,maxX,minY,maxY};
+}
+
+function annotationAtMap(id,x,y){
+ const all=[...annotations.labels,...annotations.markers,...annotations.regions];
+ return all.find(a=>a.mapId===id&&a.x===x&&a.y===y)||null;
+}
+function drawAnnotationsMap(c,mapId,scale=1){
+ if(!annotationsVisible)return;
+ const ox=0,oy=0;
+ for(const r of annotations.regions.filter(a=>a.mapId===mapId)){
+   c.fillStyle=hexAlpha(r.color,r.opacity);c.strokeStyle=r.color;c.lineWidth=2*scale;
+   c.fillRect((r.x*TILE+ox)*scale,(r.y*TILE+oy)*scale,r.w*TILE*scale,r.h*TILE*scale);
+   c.strokeRect((r.x*TILE+ox)*scale,(r.y*TILE+oy)*scale,r.w*TILE*scale,r.h*TILE*scale);
+   if(r.text){c.fillStyle=r.color;c.font=`bold ${Math.max(9,r.size||14)*scale}px sans-serif`;c.fillText(r.text,(r.x*TILE+4)*scale,(r.y*TILE+16)*scale)}
+ }
+ for(const m of annotations.markers.filter(a=>a.mapId===mapId)){
+   const x=(m.x*TILE+TILE/2)*scale,y=(m.y*TILE+TILE/2)*scale;
+   c.font=`${Math.max(10,m.size||18)*scale}px sans-serif`;c.textAlign="center";c.textBaseline="middle";
+   c.strokeStyle="#000";c.lineWidth=3*scale;c.strokeText(MARKERS[m.type]||"📍",x,y);c.fillStyle="#fff";c.fillText(MARKERS[m.type]||"📍",x,y);
+   if(m.text){c.textAlign="left";c.textBaseline="bottom";c.font=`bold ${Math.max(9,(m.size||14)-2)*scale}px sans-serif`;c.strokeStyle="#000";c.lineWidth=3*scale;c.strokeText(m.text,x+8*scale,y-2*scale);c.fillStyle="#fff";c.fillText(m.text,x+8*scale,y-2*scale)}
+ }
+ for(const l of annotations.labels.filter(a=>a.mapId===mapId)){
+   const x=(l.x*TILE+4)*scale,y=(l.y*TILE+Math.max(14,l.size||16))*scale;
+   c.font=`bold ${l.size||16}px sans-serif`;c.textAlign="left";c.textBaseline="alphabetic";c.lineWidth=3*scale;c.strokeStyle="#000";c.strokeText(l.text,x,y);c.fillStyle=l.color||"#fff";c.fillText(l.text,x,y);
+ }
+}
+function hexAlpha(hex,a){let h=(hex||"#fff").replace("#","");if(h.length===3)h=h.split("").map(x=>x+x).join("");return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a??.18})`}
+
+function renderCurrentMap(){
+ if(!maps.length)return;mode="map";$("mapBtn").disabled=true;$("worldBtn").disabled=false;
+ const temp=document.createElement("canvas"),tc=temp.getContext("2d");renderMapTo(tc,maps[currentMapId],1);drawAnnotationsMap(tc,currentMapId,1);renderedMapCanvas=temp;
+ canvas.width=temp.width;canvas.height=temp.height;ctx.drawImage(temp,0,0);
+ applyZoom();updateMapInfo();location.hash=`map=${currentMapId}`;
+}
+function renderWorld(){
+ if(!maps.length||!worldBounds)return;
+ mode="world";$('worldBtn').disabled=true;$('mapBtn').disabled=false;
+ const PW=MAP_W*worldScale,PH=MAP_H*worldScale;
+ const cols=worldBounds.maxX-worldBounds.minX+1,rows=worldBounds.maxY-worldBounds.minY+1;
+ canvas.width=cols*PW;canvas.height=rows*PH;
+ ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle="#050608";ctx.fillRect(0,0,canvas.width,canvas.height);
+ for(const [id,p] of worldPositions){
+   const x=(p.x-worldBounds.minX)*PW,y=(p.y-worldBounds.minY)*PH;
+   const thumb=getMapCanvas(id,worldScale/32);
+   ctx.drawImage(thumb,x,y,PW,PH);
+   if(mapIdsVisible){
+     const fs=Math.max(9,Math.round(worldScale*1.55));
+     ctx.font=`bold ${fs}px ui-monospace,Consolas,monospace`;ctx.textAlign="left";ctx.textBaseline="top";
+     ctx.lineWidth=Math.max(2,worldScale*.35);ctx.strokeStyle="#000";ctx.strokeText(String(id),x+3,y+3);ctx.fillStyle="#fff";ctx.fillText(String(id),x+3,y+3);
+   }
+   if(annotationsVisible){
+     for(const r of annotations.regions.filter(a=>a.mapId===id)){
+       ctx.fillStyle=hexAlpha(r.color,r.opacity);ctx.fillRect(x+r.x*worldScale,y+r.y*worldScale,r.w*worldScale,r.h*worldScale);
+       ctx.strokeStyle=r.color;ctx.lineWidth=Math.max(1,worldScale*.2);ctx.strokeRect(x+r.x*worldScale,y+r.y*worldScale,r.w*worldScale,r.h*worldScale);
+     }
+     for(const m of annotations.markers.filter(a=>a.mapId===id)){
+       const mx=x+(m.x+.5)*worldScale,my=y+(m.y+.5)*worldScale;
+       ctx.font=`${Math.max(10,m.size||18)*worldScale/32}px sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";
+       ctx.strokeStyle="#000";ctx.lineWidth=Math.max(1,worldScale/8);ctx.strokeText(MARKERS[m.type]||"📍",mx,my);ctx.fillStyle="#fff";ctx.fillText(MARKERS[m.type]||"📍",mx,my);
+     }
+     for(const l of annotations.labels.filter(a=>a.mapId===id)){
+       const lx=x+l.x*worldScale+2,ly=y+l.y*worldScale+Math.max(12,l.size||16)*worldScale/32;
+       ctx.font=`bold ${Math.max(9,(l.size||16)*worldScale/32)}px sans-serif`;ctx.textAlign="left";ctx.textBaseline="bottom";
+       ctx.strokeStyle="#000";ctx.lineWidth=Math.max(1,worldScale/8);ctx.strokeText(l.text,lx,ly);ctx.fillStyle=l.color||"#fff";ctx.fillText(l.text,lx,ly);
+     }
+   }
+   ctx.strokeStyle=id===currentMapId?"#fff":"#46505e";ctx.lineWidth=id===currentMapId?Math.max(2,worldScale*.25):1;ctx.strokeRect(x+.5,y+.5,PW-1,PH-1);
+ }
+ applyZoom();status(`${worldPositions.size.toLocaleString()} maps · detailed world preview · ${worldScale}px/tile`,"ok");
+}
+
+function applyZoom(){const z=Number($("zoom").value);canvas.style.width=canvas.width*z+"px";canvas.style.height=canvas.height*z+"px";$("canvasWrap").style.width=(canvas.clientWidth+100)+"px";$("canvasWrap").style.height=(canvas.clientHeight+100)+"px"}
+function render(){if(mode==="world")renderWorld();else renderCurrentMap()}
+
+function updateMapInfo(){
+ if(!maps.length)return;const m=maps[currentMapId],p=worldPositions.get(currentMapId);
+ $("mapInfo").textContent=`Map ID: ${currentMapId}
+Size: ${MAP_W} × ${MAP_H} tiles (width × height)
+Pixels: ${MAP_W*TILE} × ${MAP_H*TILE}
+World position: ${p?`${p.x}, ${p.y}`:"unknown"}
+North: ${m.map_north_id}
+South: ${m.map_south_id}
+West: ${m.map_west_id}
+East: ${m.map_east_id}
+Annotations: ${annotations.labels.filter(a=>a.mapId===currentMapId).length} labels, ${annotations.markers.filter(a=>a.mapId===currentMapId).length} markers, ${annotations.regions.filter(a=>a.mapId===currentMapId).length} regions`;
+}
+
+function go(id){id=Number(id);if(!Number.isInteger(id)||id<0||id>=maps.length)return;currentMapId=id;$("mapId").value=id;renderCurrentMap()}
+function neighbour(d){const k={N:"map_north_id",S:"map_south_id",W:"map_west_id",E:"map_east_id"}[d],n=maps[currentMapId]?.[k];if(Number.isInteger(n)&&n>=0&&n<maps.length)go(n)}
+
+function setTool(t){tool=t;["select","label","marker","region"].forEach(x=>$(x+"Tool").classList.toggle("active",x===t))}
+function mapCoords(e){
+ const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,px=(e.clientX-r.left)*sx,py=(e.clientY-r.top)*sy;
+ return {x:Math.floor(px/TILE),y:Math.floor(py/TILE),px,py}
+}
+function openModal(kind,data=null){
+ pending={kind,data:clone(data)||null};$("modalTitle").textContent=data?"Edit annotation":`Add ${kind}`;
+ $("labelFields").classList.toggle("hidden",kind!=="label");$("markerFields").classList.toggle("hidden",kind!=="marker");$("regionFields").classList.toggle("hidden",kind!=="region");
+ if(kind==="label"){ $("annoText").value=data?.text||"";$("annoColor").value=data?.color||"#ffffff";$("annoSize").value=String(data?.size||16);$("annoDesc").value=data?.description||""}
+ if(kind==="marker"){ $("annoMarkerType").innerHTML=Object.entries(MARKERS).map(([k,v])=>`<option value="${k}">${v} ${k}</option>`).join("");$("annoMarkerType").value=data?.type||$("markerType").value;$("markerText").value=data?.text||"";$("markerDesc").value=data?.description||""}
+ if(kind==="region"){ $("regionText").value=data?.text||"";$("regionColor").value=data?.color||"#ffcc66";$("regionOpacity").value=data?.opacity??.18}
+ $("modalBack").style.display="flex";setTimeout(()=>{if(kind==="label")$("annoText").focus();else if(kind==="marker")$("markerText").focus();else $("regionText").focus()},20)
+}
+function closeModal(){$("modalBack").style.display="none";pending=null}
+function saveModal(){
+ if(!pending)return;const {kind,data}=pending,a=data||{id:uid(),mapId:currentMapId,x:0,y:0};
+ if(kind==="label"){a.text=$("annoText").value.trim()||"Label";a.color=$("annoColor").value;a.size=Number($("annoSize").value);a.description=$("annoDesc").value}
+ if(kind==="marker"){a.type=$("annoMarkerType").value;a.text=$("markerText").value.trim();a.description=$("markerDesc").value;a.size=18}
+ if(kind==="region"){a.text=$("regionText").value.trim()||"Region";a.color=$("regionColor").value;a.opacity=Number($("regionOpacity").value);a.size=14}
+ const arr=annotations[kind+"s"];if(!data)arr.push(a);else{const i=arr.findIndex(x=>x.id===data.id);if(i>=0)arr[i]=a}
+ persist();closeModal();selectAnnotation(a);render()
+}
+function selectAnnotation(a){selected=a?{kind:a.text!==undefined?(a.type?"marker":"label"):"region",id:a.id}:null;updateSelected()}
+function getSelected(){if(!selected)return null;return annotations[selected.kind+"s"].find(x=>x.id===selected.id)||null}
+function updateSelected(){
+ const a=getSelected();$("editSelected").disabled=!a;$("deleteSelected").disabled=!a;
+ $("selectedInfo").textContent=a?`${selected.kind.toUpperCase()}
+${a.text||MARKERS[a.type]||"Region"}
+Map: ${a.mapId}
+Tile: ${a.x}, ${a.y}${a.description?`\n\n${a.description}`:""}`:"Nothing selected."
+}
+function deleteSelected(){const a=getSelected();if(!a)return;const arr=annotations[selected.kind+"s"],i=arr.findIndex(x=>x.id===a.id);if(i>=0)arr.splice(i,1);selected=null;persist();updateSelected();render()}
+
+function annotationClick(e){
+ if(mode!=="map")return;
+ const p=mapCoords(e);
+ if(p.x<0||p.x>=MAP_W||p.y<0||p.y>=MAP_H)return;
+ if(tool==="select"){
+   const a=annotationAtMap(currentMapId,p.x,p.y);selectAnnotation(a);if(a)openModal(selected.kind,a);
+   return;
+ }
+ if(tool==="label"||tool==="marker"){openModal(tool,{id:uid(),mapId:currentMapId,x:p.x,y:p.y});return}
+ if(tool==="region"){
+   pending={kind:"region",data:{id:uid(),mapId:currentMapId,x:p.x,y:p.y,w:1,h:1}};openModal("region",pending.data);
+ }
+}
+function persist(){localStorage.setItem("mirage-livemap-annotations",JSON.stringify(annotations));status("Annotations saved locally","ok")}
+function exportAnnotations(){
+ const blob=new Blob([JSON.stringify(annotations,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="annotations.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
+}
+async function autoAnnotations(){
+ try{const r=await fetch("./annotations.json",{cache:"no-store"});if(r.ok){const x=await r.json();if(x&&Array.isArray(x.labels)){annotations=normaliseAnnotations(x);status("annotations.json loaded","ok");return}}}catch(e){}
+ try{const x=JSON.parse(localStorage.getItem("mirage-livemap-annotations")||"null");if(x)annotations=normaliseAnnotations(x)}catch(e){}
+}
+function normaliseAnnotations(x){return{version:1,labels:Array.isArray(x.labels)?x.labels:[],markers:Array.isArray(x.markers)?x.markers:[],regions:Array.isArray(x.regions)?x.regions:[]}}
+function search(){
+ const q=$("search").value.trim().toLowerCase(),el=$("results");if(!q){el.innerHTML='<div class="item small">Enter a search term.</div>';return}
+ const out=[];
+ for(const a of [...annotations.labels,...annotations.markers])if((a.text||"").toLowerCase().includes(q)||(a.description||"").toLowerCase().includes(q)||String(a.mapId)===q)out.push(a);
+ if(/^\d+$/.test(q)&&Number(q)<maps.length)out.unshift({id:"map:"+q,mapId:Number(q),text:"Open map "+q});
+ el.innerHTML=out.length?out.slice(0,100).map(a=>`<div class="item" data-id="${escapeHtml(a.id)}">${a.type?MARKERS[a.type]:"🏷️"} <b>${escapeHtml(a.text||"Untitled")}</b><div class="small">Map ${a.mapId} · ${a.x},${a.y}</div></div>`).join(""):'<div class="item small">No results.</div>';
+ el.querySelectorAll(".item[data-id]").forEach(n=>n.onclick=()=>{const id=n.dataset.id;if(id.startsWith("map:"))go(Number(id.slice(4)));else{const a=[...annotations.labels,...annotations.markers].find(x=>x.id===id);if(a){go(a.mapId);selectAnnotation(a)}}})
+}
+
+canvas.addEventListener("click",annotationClick);
+canvas.addEventListener("mousemove",e=>{
+ if(mode!=="map")return;const p=mapCoords(e);if(p.x<0||p.x>=MAP_W||p.y<0||p.y>=MAP_H)return;
+ const layers=(maps[currentMapId].tiles[p.x]||[])[p.y]||[];
+ $("tileInfo").textContent=`Map ${currentMapId} · tile ${p.x},${p.y}
+Pixel: ${p.x*TILE},${p.y*TILE}
+Layers: ${layers.map((id,i)=>`L${i}: ${id}`).join(" | ")}`;
+});
+canvas.addEventListener("click",e=>{
+ if(mode!=="world")return;const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,x=Math.floor((e.clientX-r.left)*sx),y=Math.floor((e.clientY-r.top)*sy),PW=MAP_W*worldScale,PH=MAP_H*worldScale;
+ const gx=Math.floor(x/PW)+(worldBounds?.minX||0),gy=Math.floor(y/PH)+(worldBounds?.minY||0);
+ for(const [id,p] of worldPositions)if(p.x===gx&&p.y===gy){go(id);break}
+});
+
+$("labelTool").onclick=()=>setTool("label");$("markerTool").onclick=()=>setTool("marker");$("regionTool").onclick=()=>setTool("region");$("selectTool").onclick=()=>setTool("select");
+$("modalClose").onclick=closeModal;$("modalCancel").onclick=closeModal;$("modalOk").onclick=saveModal;
+$("editSelected").onclick=()=>{const a=getSelected();if(a)openModal(selected.kind,a)};$("deleteSelected").onclick=deleteSelected;
+$("saveBtn").onclick=persist;$("exportBtn").onclick=exportAnnotations;$("importBtn").onclick=()=>$("annotationFile").click();
+$("annotationFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{annotations=normaliseAnnotations(JSON.parse(await f.text()));persist();render()}catch(x){status("Invalid annotations JSON","danger")}};
+$("clearBtn").onclick=()=>{if(confirm("Delete every annotation?")){annotations={version:1,labels:[],markers:[],regions:[]};selected=null;persist();render()}};
+$("toggleAnno").onclick=()=>{annotationsVisible=!annotationsVisible;$("toggleAnno").textContent=annotationsVisible?"Hide annotations":"Show annotations";render()};
+$("worldBtn").onclick=renderWorld;$("mapBtn").onclick=renderCurrentMap;$("fitBtn").onclick=()=>{$("zoom").value=1;applyZoom()};
+$("goBtn").onclick=()=>go($("mapId").value);$("mapId").onkeydown=e=>{if(e.key==="Enter")go($("mapId").value)};
+$("firstBtn").onclick=()=>go(0);$("randomBtn").onclick=()=>go(Math.floor(Math.random()*maps.length));
+$("northBtn").onclick=()=>neighbour("N");$("southBtn").onclick=()=>neighbour("S");$("westBtn").onclick=()=>neighbour("W");$("eastBtn").onclick=()=>neighbour("E");
+$("zoom").onchange=render;$("reverseLayers").onchange=()=>{mapCanvasCache.clear();render()};$("offset").onchange=()=>{mapCanvasCache.clear();render()};
+$("searchBtn").onclick=search;$("search").onkeydown=e=>{if(e.key==="Enter")search()};
+$("downloadBtn").onclick=()=>{if(!renderedMapCanvas)return;const a=document.createElement("a");a.download=`map-${currentMapId}.png`;a.href=renderedMapCanvas.toDataURL();a.click()};
+$("jsonFile").onchange=async e=>{try{loadMapdumpText(await e.target.files[0].text())}catch(x){status(x.message,"danger")}};
+$("assetFolder").onchange=e=>{let n=0;for(const f of e.target.files){const m=f.name.match(/^tiles(\d+)\.png$/i);if(m&&Number(m[1])<SHEETS){setSheet(Number(m[1]),URL.createObjectURL(f));n++}}status(`Loaded ${n} tile files`,"ok")};
+$("markerType").onchange=e=>{};
+$("toggleIds").onclick=()=>{mapIdsVisible=!mapIdsVisible;$("toggleIds").textContent=`Map IDs: ${mapIdsVisible?"ON":"OFF"}`;render()};
+window.onresize=applyZoom;
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape")closeModal();
+ if(e.key==="1")setTool("select");if(e.key==="2")setTool("label");if(e.key==="3")setTool("marker");if(e.key==="4")setTool("region");
+ if(e.key==="Delete")deleteSelected();
+});
+
+(async()=>{
+ updateSelected();await autoAnnotations();updateMapInfo();updateSelected();autoMap();autoSheets();
+ const hash=location.hash.match(/map=(\d+)/);if(hash)currentMapId=Number(hash[1]);
+})();
+})();
+</script>
+</body>
+</html>
