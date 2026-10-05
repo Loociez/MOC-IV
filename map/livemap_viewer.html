@@ -105,6 +105,11 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 <div id="stage"><canvas id="cv"></canvas><div id="sheet"></div><div id="tip"></div><div id="loading">Loading map data…</div>
 <div id="hud"><div id="coords">–</div><div class="zoombar"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zFit" aria-label="Fit map" title="Fit map">⤢</button></div></div></div>
 </main></div>
+<div id="lb" class="mb eo"><div class="modal" role="dialog" aria-modal="true"><h2 id="lt"></h2>
+<div class="f"><label for="lName">Name shown in the legend</label><input id="lName" maxlength="30"></div>
+<div class="f"><label for="lIcon">Icon (any emoji)</label><input id="lIcon" maxlength="6"><div class="row" id="emojiPicks"></div></div>
+<div class="f"><label for="lMean">What it means</label><input id="lMean" maxlength="80"></div>
+<div class="actions"><button id="lReset">Reset</button><button id="lDel" class="danger">Delete type</button><span class="sp"></span><button id="lCancel">Cancel</button><button id="lOk" class="primary">Save</button></div></div></div>
 <div id="toast" role="status"></div>
 <div id="mb" class="mb"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt"></h2>
 <div class="f" data-k="label marker region"><label for="fText">Name</label><input id="fText"></div>
@@ -121,13 +126,17 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 const EDIT=document.documentElement.dataset.mode==="edit";
 if(!EDIT)document.querySelectorAll(".eo").forEach(n=>n.remove());
 const TILE=32,MW=512,MH=384,SHEETS=19,PER=1024,STATIC=[0,1,3,5,7,9];
-const ICONS={town:"🏠",city:"🏰",dungeon:"☠️",boss:"💀",shop:"🛒",quest:"❗",portal:"🌀",danger:"⚠️",point:"📍"};
+
 const $=id=>document.getElementById(id),cv=$("cv"),ctx=cv.getContext("2d"),stage=$("stage");
 let maps=[],cur=0,sheets=Array(SHEETS).fill(null),pos=new Map(),grid=new Map(),worldB=null;
 let ann={version:1,labels:[],markers:[],regions:[]},idx=new Map(),sel=null,tool="select",hist=[],redo=[];
 let cam={x:0,y:0,z:1},show={label:1,marker:1,region:1,ids:1,grid:1},S={offset:0,reverse:false};
 let hits=[],hover=null,drag=null,draft=null,pend=null,raf=0,anim=0,space=false,hashT=0,tt=0,camSet=false;
-const TYPES={town:["Town","Town or village"],city:["City","City or major hub"],dungeon:["Dungeon","Dungeon entrance"],boss:["Boss","Boss encounter"],shop:["Shop","Shop or vendor"],quest:["Quest","Quest giver or objective"],portal:["Portal","Portal or travel point"],danger:["Danger","Dangerous area"],point:["Point","Point of interest"]};
+const TYPES={town:["Town","Town or village","🏠"],city:["Guild Halls","Guild hall","🏰"],dungeon:["Dungeon","Dungeon entrance","☠️"],boss:["Boss","Boss encounter","💀"],shop:["Shop","Shop or vendor","🛒"],quest:["Quest","Quest giver or objective","❗"],portal:["NPC","Non-player character","👹"],danger:["Danger","Dangerous area","⚠️"],point:["Point","Point of interest","📍"],chest:["Chest","Treasure chest","🧰"]};
+function typeInfo(k){const L=ann.legend&&ann.legend[k],o=L&&typeof L==="object"?L:{},d=TYPES[k]||["Point","Point of interest","📍"];return{name:o.name||d[0],meaning:o.meaning||(typeof L==="string"&&L)||d[1],icon:o.icon||d[2]}}
+const ico=k=>typeInfo(k).icon;
+const typeKeys=()=>[...Object.keys(TYPES),...Object.keys(ann.legend||{}).filter(k=>ann.legend[k]&&ann.legend[k].custom&&!TYPES[k])];
+let lpend=null;
 const COARSE=matchMedia("(pointer:coarse)").matches;let failed=false,userMoved=false;
 const hiddenTypes=new Set();let lead=new Set();
 let last={label:"#ffffff",marker:"#e6c25a",region:"#ffcc66",size:16,opacity:.18,type:"point"};
@@ -236,7 +245,7 @@ function paint(){
    if(r.text&&z>=.5&&(!r.group||lead.has(r.id))){const fs=clamp(13*Math.max(z,.8),12,26);ctx.font=`bold ${fs}px system-ui,sans-serif`;ctx.fillStyle=r.color;ctx.fillText(r.text,x+5,y+fs+3,Math.max(20,w-8))}flag(r,"region",{x,y,w,h})}
   if(show.marker)for(const m of e.markers){if(hiddenTypes.has(m.type))continue;const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
    const mc=m.color||"#e6c25a";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle="#2a1558";ctx.fill();ctx.fillStyle=hexA(mc,.4);ctx.fill();ctx.strokeStyle=mc;ctx.lineWidth=2.5;ctx.stroke();
-   ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ICONS[m.type]||"📍",cx,cy+1);ctx.textAlign="left";ctx.textBaseline="alphabetic";
+   ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ico(m.type),cx,cy+1);ctx.textAlign="left";ctx.textBaseline="alphabetic";
    let w=r*2;if(m.text&&z>=.5){const fs=clamp(12*z,12,20);ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(m.text).width;pill(cx+r+3,cy-fs/2-3,tw+10,fs+6);ctx.fillStyle="#fff";ctx.fillText(m.text,cx+r+8,cy+fs/2-2);w+=tw+14}
    flag(m,"marker",{x:cx-r,y:cy-r,w,h:r*2})}
   if(show.label&&z>=.1)for(const l of e.labels){const [x,y]=P(id,l.x,l.y),fs=Math.min(40,Math.max(11,(l.size||12)*z));ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(l.text).width;
@@ -262,27 +271,35 @@ function updateCard(){updateCard0();syncSheet()}
 function updateCard0(){
  const a=getSel(),el=$("card");
  if(!a){el.innerHTML='<span class="muted">Select a label, marker or region on the map.</span>';return}
- el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ICONS[a.type]||"📍":""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}${a.group?' · part of a multi-map region':''}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
+ el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ico(a.type):""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind==="marker"?esc(typeInfo(a.type).name):sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}${a.group?' · part of a multi-map region':''}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
  <div class="row"><button data-act="fly">Show on map</button>${EDIT?'<button data-act="edit">Edit</button><button data-act="dup">Duplicate</button><button data-act="del" class="danger">Delete</button>':""}</div>`;
 }
+function fillTypeSelects(){for(const id of["markerType","fType"]){const el=$(id);if(!el)continue;const v=el.value||last.type;el.innerHTML=typeKeys().map(k=>`<option value="${k}">${esc(ico(k))} ${esc(typeInfo(k).name)}</option>`).join("");el.value=typeKeys().includes(v)?v:"point"}}
 function renderLegend(){
  const n={};for(const m of ann.markers)n[m.type]=(n[m.type]||0)+1;
- $("legend").innerHTML=Object.entries(TYPES).map(([k,[name,def]])=>`<div class="leg${hiddenTypes.has(k)?" off":""}" data-t="${k}" tabindex="0" role="button" aria-pressed="${!hiddenTypes.has(k)}"><span class="li">${ICONS[k]}</span><span><b>${name}</b> <span class="muted">${n[k]||0}</span><div class="muted">${esc(ann.legend?.[k]||def)}</div></span>${EDIT?`<button data-e="${k}" title="Edit meaning" aria-label="Edit meaning">✎</button>`:""}</div>`).join("")+'<div class="muted" style="margin-top:6px">Click a type to show or hide it on the map.</div>';
+ $("legend").innerHTML=typeKeys().map(k=>{const t=typeInfo(k);return `<div class="leg${hiddenTypes.has(k)?" off":""}" data-t="${k}" tabindex="0" role="button" aria-pressed="${!hiddenTypes.has(k)}"><span class="li">${esc(t.icon)}</span><span><b>${esc(t.name)}</b> <span class="muted">${n[k]||0}</span><div class="muted">${esc(t.meaning)}</div></span>${EDIT?`<button data-e="${k}" title="Edit name, icon and meaning" aria-label="Edit">✎</button>`:""}</div>`}).join("")+(EDIT?'<div class="row"><button id="addType">＋ Add marker type</button></div>':"")+'<div class="muted" style="margin-top:6px">Click a type to show or hide it on the map.</div>';
+ if(EDIT)fillTypeSelects();
 }
-$("legend").onclick=e=>{const b=e.target.closest("[data-e]");
- if(b){const k=b.dataset.e,v=prompt(`What does "${TYPES[k][0]}" mean?`,ann.legend?.[k]||TYPES[k][1]);if(v!==null){hpush();ann.legend={...ann.legend,[k]:v.trim()||undefined};persist();renderLegend()}return}
+function openLegend(k){
+ const isNew=k===null,key=isNew?"x"+uid().slice(0,6):k,t=isNew?{name:"",icon:"📍",meaning:""}:typeInfo(k),cust=!isNew&&!TYPES[key];
+ lpend={key,isNew,cust};$("lt").textContent=isNew?"Add marker type":"Edit marker type";$("lName").value=t.name;$("lIcon").value=t.icon;$("lMean").value=t.meaning;
+ $("lReset").classList.toggle("hidden",isNew||cust);$("lDel").classList.toggle("hidden",!cust);$("lb").style.display="flex";setTimeout(()=>$("lName").focus(),20)}
+function closeLegend(){$("lb").style.display="none";lpend=null}
+$("legend").onclick=e=>{
+ const b=e.target.closest("[data-e]");if(b)return openLegend(b.dataset.e);
+ if(e.target.closest("#addType"))return openLegend(null);
  const r=e.target.closest("[data-t]");if(!r)return;const k=r.dataset.t;hiddenTypes.has(k)?hiddenTypes.delete(k):hiddenTypes.add(k);renderLegend();schedule()};
 $("legend").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.target.click()}};
 function renderList(){
  const e=idx.get(cur),el=$("mapList"),rows=e?[...e.labels.map(a=>["label",a]),...e.markers.map(a=>["marker",a]),...e.regions.map(a=>["region",a])]:[];
- el.innerHTML=rows.length?rows.map(([k,a])=>`<div class="item${sel&&sel.id===a.id?" sel":""}" data-k="${k}" data-id="${esc(a.id)}">${k==="marker"?ICONS[a.type]||"📍":k==="label"?"🏷️":"▣"} <b>${esc(a.text||"Untitled")}</b></div>`).join(""):'<div class="item muted">Nothing here yet.</div>';
+ el.innerHTML=rows.length?rows.map(([k,a])=>`<div class="item${sel&&sel.id===a.id?" sel":""}" data-k="${k}" data-id="${esc(a.id)}">${k==="marker"?ico(a.type):k==="label"?"🏷️":"▣"} <b>${esc(a.text||"Untitled")}</b></div>`).join(""):'<div class="item muted">Nothing here yet.</div>';
 }
 function search(){
  const q=$("search").value.trim().toLowerCase(),box=$("resBox"),el=$("results");if(!q){box.classList.add("hidden");return}
  const out=[];if(/^\d+$/.test(q)&&Number(q)<maps.length)out.push({map:Number(q)});
  for(const k of ["label","marker"])for(const a of list(k))if((a.text||"").toLowerCase().includes(q)||(a.description||"").toLowerCase().includes(q))out.push({k,a});
  box.classList.remove("hidden");
- el.innerHTML=out.length?out.slice(0,40).map((r,i)=>r.map!=null?`<div class="item" data-r="${i}">🗺️ <b>Open map ${r.map}</b></div>`:`<div class="item" data-r="${i}">${r.k==="marker"?ICONS[r.a.type]||"📍":"🏷️"} <b>${esc(r.a.text||"Untitled")}</b><div class="muted">Map ${r.a.mapId}</div></div>`).join(""):'<div class="item muted">No matches.</div>';
+ el.innerHTML=out.length?out.slice(0,40).map((r,i)=>r.map!=null?`<div class="item" data-r="${i}">🗺️ <b>Open map ${r.map}</b></div>`:`<div class="item" data-r="${i}">${r.k==="marker"?ico(r.a.type):"🏷️"} <b>${esc(r.a.text||"Untitled")}</b><div class="muted">Map ${r.a.mapId}</div></div>`).join(""):'<div class="item muted">No matches.</div>';
  el._r=out;
 }
 $("results").onclick=e=>{const n=e.target.closest("[data-r]");if(!n)return;const r=$("results")._r[n.dataset.r];if(innerWidth<820)document.body.classList.add("noside");if(r.map!=null)go(r.map);else focusAnn(r.a,r.k)};
@@ -389,7 +406,15 @@ $("shareBtn").onclick=async()=>{clearTimeout(hashT);changed();setTimeout(async()
 for(const [id,k] of [["cbLabel","label"],["cbMarker","marker"],["cbRegion","region"],["cbIds","ids"],["cbGrid","grid"]]){const n=$(id);if(n)n.onchange=()=>{show[k]=n.checked?1:0;schedule()}}
 $("mOk").onclick=saveModal;
 if(EDIT){
- $("markerType").innerHTML=$("fType").innerHTML=Object.entries(ICONS).map(([k,v])=>`<option value="${k}">${v} ${k}</option>`).join("");
+ fillTypeSelects();
+ $("emojiPicks").innerHTML=["👹","🐉","🧙","👑","🧰","💰","🏰","🛡️","⚔️","🎣","🔨","🐟","🔑","🚪","⭐","🏠"].map(x=>`<button type="button" style="padding:2px 6px">${x}</button>`).join("");
+ $("emojiPicks").onclick=e=>{const b=e.target.closest("button");if(b){$("lIcon").value=b.textContent;$("lIcon").focus()}};
+ $("lCancel").onclick=closeLegend;$("lb").onclick=e=>{if(e.target===$("lb"))closeLegend()};
+ $("lOk").onclick=()=>{if(!lpend)return;const name=$("lName").value.trim();if(!name)return toast("Give the type a name");hpush();
+  const o={name,icon:[...$("lIcon").value.trim()].slice(0,3).join("")||"📍",meaning:$("lMean").value.trim()};if(lpend.isNew||lpend.cust)o.custom=true;
+  ann.legend={...ann.legend,[lpend.key]:o};closeLegend();after();toast("Legend updated")};
+ $("lReset").onclick=()=>{hpush();const L={...ann.legend};delete L[lpend.key];ann.legend=L;closeLegend();after();toast("Reset to default")};
+ $("lDel").onclick=()=>{const u=ann.markers.filter(m=>m.type===lpend.key).length;if(u&&!confirm(`${u} marker(s) use this type and will show as a plain point. Delete it anyway?`))return;hpush();const L={...ann.legend};delete L[lpend.key];ann.legend=L;closeLegend();after();toast("Type deleted")};
  for(const k of ["select","label","marker","region"])$("t_"+k).onclick=()=>setTool(k);
  $("undoBtn").onclick=undo;$("markerType").value=last.type;$("penColor").oninput=e=>{if(tool!=="select"){last[tool]=e.target.value;saveLast()}};setTool("select");$("redoBtn").onclick=redoIt;$("mCancel").onclick=closeModal;$("mDel").onclick=()=>{const a=pend.data;closeModal();sel={kind:pend.kind,id:a.id};delSel()};
  $("mb").onclick=e=>{if(e.target===$("mb"))closeModal()};
@@ -406,7 +431,7 @@ if(EDIT){
 }
 document.addEventListener("keydown",e=>{
  const typing=/INPUT|SELECT|TEXTAREA/.test(e.target.tagName);
- if(e.key==="Escape"){if(pend)closeModal();else{select(null);$("search").blur()}return}
+ if(e.key==="Escape"){if(lpend)closeLegend();else if(pend)closeModal();else{select(null);$("search").blur()}return}
  if(pend&&e.key==="Enter"&&(e.ctrlKey||e.metaKey))return saveModal();
  if(e.key===" "&&!typing){space=true}
  if(EDIT&&(e.ctrlKey||e.metaKey)){const k=e.key.toLowerCase();if(k==="z"&&!typing){e.preventDefault();e.shiftKey?redoIt():undo()}else if(k==="y"&&!typing){e.preventDefault();redoIt()}else if(k==="s"){e.preventDefault();persist(true)}return}
