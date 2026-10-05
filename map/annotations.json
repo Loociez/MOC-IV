@@ -414,16 +414,6 @@
       "size": 18
     },
     {
-      "id": "h4w4rfotrlpmuvj29uw",
-      "mapId": 22,
-      "x": 11,
-      "y": 7,
-      "text": "Northcoast Lockdown",
-      "type": "dungeon",
-      "description": "",
-      "size": 18
-    },
-    {
       "id": "i59uultx4rmuvlbnzl",
       "mapId": 1,
       "x": 8,
@@ -763,6 +753,72 @@
       "type": "shop",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "0tvp1v52hdwamuvonaqg",
+      "mapId": 23,
+      "x": 3,
+      "y": 4,
+      "text": "Lockdown",
+      "color": "#f7f7f7",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "0p2ys255pxopmuvoo3xq",
+      "mapId": 23,
+      "x": 3,
+      "y": 7,
+      "text": "Bank of North Coast",
+      "color": "#5777f4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "lzhkyhasplmuvop3qx",
+      "mapId": 22,
+      "x": 14,
+      "y": 2,
+      "text": "Trivia Hall",
+      "color": "#57f477",
+      "type": "point",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "8g8xptdfi4smuvopsxl",
+      "mapId": 22,
+      "x": 11,
+      "y": 6,
+      "text": "Burning Anvil",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ibi8puy6dhimuvoqbcv",
+      "mapId": 22,
+      "x": 11,
+      "y": 3,
+      "text": "Captains table Inn",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "chxqzctyc69muvor7j1",
+      "mapId": 22,
+      "x": 7,
+      "y": 2,
+      "text": "Gar's skill Emporium",
+      "color": "#575cf4",
+      "type": "shop",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
@@ -1043,5 +1099,7 @@
       "size": 14
     }
   ],
-  "legend": {}
+  "legend": {
+    "city": "Guild Hall"
+  }
 }
