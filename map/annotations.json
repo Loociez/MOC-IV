@@ -502,6 +502,56 @@
       "type": "boss",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "i9jl6xlvilmuvir2el",
+      "mapId": 905,
+      "x": 11,
+      "y": 2,
+      "text": "Shine of Lavos",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "9hujzirma6rmuvit212",
+      "mapId": 63,
+      "x": 1,
+      "y": 4,
+      "text": "Greystone Brute",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "cv5ia9a5pfmmuviw9yl",
+      "mapId": 54,
+      "x": 13,
+      "y": 4,
+      "text": "Solitary Run",
+      "type": "dungeon",
+      "description": "Bravery Dungeon",
+      "size": 18
+    },
+    {
+      "id": "tdmasxkj5wmuviz71c",
+      "mapId": 1553,
+      "x": 5,
+      "y": 6,
+      "text": "Walk in the Cemetery",
+      "type": "dungeon",
+      "description": "Bravery Dungeon",
+      "size": 18
+    },
+    {
+      "id": "h4w4rfotrlpmuvj29uw",
+      "mapId": 22,
+      "x": 11,
+      "y": 7,
+      "text": "Northcoast Lockdown",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
