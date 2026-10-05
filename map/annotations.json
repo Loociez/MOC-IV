@@ -907,6 +907,17 @@
       "type": "dungeon",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "2k2enhyhypmuvqo1q1",
+      "mapId": 1632,
+      "x": 10,
+      "y": 5,
+      "text": "Bakery & Bed",
+      "color": "#3d78f0",
+      "type": "shop",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
