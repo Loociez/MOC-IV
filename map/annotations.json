@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "labels": [
+    {
+      "id": "1egj3yifdckmuuqev6g",
+      "mapId": 0,
+      "x": 10,
+      "y": 3,
+      "text": "Potion Shop",
+      "color": "#ff0000",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "tpnc02ulj2omuuqfh7y",
+      "mapId": 0,
+      "x": 4,
+      "y": 2,
+      "text": "Gandalf's House",
+      "color": "#d99608",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "47p3zlp0ln6muuqgp8g",
+      "mapId": 0,
+      "x": 2,
+      "y": 6,
+      "text": "Crendale Inn",
+      "color": "#1d0dfd",
+      "size": 12,
+      "description": ""
+    },
+    {
+      "id": "mbhjun2vykmuuqhe39",
+      "mapId": 0,
+      "x": 1,
+      "y": 4,
+      "text": "Down the Well",
+      "color": "#ffffff",
+      "size": 12,
+      "description": ""
+    }
+  ],
+  "markers": [],
+  "regions": []
+}
