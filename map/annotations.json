@@ -1373,6 +1373,183 @@
       "type": "dungeon",
       "description": "Requires all stones to open.",
       "size": 18
+    },
+    {
+      "id": "mkvr3xkvtetmuwzhnql",
+      "mapId": 513,
+      "x": 8,
+      "y": 8,
+      "text": "Cottontail",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "9x82ogmfecsmuwziclt",
+      "mapId": 517,
+      "x": 5,
+      "y": 1,
+      "text": "Cottontail",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "4zjlbvuk1mlmuwzitrd",
+      "mapId": 515,
+      "x": 4,
+      "y": 8,
+      "text": "Angel of Hope",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "b6vjys228zvmuwzjl3a",
+      "mapId": 515,
+      "x": 12,
+      "y": 2,
+      "text": "Stairway to Heaven",
+      "link": 1855,
+      "color": "#09ece8",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "nspwx8t0qrmuwzkbfq",
+      "mapId": 512,
+      "x": 13,
+      "y": 7,
+      "text": "Cottontail",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "oshxmj4kbssmuwzkwzp",
+      "mapId": 512,
+      "x": 12,
+      "y": 3,
+      "text": "Bear",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "8smfcx9t4omuwzlbdq",
+      "mapId": 1285,
+      "x": 3,
+      "y": 3,
+      "text": "Emma's Potions",
+      "color": "#0995ec",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "uz31ay5g8emuwzm8ea",
+      "mapId": 514,
+      "x": 9,
+      "y": 5,
+      "text": "Cottontail",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ekz32xy904muwzmunq",
+      "mapId": 572,
+      "x": 9,
+      "y": 5,
+      "text": "Ifreet",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "c4gew40zbqgmuwzn6z0",
+      "mapId": 1281,
+      "x": 6,
+      "y": 2,
+      "text": "Ifreet",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "hlt5y1gdyqpmuwznxt0",
+      "mapId": 1282,
+      "x": 6,
+      "y": 6,
+      "text": "Knight of Crag",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "plly00a4cpmuwzo6ze",
+      "mapId": 1282,
+      "x": 8,
+      "y": 3,
+      "text": "Ifreet",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ajdxd8cirxmuwzoyay",
+      "mapId": 1752,
+      "x": 4,
+      "y": 3,
+      "text": "Ifreet",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "70gk3kpln2kmuwzp22i",
+      "mapId": 1752,
+      "x": 7,
+      "y": 5,
+      "text": "Knight of Crag",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "v7qb1ehlbo9muwzppvi",
+      "mapId": 1283,
+      "x": 7,
+      "y": 2,
+      "text": "Ifreet",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "55mrwf56ojtmuwzpwc0",
+      "mapId": 1283,
+      "x": 7,
+      "y": 5,
+      "text": "Knight of Crag",
+      "color": "#ec8d09",
+      "type": "portal",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
