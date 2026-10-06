@@ -68,7 +68,8 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 <header>
 <button id="menuBtn" title="Toggle panel" aria-label="Toggle panel">☰</button>
 <div class="brand">Mirage <span>Livemap</span></div>
-<div class="seg"><button id="worldBtn">World</button><button id="mapBtn">This map</button></div>
+<button id="backBtn" class="hidden" title="Go back (B)">↩ Back</button>
+<div class="seg"><button id="worldBtn">World</button><button id="areaBtn" class="hidden">Area</button><button id="mapBtn">This map</button></div>
 <div class="go"><input id="mapId" type="number" min="0" value="0" aria-label="Map ID"><button id="goBtn">Go</button></div>
 <div class="searchbox"><input id="search" type="search" placeholder="Search places or a map ID…" autocomplete="off" aria-label="Search"></div>
 <button id="dirtyBtn" class="eo" title="Click to save annotations.json">Checking file…</button><span id="status" class="status">Starting…</span>
@@ -87,6 +88,8 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 <section><h3>Legend</h3><div id="legend"></div></section>
 <section><h3>Selected</h3><div id="card" class="card"></div></section>
 <section><h3>On this map</h3><div id="mapList" class="list"></div></section>
+<section class="eo"><h3>Linked areas</h3><input id="areaFilter" placeholder="Filter by map ID or place name…" style="width:100%"><div id="areaList" class="list" style="margin-top:6px"></div>
+<p class="muted">Groups of maps joined by the game's N/S/E/W links, such as building interiors. Open one, then put an Entrance marker on the outside map and set its "Enter map" ID.</p></section>
 <section><h3>Show on map</h3>
 <label class="chk"><input id="cbLabel" type="checkbox" checked>Labels</label><label class="chk"><input id="cbMarker" type="checkbox" checked>Markers</label>
 <label class="chk"><input id="cbRegion" type="checkbox" checked>Regions</label><label class="chk"><input id="cbIds" type="checkbox" checked>Map IDs</label>
@@ -118,6 +121,7 @@ kbd{background:var(--p2);border:1px solid var(--line);border-radius:3px;padding:
 <div class="frow"><div class="f" data-k="label marker region"><label for="fColor">Colour</label><input id="fColor" type="color"></div>
 <div class="f" data-k="label"><label for="fSize">Size</label><select id="fSize"><option value="12">Small</option><option value="16">Medium</option><option value="22">Large</option><option value="30">Huge</option></select></div>
 <div class="f" data-k="region"><label for="fOp">Fill opacity</label><input id="fOp" type="range" min="0" max=".6" step=".02"></div></div>
+<div class="f" data-k="marker"><label for="fLink">Enter map ID (optional, makes this an entrance)</label><input id="fLink" type="number" min="0" placeholder="e.g. 1057"></div>
 <div class="f" data-k="label marker"><label for="fDesc">Description</label><textarea id="fDesc" placeholder="Shown to players. Links are clickable."></textarea></div>
 <div class="frow" id="coordRow"><div class="f"><label for="fX">Tile X</label><input id="fX" type="number" min="0" max="15"></div><div class="f"><label for="fY">Tile Y</label><input id="fY" type="number" min="0" max="11"></div>
 <div class="f" data-k="region"><label for="fW">Width</label><input id="fW" type="number" min="1" max="16"></div><div class="f" data-k="region"><label for="fH">Height</label><input id="fH" type="number" min="1" max="12"></div></div>
@@ -134,11 +138,11 @@ let maps=[],cur=0,sheets=Array(SHEETS).fill(null),pos=new Map(),grid=new Map(),w
 let ann={version:1,labels:[],markers:[],regions:[]},idx=new Map(),sel=null,tool="select",hist=[],redo=[];
 let cam={x:0,y:0,z:1},show={label:1,marker:1,region:1,ids:1,grid:1},S={offset:0,reverse:false};
 let hits=[],hover=null,drag=null,draft=null,pend=null,raf=0,anim=0,space=false,hashT=0,tt=0,camSet=false;
-const TYPES={town:["Town","Town or village","🏠"],city:["Guild Halls","Guild hall","🏰"],dungeon:["Dungeon","Dungeon entrance","☠️"],boss:["Boss","Boss encounter","💀"],shop:["Shop","Shop or vendor","🛒"],quest:["Quest","Quest giver or objective","❗"],portal:["NPC","Non-player character","👹"],danger:["Danger","Dangerous area","⚠️"],point:["Point","Point of interest","📍"],chest:["Chest","Treasure chest","🧰"]};
+const TYPES={town:["Town","Town or village","🏠"],city:["Guild Halls","Guild hall","🏰"],dungeon:["Dungeon","Dungeon entrance","☠️"],boss:["Boss","Boss encounter","💀"],shop:["Shop","Shop or vendor","🛒"],quest:["Quest","Quest giver or objective","❗"],portal:["NPC","Non-player character","👹"],danger:["Danger","Dangerous area","⚠️"],point:["Point","Point of interest","📍"],chest:["Chest","Treasure chest","🧰"],door:["Entrance","Entrance to a building or area","🚪"]};
 function typeInfo(k){const L=ann.legend&&ann.legend[k],o=L&&typeof L==="object"?L:{},d=TYPES[k]||["Point","Point of interest","📍"];return{name:o.name||d[0],meaning:o.meaning||(typeof L==="string"&&L)||d[1],icon:o.icon||d[2]}}
 const ico=k=>typeInfo(k).icon;
 const typeKeys=()=>[...Object.keys(TYPES),...Object.keys(ann.legend||{}).filter(k=>ann.legend[k]&&ann.legend[k].custom&&!TYPES[k])];
-let lpend=null;
+let lpend=null,comps=[],compOf=new Int32Array(0),mainComp=0,activeComp=-1,lastWorld=0,navStack=[];
 const COARSE=matchMedia("(pointer:coarse)").matches;let annMeta="",mapMeta="",failed=false,userMoved=false;
 const hiddenTypes=new Set();let lead=new Set();
 let last={label:"#ffffff",marker:"#e6c25a",region:"#ffcc66",size:16,opacity:.18,type:"point"};
@@ -163,8 +167,8 @@ function setMaps(arr){maps=arr;
  if(!maps.length)throw Error("No maps found.");
  c1.clear();cS.clear();buildWorld();cur=cur<maps.length?cur:0;setCur(cur);
  const h=new URLSearchParams(location.hash.slice(1)),x=+h.get("x"),y=+h.get("y"),z=+h.get("z");
- if(h.get("z")&&!camSet){const W=stage.clientWidth,H=stage.clientHeight;cam={z,x:x-W/2/z,y:y-H/2/z}}else Object.assign(cam,fitMapT(cur));
- camSet=true;status(`${maps.length.toLocaleString()} maps loaded`,"ok");schedule();
+ if(h.get("z")&&!camSet){const W=stage.clientWidth,H=stage.clientHeight;cam={z,x:x-W/2/z,y:y-H/2/z}}else Object.assign(cam,pos.size<=12?fitWorldT():fitMapT(cur));
+ camSet=true;renderAreas();status(`${maps.length.toLocaleString()} maps loaded`,"ok");schedule();
 }
 async function autoMap(){
  try{const r=await fetch("./mapdump.bin",{cache:"no-cache"});if(r.ok&&!/html/.test(r.headers.get("content-type")||"")){const lm=r.headers.get("last-modified");mapMeta="mapdump.bin"+(lm?" (file dated "+new Date(lm).toLocaleString()+")":"");setMaps(loadBin(await r.arrayBuffer()));return}mapMeta="mapdump.bin not found ("+r.status+"), using mapdump.json"}catch(e){console.warn(e);mapMeta="mapdump.bin failed to load, using mapdump.json"}
@@ -191,13 +195,29 @@ function mapImg(id,small){
  C.set(id,c);if(C.size>cap)C.delete(C.keys().next().value);return c;
 }
 function buildWorld(){
- pos=new Map();grid=new Map();const q=[0],p=new Map([[0,{x:0,y:0}]]);
- while(q.length){const id=q.shift(),a=p.get(id),m=maps[id];
-  for(const [k,dx,dy] of [["n",0,-1],["s",0,1],["w",-1,0],["e",1,0]]){const n=m[k];if(n<0||n>=maps.length||p.has(n))continue;p.set(n,{x:a.x+dx,y:a.y+dy});q.push(n)}}
- let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const a of p.values()){x0=Math.min(x0,a.x);y0=Math.min(y0,a.y);x1=Math.max(x1,a.x);y1=Math.max(y1,a.y)}
- for(const [id,a] of p){const q2={x:a.x-x0,y:a.y-y0};pos.set(id,q2);grid.set(q2.x+","+q2.y,id)}
- worldB={w:x1-x0+1,h:y1-y0+1};
+ compOf=new Int32Array(maps.length).fill(-1);comps=[];activeComp=-1;navStack=[];
+ const I=n=>n>=0&&n<maps.length?n:-1,D=[["n",0,-1],["s",0,1],["w",-1,0],["e",1,0]];
+ for(let s=0;s<maps.length;s++){if(compOf[s]>=0)continue;
+  const ci=comps.length,q=[s],P=new Map([[s,{x:0,y:0}]]),occ=new Set(["0,0"]);compOf[s]=ci;
+  for(let h=0;h<q.length;h++){const id=q[h],a=P.get(id);
+   for(const [k,dx,dy] of D){const n=I(maps[id][k]);if(n<0||compOf[n]>=0)continue;let x=a.x+dx,y=a.y+dy;
+    if(s!==0&&occ.has(x+","+y)){outer:for(let r=1;r<60;r++)for(let j=-r;j<=r;j++)for(let i=-r;i<=r;i++)if(Math.max(Math.abs(i),Math.abs(j))===r&&!occ.has((x+i)+","+(y+j))){x+=i;y+=j;break outer}}
+    occ.add(x+","+y);P.set(n,{x,y});compOf[n]=ci;q.push(n)}}
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const a of P.values()){x0=Math.min(x0,a.x);y0=Math.min(y0,a.y);x1=Math.max(x1,a.x);y1=Math.max(y1,a.y)}
+  const pm=new Map();for(const [id,a] of P)pm.set(id,{x:a.x-x0,y:a.y-y0});comps.push({ids:q,pos:pm,w:x1-x0+1,h:y1-y0+1})}
+ mainComp=compOf[0];lastWorld=0;
 }
+function setArea(ci){activeComp=ci;const c=comps[ci];pos=c.pos;grid=new Map();for(const [id,p] of pos)grid.set(p.x+","+p.y,id);worldB={w:c.w,h:c.h};$("areaBtn").classList.toggle("hidden",ci===mainComp)}
+function renderAreas(){
+ const el=$("areaList");if(!el||!comps.length)return;const q=($("areaFilter").value||"").trim().toLowerCase(),names=new Map();
+ for(const k of KINDS)for(const a of list(k))if(a.text){let n=names.get(a.mapId);if(!n)names.set(a.mapId,n=[]);n.push(a.text)}
+ const rows=[];comps.forEach((c,i)=>{if(i===mainComp||c.ids.length<2)return;const nm=c.ids.flatMap(id=>names.get(id)||[]);if(q&&!(c.ids.join(" ")+" "+nm.join(" ")).toLowerCase().includes(q))return;rows.push({i,c,nm})});
+ rows.sort((a,b)=>b.c.ids.length-a.c.ids.length);
+ el.innerHTML=rows.slice(0,150).map(r=>`<div class="item" data-a="${r.i}"><b>${r.c.ids.length} maps</b> <span class="muted">${r.c.ids.slice(0,6).join(", ")}${r.c.ids.length>6?"…":""}</span>${r.nm.length?`<div class="muted">${esc(r.nm.slice(0,2).join(", "))}</div>`:""}</div>`).join("")||'<div class="item muted">No matching areas.</div>';
+}
+function enterMap(id){id=Number(id);if(!(id>=0&&id<maps.length))return toast("That map doesn't exist");navStack.push({cur,cam:{...cam}});if(navStack.length>30)navStack.shift();$("backBtn").classList.remove("hidden");go(id)}
+function goBack(){const p=navStack.pop();if(!p)return;setCur(p.cur);Object.assign(cam,p.cam);$("backBtn").classList.toggle("hidden",!navStack.length);schedule();changed()}
+function goWorld(){const sw=compOf[cur]!==mainComp;if(sw)setCur(lastWorld);if(sw){Object.assign(cam,fitWorldT());schedule()}else flyTo(fitWorldT())}
 const origin=id=>{const p=pos.get(id);return p?{x:p.x*MW,y:p.y*MH}:{x:0,y:0}};
 
 /* ---------- camera ---------- */
@@ -247,7 +267,7 @@ function paint(){
    if(r.text&&z>=.5&&(!r.group||lead.has(r.id))){const fs=clamp(13*Math.max(z,.8),12,26);ctx.font=`bold ${fs}px system-ui,sans-serif`;ctx.fillStyle=r.color;ctx.fillText(r.text,x+5,y+fs+3,Math.max(20,w-8))}flag(r,"region",{x,y,w,h})}
   if(show.marker)for(const m of e.markers){if(hiddenTypes.has(m.type))continue;const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
    const mc=m.color||"#e6c25a";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle="#2a1558";ctx.fill();ctx.fillStyle=hexA(mc,.4);ctx.fill();ctx.strokeStyle=mc;ctx.lineWidth=2.5;ctx.stroke();
-   ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ico(m.type),cx,cy+1);ctx.textAlign="left";ctx.textBaseline="alphabetic";
+   ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ico(m.type),cx,cy+1);if(m.link!=null&&m.link!==""){ctx.beginPath();ctx.arc(cx+r*.75,cy+r*.75,r*.42,0,7);ctx.fillStyle="#e6c25a";ctx.fill();ctx.fillStyle="#1a0d38";ctx.font=`bold ${r*.7}px sans-serif`;ctx.fillText("➜",cx+r*.75,cy+r*.78)}ctx.textAlign="left";ctx.textBaseline="alphabetic";
    let w=r*2;if(m.text&&z>=.5){const fs=clamp(12*z,12,20);ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(m.text).width;pill(cx+r+3,cy-fs/2-3,tw+10,fs+6);ctx.fillStyle="#fff";ctx.fillText(m.text,cx+r+8,cy+fs/2-2);w+=tw+14}
    flag(m,"marker",{x:cx-r,y:cy-r,w,h:r*2})}
   if(show.label&&z>=.1)for(const l of e.labels){const [x,y]=P(id,l.x,l.y),fs=Math.min(40,Math.max(11,(l.size||12)*z));ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(l.text).width;
@@ -262,19 +282,19 @@ const hitAt=(px,py)=>{for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(px>=h
 function reindex(){lead=new Set();const sg=new Set();for(const r of ann.regions)if(r.group&&!sg.has(r.group)){sg.add(r.group);lead.add(r.id)}idx=new Map();for(const k of KINDS)for(const a of list(k)){let e=idx.get(a.mapId);if(!e)idx.set(a.mapId,e={labels:[],markers:[],regions:[]});e[k+"s"].push(a)}}
 const getSel=()=>sel?list(sel.kind).find(x=>x.id===sel.id)||null:null;
 function select(a,k){sel=a?{kind:k,id:a.id}:null;updateCard();renderList();schedule()}
-function setCur(id){cur=id;$("mapId").value=id;$("mapBtn").disabled=false;updateInfo();renderList();for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]]){const n=maps[id]?.[k];$(b).disabled=!(n>=0&&n<maps.length)}changed()}
-function go(id,fly=true){id=Number(id);if(!Number.isInteger(id)||id<0||id>=maps.length){toast("No map with that ID");return}setCur(id);if(fly)flyTo(fitMapT(id));else schedule()}
-function focusAnn(a,k){setCur(a.mapId);select(a,k);const o=origin(a.mapId),z=Math.max(cam.z,2.5),W=stage.clientWidth,H=stage.clientHeight;
- const w=k==="region"?a.w:1,h=k==="region"?a.h:1;flyTo({z,x:o.x+(a.x+w/2)*TILE-W/2/z,y:o.y+(a.y+h/2)*TILE-H/2/z})}
+function setCur(id){cur=id;const ci=compOf[id];if(ci!==activeComp){const first=activeComp<0;setArea(ci);if(!first){Object.assign(cam,pos.size<=12?fitWorldT():fitMapT(id));anim++;schedule()}}if(ci===mainComp)lastWorld=id;$("mapId").value=id;$("mapBtn").disabled=false;updateInfo();renderList();for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]]){const n=maps[id]?.[k];$(b).disabled=!(n>=0&&n<maps.length)}changed()}
+function go(id,fly=true){const sw=Number.isInteger(+id)&&compOf[+id]!==activeComp;id=Number(id);if(!Number.isInteger(id)||id<0||id>=maps.length){toast("No map with that ID");return}setCur(id);if(sw)schedule();else if(fly)flyTo(fitMapT(id));else schedule()}
+function focusAnn(a,k){const sw=compOf[a.mapId]!==activeComp;setCur(a.mapId);select(a,k);const o=origin(a.mapId),z=Math.max(cam.z,2.5),W=stage.clientWidth,H=stage.clientHeight;
+ const w=k==="region"?a.w:1,h=k==="region"?a.h:1;const t={z,x:o.x+(a.x+w/2)*TILE-W/2/z,y:o.y+(a.y+h/2)*TILE-H/2/z};if(sw){Object.assign(cam,t);schedule()}else flyTo(t)}
 function updateInfo(){const m=maps[cur];if(!m)return;const p=pos.get(cur),e=idx.get(cur)||{labels:[],markers:[],regions:[]};
- $("mapInfo").textContent=`Map ${cur}${p?`  ·  world ${p.x}, ${p.y}`:"  ·  not linked to the world"}\nN ${m.n}  S ${m.s}  W ${m.w}  E ${m.e}\n${e.labels.length} labels, ${e.markers.length} markers, ${e.regions.length} regions here\nLoaded: ${ann.labels.length} labels, ${ann.markers.length} markers, ${ann.regions.length} regions\nAnnotations: ${annMeta}\nMap data: ${mapMeta||"loaded from a file you picked"}\n${pos.size} of ${maps.length} maps are linked into the world view`}
+ $("mapInfo").textContent=`Map ${cur}${p?`  ·  ${activeComp===mainComp?"world":"separate area"} ${p.x}, ${p.y}`:""}\nN ${m.n}  S ${m.s}  W ${m.w}  E ${m.e}\n${e.labels.length} labels, ${e.markers.length} markers, ${e.regions.length} regions here\nLoaded: ${ann.labels.length} labels, ${ann.markers.length} markers, ${ann.regions.length} regions\nAnnotations: ${annMeta}\nMap data: ${mapMeta||"loaded from a file you picked"}\n${comps[mainComp].ids.length} maps in the world, ${comps.length-1} separate areas (this one has ${pos.size})`}
 function syncSheet(){const sh=$("sheet"),on=!!getSel()&&matchMedia("(max-width:820px)").matches&&document.body.classList.contains("noside");sh.style.display=on?"block":"none";if(on)sh.innerHTML='<button data-act="close" style="float:right" aria-label="Close">✕</button>'+$("card").innerHTML}
 function updateCard(){updateCard0();syncSheet()}
 function updateCard0(){
  const a=getSel(),el=$("card");
  if(!a){el.innerHTML='<span class="muted">Select a label, marker or region on the map.</span>';return}
  el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ico(a.type):""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind==="marker"?esc(typeInfo(a.type).name):sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}${a.group?' · part of a multi-map region':''}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
- <div class="row"><button data-act="fly">Show on map</button>${EDIT?'<button data-act="edit">Edit</button><button data-act="dup">Duplicate</button><button data-act="del" class="danger">Delete</button>':""}</div>`;
+ <div class="row"><button data-act="fly">Show on map</button>${a.link!=null&&a.link!==""?`<button data-act="enter" class="primary">Enter map ${esc(a.link)}</button>`:""}${EDIT?'<button data-act="edit">Edit</button><button data-act="dup">Duplicate</button><button data-act="del" class="danger">Delete</button>':""}</div>`;
 }
 function fillTypeSelects(){for(const id of["markerType","fType"]){const el=$(id);if(!el)continue;const v=el.value||last.type;el.innerHTML=typeKeys().map(k=>`<option value="${k}">${esc(ico(k))} ${esc(typeInfo(k).name)}</option>`).join("");el.value=typeKeys().includes(v)?v:"point"}}
 function renderLegend(){
@@ -308,11 +328,11 @@ $("results").onclick=e=>{const n=e.target.closest("[data-r]");if(!n)return;const
 $("search").oninput=()=>{if(innerWidth<820&&$("search").value.trim()){document.body.classList.remove("noside");syncSheet()}search()};$("search").onkeydown=e=>{if(e.key==="Enter"){const r=$("results")._r?.[0];if(r){r.map!=null?go(r.map):focusAnn(r.a,r.k)}}};
 $("mapList").onclick=e=>{const n=e.target.closest("[data-id]");if(!n)return;const a=list(n.dataset.k).find(x=>x.id===n.dataset.id);if(a){if(innerWidth<820)document.body.classList.add("noside");focusAnn(a,n.dataset.k)}};
 $("sheet").onclick=$("card").onclick=e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=getSel();if(!a)return;
- ({close:()=>select(null),fly:()=>focusAnn(a,sel.kind),edit:()=>openModal(sel.kind,a),dup:()=>{hpush();const c={...clone(a),id:uid(),x:Math.min(15,a.x+1)};delete c.group;list(sel.kind).push(c);after();select(c,sel.kind)},del:delSel})[b.dataset.act]()};
+ ({enter:()=>enterMap(a.link),close:()=>select(null),fly:()=>focusAnn(a,sel.kind),edit:()=>openModal(sel.kind,a),dup:()=>{hpush();const c={...clone(a),id:uid(),x:Math.min(15,a.x+1)};delete c.group;list(sel.kind).push(c);after();select(c,sel.kind)},del:delSel})[b.dataset.act]()};
 
 /* ---------- editing ---------- */
 function persist(t){if(!EDIT)return;try{localStorage.setItem("mirage-livemap-annotations",JSON.stringify(ann));if(t)toast("Saved in this browser")}catch(e){toast("Could not save in this browser")}}
-function after(){reindex();persist();renderLegend();if(sel&&!getSel())sel=null;updateCard();renderList();updateInfo();schedule()}
+function after(){reindex();persist();renderLegend();renderAreas();if(sel&&!getSel())sel=null;updateCard();renderList();updateInfo();schedule()}
 function setDirty(d,msg){const b=$("dirtyBtn");if(!b)return;b.classList.toggle("dirty",d);b.textContent=d?"● Not saved to annotations.json yet. Click to save":(msg||"✓ Matches the published file")}
 function exportJson(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(ann,null,2)],{type:"application/json"}));a.download="annotations.json";a.click();setDirty(false,"✓ Exported. Now upload that file to your site");toast("Exported annotations.json")}
 const idb=(m,k,v)=>new Promise((res,rej)=>{const o=indexedDB.open("mirage-livemap",1);o.onupgradeneeded=()=>o.result.createObjectStore("h");o.onerror=()=>rej(o.error);o.onsuccess=()=>{const st=o.result.transaction("h",m==="get"?"readonly":"readwrite").objectStore("h"),r=m==="get"?st.get(k):st.put(v,k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}});
@@ -343,7 +363,7 @@ function openModal(kind,data){
  $("mt").textContent=`${pend.isNew?"Add":"Edit"} ${kind}`;$("mDel").classList.toggle("hidden",pend.isNew);
  document.querySelectorAll("#mb .f[data-k]").forEach(f=>f.classList.toggle("hidden",!f.dataset.k.split(" ").includes(kind)));
  $("fText").value=d.text||"";$("fColor").value=d.color||last[kind];$("fSize").value=String(pend.isNew?last.size:d.size||16);$("fDesc").value=d.description||"";
- $("fType").value=d.type||$("markerType").value;$("fOp").value=d.opacity??last.opacity;$("fX").value=d.x;$("fY").value=d.y;$("fW").value=d.w||1;$("fH").value=d.h||1;
+ $("fType").value=d.type||$("markerType").value;$("fLink").value=d.link??"";$("fOp").value=d.opacity??last.opacity;$("fX").value=d.x;$("fY").value=d.y;$("fW").value=d.w||1;$("fH").value=d.h||1;
  const multi=(d._pieces?.length||0)>1;$("coordRow").classList.toggle("hidden",multi);if(multi)$("mt").textContent=`Add region across ${d._pieces.length} maps`;
  $("mb").style.display="flex";setTimeout(()=>$("fText").focus(),20);
 }
@@ -353,7 +373,7 @@ function saveModal(){
  a.text=$("fText").value.trim()||(kind==="region"?"Region":kind==="label"?"Label":"");
  a.x=clamp(+$("fX").value||0,0,15);a.y=clamp(+$("fY").value||0,0,11);
  if(kind==="label"){a.color=$("fColor").value;a.size=+$("fSize").value;a.description=$("fDesc").value}
- if(kind==="marker"){a.color=$("fColor").value;a.type=$("fType").value;a.description=$("fDesc").value;a.size=18}
+ if(kind==="marker"){if($("fLink").value==="")delete a.link;else a.link=Math.max(0,Math.floor(+$("fLink").value));a.color=$("fColor").value;a.type=$("fType").value;a.description=$("fDesc").value;a.size=18}
  if(kind==="region"){a.color=$("fColor").value;a.opacity=+$("fOp").value;a.size=14;a.w=clamp(+$("fW").value||1,1,16-a.x);a.h=clamp(+$("fH").value||1,1,12-a.y)}
  last[kind]=$("fColor").value;if(kind==="label")last.size=a.size;if(kind==="region")last.opacity=a.opacity;if(kind==="marker"){last.type=a.type;$("markerType").value=a.type}saveLast();if(tool===kind)$("penColor").value=last[kind];
  const arr=list(kind);
@@ -404,13 +424,13 @@ function pointerEnd(e){
 }
 cv.addEventListener("pointerup",pointerEnd);cv.addEventListener("pointercancel",pointerEnd);
 cv.addEventListener("dblclick",e=>{const h=hitAt(e.offsetX,e.offsetY);if(EDIT&&h){openModal(h.kind,h.a);return}
- if(h)return focusAnn(h.a,h.kind);const p=at(e.offsetX,e.offsetY);if(p.id!=null)go(p.id)});
+ if(h)return h.a.link!=null&&h.a.link!==""?enterMap(h.a.link):focusAnn(h.a,h.kind);const p=at(e.offsetX,e.offsetY);if(p.id!=null)go(p.id)});
 cv.addEventListener("wheel",e=>{e.preventDefault();anim++;zoomAt(e.offsetX,e.offsetY,cam.z*Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015)*(e.deltaMode===1?20:1)))},{passive:false});
 new ResizeObserver(()=>{if(!userMoved&&maps.length&&camSet&&!location.hash.includes("z="))Object.assign(cam,fitMapT(cur));schedule()}).observe(stage);
 
 /* ---------- controls ---------- */
 const fit=()=>flyTo(fitMapT(cur));
-$("worldBtn").onclick=()=>flyTo(fitWorldT());$("mapBtn").onclick=fit;$("zFit").onclick=fit;$("zIn").onclick=()=>zoomBtn(1.5);$("zOut").onclick=()=>zoomBtn(1/1.5);
+$("worldBtn").onclick=goWorld;$("areaBtn").onclick=()=>flyTo(fitWorldT());$("backBtn").onclick=goBack;$("mapBtn").onclick=fit;$("zFit").onclick=fit;$("zIn").onclick=()=>zoomBtn(1.5);$("zOut").onclick=()=>zoomBtn(1/1.5);
 $("goBtn").onclick=()=>go($("mapId").value);$("mapId").onkeydown=e=>{if(e.key==="Enter")go($("mapId").value)};
 for(const [b,k] of [["nN","n"],["nS","s"],["nW","w"],["nE","e"]])$(b).onclick=()=>{const n=maps[cur]?.[k];if(n>=0&&n<maps.length)go(n)};
 $("menuBtn").onclick=()=>{document.body.classList.toggle("noside");syncSheet();setTimeout(schedule,30)};
@@ -431,6 +451,7 @@ if(EDIT){
  for(const k of ["select","label","marker","region"])$("t_"+k).onclick=()=>setTool(k);
  $("undoBtn").onclick=undo;$("markerType").value=last.type;$("penColor").oninput=e=>{if(tool!=="select"){last[tool]=e.target.value;saveLast()}};setTool("select");$("redoBtn").onclick=redoIt;$("mCancel").onclick=closeModal;$("mDel").onclick=()=>{const a=pend.data;closeModal();sel={kind:pend.kind,id:a.id};delSel()};
  $("mb").onclick=e=>{if(e.target===$("mb"))closeModal()};
+ $("areaFilter").oninput=renderAreas;$("areaList").onclick=e=>{const n=e.target.closest("[data-a]");if(n)go(comps[+n.dataset.a].ids[0])};
  $("saveBtn").onclick=()=>persist(true);$("fileBtn").onclick=$("dirtyBtn").onclick=saveFile;$("chooseBtn").onclick=async()=>{try{await idb("put","file",null)}catch(e){}saveFile()};$("importBtn").onclick=()=>$("annFile").click();
 $("exportBtn").onclick=exportJson;
  $("annFile").onchange=async e=>{try{hpush();ann=norm(JSON.parse(await e.target.files[0].text()));after();toast("Imported")}catch(x){toast("That is not a valid annotations file")}};
@@ -450,7 +471,7 @@ document.addEventListener("keydown",e=>{
  if(EDIT&&(e.ctrlKey||e.metaKey)){const k=e.key.toLowerCase();if(k==="z"&&!typing){e.preventDefault();e.shiftKey?redoIt():undo()}else if(k==="y"&&!typing){e.preventDefault();redoIt()}else if(k==="s"){e.preventDefault();persist();saveFile()}return}
  if(typing||pend)return;
  const k=e.key.toLowerCase(),step=90/cam.z;
- if(k==="+"||k==="="){zoomBtn(1.4)}else if(k==="-"){zoomBtn(1/1.4)}else if(k==="0"||k==="f")fit();else if(k==="w")flyTo(fitWorldT());
+ if(k==="+"||k==="="){zoomBtn(1.4)}else if(k==="-"){zoomBtn(1/1.4)}else if(k==="0"||k==="f")fit();else if(k==="w")goWorld();else if(k==="b")goBack();
  else if(k==="arrowleft"){cam.x-=step;changed()}else if(k==="arrowright"){cam.x+=step;changed()}else if(k==="arrowup"){cam.y-=step;changed()}else if(k==="arrowdown"){cam.y+=step;changed()}
  else if(EDIT){if("1234".includes(k)&&k)setTool(["select","label","marker","region"][+k-1]);else if(k==="delete"||k==="backspace")delSel();else if(k==="g"){show.grid=show.grid?0:1;$("cbGrid").checked=!!show.grid;schedule()}}
 });
