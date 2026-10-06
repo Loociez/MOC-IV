@@ -271,7 +271,8 @@
       "text": "3 bears",
       "type": "boss",
       "description": "",
-      "size": 18
+      "size": 18,
+      "color": "#ffffff"
     },
     {
       "id": "s9h8hj0w39gmuvhm8no",
@@ -281,7 +282,8 @@
       "text": "Nibbles",
       "type": "boss",
       "description": "",
-      "size": 18
+      "size": 18,
+      "color": "#ffffff"
     },
     {
       "id": "1s53cyjtcrvmuvhmjpi",
@@ -916,6 +918,281 @@
       "text": "Bakery & Bed",
       "color": "#3d78f0",
       "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "zk377byi4fcmuwpmon6",
+      "mapId": 33,
+      "x": 9,
+      "y": 5,
+      "text": "Boulder",
+      "color": "#ffffff",
+      "type": "boss",
+      "description": "GvG boss Boulder.",
+      "size": 18
+    },
+    {
+      "id": "7s6q15lfvxqmuwqj01r",
+      "mapId": 107,
+      "x": 2,
+      "y": 8,
+      "text": "Southern Crendale Dock Hall",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "1umrfqzso1muwqjsff",
+      "mapId": 802,
+      "x": 5,
+      "y": 1,
+      "text": "Blood Village",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "gj1qv45x658muwqlxz7",
+      "mapId": 15,
+      "x": 8,
+      "y": 2,
+      "text": "River Valley",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "87b64gz1hlomuwr3p8d",
+      "mapId": 113,
+      "x": 9,
+      "y": 1,
+      "text": "East of Dragonia",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ylihjznruklmuwr4h94",
+      "mapId": 1496,
+      "x": 10,
+      "y": 0,
+      "text": "Sea Breeze",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "je2j37jrwkmuwr6sta",
+      "mapId": 118,
+      "x": 10,
+      "y": 3,
+      "text": "West Crendale",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "r2tt7fsf6snmuwr9gdp",
+      "mapId": 132,
+      "x": 8,
+      "y": 7,
+      "text": "Hidden Guild Hall",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "por2lk6u52jmuwrbiqp",
+      "mapId": 129,
+      "x": 13,
+      "y": 4,
+      "text": "Forest Edge",
+      "color": "#99ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "6cmo0ota8xcmuwrcvt7",
+      "mapId": 129,
+      "x": 8,
+      "y": 5,
+      "text": "Forest Spider",
+      "color": "#ff6600",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "rxtrqeo69kjmuwrdouv",
+      "mapId": 128,
+      "x": 11,
+      "y": 3,
+      "text": "Wolf Rat",
+      "color": "#ff6600",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "z1cdz6f1p3muwrdt99",
+      "mapId": 128,
+      "x": 12,
+      "y": 5,
+      "text": "Troll Scout",
+      "color": "#ff6600",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "mu0syuy2pzmuwrge4l",
+      "mapId": 128,
+      "x": 10,
+      "y": 1,
+      "text": "Fang Lizard",
+      "color": "#ff6600",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "geb10h7tzkbmuwrglzv",
+      "mapId": 128,
+      "x": 7,
+      "y": 4,
+      "text": "Neverelm Strangler",
+      "color": "#ff6600",
+      "type": "boss",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "x5aj0yad1omuwrj0l9",
+      "mapId": 1553,
+      "x": 7,
+      "y": 2,
+      "text": "Apparition",
+      "color": "#ff6600",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "m2zn2my236muwrjbgv",
+      "mapId": 1553,
+      "x": 6,
+      "y": 8,
+      "text": "Skeleton",
+      "color": "#ff6600",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "edpizq5h6o6muwrkfum",
+      "mapId": 131,
+      "x": 8,
+      "y": 8,
+      "text": "Appartment #1 & #2",
+      "color": "#00ff59",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "uvlky13my7qmuwrlcpf",
+      "mapId": 131,
+      "x": 2,
+      "y": 4,
+      "text": "Apparition",
+      "color": "#ff7b00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "njs2wvl3m5cmuwrlm8q",
+      "mapId": 131,
+      "x": 8,
+      "y": 3,
+      "text": "Skeleton",
+      "color": "#ff7b00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "81r1bkqsxslmuwrm2ns",
+      "mapId": 1090,
+      "x": 4,
+      "y": 4,
+      "text": "Daddy long leg",
+      "color": "#ff7b00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "50834yrhselmuwrmlro",
+      "mapId": 1090,
+      "x": 1,
+      "y": 1,
+      "text": "Chest",
+      "color": "#d4ff00",
+      "type": "chest",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ymm05cnk84muwrng0q",
+      "mapId": 119,
+      "x": 3,
+      "y": 8,
+      "text": "Wolf Rat",
+      "color": "#ff7b00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "bc28637wfi7muwrnpjz",
+      "mapId": 119,
+      "x": 12,
+      "y": 8,
+      "text": "Fang Lizard",
+      "color": "#ff7b00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "rzva4g4c2dmuwroau0",
+      "mapId": 120,
+      "x": 6,
+      "y": 6,
+      "text": "Troll Scout",
+      "color": "#ff7b00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "n5p0neg0mnimuwrp6l0",
+      "mapId": 96,
+      "x": 2,
+      "y": 2,
+      "text": "Duck",
+      "color": "#ff7b00",
+      "type": "portal",
       "description": "",
       "size": 18
     }
