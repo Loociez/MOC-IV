@@ -1577,6 +1577,128 @@
       "type": "door",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "hba02xd2e6amux117kx",
+      "mapId": 946,
+      "x": 7,
+      "y": 1,
+      "text": "DMC Entrances",
+      "color": "#145ceb",
+      "type": "dungeon",
+      "description": "",
+      "size": 18,
+      "link": 255
+    },
+    {
+      "id": "vubgh7c52ubmux1341p",
+      "mapId": 308,
+      "x": 8,
+      "y": 7,
+      "text": "Dread Spider",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "k2wk3df5bomux13vhj",
+      "mapId": 308,
+      "x": 8,
+      "y": 10,
+      "text": "Ogre",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kb6ik714f4amux145kq",
+      "mapId": 308,
+      "x": 7,
+      "y": 5,
+      "text": "Barquest",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ztov5khfvqrmux14m4s",
+      "mapId": 307,
+      "x": 7,
+      "y": 2,
+      "text": "Ogre",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "jlwy1r40giamux14p6m",
+      "mapId": 307,
+      "x": 9,
+      "y": 4,
+      "text": "Dread Spider",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "p19e2z6jho9mux16f92",
+      "mapId": 304,
+      "x": 3,
+      "y": 4,
+      "text": "Ogre",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "3yxtzpbf4abmux16mfe",
+      "mapId": 304,
+      "x": 6,
+      "y": 9,
+      "text": "Demon Sentinel",
+      "color": "#eb9c14",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "220tp6fcqfqmux18wcl",
+      "mapId": 255,
+      "x": 7,
+      "y": 0,
+      "text": "Dragon Mouth Cave (Hell)",
+      "color": "#bceb14",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ozjg11zx0zqmux19a8o",
+      "mapId": 693,
+      "x": 6,
+      "y": 0,
+      "text": "Dragon Mouth Cave (Easy)",
+      "color": "#bceb14",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "934wci2as5mux19llc",
+      "mapId": 694,
+      "x": 10,
+      "y": 2,
+      "text": "Dragon Mouth Cave (Nightmare)",
+      "color": "#bceb14",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
     }
   ],
   "regions": [
