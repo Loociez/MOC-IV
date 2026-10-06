@@ -526,17 +526,6 @@
       "size": 18
     },
     {
-      "id": "r6exu0uisramuvlvo9k",
-      "mapId": 1,
-      "x": 4,
-      "y": 1,
-      "text": "Bank of Crendale",
-      "color": "#147ceb",
-      "type": "shop",
-      "description": "",
-      "size": 18
-    },
-    {
       "id": "r6kbyb2liw8muvlw8x6",
       "mapId": 96,
       "x": 1,
@@ -556,17 +545,6 @@
       "color": "#147ceb",
       "type": "shop",
       "description": "",
-      "size": 18
-    },
-    {
-      "id": "8s1wcd19w44muvlwz4k",
-      "mapId": 1,
-      "x": 1,
-      "y": 7,
-      "text": "Erlingtons",
-      "color": "#147ceb",
-      "type": "shop",
-      "description": "For all your fishing needs.",
       "size": 18
     },
     {
@@ -1193,6 +1171,114 @@
       "text": "Duck",
       "color": "#ff7b00",
       "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "7ua1ygq5h53muwxh3c0",
+      "mapId": 96,
+      "x": 2,
+      "y": 4,
+      "text": "Arena",
+      "link": 1611,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "jxo48muugmmuwxj8o5",
+      "mapId": 790,
+      "x": 10,
+      "y": 3,
+      "text": "Lost City & Crags",
+      "link": 499,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "i5p1jdxhc9muwxk5rk",
+      "mapId": 96,
+      "x": 7,
+      "y": 6,
+      "text": "Crendale Castle",
+      "link": 196,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "yc1xs5qwemimuwxkxsw",
+      "mapId": 96,
+      "x": 13,
+      "y": 1,
+      "text": "Pet Vendor",
+      "link": 840,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "idxh1fckrfmuwxlla4",
+      "mapId": 96,
+      "x": 8,
+      "y": 1,
+      "text": "Crendale Slots",
+      "link": 549,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "hzav0wr441muwxmioi",
+      "mapId": 1,
+      "x": 1,
+      "y": 8,
+      "text": "Erlington",
+      "link": 8,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "lip5i63usx8muwxn03d",
+      "mapId": 1,
+      "x": 4,
+      "y": 2,
+      "text": "Bank of Crendale",
+      "link": 4,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "e3lao7vq48muwxp0fe",
+      "mapId": 1,
+      "x": 13,
+      "y": 4,
+      "text": "The Armory",
+      "link": 319,
+      "color": "#00fffb",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "areb7e9f6dgmuwxqk1i",
+      "mapId": 1,
+      "x": 14,
+      "y": 5,
+      "text": "Tavern",
+      "link": 9,
+      "color": "#00fffb",
+      "type": "door",
       "description": "",
       "size": 18
     }
