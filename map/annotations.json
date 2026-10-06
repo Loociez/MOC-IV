@@ -1281,6 +1281,98 @@
       "type": "door",
       "description": "",
       "size": 18
+    },
+    {
+      "id": "k21hzo4cdvmuwz1phc",
+      "mapId": 502,
+      "x": 6,
+      "y": 2,
+      "text": "Emma's Potions",
+      "color": "#00aaff",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "p0p847pok4jmuwz2f8x",
+      "mapId": 502,
+      "x": 6,
+      "y": 6,
+      "text": "Hilda's old house",
+      "link": 550,
+      "color": "#00aaff",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "fqqidc3w01omuwz32lg",
+      "mapId": 502,
+      "x": 4,
+      "y": 3,
+      "text": "The Lost Bank",
+      "link": 555,
+      "color": "#00aaff",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "fi12nf24hejmuwz3w99",
+      "mapId": 524,
+      "x": 8,
+      "y": 2,
+      "text": "Tumbled down house (Inn)",
+      "link": 556,
+      "color": "#00aaff",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "q57b5l23nppmuwz4m2r",
+      "mapId": 524,
+      "x": 6,
+      "y": 7,
+      "text": "Elphaba's Corner",
+      "link": 254,
+      "color": "#00aaff",
+      "type": "door",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "hdcqp7navkimuwz5l9q",
+      "mapId": 1422,
+      "x": 3,
+      "y": 11,
+      "text": "Lost Cemetery",
+      "color": "#ffffff",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "v5nqsg6fwamuwz7lvl",
+      "mapId": 501,
+      "x": 11,
+      "y": 2,
+      "text": "Roaring Rock",
+      "color": "#4dff61",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "dpqk3slwravmuwz9wil",
+      "mapId": 1294,
+      "x": 7,
+      "y": 4,
+      "text": "The Crags",
+      "color": "#ffffff",
+      "type": "dungeon",
+      "description": "Requires all stones to open.",
+      "size": 18
     }
   ],
   "regions": [
@@ -1292,7 +1384,7 @@
       "w": 16,
       "h": 12,
       "text": "Crendale",
-      "color": "#ffcc66",
+      "color": "#66ffe6",
       "opacity": 0.18,
       "size": 14
     },
@@ -1304,7 +1396,7 @@
       "w": 16,
       "h": 12,
       "text": "Crendale",
-      "color": "#ffcc66",
+      "color": "#00fffb",
       "opacity": 0.18,
       "size": 14
     },
@@ -1316,7 +1408,7 @@
       "w": 16,
       "h": 12,
       "text": "Crendale - Vicinity of Crendale",
-      "color": "#ffcc66",
+      "color": "#66ffed",
       "opacity": 0.18,
       "size": 14
     },
@@ -1328,7 +1420,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#66a8ff",
+      "color": "#66ffed",
       "opacity": 0.18,
       "size": 14
     },
@@ -1340,7 +1432,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#66c4ff",
+      "color": "#66e0ff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1352,7 +1444,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#66ccff",
+      "color": "#66fff5",
       "opacity": 0.18,
       "size": 14
     },
@@ -1364,7 +1456,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#668cff",
+      "color": "#66e6ff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1376,7 +1468,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#6685ff",
+      "color": "#66e0ff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1388,7 +1480,7 @@
       "w": 16,
       "h": 12,
       "text": "Draconis",
-      "color": "#b3ff66",
+      "color": "#66fff5",
       "opacity": 0.18,
       "size": 14
     },
@@ -1400,7 +1492,7 @@
       "w": 16,
       "h": 12,
       "text": "Babylon",
-      "color": "#ff66de",
+      "color": "#66e6ff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1412,7 +1504,7 @@
       "w": 16,
       "h": 12,
       "text": "Babylon",
-      "color": "#ff66de",
+      "color": "#66ffe6",
       "opacity": 0.18,
       "size": 14
     },
@@ -1424,7 +1516,7 @@
       "w": 16,
       "h": 12,
       "text": "Babylon",
-      "color": "#ff66f2",
+      "color": "#66edff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1436,7 +1528,7 @@
       "w": 16,
       "h": 12,
       "text": "Babylon",
-      "color": "#ff66fa",
+      "color": "#66ffed",
       "opacity": 0.18,
       "size": 14
     },
@@ -1448,7 +1540,7 @@
       "w": 16,
       "h": 12,
       "text": "Babylon",
-      "color": "#ff66f2",
+      "color": "#66edff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1460,7 +1552,7 @@
       "w": 16,
       "h": 12,
       "text": "Babylon",
-      "color": "#ff66d6",
+      "color": "#66fffc",
       "opacity": 0.18,
       "size": 14
     },
@@ -1472,7 +1564,7 @@
       "w": 16,
       "h": 12,
       "text": "Alephvale",
-      "color": "#ff8566",
+      "color": "#66fff5",
       "opacity": 0.18,
       "size": 14
     },
@@ -1484,7 +1576,7 @@
       "w": 16,
       "h": 12,
       "text": "Alephvale",
-      "color": "#ff9466",
+      "color": "#66ffed",
       "opacity": 0.18,
       "size": 14
     },
@@ -1496,7 +1588,7 @@
       "w": 16,
       "h": 12,
       "text": "North Coast",
-      "color": "#87ff66",
+      "color": "#66ffed",
       "opacity": 0.18,
       "size": 14
     },
@@ -1508,7 +1600,7 @@
       "w": 14,
       "h": 12,
       "text": "North Coast",
-      "color": "#a3ff66",
+      "color": "#66fcff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1520,7 +1612,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#66b0ff",
+      "color": "#66fcff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1532,7 +1624,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#66b0ff",
+      "color": "#66fcff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1544,7 +1636,7 @@
       "w": 16,
       "h": 12,
       "text": "Dragonia",
-      "color": "#66a8ff",
+      "color": "#66d9ff",
       "opacity": 0.18,
       "size": 14
     },
@@ -1557,6 +1649,18 @@
       "h": 12,
       "text": "PVP / Guild V Guild",
       "color": "#ff0000",
+      "opacity": 0.18,
+      "size": 14
+    },
+    {
+      "id": "pb2c5vm9h0omuwyx3dm",
+      "mapId": 2349,
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 12,
+      "text": "Village of Silt-Water",
+      "color": "#66fcff",
       "opacity": 0.18,
       "size": 14
     }
