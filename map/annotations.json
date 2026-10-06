@@ -501,7 +501,8 @@
       "color": "#6551fb",
       "type": "shop",
       "description": "",
-      "size": 18
+      "size": 18,
+      "link": 1086
     },
     {
       "id": "6hekisxvb68muvltrm6",
@@ -512,7 +513,8 @@
       "color": "#147ceb",
       "type": "shop",
       "description": "",
-      "size": 18
+      "size": 18,
+      "link": 786
     },
     {
       "id": "4wr68vc3zhmuvlvbak",
@@ -688,7 +690,8 @@
       "color": "#145ceb",
       "type": "shop",
       "description": "Trading skill items for Verle notes, and also purchase new equipment... if you have enough Verles that is.",
-      "size": 18
+      "size": 18,
+      "link": 1131
     },
     {
       "id": "3egt26xpotsmuvm86yl",
@@ -1548,6 +1551,30 @@
       "text": "Knight of Crag",
       "color": "#ec8d09",
       "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "1ek28w74huzmux06tu7",
+      "mapId": 143,
+      "x": 3,
+      "y": 1,
+      "text": "The Armory",
+      "link": 828,
+      "color": "#0977ec",
+      "type": "shop",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "r0w6xuoylkmux07ssz",
+      "mapId": 143,
+      "x": 9,
+      "y": 10,
+      "text": "Dragon Mouth Caves",
+      "link": 784,
+      "color": "#0977ec",
+      "type": "door",
       "description": "",
       "size": 18
     }
