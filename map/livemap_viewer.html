@@ -265,7 +265,7 @@ function paint(){
  for(const id of ids){const e=idx.get(id);if(!e)continue;
   if(show.region)for(const r of e.regions){const [x,y]=P(id,r.x,r.y),w=r.w*TILE*z,h=r.h*TILE*z;ctx.fillStyle=hexA(r.color,r.opacity);ctx.fillRect(x,y,w,h);ctx.strokeStyle=r.color;ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
    if(r.text&&z>=.5&&(!r.group||lead.has(r.id))){const fs=clamp(13*Math.max(z,.8),12,26);ctx.font=`bold ${fs}px system-ui,sans-serif`;ctx.fillStyle=r.color;ctx.fillText(r.text,x+5,y+fs+3,Math.max(20,w-8))}flag(r,"region",{x,y,w,h})}
-  if(show.marker)for(const m of e.markers){if(hiddenTypes.has(m.type))continue;const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
+  if(show.marker)for(const m of e.markers){if(hiddenTypes.has(m.type))continue;const [x,y]=P(id,m.x,m.y),r=clamp(TILE*z*.45,COARSE?13:10,24),cx=x+TILE*z/2,cy=y+TILE*z/2;
    const mc=m.color||"#e6c25a";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle="#2a1558";ctx.fill();ctx.fillStyle=hexA(mc,.4);ctx.fill();ctx.strokeStyle=mc;ctx.lineWidth=2.5;ctx.stroke();
    ctx.font=`${r*1.1}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(ico(m.type),cx,cy+1);if(m.link!=null&&m.link!==""){ctx.beginPath();ctx.arc(cx+r*.75,cy+r*.75,r*.42,0,7);ctx.fillStyle="#e6c25a";ctx.fill();ctx.fillStyle="#1a0d38";ctx.font=`bold ${r*.7}px sans-serif`;ctx.fillText("➜",cx+r*.75,cy+r*.78)}ctx.textAlign="left";ctx.textBaseline="alphabetic";
    let w=r*2;if(m.text&&z>=.5){const fs=clamp(12*z,12,20);ctx.font=`bold ${fs}px system-ui,sans-serif`;const tw=ctx.measureText(m.text).width;pill(cx+r+3,cy-fs/2-3,tw+10,fs+6);ctx.fillStyle="#fff";ctx.fillText(m.text,cx+r+8,cy+fs/2-2);w+=tw+14}
@@ -276,7 +276,7 @@ function paint(){
  if(draft){const x0=Math.min(draft.x0,draft.x1),y0=Math.min(draft.y0,draft.y1),w=Math.abs(draft.x1-draft.x0)+1,h=Math.abs(draft.y1-draft.y0)+1,x=(x0*TILE-cam.x)*z,y=(y0*TILE-cam.y)*z;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle="#e6c25a";ctx.lineWidth=2;ctx.fillStyle="rgba(230,194,90,.2)";ctx.fillRect(x,y,w*TILE*z,h*TILE*z);ctx.strokeRect(x,y,w*TILE*z,h*TILE*z);ctx.restore()}
 }
 function hexA(h,a){h=(h||"#fff").replace("#","");if(h.length===3)h=[...h].map(x=>x+x).join("");return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a??.18})`}
-const hitAt=(px,py)=>{for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(px>=h.x&&px<=h.x+h.w&&py>=h.y&&py<=h.y+h.h)return h}return null};
+const hitAt=(px,py)=>{const q=COARSE?10:0;for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(px>=h.x-q&&px<=h.x+h.w+q&&py>=h.y-q&&py<=h.y+h.h+q)return h}return null};
 
 /* ---------- state ---------- */
 function reindex(){lead=new Set();const sg=new Set();for(const r of ann.regions)if(r.group&&!sg.has(r.group)){sg.add(r.group);lead.add(r.id)}idx=new Map();for(const k of KINDS)for(const a of list(k)){let e=idx.get(a.mapId);if(!e)idx.set(a.mapId,e={labels:[],markers:[],regions:[]});e[k+"s"].push(a)}}
@@ -293,7 +293,7 @@ function updateCard(){updateCard0();syncSheet()}
 function updateCard0(){
  const a=getSel(),el=$("card");
  if(!a){el.innerHTML='<span class="muted">Select a label, marker or region on the map.</span>';return}
- el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ico(a.type):""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind==="marker"?esc(typeInfo(a.type).name):sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}${a.group?' · part of a multi-map region':''}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}
+ el.innerHTML=`<div class="ctitle">${sel.kind==="marker"?ico(a.type):""} ${esc(a.text||"Untitled")}</div><div class="muted">${sel.kind==="marker"?esc(typeInfo(a.type).name):sel.kind} · map ${a.mapId} · tile ${a.x}, ${a.y}${a.group?' · part of a multi-map region':''}</div>${a.description?`<div class="desc">${linkify(a.description)}</div>`:""}${a.link!=null&&a.link!==""?'<div class="muted">Double-tap or double-click the pin to enter.</div>':""}
  <div class="row"><button data-act="fly">Show on map</button>${a.link!=null&&a.link!==""?`<button data-act="enter" class="primary">Enter map ${esc(a.link)}</button>`:""}${EDIT?'<button data-act="edit">Edit</button><button data-act="dup">Duplicate</button><button data-act="del" class="danger">Delete</button>':""}</div>`;
 }
 function fillTypeSelects(){for(const id of["markerType","fType"]){const el=$(id);if(!el)continue;const v=el.value||last.type;el.innerHTML=typeKeys().map(k=>`<option value="${k}">${esc(ico(k))} ${esc(typeInfo(k).name)}</option>`).join("");el.value=typeKeys().includes(v)?v:"point"}}
@@ -416,6 +416,7 @@ function pointerEnd(e){
  if(d.mode==="draw"&&d.moved){const r=draft;draft=null;placeRegion(r);return}
  draft=null;if(d.mode==="move"&&d.moved){after();return}if(d.moved)return;
  const h=d.h,p=d.p;
+ if(e.pointerType!=="mouse"&&!(EDIT&&tool!=="select")){const n=performance.now();if(lastTap&&n-lastTap.t<400&&Math.hypot(e.offsetX-lastTap.x,e.offsetY-lastTap.y)<36){lastTap=null;dbl(e.offsetX,e.offsetY);return}lastTap={t:n,x:e.offsetX,y:e.offsetY}}
  if(EDIT&&(tool==="label"||tool==="marker")&&p.id!=null){const d={id:uid(),mapId:p.id,x:clamp(p.tx,0,15),y:clamp(p.ty,0,11)};
  if(tool==="marker"&&$("quick").checked){hpush();Object.assign(d,{type:$("markerType").value,text:"",description:"",size:18,color:last.marker});ann.markers.push(d);after();select(d,"marker");toast("Marker added");return}
  openModal(tool,d);return}
@@ -423,8 +424,10 @@ function pointerEnd(e){
  if(h){select(h.a,h.kind)}else{select(null);if(p.id!=null&&p.id!==cur)setCur(p.id)}
 }
 cv.addEventListener("pointerup",pointerEnd);cv.addEventListener("pointercancel",pointerEnd);
-cv.addEventListener("dblclick",e=>{const h=hitAt(e.offsetX,e.offsetY);if(EDIT&&h){openModal(h.kind,h.a);return}
- if(h)return h.a.link!=null&&h.a.link!==""?enterMap(h.a.link):focusAnn(h.a,h.kind);const p=at(e.offsetX,e.offsetY);if(p.id!=null)go(p.id)});
+let lastTap=null,lastDbl=0;
+function dbl(px,py){const n=performance.now();if(n-lastDbl<500)return;lastDbl=n;const h=hitAt(px,py);if(EDIT&&h){openModal(h.kind,h.a);return}
+ if(h)return h.a.link!=null&&h.a.link!==""?enterMap(h.a.link):focusAnn(h.a,h.kind);const p=at(px,py);if(p.id!=null)go(p.id)}
+cv.addEventListener("dblclick",e=>dbl(e.offsetX,e.offsetY));
 cv.addEventListener("wheel",e=>{e.preventDefault();anim++;zoomAt(e.offsetX,e.offsetY,cam.z*Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015)*(e.deltaMode===1?20:1)))},{passive:false});
 new ResizeObserver(()=>{if(!userMoved&&maps.length&&camSet&&!location.hash.includes("z="))Object.assign(cam,fitMapT(cur));schedule()}).observe(stage);
 
