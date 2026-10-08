@@ -104,16 +104,6 @@
   ],
   "markers": [
     {
-      "id": "bk6545nlbslmuvahik5",
-      "mapId": 139,
-      "x": 7,
-      "y": 3,
-      "text": "Hall of Heroes",
-      "type": "dungeon",
-      "description": "",
-      "size": 18
-    },
-    {
       "id": "3ww17tdzspamuvai62i",
       "mapId": 0,
       "x": 2,
@@ -158,10 +148,11 @@
       "mapId": 1082,
       "x": 13,
       "y": 3,
-      "text": "^ Catacombs",
+      "text": "Catacombs & Trials",
       "type": "dungeon",
-      "description": "",
-      "size": 18
+      "description": "Dungeons:\n- Catacombs\n- Purification Trials",
+      "size": 18,
+      "color": "#cec950"
     },
     {
       "id": "osckn8dgfnmuvam02d",
@@ -268,11 +259,11 @@
       "mapId": 53,
       "x": 7,
       "y": 2,
-      "text": "3 bears",
+      "text": "3 Bears",
       "type": "boss",
       "description": "",
       "size": 18,
-      "color": "#ffffff"
+      "color": "#ff0000"
     },
     {
       "id": "s9h8hj0w39gmuvhm8no",
@@ -283,7 +274,7 @@
       "type": "boss",
       "description": "",
       "size": 18,
-      "color": "#ffffff"
+      "color": "#ff0000"
     },
     {
       "id": "1s53cyjtcrvmuvhmjpi",
@@ -373,7 +364,8 @@
       "text": "Zeigfried (Easy)",
       "type": "boss",
       "description": "",
-      "size": 18
+      "size": 18,
+      "color": "#ff0000"
     },
     {
       "id": "i9jl6xlvilmuvir2el",
@@ -908,7 +900,7 @@
       "x": 9,
       "y": 5,
       "text": "Boulder",
-      "color": "#ffffff",
+      "color": "#ff0000",
       "type": "boss",
       "description": "GvG boss Boulder.",
       "size": 18
@@ -1007,7 +999,7 @@
       "x": 8,
       "y": 5,
       "text": "Forest Spider",
-      "color": "#ff6600",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1018,7 +1010,7 @@
       "x": 11,
       "y": 3,
       "text": "Wolf Rat",
-      "color": "#ff6600",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1029,7 +1021,7 @@
       "x": 12,
       "y": 5,
       "text": "Troll Scout",
-      "color": "#ff6600",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1040,7 +1032,7 @@
       "x": 10,
       "y": 1,
       "text": "Fang Lizard",
-      "color": "#ff6600",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1051,7 +1043,7 @@
       "x": 7,
       "y": 4,
       "text": "Neverelm Strangler",
-      "color": "#ff6600",
+      "color": "#ff0000",
       "type": "boss",
       "description": "",
       "size": 18
@@ -1062,7 +1054,7 @@
       "x": 7,
       "y": 2,
       "text": "Apparition",
-      "color": "#ff6600",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1073,7 +1065,7 @@
       "x": 6,
       "y": 8,
       "text": "Skeleton",
-      "color": "#ff6600",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1095,7 +1087,7 @@
       "x": 2,
       "y": 4,
       "text": "Apparition",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1106,7 +1098,7 @@
       "x": 8,
       "y": 3,
       "text": "Skeleton",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1117,7 +1109,7 @@
       "x": 4,
       "y": 4,
       "text": "Daddy long leg",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1139,7 +1131,7 @@
       "x": 3,
       "y": 8,
       "text": "Wolf Rat",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1150,7 +1142,7 @@
       "x": 12,
       "y": 8,
       "text": "Fang Lizard",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1161,7 +1153,7 @@
       "x": 6,
       "y": 6,
       "text": "Troll Scout",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1172,7 +1164,7 @@
       "x": 2,
       "y": 2,
       "text": "Duck",
-      "color": "#ff7b00",
+      "color": "#ffae00",
       "type": "portal",
       "description": "",
       "size": 18
@@ -1697,6 +1689,644 @@
       "text": "Dragon Mouth Cave (Nightmare)",
       "color": "#bceb14",
       "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "m9bapall7omuzm8qf3",
+      "mapId": 264,
+      "x": 7,
+      "y": 4,
+      "text": "Hall of Heroes",
+      "color": "#cec950",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "0vtzlnnsr0dmuzsi05j",
+      "mapId": 96,
+      "x": 6,
+      "y": 3,
+      "text": "Cutthroat Stockade",
+      "color": "#cec950",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "et24uv6jhcgmuzsju1n",
+      "mapId": 47,
+      "x": 8,
+      "y": 1,
+      "text": "Gardens of the Wanderer",
+      "color": "#cec950",
+      "type": "dungeon",
+      "description": "Gardens (Normal)",
+      "size": 18
+    },
+    {
+      "id": "q0z32mj1y2nmuzsljak",
+      "mapId": 848,
+      "x": 5,
+      "y": 5,
+      "text": "Volcano",
+      "color": "#cec950",
+      "type": "dungeon",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "rvcl61zgaemuzssaxc",
+      "mapId": 10,
+      "x": 7,
+      "y": 3,
+      "text": "Gang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "aowo9bxcmqfmuzsstvo",
+      "mapId": 10,
+      "x": 7,
+      "y": 1,
+      "text": "Wolf Rat",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "6h1ylh2z3zkmuzst44i",
+      "mapId": 13,
+      "x": 8,
+      "y": 9,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "7i5d11kemd9muzstgom",
+      "mapId": 12,
+      "x": 11,
+      "y": 1,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "y0g1kxjs42muzstsie",
+      "mapId": 14,
+      "x": 4,
+      "y": 3,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "dzbl5uaa98tmuzstx8k",
+      "mapId": 14,
+      "x": 4,
+      "y": 7,
+      "text": "Fangzard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "bfpweadeep9muzsuaa6",
+      "mapId": 105,
+      "x": 8,
+      "y": 4,
+      "text": "Wolf Rat",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "7o5wu63b1s9muzsuf3o",
+      "mapId": 105,
+      "x": 9,
+      "y": 6,
+      "text": "Bear",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "0pwx0bexv9flmuzsuleb",
+      "mapId": 105,
+      "x": 10,
+      "y": 2,
+      "text": "Wolf",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "3gci7trhq5nmuzsuvt2",
+      "mapId": 104,
+      "x": 7,
+      "y": 6,
+      "text": "Bear",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "fch83xa7x5rmuzsvag4",
+      "mapId": 114,
+      "x": 8,
+      "y": 3,
+      "text": "Wolf",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "2qwk1suvp3gmuzsvddn",
+      "mapId": 114,
+      "x": 8,
+      "y": 5,
+      "text": "Bear",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "biekn9dnonmuzsvwp7",
+      "mapId": 1634,
+      "x": 10,
+      "y": 4,
+      "text": "Forest Giant",
+      "color": "#ff0000",
+      "type": "boss",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "llad5bua7ksmuzswf1s",
+      "mapId": 1082,
+      "x": 9,
+      "y": 7,
+      "text": "Bear",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "qqtumcpndwmuzsx8tb",
+      "mapId": 15,
+      "x": 5,
+      "y": 7,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "u5strr2rp4kmuzsxqhf",
+      "mapId": 16,
+      "x": 4,
+      "y": 5,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "84iua6l1s8hmuzsxvud",
+      "mapId": 95,
+      "x": 13,
+      "y": 6,
+      "text": "Burby",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "rhlzljmulr8muzsy5lo",
+      "mapId": 103,
+      "x": 10,
+      "y": 4,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "2vejel0f4nsmuzsykx2",
+      "mapId": 95,
+      "x": 11,
+      "y": 10,
+      "text": "Crested Heron",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "19ggp48oebumuzsz1q1",
+      "mapId": 17,
+      "x": 1,
+      "y": 3,
+      "text": "Fang Lizard",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "q4u9gsvmu7muzsz98h",
+      "mapId": 18,
+      "x": 2,
+      "y": 6,
+      "text": "Crested Heron",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "y7ic0n6yagmuzszelj",
+      "mapId": 18,
+      "x": 6,
+      "y": 8,
+      "text": "Burby",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "agv31phw5sjmuzszyzj",
+      "mapId": 24,
+      "x": 5,
+      "y": 5,
+      "text": "Gorilla",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "w72tmtu4x2kmuzt0a4n",
+      "mapId": 19,
+      "x": 4,
+      "y": 6,
+      "text": "Crested Heron",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "orav2z9ky0mmuzt0e8t",
+      "mapId": 19,
+      "x": 6,
+      "y": 8,
+      "text": "Burby",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "sd426kdaj9amuzt0mx5",
+      "mapId": 25,
+      "x": 6,
+      "y": 4,
+      "text": "Gorilla",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "c6rr8c293tfmuzt0tyr",
+      "mapId": 20,
+      "x": 2,
+      "y": 5,
+      "text": "Crested Heron",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kqxb12ciwkmuzt0xxv",
+      "mapId": 20,
+      "x": 4,
+      "y": 7,
+      "text": "Burby",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "o33k40lnlemuzt18th",
+      "mapId": 21,
+      "x": 7,
+      "y": 5,
+      "text": "Burby",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "51r43ecovkhmuzt1gch",
+      "mapId": 26,
+      "x": 7,
+      "y": 3,
+      "text": "Gorilla",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "q72d4oq32dmmuzt1zu9",
+      "mapId": 28,
+      "x": 8,
+      "y": 3,
+      "text": "Burby",
+      "color": "#ffae00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ksbvgdlnd8tmuzt2jjt",
+      "mapId": 1641,
+      "x": 9,
+      "y": 3,
+      "text": "Eastern Coast",
+      "color": "#00ff33",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "pyaygrzufxsmuzt3tkt",
+      "mapId": 34,
+      "x": 3,
+      "y": 2,
+      "text": "Crested Heron",
+      "color": "#ff9500",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "55k02fdjot9muzt3z1f",
+      "mapId": 34,
+      "x": 4,
+      "y": 5,
+      "text": "Pebble",
+      "color": "#ff9500",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "dvcimbxuue6muzt4b9t",
+      "mapId": 40,
+      "x": 7,
+      "y": 3,
+      "text": "Pebble",
+      "color": "#ff9500",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "2abs4u3m42smuzt4mjj",
+      "mapId": 46,
+      "x": 3,
+      "y": 5,
+      "text": "Pebble",
+      "color": "#ff9500",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "zz8k8lwma2amuzt4v21",
+      "mapId": 46,
+      "x": 3,
+      "y": 3,
+      "text": "Covewalker",
+      "color": "#ff0000",
+      "type": "boss",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ymf2nsk6tgmuzt5bf7",
+      "mapId": 45,
+      "x": 9,
+      "y": 2,
+      "text": "Pebble",
+      "color": "#ff9500",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "9dohg4v2w6imuzt5qnt",
+      "mapId": 33,
+      "x": 8,
+      "y": 8,
+      "text": "Pebble",
+      "color": "#ff9500",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kx8rr69wnesmuzt660j",
+      "mapId": 39,
+      "x": 7,
+      "y": 4,
+      "text": "Druids Keep",
+      "color": "#59ff00",
+      "type": "city",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "ktov4c6ex79muzt6peb",
+      "mapId": 44,
+      "x": 6,
+      "y": 5,
+      "text": "Brigand",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "oxvh1eixv7bmuzt6zv3",
+      "mapId": 50,
+      "x": 4,
+      "y": 2,
+      "text": "Brigand",
+      "color": "#ff8800",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "hav9whkoyp4muzt73tv",
+      "mapId": 50,
+      "x": 12,
+      "y": 8,
+      "text": "Mardauder",
+      "color": "#ffa200",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "qybni0hwb6kmuzt8mqj",
+      "mapId": 56,
+      "x": 11,
+      "y": 4,
+      "text": "Marauder",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "kwiohm4nzpmuzt8rfz",
+      "mapId": 56,
+      "x": 3,
+      "y": 5,
+      "text": "Bear",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "306fvyx5i2gmuzt93xl",
+      "mapId": 62,
+      "x": 6,
+      "y": 5,
+      "text": "Wolf Rat",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "xlbr9e9ns9muzt9ef1",
+      "mapId": 62,
+      "x": 7,
+      "y": 2,
+      "text": "Fang Lizard",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "61bwmn1xddrmuzt9izf",
+      "mapId": 62,
+      "x": 12,
+      "y": 10,
+      "text": "Mardauder",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "w7sr8ldi19fmuzt9v7i",
+      "mapId": 61,
+      "x": 6,
+      "y": 4,
+      "text": "Fang Lizard",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "z3w6c6ayxwmuzta2al",
+      "mapId": 61,
+      "x": 1,
+      "y": 5,
+      "text": "Wolf Rat",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "gmmc0uh0enmuztadme",
+      "mapId": 60,
+      "x": 10,
+      "y": 6,
+      "text": "Fang Lizard",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "2w2wo80l0t9muztahwz",
+      "mapId": 60,
+      "x": 10,
+      "y": 8,
+      "text": "Wolf Rat",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "rb76yepxzdnmuztarci",
+      "mapId": 59,
+      "x": 7,
+      "y": 2,
+      "text": "Fang Lizard",
+      "color": "#ffbb00",
+      "type": "portal",
+      "description": "",
+      "size": 18
+    },
+    {
+      "id": "cpjqemw5z8pmuztaw2i",
+      "mapId": 59,
+      "x": 5,
+      "y": 4,
+      "text": "Wolf Rat",
+      "color": "#ffbb00",
+      "type": "portal",
       "description": "",
       "size": 18
     }
