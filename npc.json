@@ -98124,7 +98124,7 @@
     ]
   },
   {
-    "name": "Sucka",
+    "name": "Shriekwing",
     "desc": "",
     "tag": "",
     "pursue_run": false,
@@ -98152,20 +98152,20 @@
     "move_chance": 100,
     "move_delay": 80,
     "move_amount": 3,
-    "attack_delay": 100,
+    "attack_delay": 60,
     "flee_threshold": 0,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
+    "behavior": 1,
+    "targeting": 9,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 1000,
       "mp": 0,
       "sp": 0
     },
     "stats": {
-      "atk": 0,
+      "atk": 475,
       "def": 0,
       "rat": 0,
       "rdf": 0,
@@ -98174,9 +98174,9 @@
     },
     "drop_items": [
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1174,
+        "amount": 1,
+        "chance": 25
       },
       {
         "item_id": -1,
@@ -98226,11 +98226,11 @@
     ]
   },
   {
-    "name": "Taker",
+    "name": "Tidecaller",
     "desc": "",
     "tag": "",
     "pursue_run": false,
-    "equip_drops": false,
+    "equip_drops": true,
     "spawn_day": false,
     "spawn_night": true,
     "spawn_weather": 0,
@@ -98254,15 +98254,15 @@
     "move_chance": 25,
     "move_delay": 100,
     "move_amount": 1,
-    "attack_delay": 100,
-    "flee_threshold": 10,
-    "behavior": 0,
-    "targeting": 0,
-    "sight_range": 1,
+    "attack_delay": 175,
+    "flee_threshold": 0,
+    "behavior": 1,
+    "targeting": 9,
+    "sight_range": 2,
     "hostility_flags": -1,
     "shop_id": -1,
     "vitals": {
-      "hp": 0,
+      "hp": 1000,
       "mp": 0,
       "sp": 0
     },
@@ -98271,19 +98271,19 @@
       "def": 0,
       "rat": 0,
       "rdf": 0,
-      "mat": 0,
+      "mat": 625,
       "mdf": 0
     },
     "drop_items": [
       {
-        "item_id": -1,
+        "item_id": 1148,
         "amount": 0,
         "chance": 0
       },
       {
-        "item_id": -1,
-        "amount": 0,
-        "chance": 0
+        "item_id": 1173,
+        "amount": 1,
+        "chance": 25
       },
       {
         "item_id": -1,
