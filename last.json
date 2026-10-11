@@ -274,7 +274,7 @@
     "spawn_delay": 0,
     "type": 0,
     "uses": 1,
-    "limit": 20000000,
+    "limit": 50000000,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 0,
@@ -8119,41 +8119,41 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "!cleric_allheal_radius": "1",
-      "!cleric_allheal_cooldown": ".25",
-      "!necromancer_minion_cost": "8",
-      "!necromancer_minion_damage": "5",
-      "!warlock_npcaoe_damage": "7",
-      "!warlock_playeraoe_damage": "7",
-      "!necromancer_minion_attackspeed": "10",
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 330,
-      "max_mat": 360,
-      "min_mdf": 0,
-      "max_mdf": 0,
+      "hue": 0,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.6,
+      "speed": 0.15,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 4,
-      "two_handed": false,
-      "tile_range": 4,
-      "sprite_rotation": 0,
       "sprite": 4188,
-      "hue": 0,
-      "saturation": 100,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 360,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 330,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
       "brightness": 100,
-      "alpha": 1,
-      "scale": 0.6,
-      "spin": true,
-      "speed": 0.15,
-      "move": true
+      "saturation": 100,
+      "tile_range": 4,
+      "two_handed": false,
+      "damage_stat": 4,
+      "sprite_rotation": 0,
+      "!cleric_allheal_radius": "1",
+      "!warlock_npcaoe_damage": "7",
+      "!cleric_allheal_cooldown": ".25",
+      "!necromancer_minion_cost": "8",
+      "!warlock_playeraoe_damage": "7",
+      "!necromancer_minion_damage": "5",
+      "!necromancer_minion_attackspeed": "10"
     }
   },
   {
@@ -10672,7 +10672,7 @@
   },
   {
     "name": "Old Big Pot of Honey",
-    "desc": "+750 HP every 2 seconds for 20 total seconds while out of combat. Restores 25SP/MP on first sip.",
+    "desc": "+750 HP every 2 seconds for 20 total seconds while out of combat.",
     "revision": 0,
     "sprite": 437,
     "sprite_color": {
@@ -19354,6 +19354,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "max_hp": 250,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 275,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 275,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0,
       "!bard_buff_cost": "10",
       "!assassin_cloak_cost": "10",
       "!cleric_petheal_cost": "10",
@@ -19361,24 +19378,7 @@
       "!samurai_riposte_cost": "10",
       "!cleric_playerheal_cost": "10",
       "!dragoon_invisible_cost": "10",
-      "!barbarian_alldamage_amount": "5",
-      "min_atk": 275,
-      "max_atk": 275,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": 250,
-      "max_mp": 0,
-      "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": false
+      "!barbarian_alldamage_amount": "5"
     }
   },
   {
@@ -21281,7 +21281,7 @@
     "show_name": true,
     "spawn_delay": 60,
     "type": 1,
-    "uses": 5000000,
+    "uses": 6000,
     "limit": 1,
     "cooldown_delay": 0,
     "cooldown_id": -1,
@@ -40936,7 +40936,7 @@
   },
   {
     "name": "Fool's Disorientation",
-    "desc": "A recipe crafted accessory obtained within Volcano. Reduces spell cost by 10. 2% Break chance upon repair.",
+    "desc": "A recipe crafted accessory obtained within Volcano. Reduces spell cost by 14%. 2% Break chance upon repair.",
     "revision": 0,
     "sprite": 2052,
     "sprite_color": {
@@ -40965,23 +40965,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!jester_confuse_cost": "14",
+      "min_atk": 16,
+      "max_atk": 22,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 22,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 16,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
-      "damage_stat": 0,
-      "!jester_confuse_cost": "14"
+      "damage_stat": 0
     }
   },
   {
@@ -52610,7 +52610,7 @@
     }
   },
   {
-    "name": "",
+    "name": "Taker Projectile",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -52624,7 +52624,7 @@
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 2,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -52640,7 +52640,34 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hue": 270,
+      "move": true,
+      "spin": true,
+      "alpha": 1,
+      "scale": 0.6,
+      "speed": 0.25,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "sprite": 4018,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "brightness": 300,
+      "saturation": 100,
+      "tile_range": 16,
+      "two_handed": false,
+      "damage_stat": 4,
+      "sprite_rotation": 0
     }
   },
   {
@@ -53555,17 +53582,51 @@
     }
   },
   {
-    "name": "",
+    "name": "Weasel Tail",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 2723,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 320,
+      "saturation": 125,
+      "brightness": 100
+    },
+    "scale": 0.5,
+    "color": "#008b8b",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 0,
+    "uses": 1,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 50,
+    "recycle_value": 1,
+    "level_req": 1,
+    "prof_req_flags": -1,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": false,
+    "transferable": true,
+    "data": {
+
+    }
+  },
+  {
+    "name": "Ram Ribs",
+    "desc": "",
+    "revision": 0,
+    "sprite": 3878,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.5,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -53589,17 +53650,17 @@
     }
   },
   {
-    "name": "",
+    "name": "Tidestone Emblem",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 3798,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 225,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.4,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -53623,51 +53684,17 @@
     }
   },
   {
-    "name": "",
+    "name": "Molar",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 4019,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 180,
       "saturation": 100,
-      "brightness": 100
+      "brightness": 200
     },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
+    "scale": 0.5,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -55523,7 +55550,7 @@
   },
   {
     "name": "Primal Howl",
-    "desc": "Release your inner rage with a frontal burst of damage when interacting with players.",
+    "desc": "Release your inner rage with a frontal burst of damage when interacting with players.  Costs 10 SP.",
     "revision": 2,
     "sprite": 3569,
     "sprite_color": {
@@ -55552,34 +55579,34 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "min_atk": 25,
+      "max_atk": 25,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "max_atk": 25,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 0,
-      "max_rdf": 0,
-      "min_atk": 25,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 0,
-      "min_rdf": 0,
       "damage_stat": 0
     }
   },
   {
-    "name": "Black Belt",
+    "name": "White Belt",
     "desc": "Increases the uptime of Riposte by .5 seconds ",
     "revision": 2,
     "sprite": 4060,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
+      "hue": 45,
       "saturation": 0,
-      "brightness": 175
+      "brightness": 500
     },
     "scale": 0.8,
     "color": "#cc6600",
@@ -57249,7 +57276,7 @@
   },
   {
     "name": "Pocket Shotgun",
-    "desc": "Decreases the cooldown of Shotgun by .25 second. [ 10% Break chance on repair ]",
+    "desc": "A recipe crafted accessory obtained within Brackish Isles. Decreases the cooldown of Shotgun by .25 second. 15% Break chance upon repair.",
     "revision": 1,
     "sprite": 3128,
     "sprite_color": {
@@ -57259,16 +57286,16 @@
       "brightness": 120
     },
     "scale": 0.5,
-    "color": "#66ff66",
+    "color": "#bf80ff",
     "show_name": false,
     "spawn_delay": 0,
     "type": 5,
-    "uses": 3000,
+    "uses": 6000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
     "repair_cost": 11500,
-    "break_chance": 10,
+    "break_chance": 15,
     "recycle_value": 11500,
     "level_req": 60,
     "prof_req_flags": -2016,
@@ -57278,23 +57305,23 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "!marksman_shotgun_cooldown": ".25",
+      "min_atk": 0,
+      "max_atk": 0,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 25,
+      "max_rat": 25,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 10,
-      "max_atk": 0,
-      "max_def": 0,
-      "max_mat": 0,
-      "max_mdf": 0,
-      "max_rat": 25,
-      "max_rdf": 0,
-      "min_atk": 0,
-      "min_def": 0,
-      "min_mat": 0,
-      "min_mdf": 0,
-      "min_rat": 25,
-      "min_rdf": 0,
-      "damage_stat": 2,
-      "!marksman_shotgun_cooldown": ".25"
+      "damage_stat": 2
     }
   },
   {
@@ -57662,7 +57689,7 @@
       "brightness": 100
     },
     "scale": 0.4,
-    "color": "#008b8b",
+    "color": "#008b07",
     "show_name": false,
     "spawn_delay": 60,
     "type": 6,
@@ -57688,7 +57715,7 @@
   },
   {
     "name": "Ztiwhsborfchui",
-    "desc": "A unique upgraded weapon from Shrine of Lavos. Reduces Spell costs for all melee classes by 12% / Increases Barbarian passive damage by 7%. [ 2% Break chance on repair ]",
+    "desc": "A unique upgraded weapon from Shrine of Lavos. Reduces Spell costs for all melee classes by 12% [ 2% Break chance on repair ]",
     "revision": 0,
     "sprite": 3353,
     "sprite_color": {
@@ -57717,30 +57744,30 @@
     "death_drop": true,
     "transferable": true,
     "data": {
+      "max_hp": 400,
+      "max_mp": 0,
+      "max_sp": 0,
+      "max_atk": 325,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 0,
+      "max_rdf": 0,
+      "min_atk": 325,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 0,
+      "min_rdf": 0,
+      "two_handed": false,
+      "damage_stat": 0,
       "!bard_buff_cost": "12",
       "!assassin_cloak_cost": "12",
       "!cleric_petheal_cost": "12",
       "!jester_confuse_cost": "12",
       "!samurai_riposte_cost": "12",
       "!cleric_playerheal_cost": "12",
-      "!dragoon_invisible_cost": "12",
-      "min_atk": 325,
-      "max_atk": 325,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 0,
-      "max_rat": 0,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
-      "max_hp": 400,
-      "max_mp": 0,
-      "max_sp": 0,
-      "damage_stat": 0,
-      "two_handed": false
+      "!dragoon_invisible_cost": "12"
     }
   },
   {
@@ -58039,10 +58066,10 @@
     }
   },
   {
-    "name": "Pizza",
+    "name": "",
     "desc": "",
     "revision": 0,
-    "sprite": 3942,
+    "sprite": 0,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -58110,14 +58137,14 @@
     "name": "Mushroom",
     "desc": "",
     "revision": 0,
-    "sprite": 3982,
+    "sprite": 252,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 150,
+      "hue": 90,
+      "saturation": 250,
       "brightness": 150
     },
-    "scale": 0.3,
+    "scale": 0.6,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -58144,14 +58171,14 @@
     "name": "Mushroom",
     "desc": "",
     "revision": 0,
-    "sprite": 3980,
+    "sprite": 252,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 180,
+      "saturation": 250,
       "brightness": 150
     },
-    "scale": 0.3,
+    "scale": 0.6,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -58239,34 +58266,34 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-      "min_atk": 0,
-      "max_atk": 0,
-      "min_def": 0,
-      "max_def": 0,
-      "min_rat": 330,
-      "max_rat": 330,
-      "min_rdf": 0,
-      "max_rdf": 0,
-      "min_mat": 0,
-      "max_mat": 0,
-      "min_mdf": 0,
-      "max_mdf": 0,
+      "hue": 0,
+      "move": true,
+      "spin": false,
+      "alpha": 100,
+      "scale": 0.75,
+      "speed": 0.16,
       "max_hp": 0,
       "max_mp": 0,
       "max_sp": 0,
-      "damage_stat": 2,
-      "two_handed": true,
-      "tile_range": 4,
-      "sprite_rotation": 315,
       "sprite": 2672,
-      "hue": 0,
-      "saturation": 150,
+      "max_atk": 0,
+      "max_def": 0,
+      "max_mat": 0,
+      "max_mdf": 0,
+      "max_rat": 330,
+      "max_rdf": 0,
+      "min_atk": 0,
+      "min_def": 0,
+      "min_mat": 0,
+      "min_mdf": 0,
+      "min_rat": 330,
+      "min_rdf": 0,
       "brightness": 150,
-      "alpha": 100,
-      "scale": 0.75,
-      "spin": false,
-      "speed": 0.16,
-      "move": true
+      "saturation": 150,
+      "tile_range": 4,
+      "two_handed": true,
+      "damage_stat": 2,
+      "sprite_rotation": 315
     }
   },
   {
@@ -59559,17 +59586,17 @@
     }
   },
   {
-    "name": "",
+    "name": "Morel",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 3985,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
+    "scale": 0.5,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
@@ -59593,21 +59620,21 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe:  Pizza",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 372,
     "sprite_color": {
       "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
+      "hue": 135,
+      "saturation": 200,
       "brightness": 100
     },
     "scale": 1,
     "color": "#008b8b",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -59623,7 +59650,51 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "amount": 1,
+      "chance": 100,
+      "item_id": 1292,
+      "recipe_items": [
+        {
+          "amount": 1000,
+          "item_id": 1284
+        },
+        {
+          "amount": 500,
+          "item_id": 354
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        },
+        {
+          "amount": 0,
+          "item_id": -1
+        }
+      ]
     }
   },
   {
@@ -59678,7 +59749,41 @@
     }
   },
   {
-    "name": "",
+    "name": "Recipe:  ",
+    "desc": "",
+    "revision": 0,
+    "sprite": 0,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 0,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 1,
+    "color": "#008b8b",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 0,
+    "uses": 1,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 50,
+    "recycle_value": 1,
+    "level_req": 1,
+    "prof_req_flags": -1,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+
+    }
+  },
+  {
+    "name": "Recipe:  ",
     "desc": "",
     "revision": 0,
     "sprite": 0,
@@ -59715,41 +59820,7 @@
     "name": "",
     "desc": "",
     "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "sprite": 3942,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -59848,25 +59919,25 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Pizza",
+    "desc": "Restores 5,000 HP, 200 SP & 100 MP over 10 seconds when out of combat.",
+    "revision": 2,
+    "sprite": 3942,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
-      "saturation": 100,
+      "saturation": 200,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.65,
+    "color": "#008b07",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 6,
+    "uses": 500,
     "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
+    "cooldown_delay": 30,
+    "cooldown_id": 456,
     "repair_cost": 0,
     "break_chance": 50,
     "recycle_value": 1,
@@ -59878,7 +59949,9 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "hp": 0,
+      "mp": 0,
+      "sp": 0
     }
   },
   {
@@ -60086,7 +60159,7 @@
     }
   },
   {
-    "name": "penis hammer",
+    "name": "Hammer",
     "desc": "",
     "revision": 0,
     "sprite": 2224,
@@ -60920,21 +60993,173 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
+    "name": "Green Belt",
+    "desc": "A recipe crafted accessory obtained within Brackish Isles. Increases the uptime of Riposte by .6 seconds. 15% Break chance upon repair.",
     "revision": 0,
-    "sprite": 0,
+    "sprite": 4060,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 90,
+      "saturation": 250,
+      "brightness": 150
+    },
+    "scale": 0.8,
+    "color": "#bf80ff",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 11,
+    "uses": 6000,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 11500,
+    "break_chance": 15,
+    "recycle_value": 11500,
+    "level_req": 60,
+    "prof_req_flags": -2047,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "!samurai_riposte_uptime": ".6",
+      "min_atk": 40,
+      "max_atk": 40,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0
+    }
+  },
+  {
+    "name": "Funny Feet",
+    "desc": "A recipe crafted accessory obtained within Brackish Isles. Reduces spell cost by 10% and cooldown by 1 second. 15% Break chance upon repair.",
+    "revision": 0,
+    "sprite": 3683,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
       "saturation": 100,
       "brightness": 100
     },
-    "scale": 1,
-    "color": "#008b8b",
+    "scale": 0.6,
+    "color": "#bf80ff",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
+    "type": 11,
+    "uses": 6000,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 11500,
+    "break_chance": 15,
+    "recycle_value": 11500,
+    "level_req": 60,
+    "prof_req_flags": -1536,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "!jester_confuse_cost": "10",
+      "!jester_confuseplayer_cooldown": "1",
+      "!jester_confusenpc_cooldown": "1",
+      "min_atk": 50,
+      "max_atk": 50,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 45,
+      "max_rat": 45,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0
+    }
+  },
+  {
+    "name": "Savage Necklace",
+    "desc": "A recipe crafted accessory obtained within Brackish Isles. Release your inner rage with a frontal burst of damage when interacting with players.  Costs 10 SP.  Base cooldown reduces by 1 second. 15% Break chance upon repair.",
+    "revision": 0,
+    "sprite": 2503,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 0,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.4,
+    "color": "#bf80ff",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 11,
+    "uses": 6000,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 11500,
+    "break_chance": 15,
+    "recycle_value": 11500,
+    "level_req": 60,
+    "prof_req_flags": -2032,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "!barbarian_aoe_cooldown": "1",
+      "min_atk": 40,
+      "max_atk": 40,
+      "min_def": 0,
+      "max_def": 0,
+      "min_rat": 0,
+      "max_rat": 0,
+      "min_rdf": 0,
+      "max_rdf": 0,
+      "min_mat": 0,
+      "max_mat": 0,
+      "min_mdf": 0,
+      "max_mdf": 0,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0
+    }
+  },
+  {
+    "name": "Upgrade: Happy Feet",
+    "desc": "",
+    "revision": 0,
+    "sprite": 3600,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 0,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.75,
+    "color": "#66ff66",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 13,
     "uses": 1,
     "limit": 0,
     "cooldown_delay": 0,
@@ -60950,7 +61175,285 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
+      "item_id": 1316,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 909,
+          "amount": 1
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "Upgrade: Savage Necklace",
+    "desc": "",
+    "revision": 0,
+    "sprite": 3600,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 90,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.75,
+    "color": "#66ff66",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 13,
+    "uses": 1,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 50,
+    "recycle_value": 1,
+    "level_req": 1,
+    "prof_req_flags": -1,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "item_id": 1317,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 1207,
+          "amount": 1
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "Upgrade: Green Belt",
+    "desc": "",
+    "revision": 0,
+    "sprite": 3600,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 270,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.75,
+    "color": "#66ff66",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 13,
+    "uses": 1,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 50,
+    "recycle_value": 1,
+    "level_req": 1,
+    "prof_req_flags": -1,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "item_id": 1315,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 1208,
+          "amount": 1
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "Upgrade: Pocket Shotgun",
+    "desc": "",
+    "revision": 0,
+    "sprite": 3600,
+    "sprite_color": {
+      "alpha": 1,
+      "hue": 180,
+      "saturation": 100,
+      "brightness": 100
+    },
+    "scale": 0.75,
+    "color": "#66ff66",
+    "show_name": false,
+    "spawn_delay": 60,
+    "type": 13,
+    "uses": 1,
+    "limit": 0,
+    "cooldown_delay": 0,
+    "cooldown_id": -1,
+    "repair_cost": 0,
+    "break_chance": 50,
+    "recycle_value": 1,
+    "level_req": 1,
+    "prof_req_flags": -1,
+    "skill_id": -1,
+    "skill_level_req": 0,
+    "skill_exp": 0,
+    "death_drop": true,
+    "transferable": true,
+    "data": {
+      "item_id": 1242,
+      "amount": 1,
+      "chance": 100,
+      "recipe_items": [
+        {
+          "item_id": 669,
+          "amount": 1
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        },
+        {
+          "item_id": -1,
+          "amount": 0
+        }
+      ]
     }
   },
   {
@@ -61226,10 +61729,10 @@
     }
   },
   {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
+    "name": "Torch",
+    "desc": "An accessory obtained within Brackish Isles. Increases light radius by 2. 15% Break chance upon repair.",
+    "revision": 1,
+    "sprite": 60,
     "sprite_color": {
       "alpha": 1,
       "hue": 0,
@@ -61237,17 +61740,17 @@
       "brightness": 100
     },
     "scale": 1,
-    "color": "#008b8b",
+    "color": "#bf80ff",
     "show_name": false,
     "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
+    "type": 11,
+    "uses": 6000,
     "limit": 0,
     "cooldown_delay": 0,
     "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
+    "repair_cost": 11500,
+    "break_chance": 15,
+    "recycle_value": 11500,
     "level_req": 1,
     "prof_req_flags": -1,
     "skill_id": -1,
@@ -61256,211 +61759,22 @@
     "death_drop": true,
     "transferable": true,
     "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
-    }
-  },
-  {
-    "name": "",
-    "desc": "",
-    "revision": 0,
-    "sprite": 0,
-    "sprite_color": {
-      "alpha": 1,
-      "hue": 0,
-      "saturation": 100,
-      "brightness": 100
-    },
-    "scale": 1,
-    "color": "#008b8b",
-    "show_name": false,
-    "spawn_delay": 60,
-    "type": 0,
-    "uses": 1,
-    "limit": 0,
-    "cooldown_delay": 0,
-    "cooldown_id": -1,
-    "repair_cost": 0,
-    "break_chance": 50,
-    "recycle_value": 1,
-    "level_req": 1,
-    "prof_req_flags": -1,
-    "skill_id": -1,
-    "skill_level_req": 0,
-    "skill_exp": 0,
-    "death_drop": true,
-    "transferable": true,
-    "data": {
-
+      "min_atk": 5,
+      "max_atk": 5,
+      "min_def": 5,
+      "max_def": 5,
+      "min_rat": 5,
+      "max_rat": 5,
+      "min_rdf": 5,
+      "max_rdf": 5,
+      "min_mat": 5,
+      "max_mat": 5,
+      "min_mdf": 5,
+      "max_mdf": 5,
+      "max_hp": 0,
+      "max_mp": 0,
+      "max_sp": 0,
+      "damage_stat": 0
     }
   },
   {
