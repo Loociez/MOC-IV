@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mirage Map Atlas</title>
+<style>
+:root{--bg:#12151c;--p1:#1a1e28;--p2:#222735;--ln:#2e3547;--tx:#dfe3ee;--mut:#8a93a8;--ac:#e3b04b;--ac2:#6fb3d9;--ok:#7ccf94;--bad:#e5726b;--r:6px}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:13px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column}
+button,input,select{background:var(--p2);color:var(--tx);border:1px solid var(--ln);border-radius:var(--r);padding:6px 10px;font:inherit}
+button{cursor:pointer}button:hover:not(:disabled){border-color:var(--ac)}button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:2px solid var(--ac2);outline-offset:1px}
+input[type=checkbox]{accent-color:var(--ac)}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--p1);border-bottom:1px solid var(--ln);flex-wrap:wrap}
+.brand{font-size:17px;font-weight:700;letter-spacing:.2px;margin-right:8px}.brand span{color:var(--ac)}
+#stat{color:var(--mut);margin-left:auto}
+#src{display:none;gap:10px;padding:10px 16px;background:var(--p1);border-bottom:1px solid var(--ln);flex-wrap:wrap;align-items:end}
+#src.open{display:flex}#src label{display:flex;flex-direction:column;gap:3px;color:var(--mut)}#src input[type=text]{width:340px;max-width:100%}
+.fbtn{display:inline-block;cursor:pointer;background:var(--p2);border:1px solid var(--ln);border-radius:var(--r);padding:6px 10px}.fbtn:hover{border-color:var(--ac)}.fbtn input{display:none}
+main{flex:1;display:flex;min-height:0}
+#center{flex:1;overflow:auto;padding:14px 16px;min-width:0}
+#side{width:360px;flex:none;background:var(--p1);border-left:1px solid var(--ln);overflow:auto;padding:14px}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.bar .sp{flex:1}
+#mid{width:84px;text-align:center;font-weight:600}
+#q{width:230px}
+.title{font-size:18px;font-weight:650;margin:0 6px 0 4px}.title small{color:var(--mut);font-weight:400;font-size:13px}
+.stage{position:relative;width:768px;max-width:100%;line-height:0;border:1px solid var(--ln);border-radius:var(--r);overflow:hidden;background:#000}
+.stage canvas{width:100%;height:auto;image-rendering:pixelated;display:block}
+#ov{position:absolute;inset:0;pointer-events:auto;cursor:crosshair}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{display:flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--ln);border-radius:20px;background:var(--p1);cursor:pointer;user-select:none;font-size:12px}
+.chip.on{border-color:var(--ac);color:var(--ac)}.chip input{display:none}
+.opts{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:8px 0;color:var(--mut)}.opts label{display:flex;gap:5px;align-items:center;cursor:pointer}
+#grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.th{cursor:pointer;text-align:center;font-size:11px;color:var(--mut);border:1px solid transparent;border-radius:var(--r);padding:3px;background:var(--p1)}
+.th:hover{border-color:var(--ln)}.th.on{border-color:var(--ac);color:var(--ac)}.th canvas{width:100%;height:auto;display:block;image-rendering:pixelated;border-radius:3px;background:#000}
+.th div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+h3{margin:18px 0 8px;font-size:13px;color:var(--ac)}h3:first-child{margin-top:0}
+.kv{width:100%;border-collapse:collapse}.kv td{padding:4px 0;border-bottom:1px solid var(--ln);vertical-align:top}.kv td:first-child{color:var(--mut);width:42%;padding-right:8px}.kv td:last-child{word-break:break-word}
+.compass{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%}
+.cc{aspect-ratio:4/3;border:1px dashed var(--ln);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--mut);overflow:hidden;position:relative;padding:0;background:none}
+.cc canvas{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}
+.cc span{position:relative;background:#000b;color:#fff;padding:0 5px;border-radius:3px;margin-top:auto;margin-bottom:3px}
+.cc.here{border:1px solid var(--ac);color:var(--ac);font-weight:700;font-size:13px}
+.cc.link{border-style:solid;cursor:pointer}
+.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{padding:2px 8px;border-radius:20px;background:var(--p2);border:1px solid var(--ln);font-size:12px}
+.tag.bad{border-color:var(--bad);color:var(--bad)}.tag.ok{border-color:var(--ok);color:var(--ok)}
+.lay{display:grid;grid-template-columns:90px 1fr 38px;gap:6px;align-items:center;margin:3px 0;color:var(--mut)}
+.lay i{display:block;height:6px;background:var(--ac2);border-radius:3px}
+.warn{background:#3a2a1c;border:1px solid #6b4a24;color:#f1c98b;border-radius:var(--r);padding:6px 9px;margin-bottom:6px}
+a.go,.go{color:var(--ac2);cursor:pointer;text-decoration:underline;background:none;border:0;padding:0}
+pre{background:var(--bg);border:1px solid var(--ln);border-radius:var(--r);padding:8px;overflow:auto;max-height:200px;font-size:11px;margin:0}
+#insp{font:12px ui-monospace,Consolas,monospace;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:var(--r);padding:8px;min-height:64px;white-space:pre-wrap}
+dialog{background:var(--p1);color:var(--tx);border:1px solid var(--ln);border-radius:10px;padding:0;max-width:94vw;max-height:92vh}
+dialog::backdrop{background:#000a}.dh{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--ln)}
+#wbody{overflow:auto;max-height:80vh;padding:10px}
+#toast{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:9}
+.t{background:var(--p2);border:1px solid var(--ln);border-left:3px solid var(--ac2);padding:8px 12px;border-radius:var(--r);max-width:380px}.t.ok{border-left-color:var(--ok)}.t.w{border-left-color:var(--bad)}
+@media(max-width:1000px){main{flex-direction:column;overflow:auto}#side{width:auto;border-left:0;border-top:1px solid var(--ln);overflow:visible}#center{overflow:visible}#grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<header>
+ <div class="brand">Mirage <span>Map Atlas</span></div>
+ <button id="refresh" title="Download the newest mapdump and tilesets">⟳ Refresh from server</button>
+ <button id="srcBtn">⚙ Sources</button>
+ <button id="world">World view</button>
+ <span id="stat">Loading…</span>
+</header>
+<div id="src">
+ <label>Mapdump URL<input type="text" id="dumpUrl" value="https://play.mirageonlineclassic.com/mapdump.json"></label>
+ <label>Tileset URL base<input type="text" id="base" value="https://play.consty.com/images/"></label>
+ <label>Tile id offset<input type="number" id="off" value="0" style="width:90px"></label>
+ <label class="fbtn">Open mapdump file<input type="file" id="dumpF" accept=".json,.bin"></label>
+ <label class="fbtn">Open tile sheet folder<input type="file" id="sheetF" webkitdirectory multiple></label>
+</div>
+<main>
+ <div id="center">
+  <div class="bar">
+   <button id="prev" title="Previous map ([)">◀</button><input type="number" id="mid" value="0" min="0"><button id="next" title="Next map (])">▶</button>
+   <span class="title" id="ttl"></span><span class="sp"></span>
+   <button id="rand">Random</button><button id="png">Save PNG</button><button id="link">Copy link</button>
+  </div>
+  <div class="stage"><canvas id="cv" width="512" height="384"></canvas><canvas id="ov" width="512" height="384"></canvas></div>
+  <div class="chips" id="chips"></div>
+  <div class="opts">
+   <label><input type="checkbox" id="grd"> Tile grid</label>
+   <label>Zoom <select id="zoom"><option value="512">1×</option><option value="768" selected>1.5×</option><option value="1024">2×</option><option value="1536">3×</option></select></label>
+   <span>Keys: arrows follow neighbours, [ ] step through maps</span>
+  </div>
+  <div class="bar" style="margin-top:14px">
+   <input type="search" id="q" placeholder="Search id, name or any field">
+   <select id="flt"><option value="all">All maps</option><option value="linked">Has neighbours</option><option value="iso">No neighbours</option><option value="asym">Mismatched links</option><option value="empty">Blank maps</option></select>
+   <span class="sp"></span><button id="pgP">◀</button><span id="pg"></span><button id="pgN">▶</button>
+  </div>
+  <div id="grid"></div>
+ </div>
+ <aside id="side"></aside>
+</main>
+<dialog id="wd"><div class="dh"><b>World view</b><span style="color:var(--mut)">Connected maps around the current one. Click to open.</span><span style="flex:1"></span><select id="wsc"><option value=".125">Small</option><option value=".25" selected>Medium</option><option value=".4">Large</option></select><button id="wx">Close</button></div><div id="wbody"><canvas id="wc"></canvas></div></dialog>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id),TILE=32,PER=1024,SHEETS=19,NL=10,STATIC=[0,1,3,5,7,9],PAGE=30;
+const LAYERS=['Ground','Objects','Objects anim','Objects 2','Objects 2 anim','Fringe','Fringe anim','Fringe 2','Fringe 2 anim','Roof'];
+const ANIM=[2,4,6,8],DIRS=[['n','North','s'],['s','South','n'],['w','West','e'],['e','East','w']];
+let maps=[],sheets=[],cur=0,page=0,list=[],incoming=[],vis=LAYERS.map((_,k)=>!ANIM.includes(k)),hov=null,sheetUrls=[];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m,c=''){const d=document.createElement('div');d.className='t '+c;d.textContent=m;$('toast').append(d);setTimeout(()=>d.remove(),c==='w'?7000:3500)}
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ---------- parsing ---------- */
+function pack(tiles){const t=new Int16Array(192*NL).fill(-1);for(let x=0;x<16;x++){const c=tiles?.[x]||[];for(let y=0;y<12;y++){const L=c[y]||[];for(let k=0;k<NL;k++){const v=L[k];t[(x*12+y)*NL+k]=v>=0&&v<32768?v:-1}}}return t}
+function parseDump(t){t=t.trim();try{const x=JSON.parse(t);return Array.isArray(x)?x:(x.maps||[])}catch(e){if(t.startsWith('{')&&t.endsWith(']'))return JSON.parse('['+t);throw new Error('Could not parse mapdump JSON')}}
+function loadBin(buf){const dv=new DataView(buf);if(dv.getUint32(0,false)!==0x4d4c4d31)throw Error('Bad mapdump.bin');const n=dv.getUint32(4,true),out=[];
+ for(let i=0;i<n;i++){const o=8+i*2320,t=new Int16Array(192*NL).fill(-1);for(let c=0;c<192;c++)for(let k=0;k<6;k++)t[c*NL+STATIC[k]]=dv.getInt16(o+16+(c*6+k)*2,true);out.push({n:dv.getInt32(o,true),s:dv.getInt32(o+4,true),w:dv.getInt32(o+8,true),e:dv.getInt32(o+12,true),t,meta:{}})}return out}
+function nameOf(meta){for(const k of['name','map_name','mapname','title','Name'])if(typeof meta[k]==='string'&&meta[k])return meta[k];const k=Object.keys(meta).find(k=>/name/i.test(k)&&typeof meta[k]==='string'&&meta[k]);return k?meta[k]:''}
+async function ingest(name,buf){try{
+ if(/\.bin$/i.test(name))maps=loadBin(buf);
+ else{const I=n=>Number.isInteger(n)?n:-1;maps=parseDump(new TextDecoder().decode(buf)).map(m=>{const meta={...m};delete meta.tiles;return{t:pack(m.tiles),raw:m.tiles,n:I(m.map_north_id),s:I(m.map_south_id),w:I(m.map_west_id),e:I(m.map_east_id),meta}})}
+ maps.forEach(m=>{m.name=nameOf(m.meta);m.search=(m.name+' '+Object.values(m.meta).filter(v=>typeof v!=='object').join(' ')).toLowerCase()});
+ index();status();toast(maps.length+' maps loaded','ok');const h=parseInt(location.hash.slice(1));setCur(maps[h]?h:Math.min(cur,maps.length-1),true);applyFilter();return true}catch(x){toast(x.message,'w');return false}}
+function index(){incoming=maps.map(()=>[]);maps.forEach((m,i)=>{m.asym=[];m.blank=!m.t.some(v=>v>=0);DIRS.forEach(([k,,back])=>{const t=m[k];if(t<0)return;if(!maps[t]){m.asym.push(`${k.toUpperCase()} points to missing map ${t}`);return}incoming[t].push({from:i,dir:k});if(maps[t][back]!==i)m.asym.push(`${k.toUpperCase()} → #${t}, but #${t} doesn't link back (${maps[t][back]<0?'none':'#'+maps[t][back]})`)})})}
+function status(){const loaded=sheets.filter(Boolean).length;$('stat').textContent=`${maps.length} maps · ${loaded}/${SHEETS} tile sheets`}
+
+/* ---------- loading from server ---------- */
+const addSheet=(i,blob)=>new Promise(r=>{const im=new Image();im.onload=()=>{sheets[i]=im;r(1)};im.onerror=()=>r(0);im.src=URL.createObjectURL(blob)});
+async function loadTiles(){const base=($('base').value||'').replace(/\/?$/,'/');store.set('base',$('base').value);let ok=0;
+ await Promise.all([...Array(SHEETS).keys()].map(async i=>{const url=`${base}tiles${i}.png?v=${Date.now()}`;try{const r=await fetch(url);if(r.ok){ok+=await addSheet(i,await r.blob());return}}catch(e){}
+  await new Promise(res=>{const im=new Image();im.onload=()=>{sheets[i]=im;ok++;res()};im.onerror=res;im.src=url})}));
+ status();draw();buildPage();return ok}
+async function loadDump(){const url=$('dumpUrl').value.trim();store.set('dumpUrl',url);
+ try{const r=await fetch(url+(url.includes('?')?'&':'?')+'v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return await ingest(url,await r.arrayBuffer())}
+ catch(e){toast(`Could not download the mapdump (${e.message}). If you opened this file from disk, the server may block it (CORS): host this page on the same site, or use Sources → Open mapdump file.`,'w');
+  for(const n of['./mapdump.bin','./mapdump.json']){try{const r=await fetch(n);if(r.ok&&!/html/.test(r.headers.get('content-type')||'')&&await ingest(n,await r.arrayBuffer()))return true}catch(e){}}return false}}
+async function refresh(){$('stat').textContent='Loading…';const[a,b]=await Promise.all([loadDump(),loadTiles()]);
+ if(!b)toast('No tile sheets loaded. Check the tileset URL or open a local tile sheet folder.','w');status()}
+$('refresh').onclick=refresh;$('srcBtn').onclick=()=>$('src').classList.toggle('open');
+$('dumpF').onchange=async e=>{const f=e.target.files[0];if(f)ingest(f.name,await f.arrayBuffer())};
+$('sheetF').onchange=async e=>{let n=0;for(const f of e.target.files){const m=f.name.match(/^tiles(\d+)\.png$/i);if(m&&+m[1]<SHEETS)n+=await addSheet(+m[1],f)}toast(n+' tile sheets loaded','ok');status();draw();buildPage()};
+
+/* ---------- rendering ---------- */
+function render(m,sc,g,ox=0,oy=0){const off=+$('off').value||0;g.imageSmoothingEnabled=false;
+ for(let x=0;x<16;x++)for(let y=0;y<12;y++)for(let k=0;k<NL;k++){if(!vis[k])continue;const v=m.t[(x*12+y)*NL+k];if(v<0)continue;const n=v-off;if(n<0)continue;const sh=Math.floor(n/PER),l=n%PER;if(sh>=SHEETS)continue;
+  if(!sheets[sh]){g.fillStyle='#351b1b';g.fillRect(ox+x*TILE*sc,oy+y*TILE*sc,TILE*sc,TILE*sc);continue}
+  g.drawImage(sheets[sh],(l%32)*32,Math.floor(l/32)*32,32,32,ox+x*TILE*sc,oy+y*TILE*sc,TILE*sc,TILE*sc)}}
+function draw(){const c=$('cv'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(maps[cur])render(maps[cur],1,g);overlay()}
+function overlay(){const c=$('ov'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);
+ if($('grd').checked){g.strokeStyle='#ffffff33';g.lineWidth=1;g.beginPath();for(let x=0;x<=16;x++){g.moveTo(x*TILE+.5,0);g.lineTo(x*TILE+.5,384)}for(let y=0;y<=12;y++){g.moveTo(0,y*TILE+.5);g.lineTo(512,y*TILE+.5)}g.stroke()}
+ if(hov){g.strokeStyle='#e3b04b';g.lineWidth=2;g.strokeRect(hov.x*TILE+1,hov.y*TILE+1,TILE-2,TILE-2)}}
+function thumb(i,w,h,sc){const c=document.createElement('canvas');c.width=w;c.height=h;render(maps[i],sc,c.getContext('2d'));return c}
+
+/* ---------- navigation ---------- */
+function setCur(i,noPage){if(!maps.length)return;cur=Math.max(0,Math.min(maps.length-1,i));$('mid').value=cur;$('mid').max=maps.length-1;const m=maps[cur];
+ $('ttl').innerHTML=`Map ${cur}${m.name?` <small>${esc(m.name)}</small>`:''}`;document.title=`Map ${cur}${m.name?' · '+m.name:''} · Mirage Map Atlas`;history.replaceState(null,'','#'+cur);
+ const at=list.indexOf(cur);if(!noPage&&at>=0)page=Math.floor(at/PAGE);draw();info();buildPage()}
+$('prev').onclick=()=>setCur(cur-1);$('next').onclick=()=>setCur(cur+1);$('mid').onchange=e=>setCur(+e.target.value);
+$('rand').onclick=()=>setCur(Math.floor(Math.random()*maps.length));
+$('link').onclick=()=>{navigator.clipboard?.writeText(location.href.split('#')[0]+'#'+cur).then(()=>toast('Link copied','ok'),()=>toast('Copy failed','w'))};
+$('png').onclick=()=>{try{$('cv').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`map_${cur}.png`;a.click()})}catch(e){toast('The tile server blocks exporting images. Load the tile sheet folder instead.','w')}};
+$('zoom').onchange=e=>document.querySelector('.stage').style.width=e.target.value+'px';
+$('grd').onchange=overlay;$('off').onchange=()=>{draw();buildPage()};
+document.addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.ctrlKey||e.metaKey)return;const m=maps[cur];if(!m)return;
+ const k={ArrowUp:'n',ArrowDown:'s',ArrowLeft:'w',ArrowRight:'e'}[e.key];if(k){if(m[k]>=0&&maps[m[k]]){setCur(m[k]);e.preventDefault()}}
+ else if(e.key==='[')setCur(cur-1);else if(e.key===']')setCur(cur+1)});
+addEventListener('hashchange',()=>{const h=parseInt(location.hash.slice(1));if(maps[h]&&h!==cur)setCur(h)});
+
+/* layer chips */
+$('chips').innerHTML=LAYERS.map((n,k)=>`<label class="chip${vis[k]?' on':''}"><input type="checkbox" data-k="${k}"${vis[k]?' checked':''}>${n}</label>`).join('');
+$('chips').onchange=e=>{const k=+e.target.dataset.k;vis[k]=e.target.checked;e.target.parentNode.classList.toggle('on',vis[k]);draw();buildPage()};
+
+/* hover inspector */
+$('ov').onmousemove=e=>{const r=e.target.getBoundingClientRect(),x=Math.min(15,Math.floor((e.clientX-r.left)/r.width*16)),y=Math.min(11,Math.floor((e.clientY-r.top)/r.height*12));
+ if(!hov||hov.x!==x||hov.y!==y){hov={x,y};overlay();inspect()}};
+$('ov').onmouseleave=()=>{hov=null;overlay();inspect()};
+function inspect(){const el=$('insp');if(!el)return;if(!hov||!maps[cur]){el.textContent='Hover over the map to inspect a tile.';return}
+ const off=+$('off').value||0,m=maps[cur];let s=`Tile (${hov.x}, ${hov.y})\n`,any=false;
+ for(let k=0;k<NL;k++){const v=m.t[(hov.x*12+hov.y)*NL+k];if(v<0)continue;any=true;const n=v-off;s+=`${LAYERS[k].padEnd(14)} id ${v}  → sheet ${Math.floor(n/PER)}, #${n%PER}\n`}
+ if(!any)s+='Empty';if(m.raw)s+=`\nraw: [${(m.raw[hov.x]?.[hov.y]||[]).join(',')}]`;el.textContent=s}
+
+/* ---------- thumbnails, search, filter ---------- */
+function applyFilter(){const q=$('q').value.trim().toLowerCase(),f=$('flt').value;
+ list=maps.map((_,i)=>i).filter(i=>{const m=maps[i];
+  if(f==='linked'&&!DIRS.some(([k])=>m[k]>=0))return false;if(f==='iso'&&DIRS.some(([k])=>m[k]>=0))return false;
+  if(f==='asym'&&!m.asym.length)return false;if(f==='empty'&&!m.blank)return false;
+  if(q&&!(String(i)===q||m.search.includes(q)))return false;return true});
+ const at=list.indexOf(cur);page=at>=0?Math.floor(at/PAGE):0;buildPage()}
+$('q').oninput=applyFilter;$('flt').onchange=applyFilter;
+function buildPage(){const g=$('grid');g.replaceChildren();const pages=Math.max(1,Math.ceil(list.length/PAGE));page=Math.min(page,pages-1);
+ $('pg').textContent=list.length?`${page+1} / ${pages} · ${list.length} maps`:'No maps match';$('pgP').disabled=page===0;$('pgN').disabled=page>=pages-1;
+ for(const i of list.slice(page*PAGE,(page+1)*PAGE)){const d=document.createElement('div');d.className='th'+(i===cur?' on':'');d.title=maps[i].name||'';
+  const lab=document.createElement('div');lab.textContent='#'+i+(maps[i].name?' '+maps[i].name:'');d.append(thumb(i,128,96,.25),lab);d.onclick=()=>setCur(i,true);g.append(d)}}
+$('pgP').onclick=()=>{page--;buildPage()};$('pgN').onclick=()=>{page++;buildPage()};
+
+/* ---------- info panel ---------- */
+const lbl=i=>'#'+i+(maps[i]?.name?' '+esc(maps[i].name):'');
+function stats(m){if(m._s)return m._s;const per=Array(NL).fill(0),sh={},uniq=new Set;let total=0,filled=0;
+ for(let c=0;c<192;c++){let any=false;for(let k=0;k<NL;k++){const v=m.t[c*NL+k];if(v<0)continue;any=true;per[k]++;total++;uniq.add(v);const s=Math.floor(v/PER);sh[s]=(sh[s]||0)+1}if(any)filled++}
+ return m._s={per,sh,total,filled,uniq:uniq.size}}
+function info(){const m=maps[cur];if(!m){$('side').innerHTML='<p style="color:var(--mut)">Waiting for map data…</p>';return}const s=stats(m);let h='';
+ if(m.asym.length)h+=m.asym.map(a=>`<div class="warn">${esc(a)}</div>`).join('');
+ h+='<h3>Connections</h3><div class="compass" id="cmp"></div>';
+ const inc=incoming[cur].filter(l=>m[l.dir==='n'?'s':l.dir==='s'?'n':l.dir==='e'?'w':'e']!==l.from);
+ const names={n:'north',s:'south',w:'west',e:'east'},back={n:'south',s:'north',e:'west',w:'east'};
+ if(inc.length)h+=`<div style="margin-top:8px;color:var(--mut)">One-way links in: ${inc.map(l=>`<button class="go" data-go="${l.from}">${lbl(l.from)}</button> (its ${names[l.dir]} exit)`).join(', ')}</div>`;
+ h+='<h3>Properties</h3><table class="kv"><tr><td>Map id</td><td>'+cur+'</td></tr>';
+ if(m.name)h+=`<tr><td>Name</td><td>${esc(m.name)}</td></tr>`;
+ for(const[k,v]of Object.entries(m.meta)){if(/^map_(north|south|east|west)_id$/.test(k)||v===m.name&&m.name)continue;
+  h+=`<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${esc(typeof v==='object'?JSON.stringify(v):v)}</td></tr>`}
+ h+=`<tr><td>Tiles used</td><td>${s.total} across ${s.filled}/192 cells</td></tr><tr><td>Unique tiles</td><td>${s.uniq}</td></tr></table>`;
+ if(!Object.keys(m.meta).length)h+='<div style="color:var(--mut);margin-top:6px">This mapdump only carries tiles and neighbour ids, so there are no extra fields to show.</div>';
+ h+='<h3>Layers</h3>'+LAYERS.map((n,k)=>`<div class="lay"><span>${n}</span><span><i style="width:${s.per[k]/192*100}%"></i></span><span>${s.per[k]}</span></div>`).join('');
+ const off=+$('off').value||0;
+ h+='<h3>Tile sheets used</h3><div class="tags">'+(Object.keys(s.sh).map(Number).sort((a,b)=>a-b).map(i=>{const sn=Math.floor((i*PER-off)/PER);return`<span class="tag ${sheets[i]?'ok':'bad'}" title="${s.sh[i]} tiles">tiles${i}.png${sheets[i]?'':' (missing)'}</span>`}).join('')||'<span class="tag">none</span>')+'</div>';
+ h+='<h3>Tile inspector</h3><div id="insp"></div><h3>Raw data</h3>';
+ const rawJson=JSON.stringify({id:cur,...m.meta,north:m.n,south:m.s,west:m.w,east:m.e},null,1);
+ h+=`<details><summary class="go">Show map fields</summary><pre>${esc(rawJson)}</pre></details>`;
+ $('side').innerHTML=h;
+ const cmp=$('cmp'),cell=(k)=>{const t=k?m[k]:-1,b=document.createElement(t>=0?'button':'div');b.className='cc'+(t>=0?' link':'');
+  if(t>=0&&maps[t]){b.append(thumb(t,64,48,.125));const sp=document.createElement('span');sp.textContent=`${k.toUpperCase()} · ${t}${maps[t].name?' '+maps[t].name:''}`;b.append(sp);b.dataset.go=t}
+  else if(t>=0){b.textContent=`${k.toUpperCase()} · #${t} missing`}else if(k)b.textContent=k.toUpperCase()+' · none';return b};
+ const here=document.createElement('div');here.className='cc here';here.textContent='#'+cur;
+ cmp.append(document.createElement('div'),cell('n'),document.createElement('div'),cell('w'),here,cell('e'),document.createElement('div'),cell('s'),document.createElement('div'));
+ inspect()}
+$('side').onclick=e=>{const b=e.target.closest('[data-go]');if(b)setCur(+b.dataset.go)};
+
+/* ---------- world view ---------- */
+function worldView(){if(!maps.length)return;const sc=+$('wsc').value,pos=new Map(),taken=new Set,q=[[cur,0,0]];
+ while(q.length&&pos.size<600){const[i,x,y]=q.shift();if(pos.has(i)||taken.has(x+','+y))continue;pos.set(i,[x,y]);taken.add(x+','+y);
+  const m=maps[i];if(m.n>=0&&maps[m.n])q.push([m.n,x,y-1]);if(m.s>=0&&maps[m.s])q.push([m.s,x,y+1]);if(m.w>=0&&maps[m.w])q.push([m.w,x-1,y]);if(m.e>=0&&maps[m.e])q.push([m.e,x+1,y])}
+ const xs=[...pos.values()].map(p=>p[0]),ys=[...pos.values()].map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0+1,h=Math.max(...ys)-y0+1,cw=512*sc,ch=384*sc;
+ const c=$('wc');c.width=Math.ceil(w*cw);c.height=Math.ceil(h*ch);const g=c.getContext('2d');g.fillStyle='#0b0d12';g.fillRect(0,0,c.width,c.height);
+ g.font='11px system-ui';c.worldPos=[];
+ for(const[i,[x,y]]of pos){const ox=(x-x0)*cw,oy=(y-y0)*ch;render(maps[i],sc,g,ox,oy);g.strokeStyle=i===cur?'#e3b04b':'#ffffff22';g.lineWidth=i===cur?3:1;g.strokeRect(ox+.5,oy+.5,cw-1,ch-1);
+  g.fillStyle='#000b';g.fillRect(ox+3,oy+3,g.measureText('#'+i).width+8,16);g.fillStyle='#fff';g.fillText('#'+i,ox+7,oy+15);c.worldPos.push({i,ox,oy})}
+ c.cw=cw;c.ch=ch;$('wd').showModal();const sub=$('wd').querySelector('.dh span');sub.textContent=`${pos.size} connected maps from #${cur}. Click one to open it.`}
+$('world').onclick=worldView;$('wsc').onchange=()=>$('wd').open&&worldView();$('wx').onclick=()=>$('wd').close();
+$('wc').onclick=e=>{const c=e.target,r=c.getBoundingClientRect(),x=(e.clientX-r.left)*c.width/r.width,y=(e.clientY-r.top)*c.height/r.height;
+ const hit=c.worldPos.find(p=>x>=p.ox&&x<p.ox+c.cw&&y>=p.oy&&y<p.oy+c.ch);if(hit){$('wd').close();setCur(hit.i)}};
+
+/* ---------- boot ---------- */
+$('dumpUrl').value=store.get('dumpUrl')||$('dumpUrl').value;$('base').value=store.get('base')||$('base').value;
+document.querySelector('.stage').style.width='768px';info();refresh();
+</script></body></html>
